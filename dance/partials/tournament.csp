@@ -1,0 +1,42 @@
+<div class="row-fluid">
+	<div class="span3">
+	</div>
+	<div class="span6">
+		<div class="accordion">
+			<div class="accordion-group">
+				<div class="accordion-heading">
+					<a class="accordion-toggle" ng-bind="page.accordionCaption|localize"></a>
+				</div>
+				<div class="accordion-body">
+					<div class="accordion-inner">
+						<form name="form_tournament" ng-submit="page.saveTournament()" style="margin: 0;">
+							<tournamentform tournament="page.tournament"/>
+						    <div class="control-group">
+						        <div class="controls">
+						            <button type="submit" class="btn btn-primary btn-small" ng-bind="page.btnSubmitCaption|localize" ng-disabled="form_tournament.$pristine"></button>
+						            <button type="button" class="btn btn-small" ng-click="page.cancel()" ng-bind="'Отмена'|localize"></button>
+						        </div>
+						    </div>    		    		    
+						
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="span3">
+	</div>
+</div>
+
+
+
+<div class="row-fluid">
+	<div class="span3">
+	</div>
+	<div class="span6">
+		<stcalert data="page.alert"/>
+	</div>
+	<div class="span3">
+	</div>
+</div>
+

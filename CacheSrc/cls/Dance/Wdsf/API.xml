@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Wdsf.API">
+<Abstract>1</Abstract>
+<TimeCreated>63287,4352.913679</TimeCreated>
+
+<Method name="Call">
+<Description>
+do ##class(Dance.Wdsf.API).Call("GET", "/competition/46164?format=json", .resp)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pMethod:%String,pUrl:%String,&sc:%Status=$$$OK]]></FormalSpec>
+<Private>1</Private>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set sc = $$$OK
+	set pResponse = ##class(%ZEN.proxyObject).%New()
+	
+ 	try 
+ 	{
+  		set req = ##class(%Net.HttpRequest).%New()
+  		set req.SSLConfiguration = $g(^Settings("Dance","Wdsf", "SslConfig"))
+  		set req.Server = "services.worlddancesport.org"
+  		set req.Https = 1
+  		set req.Port = 443
+  		set req.ProxyHTTPS = 1
+  		set req.ProxyServer = $g(^Settings("Dance","Wdsf", "ProxyServer"))
+  		set req.ProxyPort = $g(^Settings("Dance","Wdsf", "ProxyPort"))
+  		set req.ProxyTunnel = $g(^Settings("Dance","Wdsf", "ProxyTunnel"))
+  		set req.Timeout = 10
+  		
+  		set req.Authorization = "Basic "_$system.Encryption.Base64Encode($g(^Settings("Dance","Wdsf", "Login"))_":"_$g(^Settings("Dance","Wdsf", "Password")))
+  		set pUrl = "/api/1"_pUrl
+	 	
+  		$$$TOE(sc, req.Send($zconvert(pMethod,"u"), pUrl))
+ 		set json = req.HttpResponse.Data.Read()
+  	
+  		$$$TOE(sc,##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(json,,.pResponse))
+ 	}
+ 	catch ex
+ 	{
+  		set sc = ex.AsStatus()
+ 	}
+ 	
+ 	quit pResponse
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitions">
+<Description>
+Get all competitions, use query parameters
+from [DateTime] : list competitions since and including this date (YYYY/MM/DD)
+to [DateTime] : list competitions after and including this date (YYYY/MM/DD)
+modifiedsince [Date] : list competitions that have been modified since this date (YYYY/MM/DDThh:mm:ss)
+division [string] : General/Professional
+status: The status of the competition. Valid values are:PreRegistration, Registering, RegistrationClosed, Processing, Closed, Canceled
+location: The city name where the competition takes/took place.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[*pResponse:%ZEN.proxyObject,from:%String="",to:%String="",modifiedsince:%String="",division:%String="",status:%String="",location:%String="",&sc:%Status=$$$OK]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set url = "/competition?format=json"
+	
+	if (from '= "") set url = url_"&from="_from
+	if (to '= "") set url = url_"&to="_to
+	if (modifiedsince '= "") set url = url_"&modifiedsince="_modifiedsince
+	if (division '= "") set url = url_"&division="_division
+	if (status '= "") set url = url_"&status="_status
+	if (location '= "") set url = url_"&location="_location
+	
+
+	quit ..Call("GET", url, sc)
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionById">
+<Description>
+Get one competition by id</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[id:%String,&sc:%Status=$$$OK]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set url = "/competition/"_id_"?format=json"
+	
+	quit ..Call("GET", url, sc)
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentCompetitionsByGroupId">
+<Description>
+Get competitions in group|tournament</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[id:%String,&sc:%Status=$$$OK]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set url = "/competition?format=json&groupId="_id
+	
+	quit ..Call("GET", url, sc)
+]]></Implementation>
+</Method>
+
+<Method name="GetPerson">
+<Description>
+Get person by id (MIN)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[id:%String,&sc:%Status=$$$OK]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set url = "/person/"_id_"?format=json"
+	
+	quit ..Call("GET", url, sc)
+]]></Implementation>
+</Method>
+
+<Method name="GetCouples">
+<Description>
+Get couples, use query parameters
+name [string] : list all couples where any member's name starts with this filter's value. Separate name und surname with a comma(,). The order is not relevant.
+min [int] : list couples where any member's MIN is the filter's value(1xxxxxxx can be omitted)
+ageGroup [string] : list couples of an age group (Adult, Senior I, Senior II, Youth, ...)
+division [string] : General/Professional</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[min:%String="",name:%String="",ageGroup:%String="",division:%String="",&sc:%Status=$$$OK]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set url = "/couple?format=json"
+	
+	if (name '= "") set url = url_"&name="_name
+	if (min '= "") set url = url_"&min="_min
+	if (ageGroup '= "") set url = url_"&ageGroup="_ageGroup
+	if (division '= "") set url = url_"&division="_division
+	
+	quit ..Call("GET", url, sc)
+]]></Implementation>
+</Method>
+
+<Method name="GetCouple">
+<Description>
+Get couple by id, example id = rls-1802</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[id:%String,&sc:%Status=$$$OK]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set url = "/couple/"_id_"?format=json"
+	
+	quit ..Call("GET", url, sc)
+]]></Implementation>
+</Method>
+
+<Method name="GetAgeGroups">
+<Description>
+Get all age groups</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[&sc:%Status=$$$OK]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set url = "/age?format=json"
+	
+	quit ..Call("GET", url, sc)
+]]></Implementation>
+</Method>
+</Class>
+</Export>

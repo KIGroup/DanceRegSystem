@@ -1,0 +1,18 @@
+<form method="POST" action="http://www.danceplat.ru/ftsrpay2.php">
+	<input ng-hide="hideAll" value="{{trnId}}"           name="trnID"/>
+	<input ng-hide="hideAll" value="{{maleAge}}"         name="agem">
+	<input ng-hide="hideAll" value="{{maleLastName}}"    name="fiom">
+	<input ng-hide="hideAll" value="{{maleFirstName}}"   name="namem">
+	
+	<input ng-hide="hideAll" value="{{femaleAge}}"       name="agef">
+	<input ng-hide="hideAll" value="{{femaleLastName}}"  name="fiof">
+	<input ng-hide="hideAll" value="{{femaleFirstName}}" name="namef">
+	
+	<input ng-hide="hideAll" value="{{country}}"         name="country">
+	<input ng-hide="hideAll" value="{{city}}"            name="city">
+	<input ng-hide="hideAll" value="{{trainer}}"         name="trener">
+	<input ng-hide="hideAll" value="{{club}}"            name="club">
+
+	<input ng-hide="hideAll" ng-repeat="cmp in competitions" value="{{cmp.idExternal}}" name="nmnID[]"/>
+	<button class="btn btn-small" ng-hide="btnName==''" type="submit" ng-disabled="competitions.length==0"><i class="fa fa-shopping-cart"></i>&nbsp;&nbsp;{{btnName}}</button>
+</form>

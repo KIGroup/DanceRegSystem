@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.CompetitionWDSF">
+<Super>%Persistent</Super>
+<TimeCreated>63443,54758.442836</TimeCreated>
+
+<Property name="IdWDSF">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="AgeCategory">
+<Type>AgeCategoryWDSF</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Country">
+<Type>Country</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="StartDate">
+<Type>%Date</Type>
+<Required>1</Required>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Property name="Discipline">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="Division">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="IsSolo">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="LastModifiedWDSF">
+<Type>%TimeStamp</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="LastSyncWDSF">
+<Type>%TimeStamp</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Location">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="CStatus">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="Type">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="TournamentId">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Index name="IdWDSFIdx">
+<IdKey>1</IdKey>
+<Properties>IdWDSF</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.id = ..%Id()
+	set proxy.ageCategory = ..AgeCategory.ConvertToProxyObject()
+	set proxy.date = $ZD(..StartDate, 3)
+	set proxy.country = ..Country.ConvertToProxyObject()
+	set proxy.location = ..Location
+	set proxy.status = ..CStatus
+	set proxy.type = ..Type
+	set proxy.discipline = ..Discipline
+	set proxy.division = ..Division
+	set proxy.isSolo = ..IsSolo
+	set proxy.LastSyncWDSF = ..LastSyncWDSF
+	set proxy.LastModifiedWDSF = ..LastModifiedWDSF
+	set proxy.TournamentId = ..TournamentId
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Save">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[data:%RegisteredObject,&st:%Status]]></FormalSpec>
+<ReturnType>CompetitionWDSF</ReturnType>
+<Implementation><![CDATA[
+	#dim obj As CompetitionWDSF
+	
+	if (..IdWDSFIdxExists(data.id)){
+		set obj = ..IdWDSFIdxOpen(data.id)
+	}
+	else{
+		set obj = ..%New()
+		set obj.IdWDSF = data.id
+	}
+	
+	set obj.AgeCategory = ##class(AgeCategoryWDSF).GetByName(data.ageGroup)
+	set obj.Country = ##class(Country).WDSFNameIdxOpen(data.country)
+	set obj.StartDate = $ZDH(data.date, 3)
+	set obj.Discipline = data.discipline
+	set obj.Division = data.division
+	set obj.IsSolo = data.isSolo
+	set obj.LastModifiedWDSF = data.lastModifiedWDSF
+	set obj.LastSyncWDSF = data.lastSyncWDSF
+	set obj.Location = data.location
+	set obj.CStatus = data.status
+	set obj.Type = data.type
+	set obj.TournamentId = data.tournament.id
+	set st = obj.%Save()
+	
+	quit obj
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+ {
+      "ageGroup": "MASTER CLASS I",
+      "country": "Germany",
+      "date": "2014-08-12",
+      "discipline": "STANDARD",
+      "division": "Professional",
+      "id": 46870,
+      "isSolo": 0,
+      "lastModifiedWDSF": "2014-08-12 18:18:22",
+      "lastSyncWDSF": "2014-09-01 18:40:41",
+      "location": "Stuttgart",
+      "selfLink": "http://localhost:57772/csp/wdsfcontroller/admin/competition/46870",
+      "status": "Closed",
+      "tournament": {
+        "ageGroups": "YOUTH, ADULT, SENIOR I, MASTER CLASS I, MASTER CLASS II, SENIOR II, SENIOR III, SENIOR IV",
+        "competitionsCount": 14,
+        "country": "Germany",
+        "disciplines": "LATIN, STANDARD",
+        "endDate": "2014-08-16",
+        "id": 5451,
+        "selfLink": "http://localhost:57772/csp/wdsfcontroller/admin/tournament/5451",
+        "startDate": "2014-08-12",
+        "types": "GRAND SLAM, OPEN, PD, PD SUPER GRAND PRIX"
+      },
+      type
+
+*/
+]]></Content>
+</UDLText>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.CompetitionWDSFD</DataLocation>
+<DefaultData>CompetitionWDSFDefaultData</DefaultData>
+<IdLocation>^Dance.Data.CompetitionWDSFD</IdLocation>
+<IndexLocation>^Dance.Data.CompetitionWDSFI</IndexLocation>
+<StreamLocation>^Dance.Data.CompetitionWDSFS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="CompetitionWDSFDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>AgeGroup</Value>
+</Value>
+<Value name="3">
+<Value>Country</Value>
+</Value>
+<Value name="4">
+<Value>Date</Value>
+</Value>
+<Value name="5">
+<Value>Discipline</Value>
+</Value>
+<Value name="6">
+<Value>Division</Value>
+</Value>
+<Value name="7">
+<Value>IdWDSF</Value>
+</Value>
+<Value name="8">
+<Value>IsSolo</Value>
+</Value>
+<Value name="9">
+<Value>LastModifiedWDSF</Value>
+</Value>
+<Value name="10">
+<Value>LastSyncWDSF</Value>
+</Value>
+<Value name="11">
+<Value>Location</Value>
+</Value>
+<Value name="12">
+<Value>Status</Value>
+</Value>
+<Value name="13">
+<Value>TournamentId</Value>
+</Value>
+<Value name="14">
+<Value>AgeCategory</Value>
+</Value>
+<Value name="15">
+<Value>CStatus</Value>
+</Value>
+<Value name="16">
+<Value>StartDate</Value>
+</Value>
+<Value name="17">
+<Value>Type</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

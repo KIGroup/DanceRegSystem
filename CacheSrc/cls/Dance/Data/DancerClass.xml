@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.DancerClass">
+<Description>
+Dancer classes: A,B,C ....</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeCreated>63289,41260.549928</TimeCreated>
+
+<Parameter name="JsonClass">
+<Default>Dance.Web.JsonDancerClass</Default>
+</Parameter>
+
+<Property name="Name">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Code">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="CodeIdx">
+<Properties>Code</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Convert "DancerClass" object to %ZEN.proxyObject (for JSON)</Description>
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	
+	set proxy.id = ..%Id()
+	set proxy.name = ..Name
+	set proxy.code = ..Code
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="GetByName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[name:%String,&st:%Status=$$$OK]]></FormalSpec>
+<ReturnType>DancerClass</ReturnType>
+<Implementation><![CDATA[
+	set id = ""
+	&sql(SELECT %NOLOCK ID INTO :id FROM Dance_Data.DancerClass WHERE Name = :name)
+	quit ..%OpenId(id,,.st)
+]]></Implementation>
+</Method>
+
+<Method name="GetAll">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.children = ##class(%ListOfObjects).%New()
+	
+	&sql(DECLARE Curr1 CURSOR FOR 
+		 	SELECT %NOLOCK ID, Name, Code
+		 	FROM Dance_Data.DancerClass)	
+		
+	&sql(OPEN Curr1)
+	for  
+	{	
+		&sql(FETCH Curr1 INTO :id, :name, :code) 
+		quit:(SQLCODE '= 0)
+		
+		set dc = ##class(%ZEN.proxyObject).%New()	
+		set dc.id = id
+		set dc.name = name
+		set dc.code = code
+		
+		do proxy.children.Insert(dc)	
+	}
+	
+	&sql(CLOSE Curr1)
+	
+	q proxy
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.DancerClassD</DataLocation>
+<DefaultData>DancerClassDefaultData</DefaultData>
+<IdLocation>^Dance.Data.DancerClassD</IdLocation>
+<IndexLocation>^Dance.Data.DancerClassI</IndexLocation>
+<StreamLocation>^Dance.Data.DancerClassS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="DancerClassDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>Code</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.Country">
+<Super>Dance.Utils.Init.BaseInit</Super>
+<TimeCreated>63296,4328.569075</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>Country</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ##class(Dance.Data.Country).%KillExtent()
+    
+    set count = 0
+    set countriesEng($I(count)) =  "Afghanistan"
+    set countriesEng($I(count)) =  "Albania"
+    set countriesEng($I(count)) =  "Algeria"
+    set countriesEng($I(count)) =  "American Samoa"
+    set countriesEng($I(count)) =  "Andorra"
+    set countriesEng($I(count)) =  "Angola"
+    set countriesEng($I(count)) =  "Anguilla"
+    set countriesEng($I(count)) =  "Antarctica"
+    set countriesEng($I(count)) =  "Antigua and Barbuda"
+    set countriesEng($I(count)) =  "Argentina"
+    set countriesEng($I(count)) =  "Armenia"
+    set countriesEng($I(count)) =  "Aruba"
+    set countriesEng($I(count)) =  "Australia"
+    set countriesEng($I(count)) =  "Austria"
+    set countriesEng($I(count)) =  "Azerbaijan"
+    set countriesEng($I(count)) =  "Bahamas"
+    set countriesEng($I(count)) =  "Bahrain"
+    set countriesEng($I(count)) =  "Bangladesh"
+    set countriesEng($I(count)) =  "Barbados"
+    set countriesEng($I(count)) =  "Belarus"
+    set countriesEng($I(count)) =  "Belgium"
+    set countriesEng($I(count)) =  "Belize"
+    set countriesEng($I(count)) =  "Benin"
+    set countriesEng($I(count)) =  "Bermuda"
+    set countriesEng($I(count)) =  "Bhutan"
+    set countriesEng($I(count)) =  "Bolivia"
+    set countriesEng($I(count)) =  "Bosnia and Herzegovina"
+    set countriesEng($I(count)) =  "Botswana"
+    set countriesEng($I(count)) =  "Bouvet Island"
+    set countriesEng($I(count)) =  "Brazil"
+    set countriesEng($I(count)) =  "Brunei Darussalam"
+    set countriesEng($I(count)) =  "Bulgaria"
+    set countriesEng($I(count)) =  "Burkina Faso"
+    set countriesEng($I(count)) =  "Burundi"
+    set countriesEng($I(count)) =  "Cambodia"
+    set countriesEng($I(count)) =  "Cameroon"
+    set countriesEng($I(count)) =  "Canada"
+    set countriesEng($I(count)) =  "Cape Verde"
+    set countriesEng($I(count)) =  "Cayman Islands"
+    set countriesEng($I(count)) =  "Central African Republic"
+    set countriesEng($I(count)) =  "Chad"
+    set countriesEng($I(count)) =  "Chile"
+    set countriesEng($I(count)) =  "China, People's Republic of"
+    set countriesEng($I(count)) =  "Chinese Taipei"
+    set countriesEng($I(count)) =  "Christmas Island"
+    set countriesEng($I(count)) =  "Cocos (Keeling) Islands"
+    set countriesEng($I(count)) =  "Colombia"
+    set countriesEng($I(count)) =  "Comoros"
+    set countriesEng($I(count)) =  "Congo, Republic of the"
+    set countriesEng($I(count)) =  "Cook Islands"
+    set countriesEng($I(count)) =  "Costa Rica"
+    set countriesEng($I(count)) =  "Côte d'Ivoire"
+    set countriesEng($I(count)) =  "Croatia"
+    set countriesEng($I(count)) =  "Cuba"
+    set countriesEng($I(count)) =  "Cyprus"
+    set countriesEng($I(count)) =  "Czech Republic"
+    set countriesEng($I(count)) =  "Denmark"
+    set countriesEng($I(count)) =  "Djibouti"
+    set countriesEng($I(count)) =  "Dominica"
+    set countriesEng($I(count)) =  "Dominican Republic"
+    set countriesEng($I(count)) =  "Ecuador"
+    set countriesEng($I(count)) =  "EGYPT"
+    set countriesEng($I(count)) =  "El Salvador"
+    set countriesEng($I(count)) =  "England"
+    set countriesEng($I(count)) =  "Equatorial Guinea"
+    set countriesEng($I(count)) =  "Estonia"
+    set countriesEng($I(count)) =  "Ethiopia"
+    set countriesEng($I(count)) =  "Falkland Islands"
+    set countriesEng($I(count)) =  "Faroe Islands"
+    set countriesEng($I(count)) =  "Fiji"
+    set countriesEng($I(count)) =  "Finland"
+    set countriesEng($I(count)) =  "France"
+    set countriesEng($I(count)) =  "French Guiana"
+    set countriesEng($I(count)) =  "French Polynesia"
+    set countriesEng($I(count)) =  "Gabon"
+    set countriesEng($I(count)) =  "Gambia"
+    set countriesEng($I(count)) =  "Georgia"
+    set countriesEng($I(count)) =  "Germany"
+    set countriesEng($I(count)) =  "Ghana"
+    set countriesEng($I(count)) =  "Gibraltar"
+    set countriesEng($I(count)) =  "Greece"
+    set countriesEng($I(count)) =  "Greenland"
+    set countriesEng($I(count)) =  "Grenada"
+    set countriesEng($I(count)) =  "Guadeloupe"
+    set countriesEng($I(count)) =  "Guam"
+    set countriesEng($I(count)) =  "Guatemala"
+    set countriesEng($I(count)) =  "Guinea"
+    set countriesEng($I(count)) =  "Guinea-Bissau"
+    set countriesEng($I(count)) =  "Guyana"
+    set countriesEng($I(count)) =  "Haiti"
+    set countriesEng($I(count)) =  "Heard Island and McDonald Islands"
+    set countriesEng($I(count)) =  "Honduras"
+    set countriesEng($I(count)) =  "Hong Kong"
+    set countriesEng($I(count)) =  "Hungary"
+    set countriesEng($I(count)) =  "Iceland"
+    set countriesEng($I(count)) =  "India"
+    set countriesEng($I(count)) =  "Indonesia"
+    set countriesEng($I(count)) =  "Iran, Islamic Republic of"
+    set countriesEng($I(count)) =  "Iraq"
+    set countriesEng($I(count)) =  "Ireland, Republic of"
+    set countriesEng($I(count)) =  "Israel"
+    set countriesEng($I(count)) =  "Italy"
+    set countriesEng($I(count)) =  "Jamaica"
+    set countriesEng($I(count)) =  "Japan"
+    set countriesEng($I(count)) =  "Jordan"
+    set countriesEng($I(count)) =  "Kazakhstan"
+    set countriesEng($I(count)) =  "Kenya"
+    set countriesEng($I(count)) =  "Kiribati"
+    set countriesEng($I(count)) =  "Korea"
+    set countriesEng($I(count)) =  "Korea, Democratic People's Republic of"
+    set countriesEng($I(count)) =  "Kuwait"
+    set countriesEng($I(count)) =  "Kyrgyzstan"
+    set countriesEng($I(count)) =  "Lao People's Democratic Republic"
+    set countriesEng($I(count)) =  "Latvia"
+    set countriesEng($I(count)) =  "Lebanon"
+    set countriesEng($I(count)) =  "Lesotho"
+    set countriesEng($I(count)) =  "Liberia"
+    set countriesEng($I(count)) =  "Libyan Arab Jamahiriya"
+    set countriesEng($I(count)) =  "Liechtenstein"
+    set countriesEng($I(count)) =  "Lithuania"
+    set countriesEng($I(count)) =  "Luxembourg"
+    set countriesEng($I(count)) =  "Macau"
+    set countriesEng($I(count)) =  "Macedonia"
+    set countriesEng($I(count)) =  "Madagascar"
+    set countriesEng($I(count)) =  "Malawi"
+    set countriesEng($I(count)) =  "Malaysia"
+    set countriesEng($I(count)) =  "Maldives"
+    set countriesEng($I(count)) =  "Mali"
+    set countriesEng($I(count)) =  "Malta"
+    set countriesEng($I(count)) =  "Marshall Islands"
+    set countriesEng($I(count)) =  "Martinique"
+    set countriesEng($I(count)) =  "Mauritania"
+    set countriesEng($I(count)) =  "Mauritius"
+    set countriesEng($I(count)) =  "Mayotte"
+    set countriesEng($I(count)) =  "Mexico"
+    set countriesEng($I(count)) =  "Micronesia, Federated States of"
+    set countriesEng($I(count)) =  "Moldova"
+    set countriesEng($I(count)) =  "Monaco"
+    set countriesEng($I(count)) =  "Mongolia"
+    set countriesEng($I(count)) =  "Montenegro"
+    set countriesEng($I(count)) =  "Montserrat"
+    set countriesEng($I(count)) =  "Morocco"
+    set countriesEng($I(count)) =  "Mozambique"
+    set countriesEng($I(count)) =  "Myanmar"
+    set countriesEng($I(count)) =  "Namibia"
+    set countriesEng($I(count)) =  "Nauru"
+    set countriesEng($I(count)) =  "Nepal"
+    set countriesEng($I(count)) =  "Netherlands"
+    set countriesEng($I(count)) =  "Netherlands Antilles"
+    set countriesEng($I(count)) =  "New Caledonia"
+    set countriesEng($I(count)) =  "New Zealand"
+    set countriesEng($I(count)) =  "Nicaragua"
+    set countriesEng($I(count)) =  "Niger"
+    set countriesEng($I(count)) =  "Nigeria"
+    set countriesEng($I(count)) =  "Niue"
+    set countriesEng($I(count)) =  "Norfolk Island"
+    set countriesEng($I(count)) =  "Northern Ireland"
+    set countriesEng($I(count)) =  "Northern Mariana Islands"
+    set countriesEng($I(count)) =  "Norway"
+    set countriesEng($I(count)) =  "Oman"
+    set countriesEng($I(count)) =  "Pakistan"
+    set countriesEng($I(count)) =  "Palau"
+    set countriesEng($I(count)) =  "Panama"
+    set countriesEng($I(count)) =  "Papua New Guinea"
+    set countriesEng($I(count)) =  "Paraguay"
+    set countriesEng($I(count)) =  "Peru"
+    set countriesEng($I(count)) =  "Philippines"
+    set countriesEng($I(count)) =  "Pitcairn"
+    set countriesEng($I(count)) =  "Poland"
+    set countriesEng($I(count)) =  "Portugal"
+    set countriesEng($I(count)) =  "Puerto Rico"
+    set countriesEng($I(count)) =  "Qatar"
+    set countriesEng($I(count)) =  "Republic of Kosovo"
+    set countriesEng($I(count)) =  "Réunion"
+    set countriesEng($I(count)) =  "Romania"
+    set countriesEng($I(count)) =  "Russian Federation"
+    set countriesEng($I(count)) =  "Rwanda"
+    set countriesEng($I(count)) =  "Saint Helena"
+    set countriesEng($I(count)) =  "Saint Kitts and Nevis"
+    set countriesEng($I(count)) =  "Saint Lucia"
+    set countriesEng($I(count)) =  "Saint Pierre and Miquelon"
+    set countriesEng($I(count)) =  "Saint Vincent and the Grenadines"
+    set countriesEng($I(count)) =  "Samoa"
+    set countriesEng($I(count)) =  "San Marino"
+    set countriesEng($I(count)) =  "Saudi Arabia"
+    set countriesEng($I(count)) =  "Scotland"
+    set countriesEng($I(count)) =  "Senegal"
+    set countriesEng($I(count)) =  "Serbia"
+    set countriesEng($I(count)) =  "Seychelles"
+    set countriesEng($I(count)) =  "Sierra Leone"
+    set countriesEng($I(count)) =  "Singapore"
+    set countriesEng($I(count)) =  "Slovakia"
+    set countriesEng($I(count)) =  "Slovenia"
+    set countriesEng($I(count)) =  "So Tomé and Príncipe"
+    set countriesEng($I(count)) =  "Solomon Islands"
+    set countriesEng($I(count)) =  "Somalia"
+    set countriesEng($I(count)) =  "South Africa"
+    set countriesEng($I(count)) =  "South Georgia and the South Sandwich Islands"
+    set countriesEng($I(count)) =  "Spain"
+    set countriesEng($I(count)) =  "Sri Lanka"
+    set countriesEng($I(count)) =  "Sudan"
+    set countriesEng($I(count)) =  "Suriname"
+    set countriesEng($I(count)) =  "Svalbard and Jan Mayen"
+    set countriesEng($I(count)) =  "Swaziland"
+    set countriesEng($I(count)) =  "Sweden"
+    set countriesEng($I(count)) =  "Switzerland"
+    set countriesEng($I(count)) =  "Syrian Arab Republic"
+    set countriesEng($I(count)) =  "Tajikistan"
+    set countriesEng($I(count)) =  "Tanzania, United Republic Of"
+    set countriesEng($I(count)) =  "Thailand"
+    set countriesEng($I(count)) =  "Timor-Leste"
+    set countriesEng($I(count)) =  "Togo"
+    set countriesEng($I(count)) =  "Tokelau"
+    set countriesEng($I(count)) =  "Tonga"
+    set countriesEng($I(count)) =  "Trinidad and Tobago"
+    set countriesEng($I(count)) =  "Tunisia"
+    set countriesEng($I(count)) =  "Turkey"
+    set countriesEng($I(count)) =  "Turkmenistan"
+    set countriesEng($I(count)) =  "Turks and Caicos Islands"
+    set countriesEng($I(count)) =  "Tuvalu"
+    set countriesEng($I(count)) =  "Uganda"
+    set countriesEng($I(count)) =  "Ukraine"
+    set countriesEng($I(count)) =  "United Arab Emirates"
+    set countriesEng($I(count)) =  "United Kingdom"
+    set countriesEng($I(count)) =  "United States"
+    set countriesEng($I(count)) =  "Uruguay"
+    set countriesEng($I(count)) =  "Uzbekistan"
+    set countriesEng($I(count)) =  "Vanuatu"
+    set countriesEng($I(count)) =  "Vatican City State"
+    set countriesEng($I(count)) =  "Venezuela"
+    set countriesEng($I(count)) =  "Vietnam"
+    set countriesEng($I(count)) =  "Virgin Islands, British"
+    set countriesEng($I(count)) =  "Virgin Islands, U.S."
+    set countriesEng($I(count)) =  "Wales"
+    set countriesEng($I(count)) =  "Wallis and Futuna"
+    set countriesEng($I(count)) =  "Western Sahara"
+    set countriesEng($I(count)) =  "Yemen"
+    set countriesEng($I(count)) =  "Yugoslavia"
+    set countriesEng($I(count)) =  "Zambia"
+    set countriesEng($I(count)) =  "Zimbabwe"
+    set countriesEng($I(count)) =  "--Unknown--"
+    
+    
+    
+    
+    set count = 0
+    set countriesRus($I(count)) =  "Афганистан"
+    set countriesRus($I(count)) =  "Албания"
+    set countriesRus($I(count)) =  "Алжир"
+    set countriesRus($I(count)) =  "Американское Самоа"
+    set countriesRus($I(count)) =  "Андорра"
+    set countriesRus($I(count)) =  "Ангола"
+    set countriesRus($I(count)) =  "Ангилья"
+    set countriesRus($I(count)) =  "Антарктида"
+    set countriesRus($I(count)) =  "Антигуа и Барбуда"
+    set countriesRus($I(count)) =  "Аргентина"
+    set countriesRus($I(count)) =  "Армения"
+    set countriesRus($I(count)) =  "Аруба"
+    set countriesRus($I(count)) =  "Австралия"
+    set countriesRus($I(count)) =  "Австрия"
+    set countriesRus($I(count)) =  "Азербайджан"
+    set countriesRus($I(count)) =  "Багамские острова"
+    set countriesRus($I(count)) =  "Бахрейн"
+    set countriesRus($I(count)) =  "Бангладеш"
+    set countriesRus($I(count)) =  "Барбадос"
+    set countriesRus($I(count)) =  "Беларусь"
+    set countriesRus($I(count)) =  "Бельгия"
+    set countriesRus($I(count)) =  "Белиз"
+    set countriesRus($I(count)) =  "Бенин"
+    set countriesRus($I(count)) =  "Бермудские острова"
+    set countriesRus($I(count)) =  "Бутан"
+    set countriesRus($I(count)) =  "Боливия"
+    set countriesRus($I(count)) =  "Босния и Герцеговина"
+    set countriesRus($I(count)) =  "Ботсвана"
+    set countriesRus($I(count)) =  "Остров Буве"
+    set countriesRus($I(count)) =  "Бразилия"
+    set countriesRus($I(count)) =  "Бруней-Даруссалам"
+    set countriesRus($I(count)) =  "Болгария"
+    set countriesRus($I(count)) =  "Буркина-Фасо"
+    set countriesRus($I(count)) =  "Бурунди"
+    set countriesRus($I(count)) =  "Камбоджа"
+    set countriesRus($I(count)) =  "Камерун"
+    set countriesRus($I(count)) =  "Канада"
+    set countriesRus($I(count)) =  "Кабо-Верде"
+    set countriesRus($I(count)) =  "Каймановы острова"
+    set countriesRus($I(count)) =  "Центрально-Африканская Республика"
+    set countriesRus($I(count)) =  "Чад"
+    set countriesRus($I(count)) =  "Чили"
+    set countriesRus($I(count)) =  "Китайская Народная Республика"
+    set countriesRus($I(count)) =  "китайский Тайбэй"
+    set countriesRus($I(count)) =  "Остров Рождества"
+    set countriesRus($I(count)) =  "Кокосовые ( Килинг) острова"
+    set countriesRus($I(count)) =  "Колумбия"
+    set countriesRus($I(count)) =  "Коморские острова"
+    set countriesRus($I(count)) =  "Республика Конго"
+    set countriesRus($I(count)) =  "острова Кука"
+    set countriesRus($I(count)) =  "Коста-Рика"
+    set countriesRus($I(count)) =  "Берег Слоновой Кости"
+    set countriesRus($I(count)) =  "Хорватия"
+    set countriesRus($I(count)) =  "Куба"
+    set countriesRus($I(count)) =  "Кипр"
+    set countriesRus($I(count)) =  "Чешская республика"
+    set countriesRus($I(count)) =  "Дания"
+    set countriesRus($I(count)) =  "Джибути"
+    set countriesRus($I(count)) =  "Доминика"
+    set countriesRus($I(count)) =  "Доминиканская Республика"
+    set countriesRus($I(count)) =  "Эквадор"
+    set countriesRus($I(count)) =  "ЕГИПЕТ"
+    set countriesRus($I(count)) =  "Сальвадор"
+    set countriesRus($I(count)) =  "Англия"
+    set countriesRus($I(count)) =  "Экваториальная Гвинея"
+    set countriesRus($I(count)) =  "Эстония"
+    set countriesRus($I(count)) =  "Эфиопия"
+    set countriesRus($I(count)) =  "Фолклендские острова"
+    set countriesRus($I(count)) =  "Фарерские острова"
+    set countriesRus($I(count)) =  "Фиджи"
+    set countriesRus($I(count)) =  "Финляндия"
+    set countriesRus($I(count)) =  "Франция"
+    set countriesRus($I(count)) =  "Французская Гвиана"
+    set countriesRus($I(count)) =  "Французская Полинезия"
+    set countriesRus($I(count)) =  "Габон"
+    set countriesRus($I(count)) =  "Гамбия"
+    set countriesRus($I(count)) =  "Грузия"
+    set countriesRus($I(count)) =  "Германия"
+    set countriesRus($I(count)) =  "Гана"
+    set countriesRus($I(count)) =  "Гибралтар"
+    set countriesRus($I(count)) =  "Греция"
+    set countriesRus($I(count)) =  "Гренландия"
+    set countriesRus($I(count)) =  "Гренада"
+    set countriesRus($I(count)) =  "Гваделупа"
+    set countriesRus($I(count)) =  "Гуам"
+    set countriesRus($I(count)) =  "Гватемала"
+    set countriesRus($I(count)) =  "Гвинея"
+    set countriesRus($I(count)) =  "Гвинея-Бисау"
+    set countriesRus($I(count)) =  "Гайана"
+    set countriesRus($I(count)) =  "Гаити"
+    set countriesRus($I(count)) =  "Остров Херд и Макдональд"
+    set countriesRus($I(count)) =  "Гондурас"
+    set countriesRus($I(count)) =  "Гонконг"
+    set countriesRus($I(count)) =  "Венгрия"
+    set countriesRus($I(count)) =  "Исландия"
+    set countriesRus($I(count)) =  "Индия"
+    set countriesRus($I(count)) =  "Индонезия"
+    set countriesRus($I(count)) =  "Иран, Исламская Республика"
+    set countriesRus($I(count)) =  "Ирак"
+    set countriesRus($I(count)) =  "Ирландия , Республика"
+    set countriesRus($I(count)) =  "Израиль"
+    set countriesRus($I(count)) =  "Италия"
+    set countriesRus($I(count)) =  "Ямайка"
+    set countriesRus($I(count)) =  "Япония"
+    set countriesRus($I(count)) =  "Иордания"
+    set countriesRus($I(count)) =  "Казахстан"
+    set countriesRus($I(count)) =  "Кения"
+    set countriesRus($I(count)) =  "Кирибати"
+    set countriesRus($I(count)) =  "Корея"
+    set countriesRus($I(count)) =  "Корея , Корейская Народно-Демократическая Республика"
+    set countriesRus($I(count)) =  "Кувейт"
+    set countriesRus($I(count)) =  "Киргизия"
+    set countriesRus($I(count)) =  "Лаосская Народно-Демократическая Республика"
+    set countriesRus($I(count)) =  "Латвия"
+    set countriesRus($I(count)) =  "Ливан"
+    set countriesRus($I(count)) =  "Лесото"
+    set countriesRus($I(count)) =  "Либерия"
+    set countriesRus($I(count)) =  "Ливийская Арабская Джамахирия"
+    set countriesRus($I(count)) =  "Лихтенштейн"
+    set countriesRus($I(count)) =  "Литва"
+    set countriesRus($I(count)) =  "Люксембург"
+    set countriesRus($I(count)) =  "Макао"
+    set countriesRus($I(count)) =  "Македония"
+    set countriesRus($I(count)) =  "Мадагаскар"
+    set countriesRus($I(count)) =  "Малави"
+    set countriesRus($I(count)) =  "Малайзия"
+    set countriesRus($I(count)) =  "Мальдивы"
+    set countriesRus($I(count)) =  "Мали"
+    set countriesRus($I(count)) =  "Мальта"
+    set countriesRus($I(count)) =  "Маршалловы острова"
+    set countriesRus($I(count)) =  "Мартиника"
+    set countriesRus($I(count)) =  "Мавритания"
+    set countriesRus($I(count)) =  "Маврикий"
+    set countriesRus($I(count)) =  "Майотта"
+    set countriesRus($I(count)) =  "Мексика"
+    set countriesRus($I(count)) =  "Микронезия, Федеративные Штаты"
+    set countriesRus($I(count)) =  "Молдова"
+    set countriesRus($I(count)) =  "Монако"
+    set countriesRus($I(count)) =  "Монголия"
+    set countriesRus($I(count)) =  "Черногория"
+    set countriesRus($I(count)) =  "Монтсеррат"
+    set countriesRus($I(count)) =  "Марокко"
+    set countriesRus($I(count)) =  "Мозамбик"
+    set countriesRus($I(count)) =  "Мьянма"
+    set countriesRus($I(count)) =  "Намибия"
+    set countriesRus($I(count)) =  "Науру"
+    set countriesRus($I(count)) =  "Непал"
+    set countriesRus($I(count)) =  "Нидерланды"
+    set countriesRus($I(count)) =  "Нидерландские Антильские острова"
+    set countriesRus($I(count)) =  "Новая Каледония"
+    set countriesRus($I(count)) =  "Новая Зеландия"
+    set countriesRus($I(count)) =  "Никарагуа"
+    set countriesRus($I(count)) =  "Нигер"
+    set countriesRus($I(count)) =  "Нигерия"
+    set countriesRus($I(count)) =  "Ниуэ"
+    set countriesRus($I(count)) =  "Остров Норфолк"
+    set countriesRus($I(count)) =  "Северная Ирландия"
+    set countriesRus($I(count)) =  "Северные Марианские острова"
+    set countriesRus($I(count)) =  "Норвегия"
+    set countriesRus($I(count)) =  "Оман"
+    set countriesRus($I(count)) =  "Пакистан"
+    set countriesRus($I(count)) =  "Палау"
+    set countriesRus($I(count)) =  "Панама"
+    set countriesRus($I(count)) =  "Папуа-Новая Гвинея"
+    set countriesRus($I(count)) =  "Парагвай"
+    set countriesRus($I(count)) =  "Перу"
+    set countriesRus($I(count)) =  "Филиппины"
+    set countriesRus($I(count)) =  "Питкэрн"
+    set countriesRus($I(count)) =  "Польша"
+    set countriesRus($I(count)) =  "Португалия"
+    set countriesRus($I(count)) =  "Пуэрто-Рико"
+    set countriesRus($I(count)) =  "Катар"
+    set countriesRus($I(count)) =  "Республика Косово"
+    set countriesRus($I(count)) =  "Реюньон"
+    set countriesRus($I(count)) =  "Румыния"
+    set countriesRus($I(count)) =  "Российская Федерация"
+    set countriesRus($I(count)) =  "Руанда"
+    set countriesRus($I(count)) =  "Остров Святой Елены"
+    set countriesRus($I(count)) =  "Сент-Китс и Невис"
+    set countriesRus($I(count)) =  "Сент-Люсия"
+    set countriesRus($I(count)) =  "Сен-Пьер и Микелон"
+    set countriesRus($I(count)) =  "Сент-Винсент и Гренадины"
+    set countriesRus($I(count)) =  "Самоа"
+    set countriesRus($I(count)) =  "Сан - Марино"
+    set countriesRus($I(count)) =  "Саудовская Аравия"
+    set countriesRus($I(count)) =  "Шотландия"
+    set countriesRus($I(count)) =  "Сенегал"
+    set countriesRus($I(count)) =  "Сербия"
+    set countriesRus($I(count)) =  "Сейшельские острова"
+    set countriesRus($I(count)) =  "Сьерра-Леоне"
+    set countriesRus($I(count)) =  "Сингапур"
+    set countriesRus($I(count)) =  "Словакия"
+    set countriesRus($I(count)) =  "Словения"
+    set countriesRus($I(count)) =  "Так -Томе и Принсипи"
+    set countriesRus($I(count)) =  "Соломоновы Острова"
+    set countriesRus($I(count)) =  "Сомали"
+    set countriesRus($I(count)) =  "ЮАР"
+    set countriesRus($I(count)) =  "Южная Георгия иЮжные Сандвичевы острова"
+    set countriesRus($I(count)) =  "Испания"
+    set countriesRus($I(count)) =  "Шри Ланка"
+    set countriesRus($I(count)) =  "Судан"
+    set countriesRus($I(count)) =  "Суринам"
+    set countriesRus($I(count)) =  "Шпицберген и Ян-Майен"
+    set countriesRus($I(count)) =  "Свазиленд"
+    set countriesRus($I(count)) =  "Швеция"
+    set countriesRus($I(count)) =  "Швейцария"
+    set countriesRus($I(count)) =  "Сирийская Арабская Республика"
+    set countriesRus($I(count)) =  "Таджикистан"
+    set countriesRus($I(count)) =  "Танзания, Объединенная Республика"
+    set countriesRus($I(count)) =  "Таиланд"
+    set countriesRus($I(count)) =  "Тимор-Лешти"
+    set countriesRus($I(count)) =  "Того"
+    set countriesRus($I(count)) =  "Токелау"
+    set countriesRus($I(count)) =  "Тонга"
+    set countriesRus($I(count)) =  "Тринидад и Тобаго"
+    set countriesRus($I(count)) =  "Тунис"
+    set countriesRus($I(count)) =  "Турция"
+    set countriesRus($I(count)) =  "Туркменистан"
+    set countriesRus($I(count)) =  "Острова Теркс и Кайкос"
+    set countriesRus($I(count)) =  "Тувалу"
+    set countriesRus($I(count)) =  "Уганда"
+    set countriesRus($I(count)) =  "Украина"
+    set countriesRus($I(count)) =  "Объединенные Арабские Эмираты"
+    set countriesRus($I(count)) =  "Великобритания"
+    set countriesRus($I(count)) =  "США"
+    set countriesRus($I(count)) =  "Уругвай"
+    set countriesRus($I(count)) =  "Узбекистан"
+    set countriesRus($I(count)) =  "Вануату"
+    set countriesRus($I(count)) =  "Государство-город Ватикан"
+    set countriesRus($I(count)) =  "Венесуэла"
+    set countriesRus($I(count)) =  "Вьетнам"
+    set countriesRus($I(count)) =  "Виргинские острова, Британские"
+    set countriesRus($I(count)) =  "Виргинские острова, США"
+    set countriesRus($I(count)) =  "Уэльс"
+    set countriesRus($I(count)) =  "Уоллис и Футуна"
+    set countriesRus($I(count)) =  "Западная Сахара"
+    set countriesRus($I(count)) =  "Йемен"
+    set countriesRus($I(count)) =  "Югославия"
+    set countriesRus($I(count)) =  "Замбия"
+    set countriesRus($I(count)) =  "Зимбабве"
+    set countriesRus($I(count)) =  "--Неизвестна--"
+    
+    
+    set count = 0
+    set countriesDe($I(count)) =  "Afghanistan"
+    set countriesDe($I(count)) =  "Albanien"
+    set countriesDe($I(count)) =  "Algerien"
+    set countriesDe($I(count)) =  "amerikanische Samoa"
+    set countriesDe($I(count)) =  "Andorra"
+    set countriesDe($I(count)) =  "Angola"
+    set countriesDe($I(count)) =  "Anguilla"
+    set countriesDe($I(count)) =  "Antarktika"
+    set countriesDe($I(count)) =  "Antigua und Barbuda"
+    set countriesDe($I(count)) =  "Argentinien"
+    set countriesDe($I(count)) =  "Armenien"
+    set countriesDe($I(count)) =  "Aruba"
+    set countriesDe($I(count)) =  "Australien"
+    set countriesDe($I(count)) =  "Österreich"
+    set countriesDe($I(count)) =  "Aserbaidschan"
+    set countriesDe($I(count)) =  "Bahamas"
+    set countriesDe($I(count)) =  "Bahrein"
+    set countriesDe($I(count)) =  "Bangladesch"
+    set countriesDe($I(count)) =  "Barbados"
+    set countriesDe($I(count)) =  "Weißrussland"
+    set countriesDe($I(count)) =  "Belgien"
+    set countriesDe($I(count)) =  "Belize"
+    set countriesDe($I(count)) =  "Benin"
+    set countriesDe($I(count)) =  "Bermuda"
+    set countriesDe($I(count)) =  "Butan"
+    set countriesDe($I(count)) =  "Bolivien"
+    set countriesDe($I(count)) =  "Bosnien und Herzegowina"
+    set countriesDe($I(count)) =  "Botswana"
+    set countriesDe($I(count)) =  "Bouvet-Insel"
+    set countriesDe($I(count)) =  "Brasilien"
+    set countriesDe($I(count)) =  "Brunei Darussalam"
+    set countriesDe($I(count)) =  "Bulgarien"
+    set countriesDe($I(count)) =  "Burkina Faso"
+    set countriesDe($I(count)) =  "Burundi"
+    set countriesDe($I(count)) =  "Kambodscha"
+    set countriesDe($I(count)) =  "Kamerun"
+    set countriesDe($I(count)) =  "Kanada"
+    set countriesDe($I(count)) =  "Kap Verde"
+    set countriesDe($I(count)) =  "Cayman Islands"
+    set countriesDe($I(count)) =  "Zentralafrikanische Republik"
+    set countriesDe($I(count)) =  "Tschad"
+    set countriesDe($I(count)) =  "Chile"
+    set countriesDe($I(count)) =  "Volksrepublik China"
+    set countriesDe($I(count)) =  "Chinese Taipei"
+    set countriesDe($I(count)) =  "Weihnachtsinsel"
+    set countriesDe($I(count)) =  "Cocos (Keeling) Islands"
+    set countriesDe($I(count)) =  "Kolumbien"
+    set countriesDe($I(count)) =  "Komoren"
+    set countriesDe($I(count)) =  "Republik Kongo"
+    set countriesDe($I(count)) =  "cook Islands"
+    set countriesDe($I(count)) =  "Costa Rica"
+    set countriesDe($I(count)) =  "Elfenbeinküste"
+    set countriesDe($I(count)) =  "Kroatien"
+    set countriesDe($I(count)) =  "Kuba"
+    set countriesDe($I(count)) =  "Zypern"
+    set countriesDe($I(count)) =  "Tschechische Republik"
+    set countriesDe($I(count)) =  "Dänemark"
+    set countriesDe($I(count)) =  "Dschibuti"
+    set countriesDe($I(count)) =  "Dominica"
+    set countriesDe($I(count)) =  "Dominikanische Republik"
+    set countriesDe($I(count)) =  "Ecuador"
+    set countriesDe($I(count)) =  "ÄGYPTEN"
+    set countriesDe($I(count)) =  "Salvador"
+    set countriesDe($I(count)) =  "England"
+    set countriesDe($I(count)) =  "Äquatorial-Guinea"
+    set countriesDe($I(count)) =  "Estland"
+    set countriesDe($I(count)) =  "Äthiopien"
+    set countriesDe($I(count)) =  "Falkland-Inseln"
+    set countriesDe($I(count)) =  "Färöer-Inseln"
+    set countriesDe($I(count)) =  "Fidschi"
+    set countriesDe($I(count)) =  "Finnland"
+    set countriesDe($I(count)) =  "Frankreich"
+    set countriesDe($I(count)) =  "Französisch-Guayana"
+    set countriesDe($I(count)) =  "Französisch-Polynesien"
+    set countriesDe($I(count)) =  "Gabun"
+    set countriesDe($I(count)) =  "Gambia"
+    set countriesDe($I(count)) =  "Georgia"
+    set countriesDe($I(count)) =  "Deutschland"
+    set countriesDe($I(count)) =  "Ghana"
+    set countriesDe($I(count)) =  "Gibraltar"
+    set countriesDe($I(count)) =  "Griechenland"
+    set countriesDe($I(count)) =  "Grönland"
+    set countriesDe($I(count)) =  "Grenada"
+    set countriesDe($I(count)) =  "Guadeloupe"
+    set countriesDe($I(count)) =  "Guam"
+    set countriesDe($I(count)) =  "Guatemala"
+    set countriesDe($I(count)) =  "Guinea"
+    set countriesDe($I(count)) =  "Guinea-Bissau"
+    set countriesDe($I(count)) =  "Guyana"
+    set countriesDe($I(count)) =  "Haiti"
+    set countriesDe($I(count)) =  "Heard und McDonald-Inseln"
+    set countriesDe($I(count)) =  "Honduras"
+    set countriesDe($I(count)) =  "Hongkong"
+    set countriesDe($I(count)) =  "Ungarn"
+    set countriesDe($I(count)) =  "Island"
+    set countriesDe($I(count)) =  "Indien"
+    set countriesDe($I(count)) =  "Indonesien"
+    set countriesDe($I(count)) =  "Iran, Islamische Republik"
+    set countriesDe($I(count)) =  "Irak"
+    set countriesDe($I(count)) =  "Irland, die Republik"
+    set countriesDe($I(count)) =  "Israel"
+    set countriesDe($I(count)) =  "Italien"
+    set countriesDe($I(count)) =  "Jamaika"
+    set countriesDe($I(count)) =  "Japan"
+    set countriesDe($I(count)) =  "Jordan"
+    set countriesDe($I(count)) =  "Kasachstan"
+    set countriesDe($I(count)) =  "Kenia"
+    set countriesDe($I(count)) =  "Kiribati"
+    set countriesDe($I(count)) =  "Korea"
+    set countriesDe($I(count)) =  "Korea, Demokratische Volksrepublik"
+    set countriesDe($I(count)) =  "Kuwait"
+    set countriesDe($I(count)) =  "Kirgisistan"
+    set countriesDe($I(count)) =  "Lao Demokratischen Volksrepublik"
+    set countriesDe($I(count)) =  "Lettland"
+    set countriesDe($I(count)) =  "Libanon"
+    set countriesDe($I(count)) =  "Lesotho"
+    set countriesDe($I(count)) =  "Liberia"
+    set countriesDe($I(count)) =  "Libysch-Arabische Volks-Dschamahirija"
+    set countriesDe($I(count)) =  "Liechtenstein"
+    set countriesDe($I(count)) =  "Litauen"
+    set countriesDe($I(count)) =  "Luxemburg"
+    set countriesDe($I(count)) =  "Macau"
+    set countriesDe($I(count)) =  "Mazedonien"
+    set countriesDe($I(count)) =  "Madagaskar"
+    set countriesDe($I(count)) =  "Malawi"
+    set countriesDe($I(count)) =  "Malaysia"
+    set countriesDe($I(count)) =  "Malediven"
+    set countriesDe($I(count)) =  "Mali"
+    set countriesDe($I(count)) =  "Malta"
+    set countriesDe($I(count)) =  "Marshall-Inseln"
+    set countriesDe($I(count)) =  "Martinique"
+    set countriesDe($I(count)) =  "Mauretanien"
+    set countriesDe($I(count)) =  "Mauritius"
+    set countriesDe($I(count)) =  "Mayotte"
+    set countriesDe($I(count)) =  "Mexiko"
+    set countriesDe($I(count)) =  "Mikronesien, Föderierte Staaten von"
+    set countriesDe($I(count)) =  "Moldawien"
+    set countriesDe($I(count)) =  "Monaco"
+    set countriesDe($I(count)) =  "Mongolei"
+    set countriesDe($I(count)) =  "Montenegro"
+    set countriesDe($I(count)) =  "Montserrat"
+    set countriesDe($I(count)) =  "Marokko"
+    set countriesDe($I(count)) =  "Mosambik"
+    set countriesDe($I(count)) =  "Myanmar"
+    set countriesDe($I(count)) =  "Namibia"
+    set countriesDe($I(count)) =  "Nauru"
+    set countriesDe($I(count)) =  "Nepal"
+    set countriesDe($I(count)) =  "Niederlande"
+    set countriesDe($I(count)) =  "Niederländische Antillen"
+    set countriesDe($I(count)) =  "Neukaledonien"
+    set countriesDe($I(count)) =  "Neuseeland"
+    set countriesDe($I(count)) =  "Nicaragua"
+    set countriesDe($I(count)) =  "Niger"
+    set countriesDe($I(count)) =  "Nigeria"
+    set countriesDe($I(count)) =  "Niue"
+    set countriesDe($I(count)) =  "Nf"
+    set countriesDe($I(count)) =  "Nordirland"
+    set countriesDe($I(count)) =  "Northern Mariana Islands"
+    set countriesDe($I(count)) =  "Norwegen"
+    set countriesDe($I(count)) =  "Oman"
+    set countriesDe($I(count)) =  "Pakistan"
+    set countriesDe($I(count)) =  "Palau"
+    set countriesDe($I(count)) =  "Panama"
+    set countriesDe($I(count)) =  "Papua-Neuguinea"
+    set countriesDe($I(count)) =  "Paraguay"
+    set countriesDe($I(count)) =  "Peru"
+    set countriesDe($I(count)) =  "Philippinen"
+    set countriesDe($I(count)) =  "Pitcairn"
+    set countriesDe($I(count)) =  "Polen"
+    set countriesDe($I(count)) =  "Portugal"
+    set countriesDe($I(count)) =  "Puerto Rico"
+    set countriesDe($I(count)) =  "Katar"
+    set countriesDe($I(count)) =  "Die Republik Kosovo"
+    set countriesDe($I(count)) =  "Wiedervereinigung"
+    set countriesDe($I(count)) =  "Rumänien"
+    set countriesDe($I(count)) =  "Die Russische Föderation"
+    set countriesDe($I(count)) =  "Ruanda"
+    set countriesDe($I(count)) =  "St. Helena"
+    set countriesDe($I(count)) =  "St. Kitts und Nevis"
+    set countriesDe($I(count)) =  "St. Lucia"
+    set countriesDe($I(count)) =  "Saint-Pierre und Miquelon"
+    set countriesDe($I(count)) =  "Vc"
+    set countriesDe($I(count)) =  "Samoa"
+    set countriesDe($I(count)) =  "San - Marino"
+    set countriesDe($I(count)) =  "Saudi-Arabien"
+    set countriesDe($I(count)) =  "Schottland"
+    set countriesDe($I(count)) =  "Senegal"
+    set countriesDe($I(count)) =  "Serbien"
+    set countriesDe($I(count)) =  "Seychellen"
+    set countriesDe($I(count)) =  "Sierra Leone"
+    set countriesDe($I(count)) =  "Singapur"
+    set countriesDe($I(count)) =  "Slowakei"
+    set countriesDe($I(count)) =  "Slowenien"
+    set countriesDe($I(count)) =  "So Tome und Principe"
+    set countriesDe($I(count)) =  "Salomon-Inseln"
+    set countriesDe($I(count)) =  "Somalia"
+    set countriesDe($I(count)) =  "Südafrika"
+    set countriesDe($I(count)) =  "South Georgia Sandwichinseln iYuzhnye"
+    set countriesDe($I(count)) =  "Spanien"
+    set countriesDe($I(count)) =  "Sri Lanka"
+    set countriesDe($I(count)) =  "Sudan"
+    set countriesDe($I(count)) =  "Surinam"
+    set countriesDe($I(count)) =  "Spitzbergen und Jan-Mayen"
+    set countriesDe($I(count)) =  "Swasiland"
+    set countriesDe($I(count)) =  "Schweden"
+    set countriesDe($I(count)) =  "Schweiz"
+    set countriesDe($I(count)) =  "Die Arabische Republik Syrien"
+    set countriesDe($I(count)) =  "Tadschikistan"
+    set countriesDe($I(count)) =  "Tansania, Vereinigte Republik"
+    set countriesDe($I(count)) =  "Thailand"
+    set countriesDe($I(count)) =  "Timor-Leste"
+    set countriesDe($I(count)) =  "Togo"
+    set countriesDe($I(count)) =  "Tokelau"
+    set countriesDe($I(count)) =  "Tonga"
+    set countriesDe($I(count)) =  "Trinidad und Tobago"
+    set countriesDe($I(count)) =  "Tunesien"
+    set countriesDe($I(count)) =  "Türkei"
+    set countriesDe($I(count)) =  "Turkmenistan"
+    set countriesDe($I(count)) =  "Turks-und Caicosinseln"
+    set countriesDe($I(count)) =  "Tuvalu"
+    set countriesDe($I(count)) =  "Uganda"
+    set countriesDe($I(count)) =  "Ukraine"
+    set countriesDe($I(count)) =  "Vereinigte Arabische Emirate"
+    set countriesDe($I(count)) =  "Vereinigtes Königreich"
+    set countriesDe($I(count)) =  "USA"
+    set countriesDe($I(count)) =  "Uruguay"
+    set countriesDe($I(count)) =  "Usbekistan"
+    set countriesDe($I(count)) =  "Vanuatu"
+    set countriesDe($I(count)) =  "Vatikanstaat"
+    set countriesDe($I(count)) =  "Venezuela"
+    set countriesDe($I(count)) =  "Vietnam"
+    set countriesDe($I(count)) =  "Britische Jungferninseln"
+    set countriesDe($I(count)) =  "US Virgin Islands"
+    set countriesDe($I(count)) =  "Wales"
+    set countriesDe($I(count)) =  "Wallis und Futuna"
+    set countriesDe($I(count)) =  "Westsahara"
+    set countriesDe($I(count)) =  "Jemen"
+    set countriesDe($I(count)) =  "Jugoslawien"
+    set countriesDe($I(count)) =  "Sambia"
+    set countriesDe($I(count)) =  "Simbabwe"
+    set countriesDe($I(count)) =  "--Unbekannt--"
+
+    for i=1:1:count{ 
+        set nameEng = countriesEng(i)
+        set nameRus = countriesRus(i)
+        set nameDe = countriesDe(i)
+        
+        set country = ##class(Dance.Data.Country).%New()
+        do ##class(%MessageDictionary).SetSessionLanguage("en")
+        set country.Name = ##class(Dance.Data.Localization.LText).Create(nameEng)
+        do ##class(%MessageDictionary).SetSessionLanguage("ru")
+        set country.Name.Value = nameRus
+        do ##class(%MessageDictionary).SetSessionLanguage("de")
+        set country.Name.Value = nameDe
+        
+        set country.WDSFName = nameEng
+        do country.%Save()  
+    }
+    
+    do ##class(%MessageDictionary).SetSessionLanguage("ru")
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="SetItalian">
+<Description>
+w ##class(Dance.Utils.Init.Country).SetItalian()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Afghanistan").Name.SetValueByLang("Afghanistan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Albania").Name.SetValueByLang("Albania", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Algeria").Name.SetValueByLang("Algeria", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("American Samoa").Name.SetValueByLang("Samoa Americane", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Andorra").Name.SetValueByLang("Andorra", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Angola").Name.SetValueByLang("Angola", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Anguilla").Name.SetValueByLang("Anguilla", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Antarctica").Name.SetValueByLang("Antartide", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Antigua and Barbuda").Name.SetValueByLang("Antigua e Barbuda", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Argentina").Name.SetValueByLang("Argentina", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Armenia").Name.SetValueByLang("Armenia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Aruba").Name.SetValueByLang("Aruba", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Australia").Name.SetValueByLang("Australia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Austria").Name.SetValueByLang("Austria", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Azerbaijan").Name.SetValueByLang("Azerbaijan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Bahamas").Name.SetValueByLang("Bahamas", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Bahrain").Name.SetValueByLang("Bahrain", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Bangladesh").Name.SetValueByLang("Bangladesh", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Barbados").Name.SetValueByLang("Barbados", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Belarus").Name.SetValueByLang("Belarus", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Belgium").Name.SetValueByLang("Belgio", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Belize").Name.SetValueByLang("Belize", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Benin").Name.SetValueByLang("Benin", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Bermuda").Name.SetValueByLang("Bermuda", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Bhutan").Name.SetValueByLang("Bhutan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Bolivia").Name.SetValueByLang("Bolivia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Bosnia and Herzegovina").Name.SetValueByLang("Bosnia Erzegovina", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Botswana").Name.SetValueByLang("Botswana", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Bouvet Island").Name.SetValueByLang("Isola Bouvet", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Brazil").Name.SetValueByLang("Brasile", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Brunei Darussalam").Name.SetValueByLang("Brunei Darussalam", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Bulgaria").Name.SetValueByLang("Bulgaria", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Burkina Faso").Name.SetValueByLang("Burkina Faso", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Burundi").Name.SetValueByLang("Burundi", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Cambodia").Name.SetValueByLang("Cambogia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Cameroon").Name.SetValueByLang("Cameroon", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Canada").Name.SetValueByLang("Canada", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Cape Verde").Name.SetValueByLang("Capo Verde", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Cayman Islands").Name.SetValueByLang("Isole Cayman", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Central African Republic").Name.SetValueByLang("Repubblica Centrafricana", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Chad").Name.SetValueByLang("Chad", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Chile").Name.SetValueByLang("Chile", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("China, People's Republic of").Name.SetValueByLang("Cina, Repubblica Popolare", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Chinese Taipei").Name.SetValueByLang("Chinese Taipei", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Christmas Island").Name.SetValueByLang("Isola di Natale", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Cocos (Keeling) Islands").Name.SetValueByLang("Cocos (Keeling)", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Colombia").Name.SetValueByLang("Colombia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Comoros").Name.SetValueByLang("Comoros", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Congo, Republic of the").Name.SetValueByLang("Congo, Repubblica del", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Cook Islands").Name.SetValueByLang("Isole Cook", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Costa Rica").Name.SetValueByLang("Costa Rica", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Côte d'Ivoire").Name.SetValueByLang("Costa d'Avorio", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Croatia").Name.SetValueByLang("Croazia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Cuba").Name.SetValueByLang("Cuba", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Cyprus").Name.SetValueByLang("Cipro", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Czech Republic").Name.SetValueByLang("Repubblica Ceca", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Denmark").Name.SetValueByLang("Danimarca", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Djibouti").Name.SetValueByLang("Gibuti", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Dominica").Name.SetValueByLang("Dominica", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Dominican Republic").Name.SetValueByLang("Repubblica Dominicana", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Ecuador").Name.SetValueByLang("Ecuador", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("EGYPT").Name.SetValueByLang("EGITTO", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("El Salvador").Name.SetValueByLang("El Salvador", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("England").Name.SetValueByLang("Inghilterra", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Equatorial Guinea").Name.SetValueByLang("Guinea Equatoriale", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Estonia").Name.SetValueByLang("Estonia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Ethiopia").Name.SetValueByLang("Etiopia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Falkland Islands").Name.SetValueByLang("Isole Falkland", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Faroe Islands").Name.SetValueByLang("Isole Faroe", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Fiji").Name.SetValueByLang("Fiji", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Finland").Name.SetValueByLang("Finlandia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("France").Name.SetValueByLang("Francia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("French Guiana").Name.SetValueByLang("Guyana Francese", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("French Polynesia").Name.SetValueByLang("Polinesia Francese", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Gabon").Name.SetValueByLang("Gabon", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Gambia").Name.SetValueByLang("Gambia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Georgia").Name.SetValueByLang("Georgia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Germany").Name.SetValueByLang("La Germania", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Ghana").Name.SetValueByLang("Ghana", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Gibraltar").Name.SetValueByLang("Gibilterra", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Greece").Name.SetValueByLang("Grecia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Greenland").Name.SetValueByLang("Groenlandia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Grenada").Name.SetValueByLang("Grenada", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Guadeloupe").Name.SetValueByLang("Guadeloupe", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Guam").Name.SetValueByLang("Guam", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Guatemala").Name.SetValueByLang("Guatemala", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Guinea").Name.SetValueByLang("Guinea", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Guinea-Bissau").Name.SetValueByLang("Guinea-Bissau", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Guyana").Name.SetValueByLang("Guyana", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Haiti").Name.SetValueByLang("Haiti", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Heard Island and McDonald Islands").Name.SetValueByLang("Isole Heard e McDonald", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Honduras").Name.SetValueByLang("Honduras", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Hong Kong").Name.SetValueByLang("Hong Kong", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Hungary").Name.SetValueByLang("Ungheria", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Iceland").Name.SetValueByLang("Islanda", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("India").Name.SetValueByLang("India", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Indonesia").Name.SetValueByLang("Indonesia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Iran, Islamic Republic of").Name.SetValueByLang("Iran, Repubblica Islamica", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Iraq").Name.SetValueByLang("Iraq", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Ireland, Republic of").Name.SetValueByLang("Irlanda, Repubblica di", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Israel").Name.SetValueByLang("Israele", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Italy").Name.SetValueByLang("Italia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Jamaica").Name.SetValueByLang("Giamaica", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Japan").Name.SetValueByLang("Giappone", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Jordan").Name.SetValueByLang("Giordania", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Kazakhstan").Name.SetValueByLang("Kazakhstan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Kenya").Name.SetValueByLang("Kenia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Kiribati").Name.SetValueByLang("Kiribati", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Korea").Name.SetValueByLang("Corea", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Korea, Democratic People's Republic of").Name.SetValueByLang("Repubblica Corea, democratica popolare di", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Kuwait").Name.SetValueByLang("Kuwait", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Kyrgyzstan").Name.SetValueByLang("Kyrgyzstan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Lao People's Democratic Republic").Name.SetValueByLang("Repubblica democratica popolare del Laos", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Latvia").Name.SetValueByLang("Lettonia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Lebanon").Name.SetValueByLang("Libano", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Lesotho").Name.SetValueByLang("Lesoto", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Liberia").Name.SetValueByLang("Liberia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Libyan Arab Jamahiriya").Name.SetValueByLang("Libia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Liechtenstein").Name.SetValueByLang("Liechtenstein", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Lithuania").Name.SetValueByLang("Lituania", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Luxembourg").Name.SetValueByLang("Luxembourg", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Macau").Name.SetValueByLang("Macau", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Macedonia").Name.SetValueByLang("Macedonia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Madagascar").Name.SetValueByLang("Madagascar", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Malawi").Name.SetValueByLang("Malawi", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Malaysia").Name.SetValueByLang("Malaysia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Maldives").Name.SetValueByLang("Maldive", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Mali").Name.SetValueByLang("Mali", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Malta").Name.SetValueByLang("Malta", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Marshall Islands").Name.SetValueByLang("Isole Marshall", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Martinique").Name.SetValueByLang("Martinique", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Mauritania").Name.SetValueByLang("Mauritania", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Mauritius").Name.SetValueByLang("Mauritius", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Mayotte").Name.SetValueByLang("Mayotte", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Mexico").Name.SetValueByLang("Messico", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Micronesia, Federated States of").Name.SetValueByLang("Micronesia, Stati Federati di", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Moldova").Name.SetValueByLang("Moldova", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Monaco").Name.SetValueByLang("Monaco", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Mongolia").Name.SetValueByLang("Mongolia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Montenegro").Name.SetValueByLang("Montenegro", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Montserrat").Name.SetValueByLang("Montserrat", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Morocco").Name.SetValueByLang("Marocco", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Mozambique").Name.SetValueByLang("Mozambico", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Myanmar").Name.SetValueByLang("Myanmar", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Namibia").Name.SetValueByLang("Namibia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Nauru").Name.SetValueByLang("Nauru", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Nepal").Name.SetValueByLang("Nepal", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Netherlands").Name.SetValueByLang("Paesi Bassi", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Netherlands Antilles").Name.SetValueByLang("Antille Olandesi", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("New Caledonia").Name.SetValueByLang("Nuova Caledonia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("New Zealand").Name.SetValueByLang("Nuova Zelanda", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Nicaragua").Name.SetValueByLang("Nicaragua", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Niger").Name.SetValueByLang("Niger", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Nigeria").Name.SetValueByLang("Nigeria", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Niue").Name.SetValueByLang("Niue", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Norfolk Island").Name.SetValueByLang("Norfolk Island", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Northern Ireland").Name.SetValueByLang("Irlanda Del Nord", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Northern Mariana Islands").Name.SetValueByLang("Isole Marianne Settentrionali", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Norway").Name.SetValueByLang("Norvegia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Oman").Name.SetValueByLang("Oman", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Pakistan").Name.SetValueByLang("Pakistan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Palau").Name.SetValueByLang("Palau", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Panama").Name.SetValueByLang("Panama", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Papua New Guinea").Name.SetValueByLang("Papua Nuova Guinea", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Paraguay").Name.SetValueByLang("Paraguay", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Peru").Name.SetValueByLang("Perù", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Philippines").Name.SetValueByLang("Filippine", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Pitcairn").Name.SetValueByLang("Pitcairn", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Poland").Name.SetValueByLang("Polonia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Portugal").Name.SetValueByLang("Portogallo", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Puerto Rico").Name.SetValueByLang("Puerto Rico", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Qatar").Name.SetValueByLang("Qatar", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Republic of Kosovo").Name.SetValueByLang("Repubblica del Kosovo", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Réunion").Name.SetValueByLang("Réunion", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Romania").Name.SetValueByLang("Romania", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Russian Federation").Name.SetValueByLang("Federazione Russa", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Rwanda").Name.SetValueByLang("Ruanda", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Saint Helena").Name.SetValueByLang("Sant'Elena", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Saint Kitts and Nevis").Name.SetValueByLang("Saint Kitts e Nevis", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Saint Lucia").Name.SetValueByLang("Santa Lucia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Saint Pierre and Miquelon").Name.SetValueByLang("Saint Pierre e Miquelon", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Saint Vincent and the Grenadines").Name.SetValueByLang("Saint Vincent e Grenadine", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Samoa").Name.SetValueByLang("Samoa", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("San Marino").Name.SetValueByLang("San Marino", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Saudi Arabia").Name.SetValueByLang("Arabia Saudita", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Scotland").Name.SetValueByLang("Scozia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Senegal").Name.SetValueByLang("Senegal", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Serbia").Name.SetValueByLang("Serbia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Seychelles").Name.SetValueByLang("Seychelles", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Sierra Leone").Name.SetValueByLang("Sierra Leone", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Singapore").Name.SetValueByLang("Singapore", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Slovakia").Name.SetValueByLang("Slovacchia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Slovenia").Name.SetValueByLang("Slovenia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("So Tomé and Príncipe").Name.SetValueByLang("Così Tomé e Príncipe", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Solomon Islands").Name.SetValueByLang("Isole Salomone", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Somalia").Name.SetValueByLang("Somalia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("South Africa").Name.SetValueByLang("Sud Africa", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("South Georgia and the South Sandwich Islands").Name.SetValueByLang("Georgia del Sud e isole Sandwich del Sud", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Spain").Name.SetValueByLang("La Spagna", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Sri Lanka").Name.SetValueByLang("Sri Lanka", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Sudan").Name.SetValueByLang("Sudan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Suriname").Name.SetValueByLang("Suriname", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Svalbard and Jan Mayen").Name.SetValueByLang("Svalbard e Jan Mayen", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Swaziland").Name.SetValueByLang("Swaziland", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Sweden").Name.SetValueByLang("Svezia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Switzerland").Name.SetValueByLang("Svizzera", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Syrian Arab Republic").Name.SetValueByLang("Repubblica araba siriana", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Tajikistan").Name.SetValueByLang("Tajikistan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Tanzania, United Republic Of").Name.SetValueByLang("Tanzania, Repubblica Unita di", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Thailand").Name.SetValueByLang("Thailandia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Timor-Leste").Name.SetValueByLang("Timor-Leste", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Togo").Name.SetValueByLang("Andare", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Tokelau").Name.SetValueByLang("Tokelau", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Tonga").Name.SetValueByLang("Tonga", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Trinidad and Tobago").Name.SetValueByLang("Trinidad e Tobago", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Tunisia").Name.SetValueByLang("Tunisia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Turkey").Name.SetValueByLang("Tacchino", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Turkmenistan").Name.SetValueByLang("Turkmenistan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Turks and Caicos Islands").Name.SetValueByLang("Turks e Caicos", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Tuvalu").Name.SetValueByLang("Tuvalu", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Uganda").Name.SetValueByLang("Uganda", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Ukraine").Name.SetValueByLang("Ucraina", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("United Arab Emirates").Name.SetValueByLang("Emirati Arabi Uniti", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("United Kingdom").Name.SetValueByLang("Regno Unito", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("United States").Name.SetValueByLang("Stati Uniti", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Uruguay").Name.SetValueByLang("Uruguay", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Uzbekistan").Name.SetValueByLang("Uzbekistan", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Vanuatu").Name.SetValueByLang("Vanuatu", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Vatican City State").Name.SetValueByLang("Città del Vaticano", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Venezuela").Name.SetValueByLang("Venezuela", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Vietnam").Name.SetValueByLang("Vietnam", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Virgin Islands, British").Name.SetValueByLang("Isole Vergini Britanniche,", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Virgin Islands, U.S.").Name.SetValueByLang("Isole Vergini statunitensi,", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Wales").Name.SetValueByLang("Galles", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Wallis and Futuna").Name.SetValueByLang("Wallis e Futuna", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Western Sahara").Name.SetValueByLang("Sahara Occidentale", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Yemen").Name.SetValueByLang("Yemen", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Yugoslavia").Name.SetValueByLang("Yugoslavia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Zambia").Name.SetValueByLang("Zambia", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("Zimbabwe").Name.SetValueByLang("Zimbabwe", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.Country).WDSFNameIdxOpen("--Unknown--").Name.SetValueByLang("--Unknown--", "it"))
+
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Email">
+<TimeCreated>63349,1233.455637</TimeCreated>
+
+<Method name="Send">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>email:%String,subject:%String,msg:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set status = $$$OK
+	
+	try
+	{
+		set mail=##class(%Net.MailMessage).%New()
+    	set mail.From = $GET(^Settings("Dance","EmailFrom")) //..#FROM
+    	set mail.Subject = subject
+    	set mail.Charset = "utf-8"
+    	set mail.IsHTML = 1
+    	set mail.ContentType = "text/html"
+    	do mail.TextData.Write(msg)
+    	
+    	if ($CLASSNAME(email) = "%Library.ListOfDataTypes"){
+    		for i=1:1:email.Count(){
+	    		do mail.To.Insert(email.GetAt(i))
+    		}
+    	}
+    	else{
+	    	do mail.To.Insert(email)
+    	}
+    	
+    	set auth=##class(%Net.Authenticator).%New()
+  		set auth.MechanismList = "LOGIN"
+  		set auth.UserName = $GET(^Settings("Dance","EmailSMTPUSER"))
+  		set auth.Password = $GET(^Settings("Dance","EmailSMTPPASSWORD"))
+  	
+  		set smtp = ##class(%Net.SMTP).%New()
+    	set smtp.smtpserver = $GET(^Settings("Dance","EmailSMTPSERVER"))
+    	set smtp.port = $GET(^Settings("Dance","EmailSMTPPORT"))
+  		set smtp.authenticator = auth
+  		set smtp.SSLConfiguration = $GET(^Settings("Dance","EmailSSL"))
+  		
+    	$$$THROWONERROR(status, smtp.Send(mail))
+	}
+	catch (ex){
+		set status = ex.AsStatus()
+  	}
+  	
+	quit status
+]]></Implementation>
+</Method>
+</Class>
+</Export>

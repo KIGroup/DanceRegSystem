@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Web.ReportTournamentParticipants">
+<Abstract>1</Abstract>
+<TimeCreated>63520,63887.252488</TimeCreated>
+
+<Parameter name="ContentType">
+<Default>plain/text</Default>
+</Parameter>
+
+<Parameter name="CharSet">
+<Default>windows-1251</Default>
+</Parameter>
+
+<Method name="GetReportLink">
+<Description><![CDATA[
+<Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/participant" Call="Dance.Web.ReportTournamentParticipants:GetFileByAccessCode"/>]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%Status</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set link = "http://"_$GET(^Settings("Dance", "ServerAddress"), "localhost")_":"_$GET(^Settings("Dance","ServerPort"), 57772)_$GET(^Settings("Dance","WebAppUser"))_
+    "/report/ru/tournament/"_trnId_"/code/"_..GetAccessHashForTournament(##class(Dance.Data.Tournament).%OpenId(trnId))_"/participant"
+    
+    quit link
+]]></Implementation>
+</Method>
+
+<Method name="GetAccessHashForTournament">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trn:Dance.Data.Tournament</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $REPLACE($REPLACE($SYSTEM.Encryption.Base64Encode($SYSTEM.Encryption.MD5Hash($ZCVT($P(trn.AccessCode, "-", 3)_trn.%Id()_trn.Hash, "L"))), "/", "SLASH"), "=", "EQL")
+]]></Implementation>
+</Method>
+
+<Method name="GetFile">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>lang:%String,trnId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set trn = ##class(Dance.Data.Tournament).%OpenId(trnId)
+    
+    do ##class(%MessageDictionary).SetSessionLanguage(lang)
+    set %session.Language = lang
+    
+    set %response.ContentType = ..#ContentType
+    set %response.CharSet = ..#CharSet
+    
+    set status = $$$OK
+    
+    try{
+        set fileName = trn.Name.Value_" [от "_$ZD($ZTS, 3)_"].csv"
+
+        if ($FIND(%request.UserAgent, "Firefox") '= 0) {
+            set fileName = $REPLACE(fileName, " ", "_")
+        }       
+        
+        do %response.SetHeader("Content-Disposition","attachment;filename="_fileName)
+        
+        #dim udsrCouples As %ListOfObjects = ..GetReportDataCoupleUDSR(trnId)
+        #dim udsrSingles As %ListOfObjects = ..GetReportDataSingleUDSR(trnId)
+            
+        #dim wdsfCouples As %ListOfObjects = ..GetReportDataCoupleWDSF(trnId)
+        #dim wdsfSingles As %ListOfObjects = ..GetReportDataSingleWDSF(trnId)
+        
+        #dim otherCouples As %ListOfObjects = ..GetReportDataCoupleOther(trnId)
+        #dim otherSingles As %ListOfObjects = ..GetReportDataSingleOther(trnId)
+        
+        set rowFormat = "%Created;%ManNumber;%ManLastName;%ManFirstName;%ManStClass;%ManLaClass;%ManDob;%WomanNumber;%WomanLastName;%WomanFirstName;%WomanStClass;%WomanLaClass;%WomanDob;%Competitions;%Club;%City;%Region;%Trainer1LastName;%Trainer1FirstName;%Trainer2LastName;%Trainer2FirstName"
+        w "Дата регистрации;Книжка партнера;Фамилия партнера;Имя партнера;Класс партнера СТ;Класс партнера ЛА;Дата рождения партнера;Книжка партнерши;Фамилия партнерши;Имя партнерши;Класс партнерши СТ;Класс партнерши ЛА;Дата рождения партнерши;Группы;Клуб;Город;Регион;Тренер1 Фамилия;Тренер1 Имя;Тренер2 Фамилия;Тренер2 Имя",!
+        
+        do ..WriteToDeviceFromAnyCoupleList(udsrCouples, rowFormat)
+        do ..WriteToDeviceFromAnyAthleteList(udsrSingles, rowFormat)
+        
+        do ..WriteToDeviceFromAnyCoupleList(wdsfCouples, rowFormat)
+        do ..WriteToDeviceFromAnyAthleteList(wdsfSingles, rowFormat)
+        
+        do ..WriteToDeviceFromAnyCoupleList(otherCouples, rowFormat)
+        do ..WriteToDeviceFromAnyAthleteList(otherSingles, rowFormat)
+    }
+    catch ex{
+        set status = ex.AsStatus()  
+    }
+    
+    q status
+]]></Implementation>
+</Method>
+
+<Method name="GetFileByAccessCode">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>lang:%String,trnId:%String,accessCode:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set trn = ##class(Dance.Data.Tournament).%OpenId(trnId)
+    if (..GetAccessHashForTournament(trn) '= accessCode) {
+        quit ##class(Dance.Utils.Msg).GetErrorStatus("Wrong access code for tournament")
+    }
+    
+    q ..GetFile(lang, trnId)
+]]></Implementation>
+</Method>
+
+<Method name="WriteToDeviceFromAnyCoupleList">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>list:%ListOfObjects,rowFormat:%String</FormalSpec>
+<Implementation><![CDATA[
+    for i=1:1:list.Count(){
+        set couple = list.GetAt(i).couple
+        set couple.otherInfo.mainTrainer = $REPLACE(couple.otherInfo.mainTrainer, $C(10), "")
+        set couple.otherInfo.otherTrainers = $REPLACE(couple.otherInfo.otherTrainers, $C(10), "")
+        set row = $REPLACE(rowFormat, "%ManNumber", couple.man.number)
+        set row = $REPLACE(row, "%ManLastName", couple.man.lastName)
+        set row = $REPLACE(row, "%ManFirstName", couple.man.firstName)
+        set row = $REPLACE(row, "%ManStClass", couple.man.stClass.name)
+        set row = $REPLACE(row, "%ManLaClass", couple.man.laClass.name)
+        set row = $REPLACE(row, "%ManDob", couple.man.dob)
+        set row = $REPLACE(row, "%WomanNumber", couple.woman.number)
+        set row = $REPLACE(row, "%WomanLastName", couple.woman.lastName)
+        set row = $REPLACE(row, "%WomanFirstName", couple.woman.firstName)
+        set row = $REPLACE(row, "%WomanStClass", couple.woman.stClass.name)
+        set row = $REPLACE(row, "%WomanLaClass", couple.woman.laClass.name)
+        set row = $REPLACE(row, "%WomanDob", couple.woman.dob)
+        set row = $REPLACE(row, "%Competitions", list.GetAt(i).competitions)
+        set row = $REPLACE(row, "%Club", couple.otherInfo.club)
+        set row = $REPLACE(row, "%City", couple.otherInfo.city)
+        set row = $REPLACE(row, "%Region", couple.otherInfo.regionNumber)
+        set row = $REPLACE(row, "%Trainer1LastName", $P(couple.otherInfo.mainTrainer, " ", 1))
+        set row = $REPLACE(row, "%Trainer1FirstName", $P(couple.otherInfo.mainTrainer, " ", 2))
+        set row = $REPLACE(row, "%Trainer2LastName", $P($P(couple.otherInfo.otherTrainers, ",", 1), " ", *-1))
+        set row = $REPLACE(row, "%Trainer2FirstName",$P($P(couple.otherInfo.otherTrainers, ",", 1), " ", *))
+        set row = $REPLACE(row, "%Created", "["_couple.otherInfo.created_"]")
+        
+        w row,!         
+    }
+]]></Implementation>
+</Method>
+
+<Method name="WriteToDeviceFromAnyAthleteList">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>list:%ListOfObjects,rowFormat:%String</FormalSpec>
+<Implementation><![CDATA[
+    for i=1:1:list.Count(){
+        set athlete = list.GetAt(i).athlete
+        set athlete.otherInfo.mainTrainer = $REPLACE(athlete.otherInfo.mainTrainer, $C(10), "")
+        set athlete.otherInfo.otherTrainers = $REPLACE(athlete.otherInfo.otherTrainers, $C(10), "")
+        
+        if (athlete.gender = "Male"){
+            set row = $REPLACE(rowFormat, "%ManNumber", athlete.number)
+            set row = $REPLACE(row, "%ManLastName", athlete.lastName)
+            set row = $REPLACE(row, "%ManFirstName", athlete.firstName)
+            set row = $REPLACE(row, "%ManStClass", athlete.stClass.name)
+            set row = $REPLACE(row, "%ManLaClass", athlete.laClass.name)
+            set row = $REPLACE(row, "%ManDob", athlete.dob)
+            set row = $REPLACE(row, "%WomanNumber", "")
+            set row = $REPLACE(row, "%WomanLastName", "")
+            set row = $REPLACE(row, "%WomanFirstName", "")
+            set row = $REPLACE(row, "%WomanStClass", "")
+            set row = $REPLACE(row, "%WomanLaClass", "")
+            set row = $REPLACE(row, "%WomanDob", "")
+        }
+        else {
+            set row = $REPLACE(rowFormat, "%ManNumber", "")
+            set row = $REPLACE(row, "%ManLastName", "")
+            set row = $REPLACE(row, "%ManFirstName", "")
+            set row = $REPLACE(row, "%ManStClass", "")
+            set row = $REPLACE(row, "%ManLaClass", "")
+            set row = $REPLACE(row, "%ManDob", "")
+            set row = $REPLACE(row, "%WomanNumber", athlete.number)
+            set row = $REPLACE(row, "%WomanLastName", athlete.lastName)
+            set row = $REPLACE(row, "%WomanFirstName", athlete.firstName)
+            set row = $REPLACE(row, "%WomanStClass", athlete.stClass.name)
+            set row = $REPLACE(row, "%WomanLaClass", athlete.laClass.name)
+            set row = $REPLACE(row, "%WomanDob", athlete.dob)
+        }
+        
+        set row = $REPLACE(row, "%Competitions", list.GetAt(i).competitions)
+        set row = $REPLACE(row, "%Club", athlete.otherInfo.club)
+        set row = $REPLACE(row, "%City", athlete.otherInfo.city)
+        set row = $REPLACE(row, "%Region", athlete.otherInfo.regionNumber)
+        set row = $REPLACE(row, "%Trainer1LastName", $P(athlete.otherInfo.mainTrainer, " ", 1))
+        set row = $REPLACE(row, "%Trainer1FirstName", $P(athlete.otherInfo.mainTrainer, " ", 2))
+        set row = $REPLACE(row, "%Trainer2LastName", $P($P(athlete.otherInfo.otherTrainers, ",", 1), " ", *-1))
+        set row = $REPLACE(row, "%Trainer2FirstName",$P($P(athlete.otherInfo.otherTrainers, ",", 1), " ", *))
+        set row = $REPLACE(row, "%Created", "["_athlete.otherInfo.created_"]")
+        w row,!         
+    }
+]]></Implementation>
+</Method>
+
+<Method name="GetReportDataCoupleUDSR">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    set list = ##class(%ListOfObjects).%New()
+    
+    &sql(DECLARE Cur1Top CURSOR FOR 
+         SELECT %NOLOCK ID
+         FROM Dance_Data.CoupleUDSR
+         ORDER BY Man->LastName->Value) 
+    
+    &sql(OPEN Cur1Top)
+    for  
+    {   
+        &sql(FETCH Cur1Top INTO :coupleId) 
+        quit:(SQLCODE '= 0)
+        
+        set proxy = ##class(%ZEN.proxyObject).%New()
+        set proxy.couple = ##class(Dance.Data.CoupleUDSR).%OpenId(coupleId).ConvertToProxyObject()
+        set proxy.competitions = ""
+        
+        
+        &sql(DECLARE Cur1Level1sub1 CURSOR FOR 
+             SELECT Competition->IdExternal, Created
+             FROM Dance_Data.ParticipantCoupleUDSR
+             WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND IsActive = 1 AND Couple = :coupleId 
+             ORDER BY Competition->StartDate)   
+        &sql(OPEN Cur1Level1sub1)
+        for  
+        {   
+            &sql(FETCH Cur1Level1sub1 INTO :cmpId, :created) 
+            quit:(SQLCODE '= 0)
+            
+            set proxy.competitions = proxy.competitions_","_cmpId
+            set proxy.couple.otherInfo.created = created
+        }
+        &sql(CLOSE Cur1Level1sub1)
+        
+        if (##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxExists(coupleId) = $$$YES){
+            set coupleWDSFId = ##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxOpen(coupleId).WDSF.%Id()
+            &sql(DECLARE Cur1Level1sub2 CURSOR FOR 
+                 SELECT Competition->IdExternal, Created
+                 FROM Dance_Data.ParticipantCoupleWDSF
+                 WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND IsActive = 1 AND Couple = :coupleWDSFId 
+                 ORDER BY Competition->StartDate)   
+            &sql(OPEN Cur1Level1sub2)
+            for  
+            {   
+                &sql(FETCH Cur1Level1sub2 INTO :cmpId, :created) 
+                quit:(SQLCODE '= 0)
+                
+                set proxy.competitions = proxy.competitions_","_cmpId
+                set proxy.couple.otherInfo.created = created
+            }
+            &sql(CLOSE Cur1Level1sub2)
+        }
+        
+        if (proxy.competitions '= ""){
+            set proxy.competitions = $E(proxy.competitions, 2, *)
+            do list.Insert(proxy)
+        }
+    }
+    
+    &sql(CLOSE Cur1Top)
+    
+    quit list
+]]></Implementation>
+</Method>
+
+<Method name="GetReportDataCoupleWDSF">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    set list = ##class(%ListOfObjects).%New()
+    
+    set params = ##class(%ZEN.proxyObject).%New()
+    set params.competitionParams = ##class(%ZEN.proxyObject).%New()
+            
+    &sql(DECLARE PrtWDSFCoupleCur CURSOR FOR 
+         SELECT %NOLOCK pW.ID
+         FROM Dance_Data.ParticipantCoupleWDSF as pW
+         WHERE pW.Competition->Tournament = :trnId AND pW.Competition->IsActive = 1 AND pW.IsActive = 1 AND 0 = (SELECT COUNT(mt.ID) FROM Dance_Data.MatchingCoupleUDSRWDSF as mt WHERE mt.WDSF = pW.Couple)
+         GROUP BY pW.Couple
+         ORDER BY FullName->Value)  
+    
+    &sql(OPEN PrtWDSFCoupleCur)
+    for  
+    {   
+        &sql(FETCH PrtWDSFCoupleCur INTO :prtId) 
+        quit:(SQLCODE '= 0)
+        
+        set proxy = ##class(%ZEN.proxyObject).%New()
+        set prtProxy = ##class(Dance.Data.ParticipantCoupleWDSF).%OpenId(prtId).ConvertToProxyObject(params)
+        set proxy.couple = prtProxy.couple
+        set proxy.couple.otherInfo.created = prtProxy.created
+        set proxy.couple.otherInfo.regionNumber = proxy.couple.otherInfo.country.name
+        set proxy.couple.man.number = ""
+        set proxy.couple.woman.number = ""
+        
+        if (proxy.couple.man.dob = ""){
+            set proxy.couple.man.dob = proxy.couple.otherInfo.ageCategory
+        }
+        
+        if (proxy.couple.woman.dob = ""){
+            set proxy.couple.woman.dob = proxy.couple.otherInfo.ageCategory
+        }
+        
+        set proxy.competitions = ""
+        
+        &sql(DECLARE CmpCplWDSFCur CURSOR FOR 
+             SELECT Competition->IdExternal
+             FROM Dance_Data.ParticipantCoupleWDSF
+             WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND Couple = :proxy.couple.id 
+             ORDER BY Competition->StartDate)   
+        &sql(OPEN CmpCplWDSFCur)
+        for  
+        {   
+            &sql(FETCH CmpCplWDSFCur INTO :cmpId) 
+            quit:(SQLCODE '= 0)
+            
+            set proxy.competitions = proxy.competitions_","_cmpId
+        }
+        &sql(CLOSE CmpCplWDSFCur)
+        
+        set proxy.competitions = $E(proxy.competitions, 2, *)
+        do list.Insert(proxy)
+    }
+    
+    &sql(CLOSE PrtWDSFCoupleCur)
+    
+    quit list
+]]></Implementation>
+</Method>
+
+<Method name="GetReportDataCoupleOther">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    try{
+        set list = ##class(%ListOfObjects).%New()
+        
+        set params = ##class(%ZEN.proxyObject).%New()
+        set params.competitionParams = ##class(%ZEN.proxyObject).%New()
+    
+        &sql(DECLARE PrtOtherCoupleCur CURSOR FOR 
+             SELECT ID
+             FROM Dance_Data.ParticipantCoupleOther
+             WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND IsActive = 1
+             GROUP BY CoupleKey
+             ORDER BY FullName->Value)  
+        
+        &sql(OPEN PrtOtherCoupleCur)
+        for  
+        {   
+            &sql(FETCH PrtOtherCoupleCur INTO :prtId) 
+            quit:(SQLCODE '= 0)
+            
+            set proxy = ##class(%ZEN.proxyObject).%New()
+            set proxy.couple = ##class(Dance.Data.ParticipantCoupleOther).%OpenId(prtId).ConvertToProxyObject(params).couple
+            set proxy.competitions = ""
+            
+            &sql(DECLARE CmpCplOtherCur CURSOR FOR 
+                 SELECT Competition->IdExternal, Created
+                 FROM Dance_Data.ParticipantCoupleOther
+                 WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND CoupleKey = :proxy.couple.key 
+                 ORDER BY Competition->StartDate)   
+            &sql(OPEN CmpCplOtherCur)
+            for  
+            {   
+                &sql(FETCH CmpCplOtherCur INTO :cmpId, :created) 
+                quit:(SQLCODE '= 0)
+                
+                set proxy.competitions = proxy.competitions_","_cmpId
+                set proxy.couple.otherInfo.created = created
+                set proxy.couple.otherInfo.regionNumber = proxy.couple.otherInfo.country.name
+            }
+            &sql(CLOSE CmpCplOtherCur)
+            
+            set proxy.competitions = $E(proxy.competitions, 2, *)
+            do list.Insert(proxy)
+        }
+        
+        &sql(CLOSE PrtOtherCoupleCur)
+    }
+    catch(ex){
+        do $SYSTEM.OBJ.DisplayError(ex.AsStatus())
+        
+    }
+    quit list
+]]></Implementation>
+</Method>
+
+<Method name="GetReportDataSingleUDSR">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    set list = ##class(%ListOfObjects).%New()
+    
+    &sql(DECLARE PrtSingleUDSRCur CURSOR FOR 
+         SELECT %NOLOCK DISTINCT Athlete
+         FROM Dance_Data.ParticipantSingleUDSR
+         WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND IsActive = 1
+         ORDER BY FullName->Value)  
+    
+    &sql(OPEN PrtSingleUDSRCur)
+    for  
+    {   
+        &sql(FETCH PrtSingleUDSRCur INTO :athId) 
+        quit:(SQLCODE '= 0)
+        
+        set proxy = ##class(%ZEN.proxyObject).%New()
+        set proxy.athlete = ##class(Dance.Data.ParticipantSingleUDSR).%OpenId(athId).ConvertToProxyObject()
+        set proxy.competitions = ""
+        
+        &sql(DECLARE CmpAthUDSRCur CURSOR FOR 
+             SELECT %NOLOCK Competition->IdExternal, Created
+             FROM Dance_Data.ParticipantSingleUDSR
+             WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND Athlete = :athId 
+             ORDER BY Competition->StartDate)   
+        &sql(OPEN CmpAthUDSRCur)
+        for  
+        {   
+            &sql(FETCH CmpAthUDSRCur INTO :cmpId, :created) 
+            quit:(SQLCODE '= 0)
+            
+            set proxy.competitions = proxy.competitions_","_cmpId
+            set proxy.athlete.otherInfo.created = created
+        }
+        &sql(CLOSE CmpAthUDSRCur)
+        
+        set proxy.competitions = $E(proxy.competitions, 2, *)
+        do list.Insert(proxy)
+    }
+    
+    &sql(CLOSE PrtSingleUDSRCur)
+    
+    quit list
+]]></Implementation>
+</Method>
+
+<Method name="GetReportDataSingleWDSF">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    set list = ##class(%ListOfObjects).%New()
+    set params = ##class(%ZEN.proxyObject).%New()
+    set params.competitionParams = ##class(%ZEN.proxyObject).%New()
+    
+    &sql(DECLARE PrtSingleWDSFCur CURSOR FOR 
+         SELECT ID
+         FROM Dance_Data.ParticipantSingleWDSF
+         WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND IsActive = 1
+         GROUP BY Athlete
+         ORDER BY FullName->Value)  
+    
+    &sql(OPEN PrtSingleWDSFCur)
+    for  
+    {   
+        &sql(FETCH PrtSingleWDSFCur INTO :prtId) 
+        quit:(SQLCODE '= 0)
+        
+        set proxy = ##class(%ZEN.proxyObject).%New()
+        set proxy.athlete = ##class(Dance.Data.ParticipantSingleWDSF).%OpenId(prtId).ConvertToProxyObject(params).athlete
+        set proxy.athlete.number = ""
+        set proxy.competitions = ""
+        
+        &sql(DECLARE CmpAthWDSFCur CURSOR FOR 
+             SELECT Competition->IdExternal, Created
+             FROM Dance_Data.ParticipantSingleWDSF
+             WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND Athlete = :proxy.athlete.id 
+             ORDER BY Competition->StartDate)   
+        &sql(OPEN CmpAthWDSFCur)
+        for  
+        {   
+            &sql(FETCH CmpAthWDSFCur INTO :cmpId, :created) 
+            quit:(SQLCODE '= 0)
+            
+            set proxy.competitions = proxy.competitions_","_cmpId
+            set proxy.athlete.otherInfo.created = created
+        }
+        &sql(CLOSE CmpAthWDSFCur)
+        
+        set proxy.competitions = $E(proxy.competitions, 2, *)
+        do list.Insert(proxy)
+    }
+    
+    &sql(CLOSE PrtSingleWDSFCur)
+    
+    quit list
+]]></Implementation>
+</Method>
+
+<Method name="GetReportDataSingleOther">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    set list = ##class(%ListOfObjects).%New()
+    set params = ##class(%ZEN.proxyObject).%New()
+    set params.competitionParams = ##class(%ZEN.proxyObject).%New()
+    
+    &sql(DECLARE PrtOtherAthleteCur CURSOR FOR 
+         SELECT ID
+         FROM Dance_Data.ParticipantSingleOther
+         WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND IsActive = 1
+         GROUP BY AthleteKey
+         ORDER BY FullName->Value)  
+    
+    &sql(OPEN PrtOtherAthleteCur)
+    for  
+    {   
+        &sql(FETCH PrtOtherAthleteCur INTO :prtId) 
+        quit:(SQLCODE '= 0)
+        
+        set proxy = ##class(%ZEN.proxyObject).%New()
+        set proxy.athlete = ##class(Dance.Data.ParticipantSingleOther).%OpenId(prtId).ConvertToProxyObject(params).athlete
+        set proxy.competitions = ""
+        
+        &sql(DECLARE CmpAthOtherCur CURSOR FOR 
+             SELECT %NOLOCK Competition->IdExternal, Created
+             FROM Dance_Data.ParticipantSingleOther
+             WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND AthleteKey = :proxy.athlete.key
+             ORDER BY Competition->StartDate)   
+        &sql(OPEN CmpAthOtherCur)
+        for  
+        {   
+            &sql(FETCH CmpAthOtherCur INTO :cmpId, :created) 
+            quit:(SQLCODE '= 0)
+            
+            set proxy.competitions = proxy.competitions_","_cmpId
+            set proxy.athlete.otherInfo.created = created
+        }
+        &sql(CLOSE CmpAthOtherCur)
+        
+        set proxy.competitions = $E(proxy.competitions, 2, *)
+        do list.Insert(proxy)
+    }
+    
+    &sql(CLOSE PrtOtherAthleteCur)
+    
+    quit list
+]]></Implementation>
+</Method>
+</Class>
+</Export>

@@ -1,0 +1,70 @@
+<div class="row-fluid">
+    <pre ng-bind="page.tournament.fullName" style="text-align: center; font-weight: bold; font-size: 1.3em !important;">
+    </pre>
+    <pre ng-hide="page.tournament.id" style="text-align: center;"><i class="fa fa-spinner fa-spin fa-lg" style="color: rgb(204, 204, 204);"></i></pre>
+</div>
+<div ng-show="page.tournament && page.tournament.addInfoUrl!=''" style="text-align: center; color: darkred; padding-top: 12px;" title="{{'Перейдите по ссылке для получения подробной информации'|localize}}">
+    <a class="trnAdditionInfoUrl" ng-href="{{page.tournament.addInfoUrl}}" target="_blank">{{('ВАЖНОЕ ОБЪЯВЛЕНИЕ'|localize)}}</a>
+</div>
+<br>
+<div class="row-fluid" style="text-align: center;">
+    <a ng-href="{{page.tournament.infoUrl}}" target="_blank" class="trnMenu" title="{{'Информация о турнире'|localize}}" ng-bind="'Информация »'|localize"></a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a ng-href="" ng-class="recorderHash ? 'trnMenu' : 'disabled'" title="{{'Регистрация участников на турнир'|localize}}" ng-bind="'Регистрация »'|localize" ng-click="locationSrvc.goTo(':recorderHash/tournament/' + page.tournament.id + '/registration', recorderHash)"></a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a ng-href="" class="trnMenu" title="{{'Список всех групп турнира'|localize}}" ng-bind="'Группы »'|localize"  ng-click="locationSrvc.goTo(':recorderHash/tournament/' + page.tournament.id + '/competitions', recorderHash)"></a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a ng-href="" class="trnMenuSelected" title="{{'Список всех участников турнира'|localize}}" ng-bind="'Участники •'|localize"></a>
+</div>
+<br>
+
+<p ng-hide="recorderHash">[ <font COLOR="RED"><b>!</b></font> ] <span  style="color:rgb(163, 0, 0);" ng-bind="'Код доступа не найден, переход на страницу для регистрации невозможен.'|localize"></span></p>
+<p style="margin:0 0 20px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Нажмите на ссылку (») в колонке "Группы" для просмотра списка групп турнира, в которых зарегистрирована пара (участник).'|localize}}</p>
+
+
+<div class="row-fluid" style="padding-bottom: 4px;">
+    <span style="font-weight: bold;" ng-bind="('Уникальные участники турнира'|localize) + ' - '+ page.tournament.participantsUniqueCount + '. ' + ' ' + ('Всего'|localize) + ' - ' + page.tournament.participantsCount + '.'"></span>
+    &nbsp;
+    <span ng-show="menu.admin">{{'Экспорт' + ':'}} <a ng-href="" class="trnMenu" ng-bind="'все участники'" ng-click="exportParticipants()"></a>, <a ng-href="" class="trnMenu" ng-bind="'только оплатившие'" ng-click="exportPayers()"></a>.</span>
+</div>
+
+<div class="row-fluid">
+    <stcgrid
+        style="width: initial;"
+        grid="pageStore.participants.grid"
+        table-class="table table-bordered table-hover"
+        caption=""
+        columns="page.participantTable.columns"
+        items="page.participantTable.items"
+        properties="page.participantTable.properties"
+        update-items="page.participantTable.loadItems(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText)"
+
+        page-curr="page.participantTable.pageCurr"
+        page-total="page.participantTable.pageTotal"
+        page-size="page.participantTable.pageSize"
+        navigator-visible="true"
+        search-hide="false"
+        search-top="true"
+
+        selectable="true"
+        selected-items="page.participantTable.selectedItems"
+        multi-select-mode="page.participantTable.multiSelectMode"
+        on-select-cell="page.participantTable.onSelectCell(item,property)"  
+
+        action-column-visible="false"
+        forcibly-update="page.participantTable.forciblyUpdate"
+    />
+</div>
+
+<div class="row-fluid" ng-show="page.participantTable.itemsStatus!=''">
+    <div class="span1">
+    </div>
+    <div class="span10" style="text-align: center;">
+        <i ng-bind="page.participantTable.itemsStatus"></i>
+    </div>
+    <div class="span1">
+    </div>
+</div>
+
+<stcalert data="page.alert"/>
+

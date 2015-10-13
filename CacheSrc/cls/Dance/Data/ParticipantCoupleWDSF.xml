@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.ParticipantCoupleWDSF">
+<Description>
+Участник - пара WDSF</Description>
+<Super>Participant</Super>
+<TimeCreated>63440,4297.586433</TimeCreated>
+
+<Property name="Couple">
+<Description>
+Пара WDSF</Description>
+<Type>CoupleWDSF</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="ManDOB">
+<Description>
+Дата рождения партнера</Description>
+<Type>%Date</Type>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Property name="WomanDOB">
+<Description>
+Дата рождения партнерши</Description>
+<Type>%Date</Type>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Index name="CmpCplWDSFIdx">
+<Properties>Competition,Couple</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Index name="CoupleWDSFIdx">
+<Properties>Couple</Properties>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Коневертация в json</Description>
+<FormalSpec>params:%ZEN.proxyObject</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##super(params)
+	set proxy.couple = ..Couple.ConvertToProxyObject()
+	
+	if (..ManDOB) set proxy.couple.man.dob = $ZD(..ManDOB, 3)
+	if (..WomanDOB) set proxy.couple.woman.dob = $ZD(..WomanDOB, 3)
+	
+	set proxy.couple.otherInfo.city = ..City
+	set proxy.couple.otherInfo.club = ..Club
+	set proxy.couple.otherInfo.mainTrainer = ..MainTrainer
+	set proxy.couple.otherInfo.otherTrainers = ..OtherTrainers
+
+	set proxy.couple.competitionsCount = "-"
+	set proxy.couple.paymentsCount = "-"
+	
+	if $ISOBJECT(proxy.competition.tournament){	
+		if (params.loadPrtObjCompetitionsCount){
+			set proxy.couple.competitionsCount = ..PrtObjCompetitionsCount
+		}
+		
+		if (params.loadPrtObjPaymentsCount){
+			set proxy.couple.paymentsCount = ..PrtObjPaymentsCount
+		}
+	}
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Create">
+<Description>
+Создать запись</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[recorder:Recorder,competition:Competition,couple:%ZEN.proxyObject,&st]]></FormalSpec>
+<ReturnType>Participant</ReturnType>
+<Implementation><![CDATA[
+	if ..CmpCplWDSFIdxExists(competition.%Id(), couple.id) {
+		set obj = ..CmpCplWDSFIdxOpen(competition.%Id(), couple.id)
+		set obj.IsActive = 1
+		set st = obj.%Save()
+		quit obj
+	}
+	
+	set obj = ..%New()
+	
+	// Свойства класса
+	set obj.Couple = ##class(Dance.Data.CoupleWDSF).%OpenId(couple.id)
+	if ($LENGTH(couple.man.dob) = 10) set obj.ManDOB = $ZDH(couple.man.dob, 3)
+	if ($LENGTH(couple.woman.dob) = 10) set obj.WomanDOB = $ZDH(couple.woman.dob, 3)
+	
+	// Свойства базового класса
+	set obj.Recorder = recorder
+	set obj.Competition = competition 
+	set obj.Tournament = competition.Tournament
+	
+	set obj.FullName = ##class(Dance.Data.Localization.LText).Create("")
+	set st = ..UpdateParticipantFullName(obj)
+	quit:$$$ISERR(st) $$$NULLOREF
+	
+	set obj.Country = obj.Couple.Man.Country
+	set obj.City = couple.otherInfo.city
+	set obj.Club = couple.otherInfo.club
+	set obj.MainTrainer = couple.otherInfo.mainTrainer
+	set obj.OtherTrainers = couple.otherInfo.otherTrainers
+	
+	set obj.PrtObjKey = obj.Couple.%ClassName(1)_"@"_obj.Couple.%Id()
+	
+	set st = obj.%Save()
+	
+	quit obj
+]]></Implementation>
+</Method>
+
+<Method name="GetFullNameForLang">
+<Description>
+Имя участника для выбранного языка</Description>
+<FormalSpec>lang:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit ..Couple.Man.LastName.GetValueByLang(lang)_" "_..Couple.Man.FirstName.GetValueByLang(lang)_" - "_..Couple.Woman.LastName.GetValueByLang(lang)_" "_..Couple.Woman.FirstName.GetValueByLang(lang)
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>ParticipantCoupleWDSFDefaultData</DefaultData>
+<Data name="ParticipantCoupleWDSFDefaultData">
+<Subscript>"ParticipantCoupleWDSF"</Subscript>
+<Value name="1">
+<Value>Couple</Value>
+</Value>
+<Value name="2">
+<Value>ManDOB</Value>
+</Value>
+<Value name="3">
+<Value>WomanDOB</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

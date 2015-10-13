@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.TicketStatus">
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeCreated>63436,52011.350517</TimeCreated>
+
+<Property name="Name">
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+<Parameter name="XMLREFERENCE" value="ID"/>
+</Property>
+
+<Property name="Code">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="CodeIdx">
+<Properties>Code</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.id = ..%Id()
+	set proxy.name = ..Name.Value
+	set proxy.code = ..Code		
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.TicketStatusD</DataLocation>
+<DefaultData>TicketStatusDefaultData</DefaultData>
+<IdLocation>^Dance.Data.TicketStatusD</IdLocation>
+<IndexLocation>^Dance.Data.TicketStatusI</IndexLocation>
+<StreamLocation>^Dance.Data.TicketStatusS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="TicketStatusDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>Code</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

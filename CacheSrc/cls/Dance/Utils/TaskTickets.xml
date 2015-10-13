@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.TaskTickets">
+<Super>%SYS.Task.Definition</Super>
+<TimeCreated>63324,68778.945644</TimeCreated>
+
+<Method name="OnTask">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set st = ##class(Dance.Utils.TaskTickets).Import()
+	do ##class(Dance.Data.Tournament).UpdateAllTournaments()
+	
+	quit st
+]]></Implementation>
+</Method>
+
+<Method name="Import">
+<Description>
+do ##class(Dance.Utils.TaskTickets).Import()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	/*
+	do ##class(Dance.Data.Import.TicketDanceplat).%KillExtent()
+	do ##class(Dance.Data.Ticket).%DeleteExtent()
+	do ##class(Dance.Data.Participant).%DeleteExtent()
+	do ##class(Dance.Data.Couple).%DeleteExtent()
+	do ##class(Dance.Data.PersonWDSF).%DeleteExtent()
+	
+	d ##class(Dance.Data.Import.TicketDanceplat).%KillExtent()
+	d ##class(Dance.Data.Ticket).%KillExtent()
+	*/
+	set st = $$$OK
+	
+	try{
+		&sql(DECLARE TCur CURSOR FOR 
+		 	 SELECT IdInternal, Hash
+		 	 FROM Dance_Data.Tournament
+		 	 WHERE IsActive = 1 AND (TStatus->Code='Registration' OR TStatus->Code='RegistrationClosed'))	
+		
+		&sql(OPEN TCur)
+		for  
+		{	
+			&sql(FETCH TCur INTO :idInternal, :hash) 
+			quit:(SQLCODE '= 0)
+			set page = $G(^Settings("Dance", "ImportDanceplat", "TicketsPage"))_"?trn="_idInternal_"&hash="_hash_"&all=1"
+			w !, "Tournament = "_idInternal
+			w ##class(Dance.Data.Import.ImportDanceplat).Import("Dance.Data.Import.TicketDanceplat", page)    
+		}
+		
+		&sql(CLOSE TCur)
+	}
+	catch(ex){
+		set st = ex.AsStatus()
+		do ##class(Dance.Utils.Journal).Create("Error", "TaskTickets.Import", $SYSTEM.Status.GetErrorText(st))
+	}
+	
+	do ##class(Dance.Data.TicketDanceplat).SaveAllFromImportTable()
+	quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

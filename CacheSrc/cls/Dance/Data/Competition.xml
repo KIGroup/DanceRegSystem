@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Competition">
+<Description>
+Competition in the tournament, has participants</Description>
+<Super>%Persistent</Super>
+<TimeCreated>63289,41033.08287</TimeCreated>
+
+<Property name="Tournament">
+<Type>Dance.Data.Tournament</Type>
+<Cardinality>one</Cardinality>
+<Inverse>Competitions</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Property name="IdInternal">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="IdExternal">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Name">
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Discipline">
+<Type>Discipline</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="AgeCategory">
+<Type>AgeCategory</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="DancerClasses">
+<Type>DancerClass</Type>
+<Collection>array</Collection>
+<Required>1</Required>
+</Property>
+
+<Property name="Type">
+<Type>CompetitionType</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="StartDate">
+<Type>%Date</Type>
+<Required>1</Required>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Property name="StartTime">
+<Type>%Time</Type>
+</Property>
+
+<Property name="Price">
+<Type>%Float</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="WDSF">
+<Type>CompetitionWDSF</Type>
+</Property>
+
+<Property name="Limit">
+<Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
+<Required>1</Required>
+</Property>
+
+<Property name="ParticipantsCountCalc">
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {ParticipantsCountCalc} = ##class({%%CLASSNAME}).GetParticipantsCount({%%ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="ParticipantsCount">
+<Type>%Integer</Type>
+</Property>
+
+<Property name="PaymentsCountCalc">
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {PaymentsCountCalc} = ##class({%%CLASSNAME}).GetPaymentsCount({%%ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="PaymentsCount">
+<Type>%Integer</Type>
+</Property>
+
+<Property name="IsActive">
+<Type>%Boolean</Type>
+<InitialExpression>1</InitialExpression>
+<Required>1</Required>
+</Property>
+
+<Index name="TournamentIdx">
+<Properties>Tournament</Properties>
+</Index>
+
+<Index name="IdInternalIdx">
+<Properties>IdInternal</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Index name="WDSFIdx">
+<Properties>WDSF</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Property name="IsInternational">
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="IsClosed">
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+<Required>1</Required>
+</Property>
+
+<Index name="IsActiveIndex">
+<Properties>IsActive</Properties>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.id = ..%Id()
+    set proxy.idInternal = ..IdInternal
+    set proxy.idExternal = ..IdExternal 
+    set proxy.isClosed = ..IsClosed = $$$YES
+    
+    set proxy.name = ..Name.Value
+    set proxy.startDate = $ZDATE(..StartDate, 3)
+    set proxy.startTime = $e(##class(%Library.Time).LogicalToDisplay(..StartTime), 1, 5)
+    set proxy.price = ..Price
+    set proxy.limit = ..Limit
+       
+    
+    if (params.loadTournament){
+        set proxy.tournament = ..Tournament.ConvertToProxyObject(params.tournamentParams)
+    }
+    
+    if (params.loadDiscipline){
+        set proxy.discipline = ..Discipline.ConvertToProxyObject()
+    }
+    
+    if (params.loadAgeCategory){    
+        set proxy.ageCategory = ..AgeCategory.ConvertToProxyObject()
+    }
+    
+    if (params.loadType){
+        set proxy.type = ..Type.ConvertToProxyObject()
+    }
+    
+    if (params.loadWDSF) && $ISOBJECT(..WDSF){
+        set proxy.wdsf = ..WDSF.ConvertToProxyObject()
+        set proxy.isWDSF = $$$YES
+    }
+    
+    set proxy.isInternational = ..IsInternational = $$$YES
+    
+    // DancerClasses array
+    set proxy.dancerClasses = ##class(%ListOfObjects).%New()
+    
+    if (params.loadDancerClasses){
+        set dcKey = ""
+        for i=1:1:..DancerClasses.Count(){
+            set dcKey = ..DancerClasses.Next(dcKey)
+            set dc = ..DancerClasses.GetAt(dcKey)
+            do proxy.dancerClasses.Insert(dc.ConvertToProxyObject())
+        }
+    }
+    
+    //if (params.loadParticipantsCount){
+        set proxy.participantsCount = ..ParticipantsCount
+    //}
+    
+    set proxy.freeSlotsCount = 10000
+    //if (params.loadPaymentsCount){
+        set proxy.paymentsCount = ..PaymentsCount
+        
+        if (..Limit > 0){
+            set proxy.freeSlotsCount = ..Limit - proxy.paymentsCount
+            if (proxy.freeSlotsCount < 0){
+                set proxy.freeSlotsCount = 0
+            }
+        }
+    //}
+    
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Save">
+<Description>
+Create or update competition</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[data:%RegisteredObject,&st]]></FormalSpec>
+<ReturnType>Competition</ReturnType>
+<Implementation><![CDATA[
+    do ##class(Dance.Utils.Journal).Create("Log", "Data.Competition.Save",
+    "ID="_data.id_";"_
+    "IdInternal="_data.idInternal_";"_
+    "IdExternal="_data.idExternal_";"_
+    "Name="_data.name_";"_
+    "TournamentId="_data.tournamentId_";"_
+    "DisciplineId="_data.discipline.id_";"_
+    "AgeCategoryId="_data.ageCategory.id_";"_
+    "TypeId="_data.type.id_";"_
+    "StartDate="_data.startDate_";"_
+    "Price="_data.price)
+    
+    
+    if (data.id = ""){
+        set trn = ##class(Dance.Data.Tournament).%OpenId(data.tournamentId)
+        set cmp = ##class(Dance.Data.Competition).%New()
+        set cmp.Name = ##class(Dance.Data.Localization.LText).Create(data.name)
+        set cmp.Tournament = trn
+    }
+    else{
+        set cmp = ##class(Dance.Data.Competition).%OpenId(data.id)
+        set cmp.Name.Value = data.name
+    }
+    
+    if (data.isWDSF = 1) && $ISOBJECT(data.wdsf){
+        set cmp.WDSF = ##class(CompetitionWDSF).%OpenId(data.wdsf.id)
+    }
+    else{
+        set cmp.WDSF = $$$NULLOREF
+    }
+    
+    set cmp.IsInternational = data.isInternational
+    set cmp.IsClosed = data.isClosed = 1
+        
+    set cmp.Discipline = ##class(Dance.Data.Discipline).%OpenId(data.discipline.id)
+    set cmp.AgeCategory = ##class(Dance.Data.AgeCategory).%OpenId(data.ageCategory.id)
+    set cmp.Type = ##class(Dance.Data.CompetitionType).%OpenId(data.type.id)
+        
+    set cmp.StartDate = $ZDATEH(data.startDate, 15)
+    set cmp.StartTime = ##class(%Library.Time).DisplayToLogical(data.startTime)
+        
+    set cmp.Price = data.price
+    if (data.limit = "") set data.limit = 0
+    set cmp.Limit = data.limit
+      
+    set cmp.IdInternal = data.idInternal
+    set cmp.IdExternal = data.idExternal
+        
+    // DancerClasses array
+    do cmp.DancerClasses.Clear()
+    for i=1:1:data.dancerClasses.Count(){
+        continue:(data.dancerClasses.GetAt(i).selected '= $$$YES)
+            
+        set dancerClasses = ##class(Dance.Data.DancerClass).%OpenId(data.dancerClasses.GetAt(i).id,,.st)
+        if $$$ISERR(st) return ##class(Dance.Utils.Msg).GetErrorStatus("error_DancerClassNotFound"," | "_st)
+        
+        do cmp.DancerClasses.SetAt(dancerClasses, dancerClasses.%Id())
+    }
+        
+    set st = cmp.%Save()
+    
+    if $$$ISOK(st){
+        do ##class(Tournament).UpdateIsContainsLimit(cmp.Tournament.%Id())
+        do ##class(Tournament).UpdateIsContainsSolo(cmp.Tournament.%Id())
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="Deactivate">
+<Description>
+Change IsActive property to 0</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ##class(Dance.Utils.Journal).Create("Log", "Data.Competition.Deactivate", "ID="_id_";")
+    
+    set cmp = ..%OpenId(id)
+    set cmp.IsActive = 0
+    set cmp.IdInternal = cmp.IdInternal_";"_id
+    set cmp.IdExternal = cmp.IdExternal_";"_id
+    
+    set st = cmp.%Save()
+    
+    if $$$ISOK(st){
+        do ##class(Tournament).UpdateIsContainsLimit(cmp.Tournament.%Id())
+        do ##class(Tournament).UpdateIsContainsSolo(cmp.Tournament.%Id())
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetParticipantsCount">
+<Description>
+Participants count in the competition</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>competitionId:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    set count = 0
+    
+    &sql(SELECT COUNT(ID) As TotalCount INTO :count
+         FROM Dance_Data.Participant 
+         WHERE Competition = :competitionId AND IsActive = 1)
+    
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="GetPaymentsCount">
+<Description>
+Payments</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>competitionId:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    set count = 0
+    
+    &sql(SELECT %NOLOCK COUNT(ID) INTO :count 
+         FROM Dance_Data.Participant 
+         WHERE Competition = :competitionId AND TicketStatus = 'Paid')
+    
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="UpdateParticipantsCount">
+<Description>
+Обновить свойство: количество участников в группе</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>cmpId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set count = ..GetParticipantsCount(cmpId)
+    &sql(UPDATE %NOLOCK Dance_Data.Competition
+         SET ParticipantsCount = :count
+         WHERE ID = :cmpId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdatePaymentsCount">
+<Description>
+Обновить свойство: количество платежей в группе</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>cmpId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set count = ..GetPaymentsCount(cmpId)
+    &sql(UPDATE %NOLOCK Dance_Data.Competition
+         SET PaymentsCount = :count
+         WHERE ID = :cmpId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdateAllByTournament">
+<Description>
+Обновить свойства всех групп турнира</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set status = $$$OK
+    
+    try{       
+        //TSTART
+        
+        &sql(DECLARE CmpCurs CURSOR FOR
+             SELECT %NOLOCK ID
+             FROM Dance_Data.Competition
+             WHERE Tournament = :trnId)
+        
+        &sql(OPEN CmpCurs)
+        for{
+            &sql(FETCH CmpCurs INTO :id) 
+            quit:(SQLCODE '= 0)
+            
+            do ..UpdateParticipantsCount(id)
+            do ..UpdatePaymentsCount(id)
+        }
+        
+        &sql(CLOSE CmpCurs)
+        
+        //TCOMMIT
+    }
+    catch(ex){
+        //TROLLBACK 1
+        
+        set status = ex.AsStatus()
+    }
+    
+    quit status
+]]></Implementation>
+</Method>
+
+<Method name="IsAvailableForDancerClass">
+<Description>
+Доступна ли группа для класса танцора</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>cmpId:%String,classId:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    set SQLCODE = ""
+    set recordId = ""
+    &sql(SELECT ID INTO :recordId
+         FROM Dance_Data.Competition_DancerClasses
+         WHERE Competition = :cmpId AND DancerClasses = :classId)
+    
+    quit:(SQLCODE = 0) $$$YES
+    
+    quit $$$NO
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.CompetitionD</DataLocation>
+<DefaultData>CompetitionDefaultData</DefaultData>
+<IdLocation>^Dance.Data.CompetitionD</IdLocation>
+<IndexLocation>^Dance.Data.CompetitionI</IndexLocation>
+<StreamLocation>^Dance.Data.CompetitionS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="AgeCategories">
+<Attribute>AgeCategories</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"AgeCategories"</Subscript>
+</Data>
+<Data name="CompetitionDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Tournament</Value>
+</Value>
+<Value name="3">
+<Value>StartDate</Value>
+</Value>
+<Value name="4">
+<Value>StartTime</Value>
+</Value>
+<Value name="5">
+<Value>Name</Value>
+</Value>
+<Value name="6">
+<Value>Discipline</Value>
+</Value>
+<Value name="7">
+<Value>Price</Value>
+</Value>
+<Value name="8">
+<Value>Currency</Value>
+</Value>
+<Value name="9">
+<Value>AgeCategory</Value>
+</Value>
+<Value name="10">
+<Value>TournamentUDSRID</Value>
+</Value>
+<Value name="11">
+<Value>GroupUDSRID</Value>
+</Value>
+<Value name="12">
+<Value>GroupUDSRIDExt</Value>
+</Value>
+<Value name="13">
+<Value>Limit</Value>
+</Value>
+<Value name="14">
+<Value>Solo</Value>
+</Value>
+<Value name="15">
+<Value>Type</Value>
+</Value>
+<Value name="16">
+<Value>IsInternational</Value>
+</Value>
+<Value name="17">
+<Value>IdInternal</Value>
+</Value>
+<Value name="18">
+<Value>IdExternal</Value>
+</Value>
+<Value name="19">
+<Value>IsActive</Value>
+</Value>
+<Value name="20">
+<Value>IdWDSF</Value>
+</Value>
+<Value name="21">
+<Value>WDSF</Value>
+</Value>
+<Value name="22">
+<Value>IsClosed</Value>
+</Value>
+<Value name="23">
+<Value>ParticipantsCount</Value>
+</Value>
+<Value name="24">
+<Value>PaymentsCount</Value>
+</Value>
+</Data>
+<Data name="DancerClasses">
+<Attribute>DancerClasses</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"DancerClasses"</Subscript>
+</Data>
+</Storage>
+</Class>
+</Export>

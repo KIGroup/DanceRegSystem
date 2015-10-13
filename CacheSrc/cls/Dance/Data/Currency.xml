@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Currency">
+<Description>
+Currency</Description>
+<Super>%Persistent</Super>
+<TimeCreated>63660,38532.418192</TimeCreated>
+
+<Property name="Name">
+<Description>
+Name of currency</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+<Parameter name="XMLREFERENCE" value="ID"/>
+</Property>
+
+<Property name="Code">
+<Description>
+Code of currency</Description>
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="CodeIdx">
+<IdKey>1</IdKey>
+<Properties>Code</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Convert to proxyObject (for JSON)</Description>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.id = ..%Id()
+    set proxy.name = ..Name.Value
+    set proxy.code = ..Code
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="CreateCurrencies">
+<Description>
+do ##class(Dance.Data.Currency).CreateCurrencies()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set obj = ..%New()
+    set obj.Name = ##class(Dance.Data.Localization.LText).Create("")
+    w obj.Name.SetValueByLang("Рубли", "ru")
+    w obj.Name.SetValueByLang("Ruble", "en")
+    w obj.Name.SetValueByLang("Rubel", "de")
+    w obj.Name.SetValueByLang("Rubli", "it")
+    set obj.Code = "RUB"
+    w obj.%Save()
+    
+    set obj = ..%New()
+    set obj.Name = ##class(Dance.Data.Localization.LText).Create("")
+    w obj.Name.SetValueByLang("Доллары", "ru")
+    w obj.Name.SetValueByLang("Dollars", "en")
+    w obj.Name.SetValueByLang("Dollars", "de")
+    w obj.Name.SetValueByLang("Dollari", "it")    
+    set obj.Code = "USD"
+    w obj.%Save()
+    
+    set obj = ..%New()
+    set obj.Name = ##class(Dance.Data.Localization.LText).Create("")
+    w obj.Name.SetValueByLang("Евро", "ru")
+    w obj.Name.SetValueByLang("Euro", "en")
+    w obj.Name.SetValueByLang("Euro", "de")
+    w obj.Name.SetValueByLang("Euro", "it")
+    set obj.Code = "EUR"
+    w obj.%Save()
+    
+    
+    set obj = ..%New()
+    set obj.Name = ##class(Dance.Data.Localization.LText).Create("")
+    do obj.Name.SetValueByLang("Фунт стерлингов", "ru")
+    do obj.Name.SetValueByLang("Pound Sterling", "en")
+    do obj.Name.SetValueByLang("Pfund", "de")
+    do obj.Name.SetValueByLang("Libbra", "it")
+    set obj.Code = "GBP"
+    do obj.%Save()
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.CurrencyD</DataLocation>
+<DefaultData>CurrencyDefaultData</DefaultData>
+<IdLocation>^Dance.Data.CurrencyD</IdLocation>
+<IndexLocation>^Dance.Data.CurrencyI</IndexLocation>
+<StreamLocation>^Dance.Data.CurrencyS</StreamLocation>
+<Data name="CurrencyDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>Code</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

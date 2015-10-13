@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.PersonWDSF">
+<Super>Dance.Data.Person</Super>
+<TimeCreated>63436,55275.893424</TimeCreated>
+
+<Property name="AgeCategory">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="NumberWDSFIdx">
+<Properties>Number</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##super(params)
+	set proxy.type = "WDSF"
+	set proxy.ageCategory = ..AgeCategory		
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Save">
+<Description>
+Create or save modified person</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[data:%RegisteredObject,&st]]></FormalSpec>
+<ReturnType>Dance.Data.PersonWDSF</ReturnType>
+<Implementation><![CDATA[
+	if (..NumberWDSFIdxExists(data.number)){
+		set person = ..NumberWDSFIdxOpen(data.number,, .st)
+		set person.LastName.Value = data.lastName
+		set person.FirstName.Value = data.firstName
+	}
+	else{
+		set person = ..%New()
+		set person.Number = data.number
+		set person.LastName = ##class(Dance.Data.Localization.LText).Create(data.lastName)
+		set person.FirstName = ##class(Dance.Data.Localization.LText).Create(data.firstName)
+	}
+	
+	set person.Gender = data.gender	
+	set person.AgeCategory = data.ageCategory
+	set person.Country = ##class(Dance.Data.Country).%OpenId(data.otherInfo.country.id)
+	set person.Updated = $ZDT($ZTS, 3)
+	
+	set st = person.%Save()
+	quit person
+]]></Implementation>
+</Method>
+
+<Method name="SaveFromWDSF">
+<Description>
+Create or save modified person</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[data:%RegisteredObject,&st]]></FormalSpec>
+<ReturnType>Dance.Data.Person</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.number = data.id
+	set proxy.lastName = data.surname
+	set proxy.firstName = data.name
+	set proxy.gender = data.sex
+	set proxy.ageCategory = data.ageGroup
+	set proxy.otherInfo = ##class(%ZEN.proxyObject).%New()
+	set proxy.otherInfo.country = ##class(Country).GetByName(data.country).ConvertToProxyObject()
+	
+	quit ..Save(proxy, .st)
+]]></Implementation>
+</Method>
+
+<Method name="GetByFilter">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>filter:%RegisteredObject</FormalSpec>
+<ReturnType>PersonWDSF</ReturnType>
+<Implementation><![CDATA[
+	set id = ""
+
+	&sql(SELECT person.ID INTO :id
+		 FROM Dance_Data.PersonWDSF as person 
+		 	INNER JOIN 
+		 	Dance_Data_Localization.LTextValue as ltvalLN ON ltvalLN.LText = person.LastName 
+		 	INNER JOIN 
+		 	Dance_Data_Localization.LTextValue as ltvalFN ON ltvalFN.LText = person.FirstName
+		 WHERE %UPPER(ltvalLN.Value) = %UPPER(TRIM(BOTH ' ' FROM :filter.lastName)) 
+		 	   AND 
+		 	   %UPPER(ltvalFN.Value) = %UPPER(TRIM(BOTH ' ' FROM :filter.firstName)))
+
+	quit ..%OpenId(id)
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>PersonWDSFDefaultData</DefaultData>
+<Data name="PersonWDSFDefaultData">
+<Subscript>"PersonWDSF"</Subscript>
+<Value name="1">
+<Value>AgeCategory</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

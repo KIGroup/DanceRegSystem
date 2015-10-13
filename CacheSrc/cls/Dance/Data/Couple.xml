@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Couple">
+<Description>
+Couples</Description>
+<Super>%Persistent</Super>
+<TimeCreated>63274,63488.46443</TimeCreated>
+
+<Property name="Man">
+<Type>Dance.Data.Person</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Woman">
+<Type>Dance.Data.Person</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="ManIdx">
+<Data>Man</Data>
+<Properties>Man</Properties>
+</Index>
+
+<Index name="WomanIdx">
+<Data>Woman</Data>
+<Properties>Woman</Properties>
+</Index>
+
+<Index name="CommonIdx">
+<Properties>Man,Woman</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    
+    set proxy.id = ..%Id()
+    set proxy.man = ..Man.ConvertToProxyObject()
+    set proxy.woman = ..Woman.ConvertToProxyObject()
+
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="GetFullName">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit ..Man.GetFullName()_"; "_..Woman.GetFullName()
+]]></Implementation>
+</Method>
+
+<Method name="Create">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[manId:%String,womanId:%String,&status]]></FormalSpec>
+<ReturnType>Couple</ReturnType>
+<Implementation><![CDATA[
+    if ..CommonIdxExists(manId, womanId) quit ..CommonIdxOpen(manId, womanId)
+    
+    set obj = ..%New()
+    set obj.Man = ##class(Dance.Data.Person).%OpenId(manId)
+    set obj.Woman = ##class(Dance.Data.Person).%OpenId(womanId)
+    set status = obj.%Save()
+    
+    quit obj
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.CoupleD</DataLocation>
+<DefaultData>CoupleDefaultData</DefaultData>
+<IdLocation>^Dance.Data.CoupleD</IdLocation>
+<IndexLocation>^Dance.Data.CoupleI</IndexLocation>
+<StreamLocation>^Dance.Data.CoupleS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="CoupleDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Man</Value>
+</Value>
+<Value name="3">
+<Value>Woman</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

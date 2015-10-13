@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.BaseInit">
+<TimeCreated>63273,7350.15543</TimeCreated>
+
+<Method name="Init">
+<Description>
+do ##class(Dance.Utils.Init.BaseInit).Init()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	do ..KillThemAll()
+
+	do ##class(Dance.Utils.Init.LTextLanguage).Import()
+	
+	do ##class(Dance.Utils.Init.DancerClass).Import()
+	do ##class(Dance.Utils.Init.Country).Import()
+	do ##class(Dance.Utils.Init.CompetitionType).Import()
+	do ##class(Dance.Utils.Init.TournamentStatus).Import()
+	do ##class(Dance.Utils.Init.TournamentRank).Import()
+	do ##class(Dance.Utils.Init.Discipline).Import()
+	do ##class(Dance.Utils.Init.AgeCategory).Import()
+	do ##class(Dance.Utils.Init.TicketStatus).Import()
+	do ##class(Dance.Data.AgeCategoryWDSF).Import()
+	
+	//set ^Settings("Dance", "LastSyncWDSFCompetitions") = "2014-01-01"
+	//w ##class(Dance.Utils.TaskSyncWDSFController).SyncCompetitions()
+	
+ 	//do ..Settings()
+ 	//w ##class(Dance.Utils.Init.Person).ImportFromFile("e:\boys.csv", "M")
+ 	//w ##class(Dance.Utils.Init.Person).ImportFromFile("e:\girls.csv", "F")
+ 	//w ##class(Dance.Utils.Init.Person).CreateCouples()
+]]></Implementation>
+</Method>
+
+<Method name="KillThemAll">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	do $CLASSMETHOD("Dance.Utils.Journal", "%KillExtent")
+	
+	do $CLASSMETHOD("Dance.Data.Import.TournamentDanceplat", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Import.CompetitionDanceplat", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Import.TicketDanceplat", "%KillExtent")
+	
+	do $CLASSMETHOD("Dance.Data.AgeCategory", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.AgeCategoryWDSF", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Competition", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.CompetitionType", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.CompetitionWDSF", "%KillExtent")
+	
+	
+	do $CLASSMETHOD("Dance.Data.Country", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Couple", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Ticket", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.TicketStatus", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.DancerClass", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Discipline", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Participant", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Person", "%KillExtent")
+	
+	do $CLASSMETHOD("Dance.Data.Tournament", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.TournamentRank", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.TournamentStatus", "%KillExtent")
+	
+	do $CLASSMETHOD("Dance.Data.Localization.LTextValue", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Localization.LTextLanguage", "%KillExtent")
+	do $CLASSMETHOD("Dance.Data.Localization.LText", "%KillExtent")
+]]></Implementation>
+</Method>
+
+<Method name="ImportXData">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>locationXData:%String,className:%String,xDataName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	try{
+		$$$THROWONERROR(sc,sc)
+
+		#dim stream As %Stream.Object = ##class(%Dictionary.CompiledXData).%OpenId(locationXData_"||"_xDataName).Data
+		#dim reader As %XML.Reader = ##class(%XML.Reader).%New()
+
+		set sc = reader.OpenStream(stream, "literal")
+		$$$THROWONERROR(sc,sc)
+
+		do reader.Correlate($piece(className, ".", *), className)
+		//do reader.Correlate("item", className)
+
+
+		set itemsCount = 0
+
+		while reader.Next(.obj, .sc)
+		{
+			$$$THROWONERROR(sc,sc)
+			
+			set sc = obj.%Save()
+			
+			$$$THROWONERROR(sc,sc)
+			
+			set obj = ""
+			set itemsCount = itemsCount + 1
+		}
+		
+		write !,itemsCount_" objects of class "_className_" were imported."
+	}
+	catch(ex){
+		w !,ex.AsStatus()
+	}
+]]></Implementation>
+</Method>
+
+<Method name="Settings">
+<Description>
+do ##class(Dance.Utils.Init.BaseInit).Settings()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set ^Settings("Dance","EmailFrom") = "dance.reg.system@mail.ru"
+	set ^Settings("Dance","EmailSMTPPASSWORD") = "dance2014-06"
+	set ^Settings("Dance","EmailSMTPPORT") = 25
+	set ^Settings("Dance","EmailSMTPSERVER") = "smtp.mail.ru"
+	set ^Settings("Dance","EmailSMTPUSER") = "dance.reg.system@mail.ru"
+]]></Implementation>
+</Method>
+</Class>
+</Export>

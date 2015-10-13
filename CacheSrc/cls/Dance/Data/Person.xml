@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Person">
+<Super>%Persistent</Super>
+<TimeCreated>63274,63498.354989</TimeCreated>
+
+<Property name="Number">
+<Description>
+Athlete number</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Description>
+Male or Female</Description>
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",Male,Female"/>
+</Property>
+
+<Property name="FirstName">
+<Description>
+First name</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="LastName">
+<Description>
+Last name</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Country">
+<Type>Country</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Updated">
+<Type>%TimeStamp</Type>
+<Required>1</Required>
+</Property>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.id = ..%Id()
+	set proxy.number = ..Number
+	set proxy.lastName = ..LastName.Value
+	set proxy.firstName = ..FirstName.Value
+	set proxy.gender = ..Gender	
+	set proxy.updated = ..Updated
+	set proxy.otherInfo = ##class(%ZEN.proxyObject).%New()
+	set proxy.otherInfo.country = ..Country.ConvertToProxyObject()
+		
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="GetFullName">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit ..LastName.Value_" "_..FirstName.Value
+]]></Implementation>
+</Method>
+
+<Method name="GetConflictCompetitions">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[personId:%String,cmpId:%String,&st]]></FormalSpec>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+	set st = $$$OK
+	set cmpList = ##class(%ListOfObjects).%New()
+	
+	set cmp = ##class(Competition).%OpenId(cmpId,,.st)
+	set cmpTournamentId = cmp.Tournament.%Id()
+	
+	
+	set params = ##class(%ZEN.proxyObject).%New()
+	set params.loadTournament = $$$YES
+	set params.tournamentParams = ##class(%ZEN.proxyObject).%New()
+	set params.tournamentParams.loadLocation = $$$YES
+	set params.loadDiscipline = $$$YES
+	set params.loadAgeCategory = $$$YES 
+	set params.loadType = $$$YES
+	set params.loadWDSF = $$$YES
+	set params.loadDancerClasses = $$$YES
+	
+	
+	&sql(DECLARE CrsCmpConflict CURSOR FOR
+			SELECT %NOLOCK ID INTO :cmpConflictId
+		 	FROM Dance_Data.Competition
+		 	WHERE Tournament->TStatus->Code <> 'Canceled' 
+		 	   AND Tournament->TStatus->Code <> 'Completed'
+		 	   AND Tournament <> :cmpTournamentId 
+		 	   AND StartDate = :cmp.StartDate
+		 	   AND ID IN (SELECT %NOLOCK prtCoupleUDSR.Competition 
+		 	   			  FROM Dance_Data.ParticipantCoupleUDSR as prtCoupleUDSR 
+		 	   			  WHERE prtCoupleUDSR.Competition->StartDate = :cmp.StartDate AND (prtCoupleUDSR.Couple->Man = :personId OR prtCoupleUDSR.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
+		 	   			  UNION
+		 	   			  SELECT %NOLOCK prtCoupleWDSF.Competition 
+		 	   			  FROM Dance_Data.ParticipantCoupleWDSF as prtCoupleWDSF 
+		 	   			  WHERE prtCoupleWDSF.Competition->StartDate = :cmp.StartDate AND (prtCoupleWDSF.Couple->Man = :personId OR prtCoupleWDSF.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
+		 	   			  UNION
+		 	   			  SELECT %NOLOCK prtSingleUDSR.Competition 
+		 	   			  FROM Dance_Data.ParticipantSingleUDSR as prtSingleUDSR 
+		 	   			  WHERE prtSingleUDSR.Competition->StartDate = :cmp.StartDate AND prtSingleUDSR.Athlete = :personId  AND TicketStatus = 'Piad'
+		 	   			  UNION
+		 	   			  SELECT %NOLOCK prtSingleWDSF.Competition 
+		 	   			  FROM Dance_Data.ParticipantSingleWDSF as prtSingleWDSF 
+		 	   			  WHERE prtSingleWDSF.Competition->StartDate = :cmp.StartDate AND prtSingleWDSF.Athlete = :personId AND TicketStatus = 'Piad'))
+		
+	&sql(OPEN CrsCmpConflict)
+	for{
+		&sql(FETCH CrsCmpConflict INTO :cmpConflictId) 
+		quit:(SQLCODE '= 0)
+		
+		do cmpList.Insert(##class(Competition).%OpenId(cmpConflictId).ConvertToProxyObject(params))
+	}
+		
+	&sql(CLOSE CrsCmpConflict)
+	
+	quit cmpList
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.PersonD</DataLocation>
+<DefaultData>PersonDefaultData</DefaultData>
+<IdLocation>^Dance.Data.PersonD</IdLocation>
+<IndexLocation>^Dance.Data.PersonI</IndexLocation>
+<StreamLocation>^Dance.Data.PersonS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="PersonDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Number</Value>
+</Value>
+<Value name="3">
+<Value>Gender</Value>
+</Value>
+<Value name="4">
+<Value>FirstName</Value>
+</Value>
+<Value name="5">
+<Value>LastName</Value>
+</Value>
+<Value name="6">
+<Value>Country</Value>
+</Value>
+<Value name="7">
+<Value>LastUpdated</Value>
+</Value>
+<Value name="8">
+<Value>Updated</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

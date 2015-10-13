@@ -1,0 +1,182 @@
+<p ng-show="menu.admin">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в турнире нажмите на ссылку (») в колонке "Регистрация".'|localize}}</p>
+<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Для просмотра списка всех групп турнира нажмите на ссылку (») в колонке "Группы" или выберите внизу вкладку "Группы(N)".'|localize}}</p>
+<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Для просмотра списка всех участников турнира нажмите на ссылку (») в колонке "Участники".'|localize}}</p>
+
+<div class="row-fluid">
+	<div class="row-fluid">
+		<div class="span8">
+			<label style="padding: 5px 5px 0 5px; font-weight: bold;" ng-bind="'Турниры'|localize"></label>
+		</div>
+		<div class="span4">
+			<select class="span6 pull-right" title="{{'Фильтр: Статус турнира'|localize}}" style="margin-bottom: 0; border-bottom:none; border-bottom-left-radius: 0; border-bottom-right-radius: 0;" ng-model="pageStore.tournaments.gridTournaments.filterStatusId" ng-options="status.id as status.name for status in page.tournamentTable.statuses" ng-change="page.tournamentTable.refresh()">
+                <option value="">-- {{'Статус'|localize}} --</option>
+            </select>
+            <select class="span6 pull-right" title="{{'Фильтр: Ранг турнира'|localize}}" style="margin-bottom: 0; border-bottom:none; border-bottom-left-radius: 0; border-bottom-right-radius: 0;" ng-model="pageStore.tournaments.gridTournaments.filterRankId" ng-options="rank.id as rank.name for rank in page.tournamentTable.ranks" ng-change="page.tournamentTable.refresh()">
+                <option value="">-- {{'Ранг'|localize}} --</option>
+            </select>
+        </div>
+	</div>
+	<div class="row-fluid">
+	    <stcgrid style="border-radius: 4px 0 4px 4px;"
+	    	grid="pageStore.tournaments.gridTournaments"
+		    table-class="table table-bordered table-hover"
+		    caption="''"
+		    columns="page.tournamentTable.columns"
+		    items="page.tournamentTable.items"
+		    properties="page.tournamentTable.properties"
+		    update-items="page.tournamentTable.loadItems(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText)"
+
+		    page-curr="page.tournamentTable.pageCurr"
+		    page-total="page.tournamentTable.pageTotal"
+		    page-size="page.tournamentTable.pageSize"
+		    navigator-visible="true"
+
+		    selectable="true"
+		    selected-items="page.tournamentTable.selectedItems"
+		    multi-select-mode="page.tournamentTable.multiSelectMode"
+ 			on-select="page.tournamentTable.onSelect(item)"
+ 			on-select-cell="page.tournamentTable.onSelectCell(item, property)"
+
+ 			action-column-visible="!menu.readOnlyMode && menu.admin"
+		    action-column-icon="'fa fa-plus-circle'"
+		    action-column-title="'Добавить'|localize"
+		    action-column-method="page.tournamentTable.add()"
+
+		    first-row-action-icon="'fa fa-pencil'"
+		    first-row-action-title="'Изменить'|localize"
+		    first-row-action-method="page.tournamentTable.edit(item)"
+	    	
+	    	second-row-action-icon="'fa fa-times'"
+		    second-row-action-title="'Удалить'|localize"
+		    second-row-action-method="page.tournamentTable.remove(item)"
+	    	
+ 			forcibly-update="page.tournamentTable.forciblyUpdate"
+		/>
+	</div>
+</div>
+
+<div class="row-fluid" ng-show="page.tournamentTable.selectedItems.length==0">
+	<div class="span1">
+	</div>
+	<div class="span10" style="text-align: center;">
+		<i ng-bind="'Выберите турнир для отображения подробной информации.'|localize"></i>
+	</div>
+	<div class="span1">
+	</div>
+</div>	
+
+<br>
+
+<div class="row-fluid" ng-hide="page.tournamentTable.selectedItems.length==0">
+	 <tabset>
+		<tab heading="{{'Информация'|localize}}">
+			<div class="span6">
+				<p><span class="spnTitle" ng-bind="'Название'|localize"></span>: <span ng-bind="page.tournamentTable.selectedItems[0].name"></span></p>
+				<p><span class="spnTitle" ng-bind="('Город'|localize) + ', ' + ('Страна'|localize)"></span>: <span ng-bind="page.tournamentTable.selectedItems[0].location.cityName + ', ' + page.tournamentTable.selectedItems[0].location.country.name"></span></p>
+				<p ng-hide="page.tournamentTable.selectedItems[0].organizer.info==''"><span class="spnTitle" ng-bind="'Организатор'|localize"></span>: <span ng-bind="page.tournamentTable.selectedItems[0].organizer.info"></span></p>
+				<p ng-hide="page.tournamentTable.selectedItems[0].infoUrl==''"><span class="spnTitle" ng-bind="'Информация о турнире'|localize" ></span>: <a ng-href="{{'http://' + page.tournamentTable.selectedItems[0].infoUrl}}" target="_blank" ng-bind="'Перейти'|localize"></a></p>
+			</div>
+			<div class="span6">
+				<p><span class="spnTitle" ng-bind="'Дата начала / окончания'|localize"></span>: <span ng-bind="(page.tournamentTable.selectedItems[0].startDate|convertCacheDate:('d MMMM y'|localize)) + ' / ' + (page.tournamentTable.selectedItems[0].endDate|convertCacheDate:('d MMMM y'|localize))"></span></p>
+				<p><span class="spnTitle" ng-bind="'Ранг'|localize"></span>: <span ng-bind="page.tournamentTable.selectedItems[0].rank.name"></span></p>
+				<p><span class="spnTitle" ng-bind="'Статус'|localize"></span>: <span ng-bind="page.tournamentTable.selectedItems[0].status.name"></span></p>
+				<p><span class="spnTitle" ng-bind="'Всего групп'|localize"></span>: <span ng-bind="page.tournamentTable.selectedItems[0].competitionsCount"></span></p>
+				<p><span class="spnTitle" ng-bind="'Всего участников / уникальных'|localize"></span>: <span ng-bind="page.tournamentTable.selectedItems[0].participantsCount+' / '+page.tournamentTable.selectedItems[0].participantsUniqueCount"></span></p>
+			</div>
+		</tab>
+		<tab heading="{{('Группы'|localize) + ' (' + page.competitionTable.itemsTotal + ')'}}"  active="pageStore.tournaments.tabCompetitionsActive">
+			<p style="padding-bottom: 10px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Для просмотра списка участников группы нажмите на ссылку (») в колонке "Участники".'|localize}}</p>
+
+			<div class="row-fluid">
+				<button type="button" style="margin-bottom: 15px; font-size: 1em; margin-right: 10px;" class="btn btn-mini btnRadio" ng-model="pageStore.tournaments.gridCompetitions.filterDate" btn-radio="''" ng-bind="'Все дни'|localize" ng-click="page.competitionTable.changeDateFilter('')"></button>
+				<div class="btn-group" style="margin-bottom: 15px;">
+					<button type="button" class="btn btn-mini btnRadio" ng-repeat="cdate in page.competitionTable.dates" ng-model="pageStore.tournaments.gridCompetitions.filterDate" btn-radio="cdate" ng-bind="cdate|convertCacheDate:('d MMMM'|localize)" ng-click="page.competitionTable.changeDateFilter(cdate)"></button>
+				</div>
+				<!--
+				<span class="pull-right" ng-bind="('Total prticipants count'|localize) + ' - ' + page.tournamentTable.participantsInfo.total + ', ' + ('unique'|localize) + ' - ' + page.tournamentTable.participantsInfo.unique"></span>
+				-->
+				<div class="btn-group pull-right" style="margin-bottom: 15px;">
+					<button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.tournaments.gridCompetitions.tableShortView" btn-radio="true" ng-bind="'Коротко'|localize" title="{{'Скрывать дополнительные столбцы'|localize}}" ng-click="page.competitionTable.setHiddenCoulumns(true)"></button>
+					<button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.tournaments.gridCompetitions.tableShortView" btn-radio="false" ng-bind="'Детально'|localize" title="{{'Отображать дополнительные столбцы'|localize}}" ng-click="page.competitionTable.setHiddenCoulumns(false)"></button>
+				</div>  
+			</div>
+			<div class="row-fluid">
+				<stcgrid
+			    	grid="pageStore.tournaments.gridCompetitions"
+				    table-class="table table-bordered table-hover"
+				    caption="''"
+				    columns="page.competitionTable.columns"
+				    items="page.competitionTable.items"
+				    properties="page.competitionTable.properties"
+				    update-items="page.competitionTable.loadItems(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText)"
+
+				    page-curr="page.competitionTable.pageCurr"
+				    page-total="page.competitionTable.pageTotal"
+				    page-size="page.competitionTable.pageSize"
+				    navigator-visible="true"
+				    search-hide="true"
+
+				    selectable="true"
+				    selected-items="page.competitionTable.selectedItems"
+				    multi-select-mode="page.competitionTable.multiSelectMode"
+					on-select="page.competitionTable.onSelect(item)"
+					on-select-cell="page.competitionTable.onSelectCell(item, property)"
+
+		 			action-column-visible="!menu.readOnlyMode && menu.admin"
+				    action-column-icon="'fa fa-plus-circle'"
+				    action-column-title="'Добавить'|localize"
+				    action-column-method="page.competitionTable.add()"
+
+				    first-row-action-icon="'fa fa-pencil'"
+				    first-row-action-title="'Изменить'|localize"
+				    first-row-action-method="page.competitionTable.edit(item)"
+			    	
+			    	second-row-action-icon="'fa fa-times'"
+				    second-row-action-title="'Удалить'|localize"
+				    second-row-action-method="page.competitionTable.remove(item)"
+				    	
+					forcibly-update="page.competitionTable.forciblyUpdate"
+				/>
+			</div>			
+		</tab>	
+	</tabset>
+</div>
+<br>
+
+
+<stcalert data="page.alert"/>
+
+
+<div class="modal" id="ConfirmDialog" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" ng-show="confirmDialog.visible">
+ 	<div class="modal-header">
+ 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="confirmDialog.visible=false">×</button>
+		<h4 id="ConfirmLabel" ng-bind="confirmDialog.tournament.name"></h4>
+	</div>
+	<div class="modal-body">
+		<p ng-bind="'Выберите организатора для доступа к регистрации:'|localize"></p>
+		<p ng-repeat="rec in confirmDialog.recorders">
+			<!--{{$index + 1}}. <a ng-href="{{'#/recorder/' + rec.hash + '/tournament/' + confirmDialog.tournament.id + '/registration'}}" target="reg" ng-bind="rec.name"></a> <span ng-bind="'(код - ' + rec.hash + ')'"></span>-->
+			{{$index + 1}}. <a ng-href="{{confirmDialog.getLink(rec)}}" target="reg" ng-bind="rec.name"></a> <span ng-bind="'(код - ' + rec.hash + ')'"></span>
+		</p>
+		
+		<div class="row-fluid">
+			<div class="span6">
+		    	<div class="controls">
+		        	<select class="span12" ng-model="confirmDialog.defaultType" style="margin:0;">
+		        		<option value="">{{('-- Вкладка по умолчанию --'|localize)}}</option>
+		        		<option value="udsr">{{'СТСР'|localize}}</option>
+		        		<option value="wdsf">WDSF</option>
+		        		<option value="other">{{'Другие'|localize}}</option>
+		   			</select>
+		    	</div>
+			</div>
+			<div class="span6">
+				<div class="controls">
+		        	<select class="span12" ng-model="confirmDialog.defaultLang" style="margin:0;" ng-options="lang.code as lang.name for lang in menu.languages|orderBy:'code':true">
+		   				<option value="">{{('-- Язык по умолчанию --'|localize)}}</option>
+		   			</select>
+		    	</div>
+	    	</div>
+    	</div>
+	</div>
+</div>

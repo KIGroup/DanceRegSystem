@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.AgeCategory">
+<Super>BaseInit</Super>
+<TimeCreated>63290,2843.723685</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>AgeCategory</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    w !,"=== "_..#PClassName_" ==="
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LText", "LTextXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LTextValue", "LTextValueXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data."_..#PClassName, "ClassXData")
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<AgeCategory><Name>7108024F-7A08-4FC5-9F76-18220887A7C8</Name><Code>Взрослые</Code><MinAge>19</MinAge><MaxAge>99</MaxAge></AgeCategory>
+<AgeCategory><Name>C4515A91-C0ED-4F68-809A-9F1443AF3544</Name><Code>Молодежь</Code><MinAge>16</MinAge><MaxAge>18</MaxAge></AgeCategory>
+<AgeCategory><Name>C61DD6D3-C807-4FCF-AD63-5311E5C0BF43</Name><Code>Д-1</Code><MinAge>0</MinAge><MaxAge>9</MaxAge></AgeCategory>
+<AgeCategory><Name>BF7A236F-F28E-42D3-A07F-6D931E48A9B9</Name><Code>Д-2</Code><MinAge>10</MinAge><MaxAge>11</MaxAge></AgeCategory>
+<AgeCategory><Name>8665AFB4-90A3-4E87-BEF6-970D483CB82A</Name><Code>Ю-1</Code><MinAge>12</MinAge><MaxAge>13</MaxAge></AgeCategory>
+<AgeCategory><Name>9E0168F9-6003-4EC7-AEB9-1CE52D688A35</Name><Code>Ю-2</Code><MinAge>14</MinAge><MaxAge>15</MaxAge></AgeCategory>
+<AgeCategory><Name>2FC2E1E9-8A68-40A1-B943-E940125F6182</Name><Code>С-1</Code><MinAge>35</MinAge><MaxAge>99</MaxAge></AgeCategory>
+<AgeCategory><Name>4AEB5D76-2F80-438F-A396-E16CE297BB1E</Name><Code>С-2</Code><MinAge>45</MinAge><MaxAge>99</MaxAge></AgeCategory>
+<AgeCategory><Name>2FC2E1E9-8A68-40A1-B943-E9401SENIOR3</Name><Code>С-3</Code><MinAge>55</MinAge><MaxAge>65</MaxAge></AgeCategory>
+<AgeCategory><Name>4AEB5D76-2F80-438F-A396-E16CESENIOR4</Name><Code>С-4</Code><MinAge>65</MinAge><MaxAge>99</MaxAge></AgeCategory>
+<AgeCategory><Name>FB43C02D-9611-458E-BB8F-C9D6F563F308</Name><Code>Взрослые+Молодежь</Code><MinAge>16</MinAge><MaxAge>99</MaxAge></AgeCategory>
+<AgeCategory><Name>A5976D0D-5049-4259-A85D-CFABAC535A61</Name><Code>Ю-2+Ю-1</Code><MinAge>12</MinAge><MaxAge>15</MaxAge></AgeCategory>
+<AgeCategory><Name>C3E499CF-300B-4D19-B5CF-2B497D8D2899</Name><Code>Д-2+Д-1</Code><MinAge>0</MinAge><MaxAge>11</MaxAge></AgeCategory>
+<AgeCategory><Name>F65CDBD0-3C7B-42B8-B9A7-585453E71075</Name><Code>Сеньоры 2+1</Code><MinAge>35</MinAge><MaxAge>99</MaxAge></AgeCategory>
+<AgeCategory><Name>516F4FAC-F1CE-43A2-A97B-B40BBE203EEE</Name><Code>Н-6</Code><MinAge>0</MinAge><MaxAge>10</MaxAge></AgeCategory>
+<AgeCategory><Name>C66DB327-9BB0-4E6C-BDF5-C0CD67DDBA62</Name><Code>Н-5</Code><MinAge>0</MinAge><MaxAge>10</MaxAge></AgeCategory>
+<AgeCategory><Name>A5763E6E-6A29-4AF2-9D11-859008C62F21</Name><Code>Н-4</Code><MinAge>0</MinAge><MaxAge>10</MaxAge></AgeCategory>
+<AgeCategory><Name>DE134BC9-A46D-40D3-BCDC-0D4236EFD95F</Name><Code>Н-3</Code><MinAge>0</MinAge><MaxAge>10</MaxAge></AgeCategory>
+
+<AgeCategory><Name>97CB1BCC-F46C-466F-AFA7-EAEDD151B5A2</Name><Code>Н-2</Code><MinAge>0</MinAge><MaxAge>10</MaxAge></AgeCategory>
+<AgeCategory><Name>74B08EC4-8F76-4AA7-BD27-234B25006831</Name><Code>Молодежь до 21</Code><MinAge>16</MinAge><MaxAge>20</MaxAge></AgeCategory>
+<AgeCategory><Name>EADFE474-71FE-43B1-9F39-2304E2DFB45D</Name><Code>WDSF Open</Code><MinAge>16</MinAge><MaxAge>100</MaxAge></AgeCategory>
+<AgeCategory><Name>8E10AE1D-579E-40ED-8525-76A6E51C9592</Name><Code>Молодежь-2</Code><MinAge>19</MinAge><MaxAge>20</MaxAge></AgeCategory>
+<AgeCategory><Name>9D098846-6FA2-4CEA-9ABD-A2CCF30DFA13</Name><Code>Н5+Н6</Code><MinAge>0</MinAge><MaxAge>10</MaxAge></AgeCategory>
+</ClassXData>
+]]></Data>
+</XData>
+
+<XData name="LTextXData">
+<Data><![CDATA[
+<LTextXData>
+<LText><Guid>7108024F-7A08-4FC5-9F76-18220887A7C8</Guid></LText>
+<LText><Guid>C4515A91-C0ED-4F68-809A-9F1443AF3544</Guid></LText>
+<LText><Guid>C61DD6D3-C807-4FCF-AD63-5311E5C0BF43</Guid></LText>
+<LText><Guid>BF7A236F-F28E-42D3-A07F-6D931E48A9B9</Guid></LText>
+<LText><Guid>8665AFB4-90A3-4E87-BEF6-970D483CB82A</Guid></LText>
+<LText><Guid>9E0168F9-6003-4EC7-AEB9-1CE52D688A35</Guid></LText>
+<LText><Guid>2FC2E1E9-8A68-40A1-B943-E940125F6182</Guid></LText>
+<LText><Guid>4AEB5D76-2F80-438F-A396-E16CE297BB1E</Guid></LText>
+<LText><Guid>2FC2E1E9-8A68-40A1-B943-E9401SENIOR3</Guid></LText>
+<LText><Guid>4AEB5D76-2F80-438F-A396-E16CESENIOR4</Guid></LText>
+<LText><Guid>FB43C02D-9611-458E-BB8F-C9D6F563F308</Guid></LText>
+<LText><Guid>A5976D0D-5049-4259-A85D-CFABAC535A61</Guid></LText>
+<LText><Guid>C3E499CF-300B-4D19-B5CF-2B497D8D2899</Guid></LText>
+<LText><Guid>F65CDBD0-3C7B-42B8-B9A7-585453E71075</Guid></LText>
+<LText><Guid>516F4FAC-F1CE-43A2-A97B-B40BBE203EEE</Guid></LText>
+<LText><Guid>C66DB327-9BB0-4E6C-BDF5-C0CD67DDBA62</Guid></LText>
+<LText><Guid>A5763E6E-6A29-4AF2-9D11-859008C62F21</Guid></LText>
+<LText><Guid>DE134BC9-A46D-40D3-BCDC-0D4236EFD95F</Guid></LText>
+
+<LText><Guid>97CB1BCC-F46C-466F-AFA7-EAEDD151B5A2</Guid></LText>
+<LText><Guid>74B08EC4-8F76-4AA7-BD27-234B25006831</Guid></LText>
+<LText><Guid>EADFE474-71FE-43B1-9F39-2304E2DFB45D</Guid></LText>
+<LText><Guid>8E10AE1D-579E-40ED-8525-76A6E51C9592</Guid></LText>
+<LText><Guid>9D098846-6FA2-4CEA-9ABD-A2CCF30DFA13</Guid></LText>
+</LTextXData>
+]]></Data>
+</XData>
+
+<XData name="LTextValueXData">
+<Data><![CDATA[
+<LTextValueXData>
+<LTextValue><LText>7108024F-7A08-4FC5-9F76-18220887A7C8</LText><Value>Взрослые</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>7108024F-7A08-4FC5-9F76-18220887A7C8</LText><Value>Adults</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>7108024F-7A08-4FC5-9F76-18220887A7C8</LText><Value>Adults</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>C4515A91-C0ED-4F68-809A-9F1443AF3544</LText><Value>Молодежь</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>C4515A91-C0ED-4F68-809A-9F1443AF3544</LText><Value>Youth</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>C4515A91-C0ED-4F68-809A-9F1443AF3544</LText><Value>Youth</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>C61DD6D3-C807-4FCF-AD63-5311E5C0BF43</LText><Value>Дети-1</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>C61DD6D3-C807-4FCF-AD63-5311E5C0BF43</LText><Value>Juvenile-1</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>C61DD6D3-C807-4FCF-AD63-5311E5C0BF43</LText><Value>Juvenile-1</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>BF7A236F-F28E-42D3-A07F-6D931E48A9B9</LText><Value>Дети-2</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>BF7A236F-F28E-42D3-A07F-6D931E48A9B9</LText><Value>Juvenile-2</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>BF7A236F-F28E-42D3-A07F-6D931E48A9B9</LText><Value>Juvenile-2</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>8665AFB4-90A3-4E87-BEF6-970D483CB82A</LText><Value>Юниоры-1</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>8665AFB4-90A3-4E87-BEF6-970D483CB82A</LText><Value>Junior-1</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>8665AFB4-90A3-4E87-BEF6-970D483CB82A</LText><Value>Junior-1</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>9E0168F9-6003-4EC7-AEB9-1CE52D688A35</LText><Value>Юниоры-2</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>9E0168F9-6003-4EC7-AEB9-1CE52D688A35</LText><Value>Junior-2</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>9E0168F9-6003-4EC7-AEB9-1CE52D688A35</LText><Value>Junior-2</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>2FC2E1E9-8A68-40A1-B943-E940125F6182</LText><Value>Сеньоры-1</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>2FC2E1E9-8A68-40A1-B943-E940125F6182</LText><Value>Senior-1</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>2FC2E1E9-8A68-40A1-B943-E940125F6182</LText><Value>Senior-1</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>4AEB5D76-2F80-438F-A396-E16CE297BB1E</LText><Value>Сеньоры-2</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>4AEB5D76-2F80-438F-A396-E16CE297BB1E</LText><Value>Senior-2</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>4AEB5D76-2F80-438F-A396-E16CE297BB1E</LText><Value>Senior-2</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>2FC2E1E9-8A68-40A1-B943-E9401SENIOR3</LText><Value>Сеньоры-3</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>2FC2E1E9-8A68-40A1-B943-E9401SENIOR3</LText><Value>Senior-3</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>2FC2E1E9-8A68-40A1-B943-E9401SENIOR3</LText><Value>Senior-3</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>4AEB5D76-2F80-438F-A396-E16CESENIOR4</LText><Value>Сеньоры-4</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>4AEB5D76-2F80-438F-A396-E16CESENIOR4</LText><Value>Senior-4</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>4AEB5D76-2F80-438F-A396-E16CESENIOR4</LText><Value>Senior-4</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>FB43C02D-9611-458E-BB8F-C9D6F563F308</LText><Value>Взрослые + Молодежь</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>FB43C02D-9611-458E-BB8F-C9D6F563F308</LText><Value>Adults + Youth</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>FB43C02D-9611-458E-BB8F-C9D6F563F308</LText><Value>Adults + Youth</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>A5976D0D-5049-4259-A85D-CFABAC535A61</LText><Value>Юниоры-2 + Юниоры-1</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>A5976D0D-5049-4259-A85D-CFABAC535A61</LText><Value>Junior-2 + Junior-1</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>A5976D0D-5049-4259-A85D-CFABAC535A61</LText><Value>Junior-2 + Junior-1</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>C3E499CF-300B-4D19-B5CF-2B497D8D2899</LText><Value>Дети-2 + Дети-1</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>C3E499CF-300B-4D19-B5CF-2B497D8D2899</LText><Value>Juvenile-2 + Juvenile-1</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>C3E499CF-300B-4D19-B5CF-2B497D8D2899</LText><Value>Juvenile-2 + Juvenile-1</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>F65CDBD0-3C7B-42B8-B9A7-585453E71075</LText><Value>Сеньоры-2 + Сеньоры-1</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>F65CDBD0-3C7B-42B8-B9A7-585453E71075</LText><Value>Senior-2 + Senior-1</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>F65CDBD0-3C7B-42B8-B9A7-585453E71075</LText><Value>Senior-2 + Senior-1</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>516F4FAC-F1CE-43A2-A97B-B40BBE203EEE</LText><Value>Начинающие-6</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>516F4FAC-F1CE-43A2-A97B-B40BBE203EEE</LText><Value>Beginners-6</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>516F4FAC-F1CE-43A2-A97B-B40BBE203EEE</LText><Value>Beginners-6</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>C66DB327-9BB0-4E6C-BDF5-C0CD67DDBA62</LText><Value>Начинающие-5</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>C66DB327-9BB0-4E6C-BDF5-C0CD67DDBA62</LText><Value>Beginners-5</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>C66DB327-9BB0-4E6C-BDF5-C0CD67DDBA62</LText><Value>Beginners-5</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>A5763E6E-6A29-4AF2-9D11-859008C62F21</LText><Value>Начинающие-4</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>A5763E6E-6A29-4AF2-9D11-859008C62F21</LText><Value>Beginners-4</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>A5763E6E-6A29-4AF2-9D11-859008C62F21</LText><Value>Beginners-4</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>DE134BC9-A46D-40D3-BCDC-0D4236EFD95F</LText><Value>Начинающие-3</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>DE134BC9-A46D-40D3-BCDC-0D4236EFD95F</LText><Value>Beginners-3</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>DE134BC9-A46D-40D3-BCDC-0D4236EFD95F</LText><Value>Beginners-3</Value><Lang>de</Lang></LTextValue>
+
+
+
+
+
+
+<LTextValue><LText>97CB1BCC-F46C-466F-AFA7-EAEDD151B5A2</LText><Value>Начинающие-2</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>97CB1BCC-F46C-466F-AFA7-EAEDD151B5A2</LText><Value>Beginners-2</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>97CB1BCC-F46C-466F-AFA7-EAEDD151B5A2</LText><Value>Beginners-2</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>74B08EC4-8F76-4AA7-BD27-234B25006831</LText><Value>Молодежь до 21</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>74B08EC4-8F76-4AA7-BD27-234B25006831</LText><Value>Youth under 21</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>74B08EC4-8F76-4AA7-BD27-234B25006831</LText><Value>Youth under 21</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>EADFE474-71FE-43B1-9F39-2304E2DFB45D</LText><Value>WDSF Open</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>EADFE474-71FE-43B1-9F39-2304E2DFB45D</LText><Value>WDSF Open</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>EADFE474-71FE-43B1-9F39-2304E2DFB45D</LText><Value>WDSF Open</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>8E10AE1D-579E-40ED-8525-76A6E51C9592</LText><Value>Молодежь-2</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>8E10AE1D-579E-40ED-8525-76A6E51C9592</LText><Value>Youth-2</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>8E10AE1D-579E-40ED-8525-76A6E51C9592</LText><Value>Youth-2</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>9D098846-6FA2-4CEA-9ABD-A2CCF30DFA13</LText><Value>Начинающие 5+6</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>9D098846-6FA2-4CEA-9ABD-A2CCF30DFA13</LText><Value>Beginners 5+6</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>9D098846-6FA2-4CEA-9ABD-A2CCF30DFA13</LText><Value>Beginners 5+6</Value><Lang>de</Lang></LTextValue>
+
+</LTextValueXData>
+]]></Data>
+</XData>
+
+<Method name="CopyValueFromEngToAnother">
+<Description>
+w ##class(Dance.Utils.Init.AgeCategory).CopyValueFromEngToAnother("it")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>newLang:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+    
+        &sql(DECLARE CCur CURSOR FOR
+             SELECT %NOLOCK ID
+             FROM Dance_Data.AgeCategory)
+        
+        &sql(OPEN CCur)
+        for{
+            &sql(FETCH CCur INTO :id) 
+            quit:(SQLCODE '= 0)
+            
+            set obj = ##class(Dance.Data.AgeCategory).%OpenId(id)
+            $$$THROWONERROR(st, obj.Name.SetValueByLang(obj.Name.GetValueByLang("en"), newLang))
+        }
+        
+        &sql(CLOSE CCur)
+    
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

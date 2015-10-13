@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.ParticipantSingleOther">
+<Description>
+Участник - другой - одиночка</Description>
+<Super>Participant</Super>
+<TimeCreated>63440,4374.537436</TimeCreated>
+
+<Property name="AthleteKey">
+<Description>
+Хеш полей для определения уникальности</Description>
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Gender">
+<Description>
+Пол</Description>
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",Male,Female"/>
+</Property>
+
+<Property name="LastName">
+<Description>
+Фамилия</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="FirstName">
+<Description>
+Имя</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="DOB">
+<Description>
+ДР</Description>
+<Type>%Date</Type>
+<Required>1</Required>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Index name="AthleteKeyIdx">
+<Properties>AthleteKey</Properties>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Конвертация в JSON</Description>
+<FormalSpec>params:%ZEN.proxyObject</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##super(params)
+	set proxy.athlete = ##class(%ZEN.proxyObject).%New()
+	set proxy.athlete.key = ..AthleteKey
+	set proxy.athlete.gender = ..Gender
+	set proxy.athlete.lastName = ..LastName
+	set proxy.athlete.firstName = ..FirstName
+	set proxy.athlete.dob = $ZD(..DOB, 3)
+	
+	set proxy.athlete.otherInfo = ##class(%ZEN.proxyObject).%New()
+	set proxy.athlete.otherInfo.country = ..Country.ConvertToProxyObject()
+	set proxy.athlete.otherInfo.city = ..City
+	set proxy.athlete.otherInfo.club = ..Club
+	set proxy.athlete.otherInfo.mainTrainer = ..MainTrainer
+	set proxy.athlete.otherInfo.otherTrainers = ..OtherTrainers
+	
+	set proxy.athlete.competitionsCount = "-"
+	set proxy.athlete.paymentsCount = "-"
+	if $ISOBJECT(proxy.competition.tournament){
+		if (params.loadPrtObjCompetitionsCount){
+			set proxy.athlete.competitionsCount = ..PrtObjCompetitionsCount
+		}
+		
+		if (params.loadPrtObjPaymentsCount){
+			set proxy.athlete.paymentsCount = ..PrtObjPaymentsCount	
+		}
+	}
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Create">
+<Description>
+Создание записи</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[recorder:Recorder,competition:Competition,athlete:%ZEN.proxyObject,&st]]></FormalSpec>
+<ReturnType>Participant</ReturnType>
+<Implementation><![CDATA[
+	set obj = ..%New()
+	
+	// Свойства класса
+	set obj.Gender = athlete.gender
+	set obj.LastName = athlete.lastName
+	set obj.FirstName = athlete.firstName
+	set obj.DOB = $ZDH(athlete.dob, 3)
+	set obj.AthleteKey = athlete.key
+	
+	// Свойства базового класса
+	set obj.Recorder = recorder
+	set obj.Competition = competition 
+	set obj.Tournament = competition.Tournament 
+	
+	set obj.FullName = ##class(Dance.Data.Localization.LText).Create("")
+	set st = ..UpdateParticipantFullName(obj)
+	quit:$$$ISERR(st) $$$NULLOREF
+	
+	set obj.Country = ##class(Country).%OpenId(athlete.otherInfo.country.id)	
+	set obj.City = athlete.otherInfo.city
+	set obj.Club = athlete.otherInfo.club
+	set obj.MainTrainer = athlete.otherInfo.mainTrainer
+	set obj.OtherTrainers = athlete.otherInfo.otherTrainers
+	
+	set obj.PrtObjKey = ..%ClassName(1)_"@"_athlete.key
+	
+	set st = obj.%Save()
+	
+	quit obj
+]]></Implementation>
+</Method>
+
+<Method name="GetByFilter">
+<Description>
+Найти по фильтру</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>filter:%RegisteredObject</FormalSpec>
+<ReturnType>ParticipantCoupleOther</ReturnType>
+<Implementation><![CDATA[
+	set id = ""
+
+	&sql(SELECT ID INTO :id
+		 FROM Dance_Data.ParticipantSingleOther 
+		 WHERE Competition = :filter.competitionId 
+		 	   AND
+		 	   %UPPER(LastName) = %UPPER(TRIM(BOTH ' ' FROM :filter.lastName)) 
+		 	   AND 
+		 	   %UPPER(FirstName) = %UPPER(TRIM(BOTH ' ' FROM :filter.firstName))
+		 	   AND
+		 	   (
+		 	   	 %UPPER(Club) = %UPPER(TRIM(BOTH ' ' FROM :filter.otherInfo.club)) 
+		 	   	 OR 
+		 	     %UPPER(City) = %UPPER(TRIM(BOTH ' ' FROM :filter.otherInfo.city))
+		 	   ))
+		 	   
+	quit ..%OpenId(id)
+]]></Implementation>
+</Method>
+
+<Method name="GetFullNameForLang">
+<Description>
+Имя участника для выбранного языка</Description>
+<FormalSpec>lang:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit ..LastName_" "_..FirstName
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>ParticipantSingleOtherDefaultData</DefaultData>
+<Data name="ParticipantSingleOtherDefaultData">
+<Subscript>"ParticipantSingleOther"</Subscript>
+<Value name="1">
+<Value>AthleteKey</Value>
+</Value>
+<Value name="2">
+<Value>Gender</Value>
+</Value>
+<Value name="3">
+<Value>LastName</Value>
+</Value>
+<Value name="4">
+<Value>FirstName</Value>
+</Value>
+<Value name="5">
+<Value>DOB</Value>
+</Value>
+<Value name="6">
+<Value>Country</Value>
+</Value>
+<Value name="7">
+<Value>City</Value>
+</Value>
+<Value name="8">
+<Value>Club</Value>
+</Value>
+<Value name="9">
+<Value>MainTrainer</Value>
+</Value>
+<Value name="10">
+<Value>OtherTrainers</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

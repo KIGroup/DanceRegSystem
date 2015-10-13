@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Import.TournamentDanceplat">
+<Description>
+Imported tournaments from other system</Description>
+<Super>%Persistent,%XML.Adaptor,Dance.Data.Import.ImportDanceplat</Super>
+<TimeCreated>63438,6988.71093</TimeCreated>
+
+<Parameter name="CorrelateName">
+<Type>%String</Type>
+<Default>item</Default>
+</Parameter>
+
+<Property name="IdExternal">
+<Type>%String</Type>
+<Parameter name="XMLNAME" value="TournirId"/>
+</Property>
+
+<Property name="IdInternal">
+<Type>%String</Type>
+<Parameter name="XMLNAME" value="TournirIdExt"/>
+</Property>
+
+<Property name="TDate">
+<Type>%String</Type>
+</Property>
+
+<Property name="Hash">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="Name">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="3000"/>
+</Property>
+
+<Property name="IsRemoved">
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Index name="IdInternalIdx">
+<Properties>IdInternal</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Convert "Tournament imported" object to %ZEN.proxyObject (for JSON)</Description>
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	
+	set proxy.id = ..%Id()
+	set proxy.idInternal = ..IdInternal
+	set proxy.idExternal = ..IdExternal
+	set proxy.hash = ..Hash
+	set proxy.startDate = ..TDate
+	set proxy.name = ..Name
+	
+	set proxy.info = ##class(%ZEN.proxyObject).%New()
+	set proxy.info.isExisted = ##class(Dance.Data.Tournament).IdInternalIdxExists(..IdInternal)
+	set proxy.info.isRemoved = ..IsRemoved 
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Save">
+<Description>
+Create or update tournament</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>newObj:Dance.Data.Import.TournamentDanceplat</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set newObj.Name = $REPLACE($REPLACE(newObj.Name, $c(10), ""), "&quot;", """")
+	
+	if (..IdInternalIdxExists(newObj.IdInternal) = 0){
+		quit newObj.%Save()
+	}
+
+	set oldObj = ..IdInternalIdxOpen(newObj.IdInternal)
+	set oldObj.IdExternal = newObj.IdExternal
+	set oldObj.Name = newObj.Name
+	set oldObj.Hash = newObj.Hash
+	set oldObj.TDate = newObj.TDate
+		
+	quit oldObj.%Save()
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+Example:
+
+<item>
+	<TournirId>23</TournirId>
+	<TournirIdExt>13453</TournirIdExt>
+	<TDate>2011-02-23</TDate>
+	<Name>
+	<![CDATA[
+	Кубок Оникса
+	 ]]]]><![CDATA[>
+	</Name>
+	<Hash>630169wefwe30747e</Hash>
+</item>
+*/
+]]></Content>
+</UDLText>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data8B13.TournamentD117BD</DataLocation>
+<DefaultData>TournamentDanceplatDefaultData</DefaultData>
+<IdLocation>^Dance.Data8B13.TournamentD117BD</IdLocation>
+<IndexLocation>^Dance.Data8B13.TournamentD117BI</IndexLocation>
+<StreamLocation>^Dance.Data8B13.TournamentD117BS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="TournamentDanceplatDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>IdExternal</Value>
+</Value>
+<Value name="3">
+<Value>IdInternal</Value>
+</Value>
+<Value name="4">
+<Value>TDate</Value>
+</Value>
+<Value name="5">
+<Value>Hash</Value>
+</Value>
+<Value name="6">
+<Value>Name</Value>
+</Value>
+<Value name="7">
+<Value>IsRemoved</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

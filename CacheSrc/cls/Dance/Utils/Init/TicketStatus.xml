@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.TicketStatus">
+<Abstract>1</Abstract>
+<Super>BaseInit</Super>
+<TimeCreated>63461,82932.419797</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>TicketStatus</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    w !,"=== "_..#PClassName_" ==="
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LText", "LTextXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LTextValue", "LTextValueXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data."_..#PClassName, "ClassXData")
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<TicketStatus><Name>FB9892FB-8E28-FFFF-AAAA-0ADF2410FA10</Name><Code>Paid</Code></TicketStatus>
+<TicketStatus><Name>CB4CD67E-510E-FFFF-AAAA-09DA04C4EA9F</Name><Code>Canceled</Code></TicketStatus>
+<TicketStatus><Name>CB4CD67E-510E-FFFF-CCCC-09DA04C4EA9F</Name><Code>Not paid</Code></TicketStatus>
+</ClassXData>
+]]></Data>
+</XData>
+
+<XData name="LTextXData">
+<Data><![CDATA[
+<LTextOrderStatusXData>
+<LText><Guid>FB9892FB-8E28-FFFF-AAAA-0ADF2410FA10</Guid></LText>
+<LText><Guid>CB4CD67E-510E-FFFF-AAAA-09DA04C4EA9F</Guid></LText>
+<LText><Guid>CB4CD67E-510E-FFFF-CCCC-09DA04C4EA9F</Guid></LText>
+</LTextOrderStatusXData>
+]]></Data>
+</XData>
+
+<XData name="LTextValueXData">
+<Data><![CDATA[
+<LTextValueXData>
+<LTextValue><LText>FB9892FB-8E28-FFFF-AAAA-0ADF2410FA10</LText><Value>Оплачено</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>FB9892FB-8E28-FFFF-AAAA-0ADF2410FA10</LText><Value>Paid</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>FB9892FB-8E28-FFFF-AAAA-0ADF2410FA10</LText><Value>Bezahlt</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>CB4CD67E-510E-FFFF-AAAA-09DA04C4EA9F</LText><Value>Отменено</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>CB4CD67E-510E-FFFF-AAAA-09DA04C4EA9F</LText><Value>Canceled</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>CB4CD67E-510E-FFFF-AAAA-09DA04C4EA9F</LText><Value>Storniert</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>CB4CD67E-510E-FFFF-CCCC-09DA04C4EA9F</LText><Value>Не оплачено</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>CB4CD67E-510E-FFFF-CCCC-09DA04C4EA9F</LText><Value>Not paid</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>CB4CD67E-510E-FFFF-CCCC-09DA04C4EA9F</LText><Value>Nicht bezahlt</Value><Lang>de</Lang></LTextValue>
+
+</LTextValueXData>
+]]></Data>
+</XData>
+
+<Method name="SetItalian">
+<Description>
+w ##class(Dance.Utils.Init.TicketStatus).SetItalian()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.TicketStatus).CodeIdxOpen("Paid").Name.SetValueByLang("Pagato", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.TicketStatus).CodeIdxOpen("Canceled").Name.SetValueByLang("Annullato", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.TicketStatus).CodeIdxOpen("Not paid").Name.SetValueByLang("Non pagato", "it"))
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Utils.Init.TicketStatusD</DataLocation>
+<DefaultData>TicketStatusDefaultData</DefaultData>
+<IdLocation>^Dance.Utils.Init.TicketStatusD</IdLocation>
+<IndexLocation>^Dance.Utils.Init.TicketStatusI</IndexLocation>
+<StreamLocation>^Dance.Utils.Init.TicketStatusS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="TicketStatusDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

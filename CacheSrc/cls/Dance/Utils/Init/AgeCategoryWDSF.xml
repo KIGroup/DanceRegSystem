@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.AgeCategoryWDSF">
+<Super>Dance.Utils.Init.BaseInit</Super>
+<TimeCreated>63326,801.864996</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>AgeCategoryWDSF</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	w !,"=== "_..#PClassName_" ==="
+	do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LText", "LTextXData")
+	do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LTextValue", "LTextValueXData")
+	do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data."_..#PClassName, "ClassXData")
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<AgeCategoryWDSF><Name>AC78655F-E34A-42B4-9463-FE4C065101EB</Name><Code>JUVENILE</Code><MinDOB>2003-01-01</MinDOB><MaxDOB>2013-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>3980BFFE-B754-4828-B81E-474D2B4F4CD6</Name><Code>JUVENILE I</Code><MinDOB>2005-01-01</MinDOB><MaxDOB>2013-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>5A5F1553-9D0C-4B98-B33C-75260058FE46</Name><Code>JUVENILE II</Code><MinDOB>2003-01-01</MinDOB><MaxDOB>2004-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>6CF99660-FEDD-4E5F-9147-3EA535710D5D</Name><Code>JUNIOR</Code><MinDOB>1999-01-01</MinDOB><MaxDOB>2002-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>9A2DE0BE-2840-4B84-B371-C761DEA24BE7</Name><Code>JUNIOR I</Code><MinDOB>2001-01-01</MinDOB><MaxDOB>2002-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>929406BE-9D92-4CDF-8E0F-11077A3BB383</Name><Code>JUNIOR II</Code><MinDOB>1999-01-01</MinDOB><MaxDOB>2000-12-31</MaxDOB></AgeCategoryWDSF>
+
+<AgeCategoryWDSF><Name>42728ED7-6931-4C43-84DC-AE119C47C1C4</Name><Code>UNDER 21</Code><MinDOB>1994-01-01</MinDOB><MaxDOB>1998-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>F3921B49-ACDC-479A-94BF-01D26D8C78CA</Name><Code>YOUTH</Code><MinDOB>1996-01-01</MinDOB><MaxDOB>1998-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>3EA0145C-3BD6-4357-BC07-FC18393908B0</Name><Code>RISING STAR</Code><MinDOB>1980-01-01</MinDOB><MaxDOB>1995-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>01546FB5-2647-4254-AD9F-21A69EA7C560</Name><Code>ADULT</Code><MinDOB>1985-01-01</MinDOB><MaxDOB>1995-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>8F4C52B3-0364-47F9-A422-84796B7F9134</Name><Code>SENIOR I A</Code><MinDOB>1980-01-01</MinDOB><MaxDOB>1984-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>39DB07A3-20C8-4A02-B147-9CDC91589785</Name><Code>SENIOR</Code><MinDOB>1914-01-01</MinDOB><MaxDOB>1979-12-31</MaxDOB></AgeCategoryWDSF>
+
+<AgeCategoryWDSF><Name>A9659206-E635-4100-A22A-53BDD073AB69</Name><Code>SENIOR I</Code><MinDOB>1970-01-01</MinDOB><MaxDOB>1979-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>5F75A63D-BED8-43C4-B71B-686F4BA9AEFE</Name><Code>SENIOR I B</Code><MinDOB>1975-01-01</MinDOB><MaxDOB>1979-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>B93BE8FF-A46A-4FD4-8FCC-B5D1F8471A73</Name><Code>OVER 35</Code><MinDOB>1914-01-01</MinDOB><MaxDOB>1978-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>E877ECDC-6BA5-4B1D-ADDD-DB0A2E3DE043</Name><Code>SENIOR II A</Code><MinDOB>1970-01-01</MinDOB><MaxDOB>1974-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>8CAB0A6E-D449-4256-91C7-299700668247</Name><Code>SENIOR II</Code><MinDOB>1960-01-01</MinDOB><MaxDOB>1969-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>12733E58-5D1B-4BD9-B5D7-3A48B18CD79E</Name><Code>SENIOR II B</Code><MinDOB>1965-01-01</MinDOB><MaxDOB>1969-12-31</MaxDOB></AgeCategoryWDSF>
+
+<AgeCategoryWDSF><Name>BEABA77F-25FE-40B1-AF38-99A21742796B</Name><Code>SENIOR III A</Code><MinDOB>1960-01-01</MinDOB><MaxDOB>1964-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>B9FEFCE8-C1C8-4D03-87C4-064528ADFAB3</Name><Code>SENIOR III</Code><MinDOB>1949-01-01</MinDOB><MaxDOB>1959-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>2FA9ACF8-6856-4F5D-9B31-25B783A58D9A</Name><Code>SENIOR III B</Code><MinDOB>1955-01-01</MinDOB><MaxDOB>1959-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>98ECAAB7-5D5B-4D8D-8DF0-406314A40718</Name><Code>SENIOR IV A</Code><MinDOB>1950-01-01</MinDOB><MaxDOB>1954-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>A9F4401A-0FEF-49CB-A5E2-EC890FF94498</Name><Code>SENIOR IV B</Code><MinDOB>1914-01-01</MinDOB><MaxDOB>1949-12-31</MaxDOB></AgeCategoryWDSF>
+<AgeCategoryWDSF><Name>9291570C-BEDF-4609-9558-20374729852B</Name><Code>SENIOR IV</Code><MinDOB>1914-01-01</MinDOB><MaxDOB>1949-12-31</MaxDOB></AgeCategoryWDSF>
+
+</ClassXData>
+]]></Data>
+</XData>
+
+<XData name="LTextXData">
+<Data><![CDATA[
+<LTextXData>
+<LText><Guid>AC78655F-E34A-42B4-9463-FE4C065101EB</Guid></LText>
+<LText><Guid>3980BFFE-B754-4828-B81E-474D2B4F4CD6</Guid></LText>
+<LText><Guid>5A5F1553-9D0C-4B98-B33C-75260058FE46</Guid></LText>
+<LText><Guid>6CF99660-FEDD-4E5F-9147-3EA535710D5D</Guid></LText>
+<LText><Guid>9A2DE0BE-2840-4B84-B371-C761DEA24BE7</Guid></LText>
+<LText><Guid>929406BE-9D92-4CDF-8E0F-11077A3BB383</Guid></LText>
+
+<LText><Guid>42728ED7-6931-4C43-84DC-AE119C47C1C4</Guid></LText>
+<LText><Guid>F3921B49-ACDC-479A-94BF-01D26D8C78CA</Guid></LText>
+<LText><Guid>3EA0145C-3BD6-4357-BC07-FC18393908B0</Guid></LText>
+<LText><Guid>01546FB5-2647-4254-AD9F-21A69EA7C560</Guid></LText>
+<LText><Guid>8F4C52B3-0364-47F9-A422-84796B7F9134</Guid></LText>
+<LText><Guid>39DB07A3-20C8-4A02-B147-9CDC91589785</Guid></LText>
+
+<LText><Guid>A9659206-E635-4100-A22A-53BDD073AB69</Guid></LText>
+<LText><Guid>5F75A63D-BED8-43C4-B71B-686F4BA9AEFE</Guid></LText>
+<LText><Guid>B93BE8FF-A46A-4FD4-8FCC-B5D1F8471A73</Guid></LText>
+<LText><Guid>E877ECDC-6BA5-4B1D-ADDD-DB0A2E3DE043</Guid></LText>
+<LText><Guid>8CAB0A6E-D449-4256-91C7-299700668247</Guid></LText>
+<LText><Guid>12733E58-5D1B-4BD9-B5D7-3A48B18CD79E</Guid></LText>
+
+<LText><Guid>BEABA77F-25FE-40B1-AF38-99A21742796B</Guid></LText>
+<LText><Guid>B9FEFCE8-C1C8-4D03-87C4-064528ADFAB3</Guid></LText>
+<LText><Guid>2FA9ACF8-6856-4F5D-9B31-25B783A58D9A</Guid></LText>
+<LText><Guid>98ECAAB7-5D5B-4D8D-8DF0-406314A40718</Guid></LText>
+<LText><Guid>A9F4401A-0FEF-49CB-A5E2-EC890FF94498</Guid></LText>
+<LText><Guid>9291570C-BEDF-4609-9558-20374729852B</Guid></LText>
+</LTextXData>
+]]></Data>
+</XData>
+
+<XData name="LTextValueXData">
+<Data><![CDATA[
+<LTextValueXData>
+<LTextValue><LText>AC78655F-E34A-42B4-9463-FE4C065101EB</LText><Value>JUVENILE</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>AC78655F-E34A-42B4-9463-FE4C065101EB</LText><Value>JUVENILE</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>3980BFFE-B754-4828-B81E-474D2B4F4CD6</LText><Value>JUVENILE I</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>3980BFFE-B754-4828-B81E-474D2B4F4CD6</LText><Value>JUVENILE I</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>5A5F1553-9D0C-4B98-B33C-75260058FE46</LText><Value>JUVENILE II</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>5A5F1553-9D0C-4B98-B33C-75260058FE46</LText><Value>JUVENILE II</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>6CF99660-FEDD-4E5F-9147-3EA535710D5D</LText><Value>JUNIOR</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>6CF99660-FEDD-4E5F-9147-3EA535710D5D</LText><Value>JUNIOR</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>9A2DE0BE-2840-4B84-B371-C761DEA24BE7</LText><Value>JUNIOR I</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>9A2DE0BE-2840-4B84-B371-C761DEA24BE7</LText><Value>JUNIOR I</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>929406BE-9D92-4CDF-8E0F-11077A3BB383</LText><Value>JUNIOR II</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>929406BE-9D92-4CDF-8E0F-11077A3BB383</LText><Value>JUNIOR II</Value><Lang>en</Lang></LTextValue>
+
+
+<LTextValue><LText>42728ED7-6931-4C43-84DC-AE119C47C1C4</LText><Value>UNDER 21</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>42728ED7-6931-4C43-84DC-AE119C47C1C4</LText><Value>UNDER 21</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>F3921B49-ACDC-479A-94BF-01D26D8C78CA</LText><Value>YOUTH</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>F3921B49-ACDC-479A-94BF-01D26D8C78CA</LText><Value>YOUTH</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>3EA0145C-3BD6-4357-BC07-FC18393908B0</LText><Value>RISING STAR</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>3EA0145C-3BD6-4357-BC07-FC18393908B0</LText><Value>RISING STAR</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>01546FB5-2647-4254-AD9F-21A69EA7C560</LText><Value>ADULT</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>01546FB5-2647-4254-AD9F-21A69EA7C560</LText><Value>ADULT</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>8F4C52B3-0364-47F9-A422-84796B7F9134</LText><Value>SENIOR I A</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>8F4C52B3-0364-47F9-A422-84796B7F9134</LText><Value>SENIOR I A</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>39DB07A3-20C8-4A02-B147-9CDC91589785</LText><Value>SENIOR</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>39DB07A3-20C8-4A02-B147-9CDC91589785</LText><Value>SENIOR</Value><Lang>en</Lang></LTextValue>
+
+
+<LTextValue><LText>A9659206-E635-4100-A22A-53BDD073AB69</LText><Value>SENIOR I</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>A9659206-E635-4100-A22A-53BDD073AB69</LText><Value>SENIOR I</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>5F75A63D-BED8-43C4-B71B-686F4BA9AEFE</LText><Value>SENIOR I B</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>5F75A63D-BED8-43C4-B71B-686F4BA9AEFE</LText><Value>SENIOR I B</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>B93BE8FF-A46A-4FD4-8FCC-B5D1F8471A73</LText><Value>OVER 35</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>B93BE8FF-A46A-4FD4-8FCC-B5D1F8471A73</LText><Value>OVER 35</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>E877ECDC-6BA5-4B1D-ADDD-DB0A2E3DE043</LText><Value>SENIOR II A</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>E877ECDC-6BA5-4B1D-ADDD-DB0A2E3DE043</LText><Value>SENIOR II A</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>8CAB0A6E-D449-4256-91C7-299700668247</LText><Value>SENIOR II</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>8CAB0A6E-D449-4256-91C7-299700668247</LText><Value>SENIOR II</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>12733E58-5D1B-4BD9-B5D7-3A48B18CD79E</LText><Value>SENIOR II B</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>12733E58-5D1B-4BD9-B5D7-3A48B18CD79E</LText><Value>SENIOR II B</Value><Lang>en</Lang></LTextValue>
+
+
+
+<LTextValue><LText>BEABA77F-25FE-40B1-AF38-99A21742796B</LText><Value>SENIOR III A</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>BEABA77F-25FE-40B1-AF38-99A21742796B</LText><Value>SENIOR III A</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>B9FEFCE8-C1C8-4D03-87C4-064528ADFAB3</LText><Value>SENIOR III</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>B9FEFCE8-C1C8-4D03-87C4-064528ADFAB3</LText><Value>SENIOR III</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>2FA9ACF8-6856-4F5D-9B31-25B783A58D9A</LText><Value>SENIOR III B</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>2FA9ACF8-6856-4F5D-9B31-25B783A58D9A</LText><Value>SENIOR III B</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>98ECAAB7-5D5B-4D8D-8DF0-406314A40718</LText><Value>SENIOR IV A</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>98ECAAB7-5D5B-4D8D-8DF0-406314A40718</LText><Value>SENIOR IV A</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>A9F4401A-0FEF-49CB-A5E2-EC890FF94498</LText><Value>SENIOR IV B</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>A9F4401A-0FEF-49CB-A5E2-EC890FF94498</LText><Value>SENIOR IV B</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>9291570C-BEDF-4609-9558-20374729852B</LText><Value>SENIOR IV</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>9291570C-BEDF-4609-9558-20374729852B</LText><Value>SENIOR IV</Value><Lang>en</Lang></LTextValue>
+
+</LTextValueXData>
+]]></Data>
+</XData>
+</Class>
+</Export>

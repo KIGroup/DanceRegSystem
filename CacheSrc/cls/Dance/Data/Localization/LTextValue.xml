@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Localization.LTextValue">
+<Description>
+Localized string value - Lang for LText object</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeCreated>63273,7179.147829</TimeCreated>
+
+<Property name="LText">
+<Description>
+Intermediate object, get or set text for current language</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Cardinality>one</Cardinality>
+<Inverse>Values</Inverse>
+<Relationship>1</Relationship>
+<Required>1</Required>
+<Parameter name="XMLPROJECTION" value="XELEMENT"/>
+<Parameter name="XMLREFERENCE" value="ID"/>
+</Property>
+
+<Property name="Lang">
+<Description>
+Language</Description>
+<Type>Dance.Data.Localization.LTextLanguage</Type>
+<Cardinality>one</Cardinality>
+<Inverse>Values</Inverse>
+<Relationship>1</Relationship>
+<Required>1</Required>
+<Parameter name="XMLPROJECTION" value="XELEMENT"/>
+<Parameter name="XMLREFERENCE" value="ID"/>
+</Property>
+
+<Property name="Value">
+<Type>%Text</Type>
+<Parameter name="MAXLEN" value="3000"/>
+</Property>
+
+<Index name="KeyIdx">
+<Properties>LText,Lang</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Index name="LangIdx">
+<Properties>Lang</Properties>
+</Index>
+
+<Index name="ValueIdx">
+<Properties>Value</Properties>
+</Index>
+
+<Method name="GetValue">
+<Description>
+Get value for language=lang for object with id=ltxt</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ltxt,lang</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    // ISO 639-1
+    set lang = $e(lang, 1, 2)
+    
+    set id = $O(^Dance.Data.LocaD180.LTextValueI("KeyIdx", ltxt, lang, ""))
+    if (id = ""){
+        // Ну если нет значения для такого языка для текстового поля, то скорее всего это для нового языка, поэтому вернем для английского
+        set id = $O(^Dance.Data.LocaD180.LTextValueI("KeyIdx", ltxt, "en", ""))
+        quit:(id="") "No value for language - "_lang_" (ISO 639-1)"
+    }   
+    
+    quit $LISTGET(^Dance.Data.LocaD180.LTextValueD(id), 4)
+]]></Implementation>
+</Method>
+
+<Method name="SetValue">
+<Description>
+Set value for language=lang for object with id=ltxt</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>value,ltxt,lang</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    &sql(UPDATE Dance_Data_Localization.LTextValue (Value) VALUES (:value) 
+         WHERE LText = :ltxt AND Lang = :lang)
+    
+    if (SQLCODE = 100){
+        set lv = ..%New()
+        set lv.Lang = ##class(LTextLanguage).%OpenId(lang)
+        set lv.LText = ##class(LText).%OpenId(ltxt)
+        set lv.Value = value
+        set sc = lv.%Save()
+        
+        if $$$ISERR(sc){
+            set st = ##class(Dance.Utils.Msg).GetErrorStatus("error_SaveLocalization", "| "_sc)
+        }
+    }
+    elseif (SQLCODE '= 0) {
+        set st = ##class(Dance.Utils.Msg).GetErrorStatus("error_SaveLocalization", "| SQLCODE="_SQLCODE)
+    }
+
+    if $$$ISERR(st) {
+        do ##class(Dance.Utils.Journal).Create("Log", "Localization.LTextValue. SetValue", "st="_$SYSTEM.Status.GetErrorText(st))
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="Delete">
+<Description>
+Delete all values for all languages for object LText</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ltxt</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    &sql(DELETE FROM Dance_Data_Localization.LTextValue WHERE LText = :ltxt)
+    if (SQLCODE '= 0) && (SQLCODE '= 100) quit ##class(Dance.Utils.Msg).GetErrorStatus("error_DeleteLocalization", " | SQLCODE="_SQLCODE)
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.LocaD180.LTextValueD</DataLocation>
+<DefaultData>LTextValueDefaultData</DefaultData>
+<IdLocation>^Dance.Data.LocaD180.LTextValueD</IdLocation>
+<IndexLocation>^Dance.Data.LocaD180.LTextValueI</IndexLocation>
+<StreamLocation>^Dance.Data.LocaD180.LTextValueS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="LTextValueDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>LText</Value>
+</Value>
+<Value name="3">
+<Value>Lang</Value>
+</Value>
+<Value name="4">
+<Value>Value</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

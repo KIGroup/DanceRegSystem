@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.CompetitionRank">
+<Super>Dance.Utils.Init.BaseInit</Super>
+<TimeCreated>63302,35939.161877</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>CompetitionRank</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	w !,"=== "_..#PClassName_" ==="
+	do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LText", "LTextXData")
+	do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LTextValue", "LTextValueXData")
+	do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data."_..#PClassName, "ClassXData")
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<CompetitionRank><Name>43489903-6ADC-433D-ADCD-C97AE981A297</Name><Code>РС</Code></CompetitionRank>
+<CompetitionRank><Name>FC862F5E-5274-4DD2-8D3A-EEB677902963</Name><Code>МС</Code></CompetitionRank>
+</ClassXData>
+]]></Data>
+</XData>
+
+<XData name="LTextXData">
+<Data><![CDATA[
+<LTextXData>
+<LText><Guid>0384C95C-341F-4E7C-80DF-21B76DF50A37</Guid></LText>
+<LText><Guid>43489903-6ADC-433D-ADCD-C97AE981A297</Guid></LText>
+<LText><Guid>FC862F5E-5274-4DD2-8D3A-EEB677902963</Guid></LText>
+</LTextXData>
+]]></Data>
+</XData>
+
+<XData name="LTextValueXData">
+<Data><![CDATA[
+<LTextValueXData>
+<LTextValue><LText>43489903-6ADC-433D-ADCD-C97AE981A297</LText><Value>Российский</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>43489903-6ADC-433D-ADCD-C97AE981A297</LText><Value>Russian</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>FC862F5E-5274-4DD2-8D3A-EEB677902963</LText><Value>Международный</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>FC862F5E-5274-4DD2-8D3A-EEB677902963</LText><Value>International</Value><Lang>en</Lang></LTextValue>
+</LTextValueXData>
+]]></Data>
+</XData>
+</Class>
+</Export>

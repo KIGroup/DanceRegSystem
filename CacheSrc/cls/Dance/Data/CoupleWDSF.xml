@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.CoupleWDSF">
+<Super>Couple</Super>
+<TimeCreated>63436,60745.081748</TimeCreated>
+
+<Property name="WDSFId">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="CStatus">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="AgeCategory">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Updated">
+<Type>%TimeStamp</Type>
+<Required>1</Required>
+</Property>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##super()
+    set proxy.type = "WDSF"
+    set proxy.otherInfo = ##class(%ZEN.proxyObject).%New()
+        
+    if (##class(MatchingCoupleUDSRWDSF).WDSFIdxExists(..%Id())){
+        set coupleUDSR = ##class(MatchingCoupleUDSRWDSF).WDSFIdxOpen(..%Id()).UDSR
+        set proxy.idUDSR = coupleUDSR.%Id()
+        set proxy.man.idUDSR = coupleUDSR.Man.%Id()
+        set proxy.man.numberUDSR = coupleUDSR.Man.Number
+        set proxy.woman.idUDSR = coupleUDSR.Woman.%Id()
+        set proxy.woman.numberUDSR = coupleUDSR.Woman.Number
+        
+        if $ISOBJECT(coupleUDSR.Man.LAClass){
+            set proxy.man.laClass = coupleUDSR.Man.LAClass.ConvertToProxyObject()
+        }
+        if $ISOBJECT(coupleUDSR.Man.STClass){
+            set proxy.man.stClass = coupleUDSR.Man.STClass.ConvertToProxyObject()
+        }
+        if $ISOBJECT(coupleUDSR.Woman.LAClass){
+            set proxy.woman.laClass = coupleUDSR.Woman.LAClass.ConvertToProxyObject()
+        }
+        if $ISOBJECT(coupleUDSR.Woman.STClass){
+            set proxy.woman.stClass = coupleUDSR.Woman.STClass.ConvertToProxyObject()
+        }
+        
+    }
+    
+
+    set proxy.otherInfo.country = ..Man.Country.ConvertToProxyObject()
+    set proxy.otherInfo.ageCategory = ..AgeCategory
+    set proxy.otherInfo.status = ..CStatus
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="GetByNumbers">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[manNumber:%String,womanNumber:%String,&st]]></FormalSpec>
+<ReturnType>Couple</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    #dim obj As CoupleWDSF = ""
+    
+    set (coupleId, SQLCODE) = ""
+    &sql(SELECT %NOLOCK ID INTO :coupleId FROM Dance_Data.CoupleWDSF WHERE Man->Number = :manNumber AND Woman->Number = :womanNumber)
+    if (SQLCODE = 0){
+        set obj = ..%OpenId(coupleId,,.st)
+        set diffDays = $SYSTEM.SQL.DATEDIFF("dd", $P(obj.Updated, " ", 1), $P($ZDT($ZTS, 3), " ", 1))
+        if (diffDays <= 1){
+            return obj
+        }   
+    }
+    
+    
+    set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCoupleByNumbers(manNumber, womanNumber, .st)
+    if $$$ISERR(st) {
+        if $ISOBJECT(wdsfData) && (wdsfData.message '= ""){
+            set st = $system.Status.Error(5001, wdsfData.message)
+        }
+        
+        quit obj
+    }
+    
+    quit:$$$ISERR(st) obj
+    
+    if '$ISOBJECT(obj){
+        set obj = ..%New()
+    }
+    
+    set obj.WDSFId = wdsfData.id
+    set obj.Man = ##class(PersonWDSF).SaveFromWDSF(wdsfData.man, .st)   
+    quit:$$$ISERR(st) obj
+    
+    set obj.Woman = ##class(PersonWDSF).SaveFromWDSF(wdsfData.woman, .st)   
+    quit:$$$ISERR(st) obj
+    
+    set obj.AgeCategory = wdsfData.ageGroup
+    set obj.CStatus = wdsfData.status
+    
+    set obj.Updated = $ZDT($ZTS, 3)
+    set st = obj.%Save()
+    
+    quit obj
+]]></Implementation>
+</Method>
+
+<Method name="GetByFilter">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>filter:%RegisteredObject</FormalSpec>
+<ReturnType>PersonWDSF</ReturnType>
+<Implementation><![CDATA[
+    set man = ##class(PersonWDSF).GetByFilter(filter.man)
+    quit:'$ISOBJECT(man) $$$NULLOREF
+    
+    set woman = ##class(PersonWDSF).GetByFilter(filter.woman)
+    quit:'$ISOBJECT(woman) $$$NULLOREF
+
+    quit ..GetByNumbers(man.Number, woman.Number, .st)
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>CoupleWDSFDefaultData</DefaultData>
+<Data name="CoupleWDSFDefaultData">
+<Subscript>"CoupleWDSF"</Subscript>
+<Value name="1">
+<Value>WDSFId</Value>
+</Value>
+<Value name="2">
+<Value>CStatus</Value>
+</Value>
+<Value name="3">
+<Value>AgeCategory</Value>
+</Value>
+<Value name="4">
+<Value>Updated</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

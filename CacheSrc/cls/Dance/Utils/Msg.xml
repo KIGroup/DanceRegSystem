@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Msg">
+<Abstract>1</Abstract>
+<TimeCreated>63289,61228.306082</TimeCreated>
+
+<Method name="GetErrorStatus">
+<Description>
+Get error status by key</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>errorKey:%String,additionalMsg:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $system.Status.Error(5001, ..GetMsg(errorKey)_" "_additionalMsg)
+]]></Implementation>
+</Method>
+
+<Method name="GetMsg">
+<Description>
+Get localized message</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>key:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit $GET(^Dance.Utils.Msg(key, $$$SessionLanguage), "No msg for key = "_key)
+]]></Implementation>
+</Method>
+
+<Method name="SetMsg">
+<Description>
+Set localized message</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>lang:%String,key:%String,value:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set ^Dance.Utils.Msg(key, lang) = value
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="SetMsgForLangs">
+<Description>
+Set localized messages for langs</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>key:%String,ruValue:%String,enValue:%String,deValue:%String,itValue:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    do ..SetMsg("ru", key, ruValue)
+    
+    if (enValue = "") set enValue = key
+    do ..SetMsg("en", key, enValue)
+    
+    if (deValue = "") set deValue = key
+    do ..SetMsg("de", key, deValue)
+    
+    if (itValue = "") set itValue = key
+    do ..SetMsg("it", key, itValue)
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="Init">
+<Description>
+do ##class(Dance.Utils.Msg).Init()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    
+    do ..SetMsgForLangs("error_CoupleDifferentClubs",
+                        "Партнер и партнерша должны быть из одного клуба!",
+                        "Male partner and female partner must be from the same club!",
+                        "Partner und die partner müssen aus dem gleichen club sein!",
+                        "Partner e il partner deve essere dello stesso club!")
+                        
+                        
+    
+    do ..SetMsgForLangs("error_RegistrationClosed",
+                        "Добавление участника невозможно. Регистрация в турнир уже завершена.",
+                        "Adding a participant impossible. Registration in the tournament has been completed.",
+                        "Hinzufügen ein Teilnehmer nicht möglich. Die Eintragung in das Turnier beendet ist.",
+                        "Aggiunta impossibile un partecipante. L'iscrizione al torneo è stata completata.")
+                        
+    do ..SetMsgForLangs("error_ConflictCompetitionIsFound",
+                        "Обнаружены конфликтные группы.",
+                        "Found conflicting competitions.",
+                        "Gefunden Konfliktparteien.",
+                        "Gruppi in conflitto trovati.")
+
+    do ..SetMsgForLangs("error_ParticipantNotCreated",
+                        "При добавлении участника возникла ошибка.",
+                        "When you add a participant has failed.",
+                        "Beim Hinzufügen Mitglied ist fehlgeschlagen.",
+                        "Quando si aggiunge un membro non è riuscita.")
+
+    do ..SetMsgForLangs("error_FatalError",
+                        "Произошла фатальная ошибка.",
+                        "A fatal error occurred.",
+                        "Ein schwerwiegender Fehler ist aufgetreten.",
+                        "Si è verificato un errore irreversibile.")
+
+    do ..SetMsgForLangs("error_ConnectionWDSFControllerFailed",
+                        "Соединение с WDSF контроллером завершилось ошибкой.",
+                        "Connect with WDSF controller has failed.",
+                        "Kontakt mit WDSF-Controller ist ausgefallen.",
+                        "Connettiti con regolatore WDSF non è riuscita.")
+
+    do ..SetMsgForLangs("error_DancerClassNotFound",
+                        "Класс танцора не найден.",
+                        "Class dancer was not found.",
+                        "Klasse Tänzer wurde nicht gefunden.",
+                        "Class ballerino non è stato trovato.")
+
+    do ..SetMsgForLangs("error_PersonUDSRNotFound",
+                        "Спортсмен СТСР не найден.",
+                        "Athlete UDSR not found.",
+                        "Athlete UDSR nicht gefunden.",
+                        "Atleta UDSR non trovato.")
+
+    do ..SetMsgForLangs("error_CreateLocalization",
+                        "Создание мультиязычного поля невозможно",
+                        "Creating a multilingual field can not be.",
+                        "Creating a multilingual field can not be.",
+                        "Creating a multilingual field can not be.")
+
+    do ..SetMsgForLangs("error_DeleteLocalization",
+                        "Удаление мультиязычного поля невозможно.",
+                        "Deleting a multilingual field impossible.",
+                        "Deleting a multilingual field impossible.",
+                        "Deleting a multilingual field impossible.")
+
+    do ..SetMsgForLangs("error_SaveLocalization",
+                        "Сохранение мультиязычного поля невозможно.",
+                        "Saving multilingual fields impossible.",
+                        "Saving multilingual fields impossible.",
+                        "Saving multilingual fields impossible.")
+                        
+    do ..SetMsgForLangs("error_NoPrivilegeForDelete",
+                        "Нет привилегий для удаления.",
+                        "No privileges for removal.",
+                        "No privileges for removal.",
+                        "No privileges for removal.")
+    
+    do ..SetMsgForLangs("error_NoPrivilegeForUpdate",
+                        "Нет привилегий для обновления.",
+                        "No privileges for the update.",
+                        "No privileges for the update.",
+                        "No privileges for the update.")
+    
+    do ..SetMsgForLangs("error_BadResponseStatus",
+                        "Ошибочный статус ответа сервера.",
+                        "Error status response from the server.",
+                        "Error status response from the server.",
+                        "Error status response from the server.")
+                        
+    
+    do ..SetMsgForLangs("error_TournamentDeactivate",
+                        "Произошла ошибка при удалении турнира.",
+                        "An error occurred while deleting the tournament.",
+                        "An error occurred while deleting the tournament.",
+                        "An error occurred while deleting the tournament.")
+                                            
+    
+    do ..SetMsgForLangs("error_CompetitionDeactivate",
+                        "Произошла ошибка при удалении группы.",
+                        "An error occurred while deleting a competition.",
+                        "An error occurred while deleting a competition.",
+                        "An error occurred while deleting a competition.")
+                        
+    do ..SetMsgForLangs("error_ParticipantDeactivate",
+                        "Произошла ошибка при удалении регистрации.",
+                        "An error occurred while deleting the registration.",
+                        "An error occurred while deleting the registration.",
+                        "An error occurred while deleting the registration.")
+                        
+    do ..SetMsgForLangs("error_TournamentSave",
+                        "Турнир не сохранен.",
+                        "The tournament is not saved.",
+                        "The tournament is not saved.",
+                        "The tournament is not saved.")
+                        
+    do ..SetMsgForLangs("error_CompetitionSave",
+                        "Группа не сохранена.",
+                        "Competition is not saved.",
+                        "Competition is not saved.",
+                        "Competition is not saved.")
+                        
+    do ..SetMsgForLangs("error_FeedBackSave",
+                        "Отзыв не сохранен.",
+                        "Feedback is not saved.",
+                        "Feedback is not saved.",
+                        "Feedback is not saved.")
+
+
+    do ..SetMsgForLangs("error_Recorder_AccessDenied",
+                        "Регистратору запрещен доступ к турниру.",
+                        "Registrar denied access to the tournament.",
+                        "Registrar denied access to the tournament.",
+                        "Registrar denied access to the tournament.")
+                        
+    q $$$OK
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+SaveTournamentError
+
+NoPrivilegeForDelete
+NoPrivilegeForUpdate
+*/
+]]></Content>
+</UDLText>
+</Class>
+</Export>

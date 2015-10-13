@@ -1,0 +1,61 @@
+<div class="row-fluid">
+	<div class="span8 offset2">
+		<div class="accordion">
+			<div class="accordion-group">
+				<div class="accordion-heading">
+					<a class="accordion-toggle" ng-bind="'Форма обратной связи'|localize"></a>
+				</div>
+				<div class="accordion-body">
+					<div class="accordion-inner">
+						<p style="font-style: italic; font-size: 0.9em; text-align: justify;">{{'Нашли ошибку в работе системы? Что-то не нравится? Пожалуйста, напишите нам Ваши замечания и предложения.'|localize}}</p>
+						<form name="form_feedback" ng-submit="page.createFeedBack()" style="margin: 0;">
+							<div class="row-fluid">
+								<div class="span6">
+									<div class="control-group">
+								        <label class="control-label" ng-bind="('Ваше имя'|localize) + ''"></label>
+								        <div class="controls">
+								            <input class="span12" type="text" ng-model="page.fb.author"></input>
+								        </div>
+								    </div>
+								</div>    
+								<div class="span6">
+								    <div class="control-group">
+								        <label class="control-label" ng-bind="('Ваш email'|localize) + ''"></label>
+								        <div class="controls">
+								            <input class="span12" type="email" ng-model="page.fb.email"></input>
+								        </div>
+								    </div>
+								</div>
+							</div>
+							<div class="control-group">
+						        <label class="control-label" ng-bind="('Тема сообщения'|localize) + '*'"></label>
+						        <div class="controls">
+						            <input class="span12" type="text" ng-model="page.fb.subject"  required></input>
+						        </div>
+						    </div>
+						    <div class="control-group">
+						        <label class="control-label" ng-bind="('Сообщение'|localize) + '*'"></label>
+						        <div class="controls">
+						            <textarea class="span12" rows="8" ng-model="page.fb.msg" required></textarea>
+						        </div>
+						    </div>
+						    <div class="control-group">
+						        <div class="controls">
+						            <button type="submit" class="btn btn-small" ng-disabled="form_feedback.$pristine"><i class="fa fa-floppy-o"></i>&nbsp;&nbsp;{{'Отправить'|localize}}</button>
+						            &nbsp;
+						            <button type="button" class="btn btn-small" ng-click="page.clearForm()"><i class="fa fa-eraser"></i>&nbsp;&nbsp;{{'Очистить'|localize}}</button>
+						        </div>
+						    </div>    		    		    
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row-fluid">
+	<div class="span8 offset2">
+		<stcalert data="page.alert"/>
+	</div>
+</div>
+	

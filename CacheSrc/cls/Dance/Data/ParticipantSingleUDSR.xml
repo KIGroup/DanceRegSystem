@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.ParticipantSingleUDSR">
+<Description>
+Участник - СТСР - одиночка</Description>
+<Super>Participant</Super>
+<TimeCreated>63440,4273.857207</TimeCreated>
+
+<Property name="Athlete">
+<Description>
+Спортсмен СТСР</Description>
+<Type>PersonUDSR</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="CmpAtUDSRIdx">
+<Properties>Competition,Athlete</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Конвертация в JSON</Description>
+<FormalSpec>params:%ZEN.proxyObject</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##super(params)
+	set proxy.athlete = ..Athlete.ConvertToProxyObject()
+	
+	set proxy.athlete.competitionsCount = "-"
+	set proxy.athlete.paymentsCount = "-"
+	if $ISOBJECT(proxy.competition.tournament){
+		if (params.loadPrtObjCompetitionsCount){
+			set proxy.athlete.competitionsCount = ..PrtObjCompetitionsCount
+		}
+		
+		if (params.loadPrtObjPaymentsCount){
+			set proxy.athlete.paymentsCount = ..PrtObjPaymentsCount
+		}
+	}
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Create">
+<Description>
+Создание записи</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[recorder:Recorder,competition:Competition,athlete:%ZEN.proxyObject,&st]]></FormalSpec>
+<ReturnType>Participant</ReturnType>
+<Implementation><![CDATA[
+	if ..CmpAtUDSRIdxExists(competition.%Id(), athlete.id) {
+		set obj = ..CmpAtUDSRIdxOpen(competition.%Id(), athlete.id)
+		set obj.IsActive = 1
+		set st = obj.%Save()
+		quit obj
+	}
+
+	set obj = ..%New()
+	
+	// Свойства класса
+	set obj.Athlete = ##class(PersonUDSR).%OpenId(athlete.id)
+	
+	// Свойства базового класса	
+	set obj.Recorder = recorder
+	set obj.Competition = competition 
+	set obj.Tournament = competition.Tournament 
+	
+	set obj.FullName = ##class(Dance.Data.Localization.LText).Create("")
+	set st = ..UpdateParticipantFullName(obj)
+	quit:$$$ISERR(st) $$$NULLOREF
+
+	set obj.Country = obj.Athlete.Country
+	set obj.City = obj.Athlete.City
+	set obj.Club = obj.Athlete.Club
+	set obj.MainTrainer = obj.Athlete.MainTrainer
+	set obj.OtherTrainers = obj.Athlete.OtherTrainers
+	
+	set obj.PrtObjKey = obj.Athlete.%ClassName(1)_"@"_obj.Athlete.%Id()
+	
+	set st = obj.%Save()
+	
+	quit obj
+]]></Implementation>
+</Method>
+
+<Method name="GetFullNameForLang">
+<Description>
+Имя участника для выбранного языка</Description>
+<FormalSpec>lang:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit ..Athlete.LastName.GetValueByLang(lang)_" "_..Athlete.FirstName.GetValueByLang(lang)
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>ParticipantSingleUDSRDefaultData</DefaultData>
+<Data name="ParticipantSingleUDSRDefaultData">
+<Subscript>"ParticipantSingleUDSR"</Subscript>
+<Value name="1">
+<Value>Athlete</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

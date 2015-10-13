@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.DancerClass">
+<Super>BaseInit</Super>
+<TimeCreated>63289,45673.127435</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>DancerClass</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	w !,"=== "_..#PClassName_" ==="
+	do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data."_..#PClassName, "ClassXData")
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+A-5
+B-4
+C-3
+D-2
+E-1
+H-9
+M-7
+S-6
+*/
+]]></Content>
+</UDLText>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<DancerClass><Name>A</Name><Code>5</Code></DancerClass>
+<DancerClass><Name>B</Name><Code>4</Code></DancerClass>
+<DancerClass><Name>C</Name><Code>2</Code></DancerClass>
+<DancerClass><Name>D</Name><Code>3</Code></DancerClass>
+<DancerClass><Name>E</Name><Code>6</Code></DancerClass>
+<DancerClass><Name>H</Name><Code>7</Code></DancerClass>
+<DancerClass><Name>M</Name><Code>8</Code></DancerClass>
+<DancerClass><Name>S</Name><Code>9</Code></DancerClass>
+</ClassXData>
+]]></Data>
+</XData>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Utils.Init.DancerClassD</DataLocation>
+<DefaultData>DancerClassDefaultData</DefaultData>
+<IdLocation>^Dance.Utils.Init.DancerClassD</IdLocation>
+<IndexLocation>^Dance.Utils.Init.DancerClassI</IndexLocation>
+<StreamLocation>^Dance.Utils.Init.DancerClassS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="DancerClassDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

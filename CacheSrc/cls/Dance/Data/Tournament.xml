@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Tournament">
+<Description>
+Tournaments</Description>
+<Super>%Persistent</Super>
+<TimeCreated>63274,63417.76954</TimeCreated>
+
+<Property name="AccessCode">
+<Description>
+Код доступа к турниру</Description>
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="IdInternal">
+<Description>
+Внутренний ИД, связка с данцплатом</Description>
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="IdExternal">
+<Description>
+Внешний ИД, связка с данцплатом</Description>
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Hash">
+<Description>
+Хеш какой-то, связка с данцплатом</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="100"/>
+</Property>
+
+<Property name="Name">
+<Description>
+Короткое имя турнира</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="FullName">
+<Description>
+Полное имя турнира для страницы регистрации </Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Country">
+<Description>
+Страна проведения</Description>
+<Type>Country</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="City">
+<Description>
+Город проведения</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="StartDate">
+<Description>
+Дата начала</Description>
+<Type>%Date</Type>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Property name="EndDate">
+<Description>
+Дата окончания</Description>
+<Type>%Date</Type>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Property name="OrganizerInfo">
+<Description>
+Орагнизатор</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="OrganizerSite">
+<Description>
+Не используется</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="500"/>
+</Property>
+
+<Property name="TRank">
+<Description>
+Ранг турнира</Description>
+<Type>Dance.Data.TournamentRank</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="TStatus">
+<Description>
+Статус турнира</Description>
+<Type>Dance.Data.TournamentStatus</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="CompetitionsCount">
+<Description>
+Количество групп в турнире</Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {CompetitionsCount} = ##class({%%CLASSNAME}).GetCompetitionsCount({%%ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="ParticipantsCountCalc">
+<Description>
+Количество участников в турнире</Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {ParticipantsCountCalc} = ##class({%%CLASSNAME}).GetParticipantsCount({%%ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="ParticipantsUniqueCountCalc">
+<Description>
+Количестов уникальных участников в турнире</Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {ParticipantsUniqueCountCalc} = ##class({%%CLASSNAME}).GetParticipantsUniqueCount({%%ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="ParticipantsCount">
+<Description>
+Количество участников в турнире</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="ParticipantsUniqueCount">
+<Description>
+Количестов уникальных участников в турнире</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="PaymentsCountCalc">
+<Description>
+Количество платежей</Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {PaymentsCountCalc} = ##class({%%CLASSNAME}).GetPaymentsCount({%%ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="PaymentsUniqueCountCalc">
+<Description>
+Количестов платежей от уникальнх участников</Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {PaymentsUniqueCountCalc} = ##class({%%CLASSNAME}).GetPaymentsUniqueCount({%%ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="PaymentsCount">
+<Description>
+Количество платежей</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="PaymentsUniqueCount">
+<Description>
+Количестов платежей от уникальнх участников</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="Competitions">
+<Description>
+Группы</Description>
+<Type>Dance.Data.Competition</Type>
+<Cardinality>many</Cardinality>
+<Inverse>Tournament</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Property name="IsActive">
+<Description>
+Турнир активен? </Description>
+<Type>%Boolean</Type>
+<InitialExpression>1</InitialExpression>
+<Required>1</Required>
+</Property>
+
+<Property name="TabUDSRAllowed">
+<Description>
+Доступна регистрация СТСР</Description>
+<Type>%Boolean</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="TabWDSFAllowed">
+<Description>
+Доступна регистрация WDSF</Description>
+<Type>%Boolean</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="TabOtherAllowed">
+<Description>
+Доступна регистрация другим участникам</Description>
+<Type>%Boolean</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="AnnouncementUrl">
+<Description>
+Не используется</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="500"/>
+</Property>
+
+<Property name="IsContainsSolo">
+<Description>
+Есть ли соло в турнире?</Description>
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="IsContainsLimit">
+<Description>
+Есть ли какие-то ограничения в турнире?</Description>
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="InfoUrl">
+<Description>
+Мультияычная ссылка на инфу о турнире</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="AdditionInfoUrl">
+<Description>
+Мультияычная ссылка на дополнительную инфу о турнире</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Currency">
+<Description>
+Валюта</Description>
+<Type>Currency</Type>
+</Property>
+
+<Index name="IdInternalIdx">
+<Properties>IdInternal</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Index name="IdExternalIdx">
+<Properties>IdExternal</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Index name="IsActiveIdx">
+<Properties>IsActive</Properties>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    
+    set proxy.id = ..%Id()
+    set proxy.idInternal = ..IdInternal
+    set proxy.idExternal = ..IdExternal
+    set proxy.isContainsSolo = ..IsContainsSolo
+    set proxy.isContainsLimit = ..IsContainsLimit
+    set proxy.startDate = $ZDATE(..StartDate, 3)
+    set proxy.endDate = $ZDATE(..EndDate, 3)
+    
+    set proxy.currency = ##class(%ZEN.proxyObject).%New()
+    if $ISOBJECT(..Currency){
+        set proxy.currency.id = ..Currency.%Id()
+    }
+        
+    if (##class(Dance.Data.Tournament).CheckUpdatePrivilege() = $$$OK){
+        set proxy.hash = ..Hash
+        set proxy.prtsUrl = ##class(Dance.Web.ReportTournamentParticipants).GetReportLink(..%Id())
+        set proxy.payersUrl = ##class(Dance.Web.ReportTournamentPayers).GetReportLink(..%Id())
+    }
+    
+    if (params.loadName){   
+        set proxy.name = ..Name.Value
+    }
+    
+    if (params.loadFullName){
+        set proxy.fullName = ..FullName.Value
+    }
+    
+    if (params.loadStatus){
+        set proxy.status = ..TStatus.ConvertToProxyObject()
+    }
+    
+    if (params.loadRank){
+        set proxy.rank = ..TRank.ConvertToProxyObject()
+    }
+    
+    if (params.loadCompetitionsCount){
+        set proxy.competitionsCount = ..CompetitionsCount
+    }
+    
+    //if (params.loadParticipantsCount){
+        set proxy.participantsCount = ..ParticipantsCount
+    //}
+
+    //if (params.loadParticipantsUniqueCount){
+        set proxy.participantsUniqueCount = ..ParticipantsUniqueCount
+    //}
+    
+    //if (params.loadPaymentsCount){
+        set proxy.paymentsCount = ..PaymentsCount
+        set proxy.paymentsUniqueCount = ..PaymentsUniqueCount
+    //}
+    
+    set proxy.location = ##class(%ZEN.proxyObject).%New()
+    if (params.loadLocation){       
+        set proxy.location.country = ..Country.ConvertToProxyObject()
+        set proxy.location.cityName = ..City.Value
+    }
+    
+    //if (params.loadUrls){       
+        set proxy.infoUrl = ..InfoUrl.Value
+        set proxy.addInfoUrl = ..AdditionInfoUrl.Value
+    //}
+    
+    //set proxy.annUrl = ..AnnouncementUrl
+    
+    set proxy.organizer = ##class(%ZEN.proxyObject).%New()
+    //set proxy.organizer.site = ..OrganizerSite
+    
+    if (params.loadOrganizer){  
+        set proxy.organizer.info = ..OrganizerInfo.Value
+    }
+    
+    set proxy.tabUDSRAllowed = ..TabUDSRAllowed
+    set proxy.tabWDSFAllowed = ..TabWDSFAllowed
+    set proxy.tabOtherAllowed = ..TabOtherAllowed
+    
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Save">
+<Description>
+Create or Update object</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[data:%RegisteredObject,&st]]></FormalSpec>
+<ReturnType>Tournament</ReturnType>
+<Implementation><![CDATA[
+    do ##class(Dance.Utils.Journal).Create("Log", "Data.Tournament.Save",
+    "ID="_data.id_";"_
+    "IdInternal="_data.idInternal_";"_
+    "IdExternal="_data.idExternal_";"_
+    "Hash="_data.hash_";"_
+    "Name="_data.name_";"_
+    "TStatusId="_data.status.id_";"_
+    "TRankId="_data.rank.id_";"_
+    "CountryId="_data.location.country.id_";"_
+    "City="_data.location.cityName_";"_
+    "StartDate="_data.startDate_";"_
+    "endDate="_data.startDate)
+    
+    set trn = ""
+    if (data.id = ""){
+        set trn = ..%New()
+        set trn.AccessCode = $SYSTEM.Util.CreateGUID()
+        set trn.Name = ##class(Dance.Data.Localization.LText).Create(data.name)
+        set trn.FullName = ##class(Dance.Data.Localization.LText).Create(data.fullName)
+        set trn.City = ##class(Dance.Data.Localization.LText).Create(data.location.cityName)
+        set trn.OrganizerInfo = ##class(Dance.Data.Localization.LText).Create(data.organizer.info)
+        set trn.InfoUrl = ##class(Dance.Data.Localization.LText).Create(data.infoUrl)
+        set trn.AdditionInfoUrl = ##class(Dance.Data.Localization.LText).Create(data.addInfoUrl)
+    }
+    else{
+        set trn = ..%OpenId(data.id)
+        set trn.Name.Value = data.name
+        set trn.FullName.Value = data.fullName
+        set trn.City.Value = data.location.cityName
+        set trn.OrganizerInfo.Value = data.organizer.info
+        set trn.InfoUrl.Value = data.infoUrl
+        set trn.AdditionInfoUrl.Value = data.addInfoUrl
+    }
+        
+    set trn.IdInternal = data.idInternal
+    set trn.IdExternal = data.idExternal
+    set trn.Hash = data.hash
+    
+    //set trn.AnnouncementUrl = data.annUrl     
+    //set trn.OrganizerSite = data.organizer.site
+    
+    set trn.Country = ##class(Dance.Data.Country).%OpenId(data.location.country.id)
+    set trn.Currency = ##class(Dance.Data.Currency).%OpenId(data.currency.id)
+    set trn.TStatus = ##class(Dance.Data.TournamentStatus).%OpenId(data.status.id)
+    set trn.TRank = ##class(Dance.Data.TournamentRank).%OpenId(data.rank.id)
+        
+    set trn.StartDate = $ZDATEH(data.startDate, 15)
+    set trn.EndDate = $ZDATEH(data.endDate, 15)
+    
+    set trn.TabUDSRAllowed = data.tabUDSRAllowed = $$$YES
+    set trn.TabWDSFAllowed = data.tabWDSFAllowed = $$$YES
+    set trn.TabOtherAllowed = data.tabOtherAllowed = $$$YES
+                
+    set st = trn.%Save()
+            
+    quit trn
+]]></Implementation>
+</Method>
+
+<Method name="Deactivate">
+<Description>
+Change IsActive property to 0</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ##class(Dance.Utils.Journal).Create("Log", "Data.Tournament.Deactivate", "ID="_id_";")
+    
+    set trn = ..%OpenId(id)
+    set trn.IsActive = 0
+    set trn.IdInternal = trn.IdInternal_";"_id
+    set trn.IdExternal = trn.IdExternal_";"_id
+    set trn.Hash = trn.Hash_";"_id
+    
+    for i=1:1:trn.Competitions.Count(){
+        set st = ##class(Dance.Data.Competition).Deactivate(trn.Competitions.GetAt(i).%Id())
+        if $$$ISERR(st) return st
+    }
+    
+    quit trn.%Save()
+]]></Implementation>
+</Method>
+
+<Method name="CheckDeletePrivilege">
+<Description>
+Check delete privilege</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    SET SQLCODE=""
+    &sql(%CHECKPRIV DELETE ON Dance_Data.Tournament)
+    if (SQLCODE = 100) || ($UserName = "UnknownUser") quit ##class(Dance.Utils.Msg).GetErrorStatus("error_NoPrivilegeForDelete", " USERNAME="_$USERNAME)
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="CheckUpdatePrivilege">
+<Description>
+Check update privilege</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    SET SQLCODE=""
+    &sql(%CHECKPRIV UPDATE ON Dance_Data.Tournament)
+    if (SQLCODE = 100) || ($UserName = "UnknownUser") quit ##class(Dance.Utils.Msg).GetErrorStatus("error_NoPrivilegeForUpdate", " USERNAME="_$USERNAME)
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionsCount">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    set count = 0
+    &sql(SELECT COUNT(ID) INTO :count 
+         FROM Dance_Data.Competition 
+         WHERE Tournament = :tournamentId AND IsActive = 1)
+         
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="GetParticipantsCount">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    set count = 0
+    
+    &sql(SELECT %NOLOCK COUNT(totalP.ID) As TotalCount INTO :count
+            FROM Dance_Data.Participant as totalP 
+            WHERE totalP.Tournament = :tournamentId AND totalP.Competition->IsActive = 1 AND totalP.IsActive = 1)
+    
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="GetParticipantsUniqueCount">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    set count = 0
+    
+    &sql(SELECT COUNT(DISTINCT totalP.FullName->Value) As TotalCount INTO :count
+         FROM Dance_Data.Participant as totalP 
+         WHERE totalP.Tournament = :tournamentId AND totalP.Competition->IsActive = 1 AND totalP.IsActive = 1)
+    
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="GetPaymentsCount">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    set count = 0
+    
+    &sql(SELECT %NOLOCK COUNT (ID) INTO :count
+         FROM Dance_Data.Ticket
+         WHERE Tournament = :tournamentId AND TStatus = 1 AND Participant->IsActive = 1 AND Participant->Competition->IsActive = 1)
+    
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="GetPaymentsUniqueCount">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    set count = 0
+    
+    &sql(SELECT %NOLOCK COUNT (ID) INTO :count
+         FROM (
+            SELECT %NOLOCK ID
+            FROM Dance_Data.Ticket
+            WHERE Tournament = :tournamentId AND TStatus = 1 AND Participant->IsActive = 1 AND Participant->Competition->IsActive = 1
+            GROUP BY Participant->FullName->Value))
+    
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="UpdateIsContainsSolo">
+<Description>
+Обновить свойство: Содержит ли турнир соло группу?</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    &sql(UPDATE %NOLOCK Dance_Data.Tournament
+         SET IsContainsSolo = (SELECT %NOLOCK 
+                               CASE COUNT(ID) WHEN 0 THEN 0 ELSE 1 END 
+                               FROM Dance_Data.Competition 
+                               WHERE Tournament = :tournamentId AND Type = 2 AND IsActive = 1)
+         WHERE ID = :tournamentId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdateIsContainsLimit">
+<Description>
+Обновить свойство: Содержит ли турнир ограничения?</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    &sql(UPDATE %NOLOCK Dance_Data.Tournament
+         SET IsContainsLimit = (SELECT %NOLOCK 
+                               CASE COUNT(ID) WHEN 0 THEN 0 ELSE 1 END 
+                               FROM Dance_Data.Competition 
+                               WHERE Tournament = :tournamentId AND Limit > 0 AND IsActive = 1)
+         WHERE ID = :tournamentId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdateParticipantsCount">
+<Description>
+Обновить свойство: количество слушателей</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set count = ..GetParticipantsCount(tournamentId)
+    &sql(UPDATE %NOLOCK Dance_Data.Tournament
+         SET ParticipantsCount = :count
+         WHERE ID = :tournamentId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdateParticipantsUniqueCount">
+<Description>
+Обновить свойство: количество уникальных слушателей</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set count = ..GetParticipantsUniqueCount(tournamentId)
+    &sql(UPDATE %NOLOCK Dance_Data.Tournament
+         SET ParticipantsUniqueCount = :count
+         WHERE ID = :tournamentId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdatePaymentsCount">
+<Description>
+Обновить свойство: количество платежей</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set count = ..GetPaymentsCount(tournamentId)
+    &sql(UPDATE %NOLOCK Dance_Data.Tournament
+         SET PaymentsCount = :count
+         WHERE ID = :tournamentId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdatePaymentsUniqueCount">
+<Description>
+Обновить свойство: количество уникальных платежей</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set count = ..GetPaymentsUniqueCount(tournamentId)
+    &sql(UPDATE %NOLOCK Dance_Data.Tournament
+         SET PaymentsUniqueCount = :count
+         WHERE ID = :tournamentId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdateAllTournaments">
+<Description>
+Обновить свойства всех турниров w ##class(Dance.Data.Tournament).UpdateAllTournaments()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    &sql(DECLARE TrnCurs CURSOR FOR
+         SELECT %NOLOCK ID
+         FROM Dance_Data.Tournament
+         WHERE IsActive = 1 AND (TStatus->Code='Registration' OR TStatus->Code='RegistrationClosed'))
+    
+    &sql(OPEN TrnCurs)
+    for{
+        &sql(FETCH TrnCurs INTO :id) 
+        quit:(SQLCODE '= 0)
+        
+        do ..UpdateTournament(id)
+    }
+    
+    &sql(CLOSE TrnCurs)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdateTournament">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set status = $$$OK
+    
+    try{       
+        TSTART
+        
+        do ..UpdateIsContainsLimit(trnId)
+        do ..UpdateIsContainsSolo(trnId)
+        do ..UpdateParticipantsCount(trnId)
+        do ..UpdateParticipantsUniqueCount(trnId)
+        do ..UpdatePaymentsCount(trnId)
+        do ..UpdatePaymentsUniqueCount(trnId)
+        $$$THROWONERROR(status, ##class(Competition).UpdateAllByTournament(trnId))
+        $$$THROWONERROR(status, ##class(Participant).UpdateAllByTournament(trnId))
+    
+        TCOMMIT
+    }
+    catch(ex){
+        TROLLBACK
+        
+        set status = ex.AsStatus()
+        do ##class(Dance.Utils.Journal).Create("Log", "Tournmant.UpdateTournament()", "id="_trnId_" error=",$SYSTEM.Status.GetErrorText(status))
+        w status
+    }
+    
+    quit status
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.TournamentD</DataLocation>
+<DefaultData>TournamentDefaultData</DefaultData>
+<IdLocation>^Dance.Data.TournamentD</IdLocation>
+<IndexLocation>^Dance.Data.TournamentI</IndexLocation>
+<StreamLocation>^Dance.Data.TournamentS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="TournamentDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Title</Value>
+</Value>
+<Value name="3">
+<Value>StartDate</Value>
+</Value>
+<Value name="4">
+<Value>EndDate</Value>
+</Value>
+<Value name="5">
+<Value>OrganizerSite</Value>
+</Value>
+<Value name="6">
+<Value>TClass</Value>
+</Value>
+<Value name="7">
+<Value>Name</Value>
+</Value>
+<Value name="8">
+<Value>TRank</Value>
+</Value>
+<Value name="9">
+<Value>TStatus</Value>
+</Value>
+<Value name="10">
+<Value>OrganizerInfo</Value>
+</Value>
+<Value name="11">
+<Value>Country</Value>
+</Value>
+<Value name="12">
+<Value>City</Value>
+</Value>
+<Value name="13">
+<Value>TournirId</Value>
+</Value>
+<Value name="14">
+<Value>TournirIdExt</Value>
+</Value>
+<Value name="15">
+<Value>IdInternal</Value>
+</Value>
+<Value name="16">
+<Value>Hash</Value>
+</Value>
+<Value name="17">
+<Value>IdExternal</Value>
+</Value>
+<Value name="18">
+<Value>IsRemoved</Value>
+</Value>
+<Value name="19">
+<Value>IsActive</Value>
+</Value>
+<Value name="20">
+<Value>FullName</Value>
+</Value>
+<Value name="21">
+<Value>TabUDSRAllowed</Value>
+</Value>
+<Value name="22">
+<Value>TabWDSFAllowed</Value>
+</Value>
+<Value name="23">
+<Value>TabOtherAllowed</Value>
+</Value>
+<Value name="24">
+<Value>AccessCode</Value>
+</Value>
+<Value name="25">
+<Value>AnnouncementUrl</Value>
+</Value>
+<Value name="26">
+<Value>InfoUrl</Value>
+</Value>
+<Value name="27">
+<Value>AdditionInfoUrl</Value>
+</Value>
+<Value name="28">
+<Value>IsContainsSolo</Value>
+</Value>
+<Value name="29">
+<Value>IsContainsLimit</Value>
+</Value>
+<Value name="30">
+<Value>ParticipantsCount</Value>
+</Value>
+<Value name="31">
+<Value>ParticipantsUniqueCount</Value>
+</Value>
+<Value name="32">
+<Value>PaymentsCount</Value>
+</Value>
+<Value name="33">
+<Value>PaymentsUniqueCount</Value>
+</Value>
+<Value name="34">
+<Value>Currency</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

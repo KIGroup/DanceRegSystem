@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Recorder">
+<Super>%Persistent</Super>
+<TimeCreated>63463,64656.996997</TimeCreated>
+
+<Property name="Login">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="LoginHash">
+<Type>%String</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {LoginHash} = ##class({%%CLASSNAME}).GetLoginHash({Login})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+<Parameter name="MAXLEN" value="300"/>
+</Property>
+
+<Property name="Name">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Password">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="OtherInfo">
+<Type>%Text</Type>
+<Parameter name="MAXLEN" value="3000"/>
+</Property>
+
+<Property name="IsInUse">
+<Type>%Boolean</Type>
+<InitialExpression>1</InitialExpression>
+<Required>1</Required>
+</Property>
+
+<Index name="LoginIdx">
+<Properties>Login</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="GetByLoginHash">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>hash:%String</FormalSpec>
+<ReturnType>Recorder</ReturnType>
+<Implementation><![CDATA[
+	set id = ""
+	&sql(SELECT %NOLOCK ID INTO :id FROM Dance_Data.Recorder WHERE LoginHash = :hash)
+	quit ..%OpenId(id)
+]]></Implementation>
+</Method>
+
+<Method name="GetLoginHash">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>login:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $REPLACE($SYSTEM.Encryption.Base64Encode($SYSTEM.Encryption.MD5Hash(login)), "/", "")
+]]></Implementation>
+</Method>
+
+<Method name="GetSystemRecorder">
+<ClassMethod>1</ClassMethod>
+<ReturnType>Recorder</ReturnType>
+<Implementation><![CDATA[
+	set id = ""
+	set login = $GET(^Settings("Dance", "SystemRecorderLogin"))
+	&sql(SELECT ID INTO :id FROM Dance_Data.Recorder WHERE Login = :login)
+	quit ..%OpenId(id)
+]]></Implementation>
+</Method>
+
+<Method name="GetAccessHashForTournament">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trn:Tournament,rec:Recorder</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $REPLACE($REPLACE($SYSTEM.Encryption.Base64Encode($SYSTEM.Encryption.MD5Hash($ZCVT(rec.Login_trn.AccessCode, "L"))), "/", "SLASH"), "=", "EQL")
+]]></Implementation>
+</Method>
+
+<Method name="GetByAccessHashForTournament">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trn:Tournament,hash:%String</FormalSpec>
+<ReturnType>Recorder</ReturnType>
+<Implementation><![CDATA[
+	#dim recorder As Recorder = "" 
+	
+	&sql(DECLARE RecCur CURSOR FOR 
+		 SELECT ID
+		 FROM Dance_Data.Recorder)	
+		
+	&sql(OPEN RecCur)
+	for  
+	{	
+		&sql(FETCH RecCur INTO :id) 
+		quit:(SQLCODE '= 0)
+		
+		set recorder = ##class(Recorder).%OpenId(id)
+		if (hash = ..GetAccessHashForTournament(trn, recorder)){
+			quit
+		}
+		
+		set recorder = $$$NULLOREF	
+	}
+		
+	&sql(CLOSE RecCur)
+	
+	quit recorder
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.RecorderD</DataLocation>
+<DefaultData>RecorderDefaultData</DefaultData>
+<IdLocation>^Dance.Data.RecorderD</IdLocation>
+<IndexLocation>^Dance.Data.RecorderI</IndexLocation>
+<StreamLocation>^Dance.Data.RecorderS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="RecorderDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Login</Value>
+</Value>
+<Value name="3">
+<Value>Password</Value>
+</Value>
+<Value name="4">
+<Value>OtherInfo</Value>
+</Value>
+<Value name="5">
+<Value>IsInUse</Value>
+</Value>
+<Value name="6">
+<Value>Name</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

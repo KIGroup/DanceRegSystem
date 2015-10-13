@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.TournamentRank">
+<Description>
+Rank of the tournament: international, local ...</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeCreated>63303,58579.105456</TimeCreated>
+
+<Property name="Name">
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+<Parameter name="XMLREFERENCE" value="ID"/>
+</Property>
+
+<Property name="ShortName">
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+<Parameter name="XMLREFERENCE" value="ID"/>
+</Property>
+
+<Property name="Code">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="CodeIdx">
+<Properties>Code</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.id = ..%Id()
+	set proxy.code = ..Code
+	set proxy.name = ..Name.Value
+	set proxy.shortName = ..ShortName.Value
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.TournamentRankD</DataLocation>
+<DefaultData>TournamentRankDefaultData</DefaultData>
+<IdLocation>^Dance.Data.TournamentRankD</IdLocation>
+<IndexLocation>^Dance.Data.TournamentRankI</IndexLocation>
+<StreamLocation>^Dance.Data.TournamentRankS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="TournamentRankDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>Code</Value>
+</Value>
+<Value name="4">
+<Value>ShortName</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

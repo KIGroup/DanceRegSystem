@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Country">
+<Description>
+WDSF Countries</Description>
+<Super>%Persistent</Super>
+<TimeCreated>63296,4409.292627</TimeCreated>
+
+<Property name="Name">
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="WDSFName">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="WDSFNameIdx">
+<Properties>WDSFName</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.id = ..%Id()
+	set proxy.name = ..Name.Value	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="GetByName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String</FormalSpec>
+<ReturnType>Country</ReturnType>
+<Implementation><![CDATA[
+	set id = ""
+	
+	&sql(SELECT %NOLOCK country.ID INTO :id
+		 FROM Dance_Data.Country as country INNER JOIN
+		 Dance_Data_Localization.LTextValue as ltval ON country.Name = ltval.LText
+		 WHERE ltval.Value = :name)
+
+	set country = ..%OpenId(id)
+	
+	if '$ISOBJECT(country) set country = ..WDSFNameIdxOpen("--Unknown--")
+	
+	quit country
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.CountryD</DataLocation>
+<DefaultData>CountryDefaultData</DefaultData>
+<IdLocation>^Dance.Data.CountryD</IdLocation>
+<IndexLocation>^Dance.Data.CountryI</IndexLocation>
+<StreamLocation>^Dance.Data.CountryS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="CountryDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>WDSFName</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

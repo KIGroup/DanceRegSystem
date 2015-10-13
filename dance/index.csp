@@ -1,0 +1,231 @@
+<!doctype html>
+
+<html ng-app="mainModule" ng-controller="MainCtrl">
+  <head>
+    <title ng-bind="'Система регистрации'|localize"></title>
+    <link rel="shortcut icon" href="img/icon.png" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Регистрация участников WDSF, СТСР."/>
+    <meta name="description" content="Регистрация участников WDSF, СТСР."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <script language="javascript"  src="js/common.js"></script>
+    <script language="javascript">
+        // На случай технических работ n
+        if (window.location.host != "146.185.160.138:57772" && window.location.host != "localhost:57772"){
+            window.location = "tech.csp";
+        }
+    
+        var langIdx = window.location.href.indexOf('/lang/');
+        if (langIdx > 0)
+        {
+            var lang = window.location.href.substring(langIdx + 6, langIdx + 8);
+            AppSettings.setCookie('lang', lang, null);
+        }
+    
+        
+        // Настройки приложения. Имена веб-приложений для REST, google календарь, язык
+        AppSettings.defaultName = '#($GET(^Settings("Dance", "WebApp")))#';
+        AppSettings.admin = '#($GET(^Settings("Dance", "WebAppAdmin")))#';
+        AppSettings.user = '#($GET(^Settings("Dance", "WebAppUser")))#';
+        AppSettings.lang = AppSettings.getLang();
+    </script>
+  
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+  
+    <script language="javascript"  src="lib/jquery-1.11.0.min.js"></script>
+    <script language="javascript"  src="lib/bootstrap.min.js"></script>
+    <script language="javascript"  src="lib/angular/angular.min.js"></script>
+    <script language="javascript"  src="lib/angular/angular-route.min.js"></script>
+    <script language="javascript"  src="lib/angular/angular-cookies.min.js"></script>
+    
+    <script language="javascript"  src="js/localization/tmhDynamicLocale.js"></script>
+
+    <script language="javascript" src="lib/ui-bootstrap-tpls-0.5.0.js"></script>
+    
+      
+    <script language="javascript">
+    //document.write('<script language="javascript" src="js/localization/locale_en.js"><\/script>'); 
+    //document.write('<script language="javascript" src="js/localization/locale_' + AppSettings.lang + '.js"><\/script>'); 
+   </script>  
+   
+    <script language="javascript"  src="js/app.js"></script>  
+    
+  </head>
+
+  <body id="bodyDiv">
+    <div id="divLoader" style="text-align: center;">
+        <i class="fa fa-spinner fa-spin fa-2x" style="position: absolute; top: 70px; color: rgb(204, 204, 204);"></i>
+    </div>
+    <div id="divContainer" style="display: none;" class="container-fluid">
+        <div class="navbar" ng-init="menu.shortMenu=true">
+          <div class="navbar-inner" ng-hide="menu.shortMenu">
+            <div class="container">  
+              <a class="brand" ng-href="{{menu.pages.tournaments.url}}" ng-bind="'Система регистрации'|localize"></a>
+    
+              <div class="nav-responsive-collapse">
+                <ul class="nav">
+                  <li ng-class="menu.pages.tournaments.id==menu.pages.selected.id ? 'active' : ''"><a ng-href="{{menu.pages.tournaments.url}}" ng-bind="menu.pages.tournaments.name" ng-click="menu.selectMenu(menu.pages.tournaments)"></a></li>
+  
+                  <li ng-show="false" class="dropdown" ng-class="'dropdown ' + (menu.pages.entities.id==menu.pages.selected.parentId ? 'active' : '')">
+                    <a ng-href="{{menu.pages.entities.url}}" ng-click="menu.selectMenu(menu.pages.entities.childrens.ageCategories)"><span ng-bind="menu.pages.entities.name + ' '"></span><b class="caret" style="border-top-color: grey;"></b></a>
+                    <ul class="dropdown-menu">
+                      <li ng-class="{aSelected: menu.pages.entities.childrens.ageCategories.id==menu.pages.selected.id}"><a ng-href="{{menu.pages.entities.childrens.ageCategories.url}}" ng-bind="menu.pages.entities.childrens.ageCategories.name" ng-click="menu.selectMenu(menu.pages.entities.childrens.ageCategories)"></a></li>
+                      <li ng-class="{aSelected: menu.pages.entities.childrens.dancerClasses.id==menu.pages.selected.id}"><a ng-href="{{menu.pages.entities.childrens.dancerClasses.url}}" ng-bind="menu.pages.entities.childrens.dancerClasses.name" ng-click="menu.selectMenu(menu.pages.entities.childrens.dancerClasses)"></a></li>
+                    </ul>
+                  </li>
+  
+                  <li ng-show="!menu.readOnlyMode && menu.admin" class="dropdown" ng-class="'dropdown ' + (menu.pages.import.id==menu.pages.selected.parentId ? 'active' : '')">
+                    <a ng-href="{{menu.pages.import.url}}" ng-click="menu.selectMenu(menu.pages.import.childrens.tournaments)"><span ng-bind="menu.pages.import.name + ' '"></span><b class="caret" style="border-top-color: grey;"></b></a>
+                    <ul class="dropdown-menu">
+                      <li ng-class="{aSelected: menu.pages.import.childrens.tournaments.id==menu.pages.selected.id}" ><a ng-href="{{menu.pages.import.childrens.tournaments.url}}"  ng-bind="menu.pages.import.childrens.tournaments.name"  ng-click="menu.selectMenu(menu.pages.import.childrens.tournaments)"></a></li>
+                      <li ng-class="{aSelected: menu.pages.import.childrens.competitions.id==menu.pages.selected.id}"><a ng-href="{{menu.pages.import.childrens.competitions.url}}" ng-bind="menu.pages.import.childrens.competitions.name" ng-click="menu.selectMenu(menu.pages.import.childrens.competitions)"></a></li>
+                      <li ng-show="false" ng-class="{aSelected: menu.pages.import.childrens.tickets.id==menu.pages.selected.id}"     ><a ng-href="{{menu.pages.import.childrens.tickets.url}}"      ng-bind="menu.pages.import.childrens.tickets.name"      ng-click="menu.selectMenu(menu.pages.import.childrens.tickets)"></a></li>
+                      <li ng-class="{aSelected: menu.pages.import.childrens.persons.id==menu.pages.selected.id}"     ><a ng-href="{{menu.pages.import.childrens.persons.url}}"      ng-bind="menu.pages.import.childrens.persons.name"      ng-click="menu.selectMenu(menu.pages.import.childrens.persons)"></a></li>
+                    </ul>
+                  </li>            
+  
+                  <li ng-class="menu.pages.searchprt.id==menu.pages.selected.id ? 'active' : ''"><a ng-href="{{menu.pages.searchprt.url}}" ng-bind="menu.pages.searchprt.name" ng-click="menu.selectMenu(menu.pages.searchprt)"></a></li>
+                  <li ng-show="!menu.readOnlyMode && menu.admin"><a ng-href="#($GET(^Settings("Dance", "WSDSFControllerLink")))#" ng-bind="'WDSF Controller'|localize" target="_blank"></a></li>
+  
+                </ul>
+              
+   
+                <ul class="nav pull-right">
+                  <li ng-class="menu.pages.feedback.id==menu.pages.selected.id ? 'active' : ''"><a ng-href="{{menu.pages.feedback.url}}" ng-bind="menu.pages.feedback.name" ng-click="menu.selectMenu(menu.pages.feedback)"></a></li>
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" title="{{'Язык системы'|localize}} " href=""><span><img style="margin-bottom: 2px" ng-src="{{menu.lang.flagUrl}}"/> {{menu.lang.name + ' '}}</span><b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li ng-repeat="lang in menu.languages">
+                        <a ng-class="{aSelected: menu.lang==lang}" ng-click="menu.switchLang(lang)" href=""><img style="margin-bottom: 2px" ng-src="{{lang.flagUrl}}"/> {{lang.name}}</a>   
+                      </li>
+                    </ul>
+                  </li>
+                  <li><a ng-click="menu.login()" href="" ng-bind="menu.loginCaption|localize"></a></li>   
+                </ul> 
+              </div>
+            </div>
+          </div>
+
+
+          <div ng-show="menu.shortMenu">
+            <div class="container">
+              <div class="nav">
+                <!--
+                <li><a ng-hide="menu.pages.searchprt.id==menu.pages.selected.id || menu.pages.feedback.id==menu.pages.selected.id" ng-href="{{menu.pages.searchprt.url}}" ng-bind="menu.pages.searchprt.name" title="{{'Поиск регистрации участника по фамилии!'|localize}}" style="padding-left: 0;"></a></li>
+                <li><a ng-show="menu.pages.searchprt.id==menu.pages.selected.id && menu.pages.feedback.id!=menu.pages.selected.id" href="" onclick="window.history.back()" style="padding-left: 0;"><i class="fa fa-reply"></i> {{'Вернуться назад'|localize}}</a></li>
+                -->
+                <li><a style="padding-left: 0;" target="_blank" href="https://docs.google.com/document/d/10dD-UfcgOTz5U3PyCscx98zlwHfPMo3pDtsGx9Tw9cA/pub#id.4m1w34n6ya88" ng-bind="'Инструкция к регистрации'|localize"></a></li>
+                <li ng-hide="menu.pages.searchprt.id==menu.pages.selected.id"><a target="_blank" ng-hide="menu.pages.feedback.id==menu.pages.selected.id" ng-href="{{menu.pages.feedback.url}}" ng-bind="menu.pages.feedback.name" title="{{'Оставьте свои отзывы, предложения, замечания!'|localize}}"></a></li>
+                <li ng-hide="menu.pages.searchprt.id==menu.pages.selected.id"><a ng-show="menu.pages.feedback.id==menu.pages.selected.id" href="" onclick="window.history.back()"><i class="fa fa-reply"></i> {{'Вернуться назад'|localize}}</a></li>
+                  
+                <!--<li><a class="homeIcon" style="margin-left: 60px;" title="{{'На главную'|localize}}" href="#/tournaments"><i class="fa fa-home fa-lg"></i></a></li>
+                -->
+              </div>
+                
+              <div class="nav-responsive-collapse">   
+                <ul class="nav pull-right">
+                  <!--
+                  <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" title="{{'Язык системы'|localize}} " href=""><span><img style="margin-bottom: 2px" ng-src="{{menu.lang.flagUrl}}"/> {{menu.lang.name + ' '}}</span><b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li ng-repeat="lang in menu.languages">
+                        <a ng-class="{aSelected: menu.lang==lang}" ng-click="menu.switchLang(lang)" href=""><img style="margin-bottom: 2px" ng-src="{{lang.flagUrl}}"/> {{lang.name}}</a>   
+                      </li>
+                    </ul>
+                  </li>
+                  -->
+                  <li ng-repeat="lang in menu.languages|orderBy:'code':true">
+                    <a ng-class="{langSelected: menu.lang==lang}" style="padding: 10px 5px 10px 5px;" ng-click="menu.switchLang(lang)" href=""><img class="langFlag" ng-src="{{lang.flagUrl}}"/> {{lang.name}}</a>  
+                  </li>
+                </ul> 
+              </div>
+            </div>
+          </div>
+
+        </div>
+      <div ng-view style="padding-bottom: 300px;">
+      </div>
+   
+    </div>
+    
+    <script language="javascript">
+        $('ul.nav li.dropdown').hover(function() {
+              $(this).find('.dropdown-menu').stop(true, true).delay(250).show(200);
+            }, function() {
+              $(this).find('.dropdown-menu').stop(true, true).delay(50).hide(50);
+         });
+            
+        $('#divContainer')
+            .delay(400)
+            .queue( function(next){ 
+                $('#divLoader').hide();
+                $(this).css('display','block'); 
+                next(); 
+          });  
+   </script>
+
+    <!-- Все JS исходники в одном файле -->
+<!--   <script language="javascript"  src="js/combine.js"></script>  
+-->
+   
+    <script language="javascript" src="js/controllers/MainCtrl.js"></script>
+    
+    <script language="javascript" src="js/controllers/TournamentCtrl.js"></script>
+    <script language="javascript" src="js/controllers/TournamentsCtrl.js"></script>
+    <script language="javascript" src="js/controllers/TournamentCompetitionsCtrl.js"></script>
+    <script language="javascript" src="js/controllers/TournamentParticipantsCtrl.js"></script>
+    <script language="javascript" src="js/controllers/SearchParticipantsCtrl.js"></script>
+    
+    <script language="javascript" src="js/controllers/RegistrationCtrl.js"></script>
+    <script language="javascript" src="js/controllers/PaymentCtrl.js"></script>
+    
+
+    <script language="javascript" src="js/controllers/CompetitionCtrl.js"></script>
+    <script language="javascript" src="js/controllers/CompetitionParticipantsCtrl.js"></script>
+    
+    <script language="javascript" src="js/controllers/AgeCategoriesCtrl.js"></script>
+    
+    <script language="javascript" src="js/controllers/ImportTournamentsCtrl.js"></script>
+    <script language="javascript" src="js/controllers/ImportCompetitionsCtrl.js"></script>
+    <script language="javascript" src="js/controllers/ImportPersonsCtrl.js"></script>
+    <script language="javascript" src="js/controllers/FeedBackCtrl.js"></script>
+   
+
+    <script language="javascript" src="js/services/RESTSrvc.js"></script>
+    <script language="javascript" src="js/services/TournamentSrvc.js"></script>
+    <script language="javascript" src="js/services/TournamentRankSrvc.js"></script>
+    <script language="javascript" src="js/services/TournamentStatusSrvc.js"></script>   
+    <script language="javascript" src="js/services/CompetitionSrvc.js"></script>
+    <script language="javascript" src="js/services/CoupleSrvc.js"></script>
+    <script language="javascript" src="js/services/PersonSrvc.js"></script>
+    <script language="javascript" src="js/services/DisciplineSrvc.js"></script>
+    <script language="javascript" src="js/services/DancerClassSrvc.js"></script>
+    <script language="javascript" src="js/services/AgeCategorySrvc.js"></script>
+    <script language="javascript" src="js/services/ParticipantSrvc.js"></script>
+    <script language="javascript" src="js/services/OtherSrvc.js"></script>
+    <script language="javascript" src="js/services/ImportSrvc.js"></script>
+    <script language="javascript" src="js/services/FeedBackSrvc.js"></script>
+    <script language="javascript" src="js/services/LocationSrvc.js"></script>
+    <script language="javascript" src="js/services/RegistrationSrvc.js"></script>
+    <script language="javascript" src="js/services/ReportSrvc.js"></script>
+    <script language="javascript" src="js/services/UtilsSrvc.js"></script>
+
+    <script language="javascript" src="js/directives/stcalert.js"></script>
+    <script language="javascript" src="js/directives/stcgrid.js"></script>
+    <script language="javascript" src="js/directives/tournamentform.js"></script>
+    <script language="javascript" src="js/directives/competitionform.js"></script>
+    <script language="javascript" src="js/directives/danceplatUDSRPay.js"></script>
+    <script language="javascript" src="js/directives/danceplatOtherPay.js"></script>
+
+    <script language="javascript" src="js/localization/dict.js"></script>
+    <script language="javascript" src="js/localization/filter.js"></script>
+    
+    <script language="javascript" src="js/filters/cacheDate.js"></script>
+
+
+  </body>
+  
+</html>

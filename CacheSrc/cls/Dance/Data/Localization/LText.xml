@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Localization.LText">
+<Description>
+Localized property</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeCreated>63273,7033.751118</TimeCreated>
+
+<Property name="Guid">
+<Description>
+GUID = ID</Description>
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Value">
+<Description>
+Calculated property, returns string according to session's language</Description>
+<Type>%String</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {Value} = ##class({%%CLASSNAME}).GetValueById({%%ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Index name="GuidIdx">
+<IdKey>1</IdKey>
+<Properties>Guid</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Property name="Values">
+<Type>Dance.Data.Localization.LTextValue</Type>
+<Cardinality>many</Cardinality>
+<Inverse>LText</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Method name="ValueGet">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit ..GetValueById(..%Id())
+]]></Implementation>
+</Method>
+
+<Method name="ValueSet">
+<FormalSpec>value:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[	quit ##class(LTextValue).SetValue(value, ..%Id(), $$$SessionLanguage)
+]]></Implementation>
+</Method>
+
+<Method name="GetValueById">
+<Description>
+Getting string value for current language by id</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit ##class(LTextValue).GetValue(id, $$$SessionLanguage)
+]]></Implementation>
+</Method>
+
+<Method name="GetValueByLang">
+<FormalSpec>lang:%String</FormalSpec>
+<ReturnType>%Text</ReturnType>
+<Implementation><![CDATA[	quit ##class(LTextValue).GetValue(..%Id(), lang)
+]]></Implementation>
+</Method>
+
+<Method name="SetValueByLang">
+<FormalSpec>value:%Text,lang:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[	quit ##class(LTextValue).SetValue(value, ..%Id(), lang)
+]]></Implementation>
+</Method>
+
+<Method name="Create">
+<Description>
+Create multilanguage property. 
+For each language creates record; if translation function not specified,
+value will be same in all languages.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>value:%String,translateClassMethod:%String=""</FormalSpec>
+<ReturnType>LText</ReturnType>
+<Implementation><![CDATA[
+	set ltxt = ..%New()
+	set ltxt.Guid = $SYSTEM.Util.CreateGUID()
+	 
+	if $$$ISERR(ltxt.%Save()) $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_CreateLocalization"))
+	
+	set ltxt.Value = value
+	
+	set currLang = $$$SessionLanguage
+	
+	&sql(DECLARE LangCurs CURSOR FOR 
+		 SELECT %NOLOCK ID
+		 FROM Dance_Data_Localization.LTextLanguage
+		 WHERE ID <> :currLang)	
+		
+	&sql(OPEN LangCurs)
+	for  
+	{	
+		&sql(FETCH LangCurs INTO :langId) 
+		quit:(SQLCODE '= 0)
+	
+		if (translateClassMethod = ""){
+			do ##class(LTextValue).SetValue(value, ltxt.%Id(), langId)
+		}
+		else{
+			do ##class(LTextValue).SetValue($CLASSMETHOD($P(translateClassMethod,";",1), $P(translateClassMethod,";",2), value, currLang, langId), ltxt.%Id(), langId)
+		}
+	}
+		
+	&sql(CLOSE LangCurs)
+	
+	quit ltxt
+]]></Implementation>
+</Method>
+
+<Method name="Delete">
+<Description>
+Delete object from all languages</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set status = ##class(LTextValue).Delete(id)
+	if $$$ISERR(status) quit status
+	
+	set status = ..%DeleteId(id,4)
+	if $$$ISERR(status) quit ##class(Dance.Utils.Msg).GetErrorStatus("error_DeleteLocalization", " | "_status)
+	
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="SetValues">
+<Description>
+Set value for current language</Description>
+<FormalSpec>ltxtId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	&sql(DECLARE LangCur CURSOR FOR 
+		 SELECT ID
+		 FROM Dance_Data_Localization.LTextLanguage)	
+		
+	&sql(OPEN LangCur)
+	for  
+	{	
+		&sql(FETCH LangCur INTO :langId) 
+		quit:(SQLCODE '= 0)
+		
+		set value = ##class(Dance.Data.Localization.LTextValue).GetValue(ltxtId, langId)
+		do ##class(LTextValue).SetValue(value, ..%Id(), langId)
+	}
+		
+	&sql(CLOSE LangCur)
+	
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.Localization.LTextD</DataLocation>
+<DefaultData>LTextDefaultData</DefaultData>
+<IdLocation>^Dance.Data.Localization.LTextD</IdLocation>
+<IndexLocation>^Dance.Data.Localization.LTextI</IndexLocation>
+<StreamLocation>^Dance.Data.Localization.LTextS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="LTextDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

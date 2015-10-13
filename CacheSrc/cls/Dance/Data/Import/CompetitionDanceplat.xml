@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Import.CompetitionDanceplat">
+<Description>
+Imported competitions from other system</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeCreated>63438,6973.710952</TimeCreated>
+
+<Parameter name="CorrelateName">
+<Type>%String</Type>
+<Default>item</Default>
+</Parameter>
+
+<Property name="TournamentIdExternal">
+<Type>%String</Type>
+<Parameter name="XMLNAME" value="TournirId"/>
+</Property>
+
+<Property name="IdInternal">
+<Type>%String</Type>
+<Parameter name="XMLNAME" value="GroupId"/>
+</Property>
+
+<Property name="IdExternal">
+<Type>%String</Type>
+<Parameter name="XMLNAME" value="GroupIdExt"/>
+</Property>
+
+<Property name="Name">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="3000"/>
+<Parameter name="XMLNAME" value="name"/>
+</Property>
+
+<Property name="Rank">
+<Type>%String</Type>
+<InitialExpression>0</InitialExpression>
+<Parameter name="XMLNAME" value="rang"/>
+</Property>
+
+<Property name="DisciplineCode">
+<Type>%String</Type>
+<Parameter name="XMLNAME" value="prog"/>
+</Property>
+
+<Property name="AgeCategoryCode">
+<Type>%String</Type>
+<Parameter name="XMLNAME" value="cat"/>
+</Property>
+
+<Property name="DancerClassCodes">
+<Type>%String</Type>
+<Parameter name="XMLNAME" value="class"/>
+</Property>
+
+<Property name="StartDate">
+<Type>%String</Type>
+<Parameter name="XMLNAME" value="day"/>
+</Property>
+
+<Property name="Limit">
+<Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
+<Required>1</Required>
+<Parameter name="XMLNAME" value="limit"/>
+</Property>
+
+<Property name="IsSoloType">
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+<Required>1</Required>
+<Parameter name="XMLNAME" value="solo"/>
+</Property>
+
+<Property name="MaxAge">
+<Type>%Integer</Type>
+<Parameter name="XMLNAME" value="ageto"/>
+</Property>
+
+<Property name="MinAge">
+<Type>%Integer</Type>
+<Parameter name="XMLNAME" value="agefrom"/>
+</Property>
+
+<Property name="Price">
+<Type>%Float</Type>
+<Parameter name="XMLNAME" value="price"/>
+</Property>
+
+<Index name="IdInternalIdx">
+<Properties>IdInternal</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.info = ##class(%ZEN.proxyObject).%New()
+	set proxy.info.errorMessages = ##class(%ListOfDataTypes).%New()
+	
+	try{
+		set proxy.id = ..%Id()
+		set proxy.tournamentIdExternal = ..TournamentIdExternal
+		set proxy.idInternal = ..IdInternal
+		set proxy.idExternal = ..IdExternal
+		set proxy.startDate = ..StartDate
+		set proxy.minAge = ..MinAge
+		set proxy.maxAge = ..MaxAge
+		set proxy.limit = ..Limit
+		set proxy.price = ..Price
+		set proxy.name = ..Name
+						
+		set realDicipline = ##class(Dance.Data.Discipline).CodeIdxOpen(..DisciplineCode,,.sc)
+		if ($$$ISOK(sc)){
+			set proxy.discipline = realDicipline.ConvertToProxyObject()
+		}
+		else{
+			do proxy.info.errorMessages.Insert("Дисциплина не найдена! Код = "_..DisciplineCode)	
+		}
+			
+		set realAge = ##class(Dance.Data.AgeCategory).CodeIdxOpen(..AgeCategoryCode,,.sc)
+		if ($$$ISOK(sc)){
+			set proxy.ageCategory = realAge.ConvertToProxyObject()
+		}
+		else{
+			do proxy.info.errorMessages.Insert("Возрастная группа не найдена! Код = "_..AgeCategoryCode)
+		}
+			
+		if (..IsSoloType = $$$YES){
+			set typeCode = "Solo"
+		}
+		else{
+			set typeCode = "Couples"
+		}
+			
+		set type = ##class(Dance.Data.CompetitionType).CodeIdxOpen(typeCode,,.sc)
+		if ($$$ISOK(sc)){
+			set proxy.type = type.ConvertToProxyObject()
+		}
+		else{
+			do proxy.info.errorMessages.Insert("Тип не найден! Соло = "_..IsSoloType)
+		}
+		
+		set proxy.dancerClasses = ##class(Dance.Data.DancerClass).GetAll().children
+		set dancerClassesList = $LISTFROMSTRING(..DancerClassCodes, ",")
+		for i=1:1:$LL(dancerClassesList){
+			set class = $LIST(dancerClassesList, i)
+			if (class = "") continue
+				
+			if (##class(Dance.Data.DancerClass).CodeIdxExists(class) = $$$YES){
+				for cc=1:1:proxy.dancerClasses.Count(){
+					if (class = proxy.dancerClasses.GetAt(cc).code){
+						set proxy.dancerClasses.GetAt(cc).selected = $$$YES
+						quit
+					}
+				}
+			}
+			elseif (class = "0"){
+				for cc=1:1:proxy.dancerClasses.Count(){
+					if (proxy.dancerClasses.GetAt(cc).code = 7){
+						continue
+					}
+					
+					set proxy.dancerClasses.GetAt(cc).selected = $$$YES
+				}
+			}
+			else{
+				do proxy.info.errorMessages.Insert("Класс не найден! Код = "_class)	
+			}		
+		}
+
+		set proxy.info.isExisted = ##class(Dance.Data.Competition).IdInternalIdxExists(..IdInternal)
+		set proxy.info.isErrored = (proxy.info.errorMessages.Count() '= 0)
+	}
+	catch(ex){
+		set proxy.errorText = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+	}
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Save">
+<Description>
+Create or update item</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>newObj:Dance.Data.Import.CompetitionDanceplat</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set newObj.Name = $REPLACE($REPLACE(newObj.Name, $c(10), ""), "&quot;", """")
+	
+	if (..IdInternalIdxExists(newObj.IdInternal) = 0){
+		quit newObj.%Save()
+	}
+
+	set oldObj = ..IdInternalIdxOpen(newObj.IdInternal)
+	set oldObj.IdExternal = newObj.IdExternal
+	set oldObj.Name = newObj.Name
+	set oldObj.AgeCategoryCode = newObj.AgeCategoryCode
+	set oldObj.DancerClassCodes = newObj.DancerClassCodes
+	set oldObj.StartDate = newObj.StartDate
+	set oldObj.DisciplineCode = newObj.DisciplineCode
+	set oldObj.IsSoloType = newObj.IsSoloType
+	set oldObj.Limit = newObj.Limit
+	set oldObj.MaxAge = newObj.MaxAge
+	set oldObj.MinAge = newObj.MinAge
+	set oldObj.Price = newObj.Price
+	set oldObj.Rank = newObj.Rank
+	set oldObj.TournamentIdExternal = newObj.TournamentIdExternal
+	
+	quit oldObj.%Save()
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data8B13.Competition18A0D</DataLocation>
+<DefaultData>CompetitionDanceplatDefaultData</DefaultData>
+<IdLocation>^Dance.Data8B13.Competition18A0D</IdLocation>
+<IndexLocation>^Dance.Data8B13.Competition18A0I</IndexLocation>
+<StreamLocation>^Dance.Data8B13.Competition18A0S</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="CompetitionDanceplatDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>TournamentIdExternal</Value>
+</Value>
+<Value name="3">
+<Value>IdInternal</Value>
+</Value>
+<Value name="4">
+<Value>IdExternal</Value>
+</Value>
+<Value name="5">
+<Value>Name</Value>
+</Value>
+<Value name="6">
+<Value>Rank</Value>
+</Value>
+<Value name="7">
+<Value>DisciplineCode</Value>
+</Value>
+<Value name="8">
+<Value>AgeCategoryCode</Value>
+</Value>
+<Value name="9">
+<Value>DancerClassCodes</Value>
+</Value>
+<Value name="10">
+<Value>StartDate</Value>
+</Value>
+<Value name="11">
+<Value>Limit</Value>
+</Value>
+<Value name="12">
+<Value>IsSoloType</Value>
+</Value>
+<Value name="13">
+<Value>MaxAge</Value>
+</Value>
+<Value name="14">
+<Value>MinAge</Value>
+</Value>
+<Value name="15">
+<Value>Price</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

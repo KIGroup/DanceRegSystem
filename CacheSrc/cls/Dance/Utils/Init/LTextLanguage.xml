@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.LTextLanguage">
+<Super>BaseInit</Super>
+<TimeCreated>63273,7616.57883</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>LTextLanguage</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	w !,"=== "_..#PClassName_" ==="
+	do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization."_..#PClassName, "ClassXData")
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<LTextLanguage><Name>Русский</Name><Code>ru</Code></LTextLanguage>
+<LTextLanguage><Name>English</Name><Code>en</Code></LTextLanguage>
+<LTextLanguage><Name>Deutsch</Name><Code>de</Code></LTextLanguage>
+</ClassXData>
+]]></Data>
+</XData>
+</Class>
+</Export>

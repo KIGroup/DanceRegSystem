@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.Other">
+<Abstract>1</Abstract>
+<TimeCreated>63275,3526.148205</TimeCreated>
+
+<Method name="GoGuids">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set out = ##class(%Library.FileCharacterStream).%New()
+	set out.Filename = "E:\GUIDSSUPER2.txt"
+	
+	for i=1:1:1000
+	{
+		set guid = $SYSTEM.Util.CreateGUID()
+		do out.Write(guid)
+		do out.Write($$$EOL)
+	}
+	quit out.%Save()
+]]></Implementation>
+</Method>
+</Class>
+</Export>

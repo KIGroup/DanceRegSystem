@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.TaskSyncWDSFController">
+<Super>%SYS.Task.Definition</Super>
+<TimeCreated>63443,63387.021882</TimeCreated>
+
+<Method name="OnTask">
+<ReturnType>%Status</ReturnType>
+</Method>
+
+<Method name="SyncCompetitions">
+<Description>
+do ##class(Dance.Utils.TaskSyncWDSFController).SyncCompetitions()</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>nowSyncSinceDate:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	try{
+		set syncCount = 0
+		
+		TSTART
+		
+		// wdsf date format: YYYY/MM/DD
+		set prevSyncSinceDate = $GET(^Settings("Dance", "LastSyncWDSFCompetitions"), $ZD($H-1, 3))
+		if (nowSyncSinceDate = ""){
+			set nowSyncSinceDate = $REPLACE($ZD($ZDH($REPLACE(prevSyncSinceDate, "/", ""), 15) + 1, 3), "-", "/")
+		}
+		
+		set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCompetitions($REPLACE($ZD($H - 365, 3), "-", "/"), $REPLACE($ZD($H + 365, 3), "-", "/"), nowSyncSinceDate,,,,.st)
+		$$$THROWONERROR(st, st)
+		
+		for i=1:1:wdsfData.Count(){
+			do ##class(Dance.Data.CompetitionWDSF).Save(wdsfData.Get(i), .st)
+			$$$THROWONERROR(st, st)
+			
+			set syncCount = syncCount + 1
+		}		
+		
+		set ^Settings("Dance", "LastSyncWDSFCompetitions") = $ZD($H, 3)
+		
+		TCOMMIT
+	}
+	catch(ex){
+		TROLLBACK
+		set st = ex.AsStatus()	
+	}
+	
+	quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

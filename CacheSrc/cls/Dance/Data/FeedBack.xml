@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.FeedBack">
+<Super>%Persistent</Super>
+<TimeCreated>63349,943.222428</TimeCreated>
+
+<Property name="Created">
+<Type>%TimeStamp</Type>
+</Property>
+
+<Property name="Author">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="50"/>
+</Property>
+
+<Property name="Email">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="60"/>
+</Property>
+
+<Property name="Subject">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="50"/>
+</Property>
+
+<Property name="Msg">
+<Type>%Text</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="3000"/>
+</Property>
+
+<Method name="%OnNew">
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<ServerOnly>1</ServerOnly>
+<Implementation><![CDATA[
+	set ..Created = $ZDT($ZTS, 3)
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.FeedBackD</DataLocation>
+<DefaultData>FeedBackDefaultData</DefaultData>
+<IdLocation>^Dance.Data.FeedBackD</IdLocation>
+<IndexLocation>^Dance.Data.FeedBackI</IndexLocation>
+<StreamLocation>^Dance.Data.FeedBackS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="FeedBackDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Created</Value>
+</Value>
+<Value name="3">
+<Value>Author</Value>
+</Value>
+<Value name="4">
+<Value>Email</Value>
+</Value>
+<Value name="5">
+<Value>Subject</Value>
+</Value>
+<Value name="6">
+<Value>Msg</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

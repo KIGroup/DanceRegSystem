@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Import.ImportDanceplat">
+<Abstract>1</Abstract>
+<TimeCreated>63438,7022.551555</TimeCreated>
+
+<Method name="Import">
+<Description>
+Import all objects from XML to table</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String,pageWithParameters:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set st = $$$OK
+
+	try{
+		TSTART
+				
+		set httprequest = ##class(%Net.HttpRequest).%New()
+		set httprequest.Server = $G(^Settings("Dance", "ImportDanceplat", "Server"))
+		set httprequest.ContentEncoding = "UTF-8"
+		do httprequest.Get(pageWithParameters)
+		
+		#dim stream As %Stream.Object = httprequest.HttpResponse.Data
+		#dim reader As %XML.Reader = ##class(%XML.Reader).%New()
+
+		$$$THROWONERROR(st, reader.OpenStream(stream, "literal"))
+
+		do reader.Correlate($CLASSMETHOD(className, "%GetParameter", "CorrelateName"), className)
+
+		while reader.Next(.obj, .st)
+		{			
+			$$$THROWONERROR(st, $CLASSMETHOD(className, "Save", obj))
+			kill obj
+		}
+		
+		TCOMMIT		
+	}
+	catch(ex){
+		TROLLBACK
+		
+		set st = ex.AsStatus()
+	}
+	
+	quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

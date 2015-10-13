@@ -1,0 +1,74 @@
+<div class="row-fluid">
+	<div class="span3">
+	</div>
+	<div class="span6">
+		<div class="accordion">
+			<div class="accordion-group">
+				<div class="accordion-heading">
+					<a class="accordion-toggle" ng-bind="'Турнир'|localize"></a>
+				</div>
+				<div class="accordion-body">
+					<div class="accordion-inner">
+						 <div class="row-fluid">
+							<div class="span6">
+								<p><span class="spnTitle" ng-bind="'Название'|localize"></span>: <span ng-bind="page.tournament.name"></span></p>
+								<p><span class="spnTitle" ng-bind="'Дата начала'|localize"></span>: <span ng-bind="(page.tournament.startDate|convertCacheDate:('d MMMM y'|localize))"></span></p>
+								<p><span class="spnTitle" ng-bind="'Дата окончания'|localize"></span>: <span ng-bind="(page.tournament.endDate|convertCacheDate:('d MMMM y'|localize))"></span></p>
+								<p><span class="spnTitle" ng-bind="('Страна'|localize)"></span>: <span ng-bind="page.tournament.location.country.name"></span></p>
+								<p><span class="spnTitle" ng-bind="('Город'|localize)"></span>: <span ng-bind="page.tournament.location.cityName"></span></p>
+							</div>
+							<div class="span6">
+								<p><span class="spnTitle" ng-bind="'Ранг'|localize"></span>: <span ng-bind="page.tournament.rank.name"></span></p>
+								<p><span class="spnTitle" ng-bind="'Статус'|localize"></span>: <span ng-bind="page.tournament.status.name"></span></p>
+								<p><span class="spnTitle" ng-bind="'Всего групп'|localize"></span>: <span ng-bind="page.tournament.competitionsCount"></span></p>
+								<p><span class="spnTitle" ng-bind="'Всего участников / уникальных'|localize"></span>: <span ng-bind="page.tournament.participantsCount+' / '+page.tournament.participantsUniqueCount"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="span3">
+	</div>
+</div>
+<br>
+<div class="row-fluid" ng-show="page.tournament.id">
+	<div class="span3">
+	</div>
+	<div class="span6">
+		<div class="accordion">
+			<div class="accordion-group">
+				<div class="accordion-heading">
+					<a class="accordion-toggle" ng-bind="page.accordionCaption|localize"></a>
+				</div>
+				<div class="accordion-body">
+					<div class="accordion-inner">
+						<form name="form_competition" ng-submit="page.saveCompetition()" style="margin: 0;">
+							<competitionform competition="page.competition" tournament="page.tournament"/>
+						    <div class="control-group">
+						        <div class="controls">
+						            <button type="submit" class="btn btn-success btn-small" ng-bind="page.btnSubmitCaption|localize" ng-disabled="form_competition.$pristine"></button>
+						            <button type="button" class="btn btn-small" ng-click="page.cancel()" ng-bind="'Отмена'|localize"></button>
+						        </div>
+						    </div>    		    		    
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="span3">
+	</div>
+</div>
+
+
+<div class="row-fluid">
+	<div class="span3">
+	</div>
+	<div class="span6">
+		<stcalert data="page.alert"/>
+	</div>
+	<div class="span3">
+	</div>
+</div>

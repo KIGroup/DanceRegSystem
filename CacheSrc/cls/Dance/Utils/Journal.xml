@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Journal">
+<Super>%Persistent</Super>
+<TimeCreated>63289,41745.96634</TimeCreated>
+
+<Property name="EventType">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="CreatedTS">
+<Type>%TimeStamp</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Location">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1500"/>
+</Property>
+
+<Property name="Msg">
+<Type>%Text</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="7000"/>
+</Property>
+
+<Method name="Create">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>type:%String,location:%String,msg:%Text</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	try{
+		set log = ..%New()
+		set log.EventType = type
+		set log.CreatedTS = $ZDT($ZTS,3)
+		set log.Location = location
+		set log.Msg = msg
+		do log.%Save()
+	}
+	catch(ex){
+	}
+	
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Utils.JournalD</DataLocation>
+<DefaultData>JournalDefaultData</DefaultData>
+<IdLocation>^Dance.Utils.JournalD</IdLocation>
+<IndexLocation>^Dance.Utils.JournalI</IndexLocation>
+<StreamLocation>^Dance.Utils.JournalS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="JournalDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>CreatedTS</Value>
+</Value>
+<Value name="3">
+<Value>Location</Value>
+</Value>
+<Value name="4">
+<Value>Msg</Value>
+</Value>
+<Value name="5">
+<Value>EventType</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

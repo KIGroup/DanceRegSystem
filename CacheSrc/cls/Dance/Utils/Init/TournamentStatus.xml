@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.TournamentStatus">
+<Super>Dance.Utils.Init.BaseInit</Super>
+<TimeCreated>63293,10528.110781</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>TournamentStatus</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    w !,"=== "_..#PClassName_" ==="
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LText", "LTextXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LTextValue", "LTextValueXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data."_..#PClassName, "ClassXData")
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<TournamentStatus><Name>FB9892FB-8E28-45D2-AAF0-2ADF2410FA10</Name><Code>Initialization</Code><Sequence>1</Sequence></TournamentStatus>
+<TournamentStatus><Name>CB4CD67E-510E-48FA-8AF7-99DA04C4EA9F</Name><Code>Registration</Code><Sequence>2</Sequence></TournamentStatus>
+<TournamentStatus><Name>7C33DA68-04AF-4A94-8855-65028F74D091</Name><Code>RegistrationClosed</Code><Sequence>3</Sequence></TournamentStatus>
+<TournamentStatus><Name>40D186C2-1CEE-45CB-9007-117F3466344C</Name><Code>Completed</Code><Sequence>4</Sequence></TournamentStatus>
+<TournamentStatus><Name>07F18C3F-1EB7-4280-9AAB-F6D9C232FB29</Name><Code>Canceled</Code><Sequence>5</Sequence></TournamentStatus>
+</ClassXData>
+]]></Data>
+</XData>
+
+<XData name="LTextXData">
+<Data><![CDATA[
+<LTextOrderStatusXData>
+<LText><Guid>FB9892FB-8E28-45D2-AAF0-2ADF2410FA10</Guid></LText>
+<LText><Guid>CB4CD67E-510E-48FA-8AF7-99DA04C4EA9F</Guid></LText>
+<LText><Guid>7C33DA68-04AF-4A94-8855-65028F74D091</Guid></LText>
+<LText><Guid>40D186C2-1CEE-45CB-9007-117F3466344C</Guid></LText>
+<LText><Guid>07F18C3F-1EB7-4280-9AAB-F6D9C232FB29</Guid></LText>
+</LTextOrderStatusXData>
+]]></Data>
+</XData>
+
+<XData name="LTextValueXData">
+<Data><![CDATA[
+<LTextValueXData>
+<LTextValue><LText>FB9892FB-8E28-45D2-AAF0-2ADF2410FA10</LText><Value>Инициализация</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>FB9892FB-8E28-45D2-AAF0-2ADF2410FA10</LText><Value>Initialization</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>FB9892FB-8E28-45D2-AAF0-2ADF2410FA10</LText><Value>Initialisierung</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>CB4CD67E-510E-48FA-8AF7-99DA04C4EA9F</LText><Value>Регистрация</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>CB4CD67E-510E-48FA-8AF7-99DA04C4EA9F</LText><Value>Registration</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>CB4CD67E-510E-48FA-8AF7-99DA04C4EA9F</LText><Value>Registrierung</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>7C33DA68-04AF-4A94-8855-65028F74D091</LText><Value>Регистрация завершена</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>7C33DA68-04AF-4A94-8855-65028F74D091</LText><Value>Registration closed</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>7C33DA68-04AF-4A94-8855-65028F74D091</LText><Value>Registrierung abgeschlossen</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>40D186C2-1CEE-45CB-9007-117F3466344C</LText><Value>Завершен</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>40D186C2-1CEE-45CB-9007-117F3466344C</LText><Value>Сompleted</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>40D186C2-1CEE-45CB-9007-117F3466344C</LText><Value>Abgeschlossene</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>07F18C3F-1EB7-4280-9AAB-F6D9C232FB29</LText><Value>Отменен</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>07F18C3F-1EB7-4280-9AAB-F6D9C232FB29</LText><Value>Canceled</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>07F18C3F-1EB7-4280-9AAB-F6D9C232FB29</LText><Value>Storniert</Value><Lang>de</Lang></LTextValue>
+</LTextValueXData>
+]]></Data>
+</XData>
+
+<Method name="SetItalian">
+<Description>
+w ##class(Dance.Utils.Init.TournamentStatus).SetItalian()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.TournamentStatus).CodeIdxOpen("Initialization").Name.SetValueByLang("Inizializzazione", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.TournamentStatus).CodeIdxOpen("Registration").Name.SetValueByLang("Registrazione", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.TournamentStatus).CodeIdxOpen("RegistrationClosed").Name.SetValueByLang("Registrazione chiuso", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.TournamentStatus).CodeIdxOpen("Completed").Name.SetValueByLang("Completato", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.TournamentStatus).CodeIdxOpen("Canceled").Name.SetValueByLang("Annullato", "it"))
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

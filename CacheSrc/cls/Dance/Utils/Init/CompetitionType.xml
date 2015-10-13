@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.CompetitionType">
+<Super>Dance.Utils.Init.BaseInit</Super>
+<TimeCreated>63303,73180.035127</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>CompetitionType</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    w !,"=== "_..#PClassName_" ==="
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LText", "LTextXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LTextValue", "LTextValueXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data."_..#PClassName, "ClassXData")
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<CompetitionType><Name>5EB81A33-5310-470D-AE3A-3DABFCF02F3AR</Name><Code>Couples</Code></CompetitionType>
+<CompetitionType><Name>4E490C1D-8402-4148-A876-85078EEF3ADBR</Name><Code>Solo</Code></CompetitionType>
+</ClassXData>
+]]></Data>
+</XData>
+
+<XData name="LTextXData">
+<Data><![CDATA[
+<LTextOrderStatusXData>
+<LText><Guid>5EB81A33-5310-470D-AE3A-3DABFCF02F3AR</Guid></LText>
+<LText><Guid>4E490C1D-8402-4148-A876-85078EEF3ADBR</Guid></LText>
+</LTextOrderStatusXData>
+]]></Data>
+</XData>
+
+<XData name="LTextValueXData">
+<Data><![CDATA[
+<LTextValueXData>
+<LTextValue><LText>5EB81A33-5310-470D-AE3A-3DABFCF02F3AR</LText><Value>Пары</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>4E490C1D-8402-4148-A876-85078EEF3ADBR</LText><Value>Соло</Value><Lang>ru</Lang></LTextValue>
+
+<LTextValue><LText>5EB81A33-5310-470D-AE3A-3DABFCF02F3AR</LText><Value>Couple</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>4E490C1D-8402-4148-A876-85078EEF3ADBR</LText><Value>Solo</Value><Lang>en</Lang></LTextValue>
+
+<LTextValue><LText>5EB81A33-5310-470D-AE3A-3DABFCF02F3AR</LText><Value>Paar</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>4E490C1D-8402-4148-A876-85078EEF3ADBR</LText><Value>Solo</Value><Lang>de</Lang></LTextValue>
+
+</LTextValueXData>
+]]></Data>
+</XData>
+
+<Method name="SetItalian">
+<Description>
+w ##class(Dance.Utils.Init.CompetitionType).SetItalian()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.CompetitionType).CodeIdxOpen("Couples").Name.SetValueByLang("Coppie", "it"))
+        $$$THROWONERROR(st, ##class(Dance.Data.CompetitionType).CodeIdxOpen("Solo").Name.SetValueByLang("Assolo", "it"))
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

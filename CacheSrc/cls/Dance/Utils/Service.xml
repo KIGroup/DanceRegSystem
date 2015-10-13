@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Service">
+<Abstract>1</Abstract>
+<TimeCreated>63612,51804.121086</TimeCreated>
+
+<Method name="BuildAllIndices">
+<Description>
+do ##class(Dance.Utils.Service).BuildAllIndices()</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Localization.LText).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Localization.LTextLanguage).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Localization.LTextValue).%BuildIndices())
+    
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Tournament).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.AgeCategory).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.AgeCategoryWDSF).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Competition).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.CompetitionType).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.CompetitionWDSF).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Country).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Couple).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.CoupleUDSR).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.CoupleWDSF).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.DancerClass).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Discipline).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.FeedBack).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Participant).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.ParticipantCoupleOther).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.ParticipantCoupleUDSR).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.ParticipantCoupleWDSF).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.ParticipantSingleOther).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.ParticipantSingleUDSR).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.ParticipantSingleWDSF).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Person).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.Ticket).%BuildIndices())
+    do $SYSTEM.OBJ.DisplayError(##class(Dance.Data.TicketDanceplat).%BuildIndices())
+]]></Implementation>
+</Method>
+
+<Method name="UpdateTournamentUrl">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+        set st = $$$OK
+    try{
+        TSTART
+        
+        &sql(DECLARE TRNCurs CURSOR FOR 
+             SELECT ID
+             FROM Dance_Data.Tournament)    
+                    
+        &sql(OPEN TRNCurs)
+        for  
+        {   
+            &sql(FETCH TRNCurs INTO :id) 
+            quit:(SQLCODE '= 0)
+            
+            set trn = ##class(Dance.Data.Tournament).%OpenId(id)
+            
+            
+            if ($ISOBJECT(trn.InfoUrl) = $$$NO){
+                set trn.InfoUrl = ##class(Dance.Data.Localization.LText).Create(trn.OrganizerSite)
+            }
+            else{
+                w !,"TRN ID = "_id_" Info exists"
+            }
+            
+            
+            if ($ISOBJECT(trn.AdditionInfoUrl) = $$$NO){
+                set trn.AdditionInfoUrl = ##class(Dance.Data.Localization.LText).Create(trn.AnnouncementUrl)
+            }
+            else{
+                w !,"TRN ID = "_id_" AdditionInfoUrl exists"
+            }
+            
+            $$$THROWONERROR(st, trn.%Save())
+        }
+        
+        &sql(CLOSE TRNCurs)
+        
+        TCOMMIT 
+    }
+    catch(ex){
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+        w !,$SYSTEM.Status.GetErrorText(st)
+    }
+]]></Implementation>
+</Method>
+
+<Method name="UpdateFullNameForLangs">
+<Description>
+w ##class(Dance.Utils.Service).UpdateFullNameForLangs()</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    set st = $$$OK
+    try{
+        TSTART
+        
+        &sql(DECLARE FNCurs CURSOR FOR 
+             SELECT ID
+             FROM Dance_Data.Person)    
+                    
+        &sql(OPEN FNCurs)
+        for  
+        {   
+            &sql(FETCH FNCurs INTO :id) 
+            quit:(SQLCODE '= 0)
+            
+            set obj = ##class(Dance.Data.Person).%OpenId(id)
+            $$$THROWONERROR(st, obj.LastName.SetValueByLang(obj.LastName.GetValueByLang("en"), "de"))
+            $$$THROWONERROR(st, obj.LastName.SetValueByLang(obj.LastName.GetValueByLang("en"), "it"))
+            
+            $$$THROWONERROR(st, obj.FirstName.SetValueByLang(obj.FirstName.GetValueByLang("en"), "de"))
+            $$$THROWONERROR(st, obj.FirstName.SetValueByLang(obj.FirstName.GetValueByLang("en"), "it"))
+        }
+        
+        &sql(CLOSE FNCurs)
+        
+       //====================================== 
+        
+       &sql(DECLARE FNCurs2 CURSOR FOR 
+             SELECT ID
+             FROM Dance_Data.Participant)    
+                    
+        &sql(OPEN FNCurs2)
+        for  
+        {   
+            &sql(FETCH FNCurs2 INTO :id) 
+            quit:(SQLCODE '= 0)
+            
+            set obj = ##class(Dance.Data.Participant).%OpenId(id)
+            if ($ISOBJECT(obj.FullName) = $$$NO){
+                continue
+            }
+            $$$THROWONERROR(st, obj.FullName.SetValueByLang(obj.FullName.GetValueByLang("en"), "de"))
+            $$$THROWONERROR(st, obj.FullName.SetValueByLang(obj.FullName.GetValueByLang("en"), "it"))
+        }
+        
+        &sql(CLOSE FNCurs2)
+        
+        TCOMMIT 
+    }
+    catch(ex){
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+        w !,$SYSTEM.Status.GetErrorText(st)
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="CreateAgeGroups">
+<Description>
+w ##class(Dance.Utils.Service).CreateAgeGroups()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        set ag = ##class(Dance.Data.AgeCategory).%New()
+        set ag.Code = "Ю-1+Д-2"
+        set ag.OldestPartnerMaxAge = 13
+        set ag.OldestPartnerMinAge = 11
+        set ag.YoungestPartnerMaxAge = 13
+        set ag.YoungestPartnerMinAge = 11
+        set ag.SpecialLogic = 0
+        set ag.Name = ##class(Dance.Data.Localization.LText).Create("Юниоры-1 + Дети-2")
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Junior-1+Juvenile-2", "en"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Junior-1+Juvenile-2", "de"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Junior-1+Juvenile-2", "it"))
+        $$$THROWONERROR(st, ag.%Save())
+        
+        
+        
+        
+        set ag = ##class(Dance.Data.AgeCategory).%New()
+        set ag.Code = "Молодежь+Ю-2"
+        set ag.OldestPartnerMaxAge = 18
+        set ag.OldestPartnerMinAge = 14
+        set ag.YoungestPartnerMaxAge = 18
+        set ag.YoungestPartnerMinAge = 14
+        set ag.SpecialLogic = 0
+        set ag.Name = ##class(Dance.Data.Localization.LText).Create("Молодежь + Юниоры-2")
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Youth + Junior-2", "en"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Youth + Junior-2", "de"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Youth + Junior-2", "it"))
+        $$$THROWONERROR(st, ag.%Save())
+        
+        
+        
+        set ag = ##class(Dance.Data.AgeCategory).%New()
+        set ag.Code = "Взрослые+Молодежь+Сеньоры"
+        set ag.OldestPartnerMaxAge = 99
+        set ag.OldestPartnerMinAge = 16
+        set ag.YoungestPartnerMaxAge = 99
+        set ag.YoungestPartnerMinAge = 16
+        set ag.SpecialLogic = 0
+        set ag.Name = ##class(Dance.Data.Localization.LText).Create("Взрослые + Молодежь + Сеньоры")
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Adult + Youth + Senior", "en"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("", "de"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("", "it"))
+        $$$THROWONERROR(st, ag.%Save())
+        
+        TCOMMIT
+    }
+    catch(ex){
+        TROLLBACK
+        set st = ex.AsStatus()
+        w !, $SYSTEM.Status.GetErrorText(st)
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

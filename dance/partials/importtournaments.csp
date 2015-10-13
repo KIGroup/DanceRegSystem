@@ -1,0 +1,51 @@
+<p style="padding-bottom: 15px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Ярким цветом выделены турниры, которые уже есть базе данных. Сравнение идет по IdInternal. Для сохранения турнира заполните все дополнительные поля в диалоговом окне импорта.'|localize}}</p>
+
+<div class="row-fluid">
+    <stcgrid 
+    	grid="pageStore.importtournaments.grid"
+	    table-class="table table-bordered table-hover"
+	    caption="'Доступные для импорта турниры'"
+	    columns="page.tournamentTable.columns"
+	    items="page.tournamentTable.items"
+	    properties="page.tournamentTable.properties"
+	    update-items="page.tournamentTable.loadItems(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText)"
+
+	    page-curr="page.tournamentTable.pageCurr"
+	    page-total="page.tournamentTable.pageTotal"
+	    page-size="page.tournamentTable.pageSize"
+	    navigator-visible="true"
+
+	    selectable="false"
+	    selected-items="page.tournamentTable.selectedItems"
+	    multi-select-mode="page.tournamentTable.multiSelectMode"
+			
+		action-column-visible="true"
+	    action-column-icon="'fa fa-ellipsis-h'"
+	 
+	    first-row-action-icon="'fa fa-download'"
+	    first-row-action-title="'Импортировать'|localize"
+	    first-row-action-method="page.tournamentTable.edit(item)"
+    		    	
+		forcibly-update="page.tournamentTable.forciblyUpdate"
+	/>
+</div>
+
+<div class="modal" id="InfoModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="InfoLabel" aria-hidden="true" ng-show="page.infoModalVisible">
+ 	<div class="modal-header">
+ 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"  ng-click="page.infoModalVisible=false">×</button>
+		<h3 id="InfoLabel" ng-bind="'Турнир'|localize"></h3>
+	</div>
+	<div class="modal-body">
+		<form name="form_tournament" ng-submit="page.saveImportedTournament()" style="margin: 0;">					
+			<tournamentform tournament="page.tournamentTable.selected"/>
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn btn-primary btn-small" ng-bind="'Импорт'|localize" ng-disabled="form_tournament.$pristine"></button>
+					<button type="button" class="btn btn-small" ng-click="page.cancel()" ng-bind="'Отмена'|localize"></button>
+				</div>
+			</div>    		    		    				
+		</form>
+    </div>
+</div>
+
+<stcalert data="page.alert"/>

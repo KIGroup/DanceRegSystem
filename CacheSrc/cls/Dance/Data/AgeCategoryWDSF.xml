@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.AgeCategoryWDSF">
+<Super>%Persistent</Super>
+<TimeCreated>63444,2177.140809</TimeCreated>
+
+<Property name="Name">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="AllowedToDance">
+<Type>AgeCategoryWDSF</Type>
+<Collection>list</Collection>
+<Parameter name="CollectionDisplayDelimiter" value="&quot;,&quot;"/>
+</Property>
+
+<Property name="Division">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="FromAge">
+<Type>%Integer</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="ToAge">
+<Type>%Integer</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="MaxDob">
+<Type>%Date</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {MaxDob} = ##class({%%CLASSNAME}).GetMaxDob({FromAge})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="MinDob">
+<Type>%Date</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {MinDob} = ##class({%%CLASSNAME}).GetMinDob({ToAge})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Index name="NameIdx">
+<Properties>Name</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.id = ..%Id()
+	set proxy.name = ..Name
+	set proxy.fromAge = ..FromAge
+	set proxy.toAge = ..ToAge
+	set proxy.maxDob = $ZD(..MaxDob, 3)
+	set proxy.minDob = $ZD(..MinDob, 3)
+	set proxy.division = ..Division
+	
+	set proxy.allowedToDance = ##class(%ListOfDataTypes).%New()
+	for i=1:1:..AllowedToDance.Count(){
+		do proxy.allowedToDance.Insert(..AllowedToDance.GetAt(i).Name)
+	}
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="GetByName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String</FormalSpec>
+<ReturnType>Discipline</ReturnType>
+<Implementation><![CDATA[	quit ..NameIdxOpen(name)
+]]></Implementation>
+</Method>
+
+<Method name="GetMaxDob">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>fromAge:%Integer</FormalSpec>
+<ReturnType>%Date</ReturnType>
+<Implementation><![CDATA[
+	set currYear = $P($ZD($ZTS, 3), "-", 1)
+	quit $ZDH((currYear - fromAge)_"-12-31", 3)
+]]></Implementation>
+</Method>
+
+<Method name="GetMinDob">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>toAge:%Integer</FormalSpec>
+<ReturnType>%Date</ReturnType>
+<Implementation><![CDATA[
+	set currYear = $P($ZD($ZTS, 3), "-", 1)
+	quit $ZDH((currYear - toAge)_"-01-01", 3)
+]]></Implementation>
+</Method>
+
+<Method name="CheckAllowed">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>age:%String,checkingAge:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	quit:(age = checkingAge) $$$YES
+	
+	set ageObj = ..NameIdxOpen(age)
+	for i=1:1:ageObj.AllowedToDance.Count(){
+		if (ageObj.AllowedToDance.GetAt(i).Name = checkingAge) return $$$YES
+	}
+	
+	quit $$$NO
+]]></Implementation>
+</Method>
+
+<Method name="Import">
+<Description>
+w ##class(Dance.Data.AgeCategoryWDSF).Import()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set st = $$$OK
+	
+	try{
+		TSTART
+		
+		set groups = ##class(Dance.Wdsf.ControllerAPI).GetAgeGroups(.st).ageGroups
+		
+		for i=1:1:groups.Count(){
+			set group = groups.GetAt(i)
+			
+			if (..NameIdxExists(group.name) = $$$YES){
+				set age = ..NameIdxOpen(group.name)
+			}
+			else{
+				set age = ..%New()
+				set age.Name = group.name
+			}
+			
+			set age.ToAge = group.toAge
+			set age.FromAge = group.fromAge
+			set age.Division = group.division
+			
+			
+			$$$THROWONERROR(st, age.%Save())	 
+		}
+		
+		for i=1:1:groups.Count(){
+			set group = groups.GetAt(i)
+			set age = ..NameIdxOpen(group.name)
+			
+			if (age.AllowedToDance.FindObjectId(age.%Id()) = "") {
+				do age.AllowedToDance.Insert(age)
+			}
+			
+			for k=1:1:group.allowedToDance.Count(){
+				set storedAge = ..NameIdxOpen(group.allowedToDance.GetAt(k))
+				if (age.AllowedToDance.FindObjectId(storedAge.%Id()) = ""){
+					do age.AllowedToDance.Insert(storedAge)
+				}
+			}
+			$$$THROWONERROR(st, age.%Save())
+		}
+		
+		TCOMMIT
+	}
+	catch(ex){
+		TROLLBACK
+		
+		set st = ex.AsStatus()
+	}
+	
+	quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetAllAvailableList">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ageCategoryName:%String</FormalSpec>
+<ReturnType>%List</ReturnType>
+<Implementation><![CDATA[
+	set list = $LISTBUILD("0")
+	
+	set prtAC = ..NameIdxOpen(ageCategoryName)
+	for i=1:1:prtAC.AllowedToDance.Count(){
+		set $LIST(list, i) = prtAC.AllowedToDance.GetAt(i).%Id()
+	}
+	
+	if ($LISTLENGTH(list) = 0) set list = $LISTBUILD("0")
+	
+	quit list
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.AgeCategoryWDSFD</DataLocation>
+<DefaultData>AgeCategoryWDSFDefaultData</DefaultData>
+<IdLocation>^Dance.Data.AgeCategoryWDSFD</IdLocation>
+<IndexLocation>^Dance.Data.AgeCategoryWDSFI</IndexLocation>
+<StreamLocation>^Dance.Data.AgeCategoryWDSFS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="AgeCategoryWDSFDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>AllowedToDance</Value>
+</Value>
+<Value name="4">
+<Value>Division</Value>
+</Value>
+<Value name="5">
+<Value>FromAge</Value>
+</Value>
+<Value name="6">
+<Value>ToAge</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

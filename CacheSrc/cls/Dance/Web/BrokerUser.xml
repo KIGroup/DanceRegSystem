@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Web.BrokerUser">
+<Description>
+Public REST URLs</Description>
+<Super>Dance.Web.BrokerBase</Super>
+<TimeCreated>63289,63491.819669</TimeCreated>
+
+<XData name="UrlMap">
+<Data><![CDATA[
+<Routes>
+
+<!-- ========================================================================================================= -->
+<!-- Registration                                                                                 Registration -->
+<!-- ========================================================================================================= -->
+<Route Method="POST" Url="/registration/udsr" Call="Dance.Web.JsonUser:RegistrationUDSR"/>
+<Route Method="POST" Url="/registration/wdsf" Call="Dance.Web.JsonUser:RegistrationWDSF"/>
+<Route Method="POST" Url="/registration/other" Call="Dance.Web.JsonUser:RegistrationOTHER"/>
+
+
+
+<!-- ========================================================================================================= -->
+<!-- Tournament                                                                                     Tournament -->
+<!-- ========================================================================================================= -->
+
+<!-- GET BY ID, Tournament -->
+<Route Method="GET" Url="/tournament/:id"   Call="Dance.Web.JsonUser:GetTournamentById"/>
+
+<!-- GET YEARS, Tournament -->
+<Route Method="GET" Url="/tournamentyears"   Call="Dance.Web.JsonUser:GetTournamentYears"/>
+
+<!-- GET ALL [GRID], Tournament -->
+<Route Method="POST" Url="/tournament/grid" Call="Dance.Web.JsonUser:GetTournamentsForGrid"/>
+
+<!-- GET ALL, Tournament status -->
+<Route Method="GET" Url="/tournamentStatus" Call="Dance.Web.JsonUser:GetTournamentStatuses"/>
+
+<!-- GET ALL, Tournament rank -->
+<Route Method="GET" Url="/tournamentRank" Call="Dance.Web.JsonUser:GetTournamentRanks"/>
+
+<!-- GET BY YEAR, Tournament [Short Info]-->
+<Route Method="GET" Url="/tournament/year/:year" Call="Dance.Web.JsonUser:GetTournamentsByYear"/>
+
+<!-- ========================================================================================================= -->
+<!-- Competition                                                                                   Competition -->
+<!-- ========================================================================================================= -->
+
+
+<!-- GET BY ID, Competition -->
+<Route Method="GET"   Url="/tournament/competition/:id"      Call="Dance.Web.JsonUser:GetCompetitionById"/>
+
+<!-- GET ALL,[GRID AVIALABLE FOR COUPLE] Available Competitions in Tournament -->
+<Route Method="POST"  Url="/tournament/competition/grid/couple" Call="Dance.Web.JsonUser:GetAvailableCompetitionsForGrid"/>
+
+<!-- GET Dates, All possible dates in Tournament -->
+<Route Method="GET"  Url="/tournament/:id/competition/date" Call="Dance.Web.JsonUser:GetTournamentDates"/>
+
+<!-- GET ALL,[GRID] Competitions in Tournament -->
+<Route Method="POST"  Url="/tournament/competition/grid" Call="Dance.Web.JsonUser:GetTournamentCompetitionsForGrid"/>
+
+<!-- GET Types, All competition types -->
+<Route Method="GET"  Url="/competition/type" Call="Dance.Web.JsonUser:GetCompetitionTypes"/>
+
+
+<!-- GET WDSF competitions by filter -->
+<Route Method="GET" Url="/competitionwdsf/country/:countryId/date/:date" Call="Dance.Web.JsonUser:GetAvailableCompetitionsWDSFByFilter"/>
+
+
+<!-- ========================================================================================================= -->
+<!-- Participant                                                                                   Participant -->
+<!-- ========================================================================================================= -->
+
+<Route Method="POST" Url="/competition/participant/grid" Call="Dance.Web.JsonUser:GetCompetitionParticipantsForGrid"/>
+
+<Route Method="POST" Url="/tournament/participant/grid" Call="Dance.Web.JsonUser:GetTournamentParticipantsForGrid"/>
+
+<Route Method="GET" Url="/dancer/participant" Call="Dance.Web.JsonUser:GetAllDancerParticipants"/>
+
+<Route Method="POST" Url="/participant/grid" Call="Dance.Web.JsonUser:GetAllParticipantsForGrid"/>
+
+
+<!-- ========================================================================================================= -->
+<!-- Couple                                                                                             Couple -->
+<!-- ========================================================================================================= -->
+
+
+<Route Method="GET" Url="/couple/:id" Call="Dance.Web.JsonUser:GetCoupleById"/>
+
+<Route Method="GET" Url="/couple/udsr/man/:manNumber/woman/:womanNumber" Call="Dance.Web.JsonUser:GetCoupleUDSRByNumbers"/>
+
+<Route Method="GET" Url="/couple/wdsf/man/:manNumber/woman/:womanNumber" Call="Dance.Web.JsonUser:GetCoupleWDSFByNumbers"/>
+
+<Route Method="POST" Url="/couple/registration/existing" Call="Dance.Web.JsonCouple:RegistrationExistingCouple"/>
+
+<Route Method="POST" Url="/couple/registration/new" Call="Dance.Web.JsonCouple:RegistrationNewCouple"/>
+
+<!-- ========================================================================================================= -->
+<!-- Person                                                                                             Person -->
+<!-- ========================================================================================================= -->
+
+<Route Method="GET" Url="/person/udsr/:number" Call="Dance.Web.JsonUser:GetPersonByUDSRNumber"/>
+<Route Method="GET" Url="/person/wdsf/:number" Call="Dance.Web.JsonUser:GetPersonByWDSFNumber"/>
+
+
+<!-- ========================================================================================================= -->
+<!-- Other                                                                                               Other -->
+<!-- ========================================================================================================= -->
+
+<!-- GET ALL, Language -->
+<Route Method="GET" Url="/language" Call="Dance.Web.JsonUser:GetLanguages"/>
+
+<!-- GET ALL, Country -->
+<Route Method="GET" Url="/country"  Call="Dance.Web.JsonUser:GetCountries"/>
+
+<!-- GET ALL, Discipline -->
+<Route Method="GET" Url="/discipline" Call="Dance.Web.JsonUser:GetDisciplines"/>
+
+<!-- GET ALL, Dancer class -->
+<Route Method="GET" Url="/dancerClass" Call="Dance.Web.JsonUser:GetDancerClasses"/>
+	
+<!-- GET ALL, Age category -->
+<Route Method="GET" Url="/ageCategory" Call="Dance.Web.JsonUser:GetAgeCategories"/>
+
+<Route Method="POST" Url="/feedback" Call="Dance.Web.JsonUser:CreateFeedBack"/>
+
+
+<Route Method="GET" Url="/person/stats" Call="Dance.Web.JsonUser:GetPersonStatistics"/>
+	
+	
+<!--  -->
+<Route Method="GET" Url="/count/participant/competition" Call="Dance.Web.JsonUser:GetCountParticipantCompetitions"/>
+	
+	
+	
+<Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/participant" Call="Dance.Web.ReportTournamentParticipants:GetFileByAccessCode"/>
+<Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/payer" Call="Dance.Web.ReportTournamentPayers:GetFileByAccessCode"/>
+	
+</Routes>
+]]></Data>
+</XData>
+</Class>
+</Export>

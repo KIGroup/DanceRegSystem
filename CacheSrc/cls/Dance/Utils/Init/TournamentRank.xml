@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.TournamentRank">
+<Abstract>1</Abstract>
+<Super>BaseInit</Super>
+<TimeCreated>63289,45056.357648</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>TournamentRank</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    w !,"=== "_..#PClassName_" ==="
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LText", "LTextXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LTextValue", "LTextValueXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data."_..#PClassName, "ClassXData")
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<TournamentRank><Name>CBC20F73-49FC-4325-82AE-FEA3AE61DC20</Name><ShortName>10877D23-6841-450E-B53C-C8F5BBDA6447</ShortName><Code>МК</Code></TournamentRank>
+<TournamentRank><Name>3217E815-4F35-4ED6-8973-08DEA840C5C7</Name><ShortName>03DD8AD8-9857-4D34-8EF5-FB4AC92C9A3A</ShortName><Code>РС</Code></TournamentRank>
+<TournamentRank><Name>48A389A8-7E00-4CD7-94C0-BCB53F7235E3</Name><ShortName>55B7C7B1-D782-4E68-949B-6DC9A42D4DFB</ShortName><Code>МС</Code></TournamentRank>
+<TournamentRank><Name>2D70F332-32CC-449E-ABF1-B07772A4AF0E</Name><ShortName>89483DF0-D61B-468E-9EED-688BA75E852F</ShortName><Code>рф</Code></TournamentRank>
+<TournamentRank><Name>BD169385-BB73-4608-ACC2-0652F8D1FFE1</Name><ShortName>16F57E3F-E1E5-466D-8ED9-087E91B11196</ShortName><Code>ПМ</Code></TournamentRank>
+<TournamentRank><Name>EAFD525E-5D0E-48C4-B7D6-97A89F9C2FC9</Name><ShortName>DD320337-19E6-4D5C-92D9-C43E94AE600C</ShortName><Code>ПФ</Code></TournamentRank>
+<TournamentRank><Name>61E3DC65-5C07-44C8-A96F-5652B19A4844</Name><ShortName>2A0A9E83-E078-437A-BB8F-67E85F164693</ShortName><Code>ПР</Code></TournamentRank>
+<TournamentRank><Name>ABF7A9E3-50D1-4101-BA41-70AB2188DC28</Name><ShortName>08308466-FDA3-4566-9700-4BB7C0797E17</ShortName><Code>ПККМ</Code></TournamentRank>
+<TournamentRank><Name>F6D97D6F-BFED-484B-BC60-97FF165D4AF8</Name><ShortName>794E0252-1A11-4792-B7AB-7AA9510761E2</ShortName><Code>ПМ Формейшн</Code></TournamentRank>
+<TournamentRank><Name>9273C1E7-B9D2-41FA-AA70-57DFA3B5D180</Name><ShortName>F384FA22-E814-4304-B2BD-D8B1F8D18D97</ShortName><Code>ПМ Ансамбли</Code></TournamentRank>
+
+
+
+<TournamentRank><Name>878BB6F1-BB88-4B95-8532-2F5B37A9F0F5</Name><ShortName>65FBC39B-E418-4C8E-85D9-744F1833699C</ShortName><Code>Первенство "Буревестник"</Code></TournamentRank>
+<TournamentRank><Name>1B316A8B-BB04-4026-BA43-5CD8972578EE</Name><ShortName>CA862D40-8530-4E72-B8A6-8446D2ABF32F</ShortName><Code>ЧМ</Code></TournamentRank>
+<TournamentRank><Name>9EF2CD24-4918-45C7-846D-D40CE2FC2870</Name><ShortName>C4DBB87B-E916-4317-825C-0119A43E670E</ShortName><Code>ЧР</Code></TournamentRank>
+<TournamentRank><Name>CB1F0E64-B709-4BC4-BAE4-743D890D4F90</Name><ShortName>A60A7510-0ECE-4361-962D-D6E529EDD6A0</ShortName><Code>ЧККМ</Code></TournamentRank>
+<TournamentRank><Name>258F7C16-B8F2-4B06-B75B-5DF5C9DC15AA</Name><ShortName>3C6049AD-92BB-4B74-BB7D-05E71EFF1D1C</ShortName><Code>ЧМ Формейшн</Code></TournamentRank>
+<TournamentRank><Name>32AC4CC9-ED62-453B-8768-B8C00F3E8414</Name><ShortName>8B1ACFAC-F64C-4117-A65E-FBE415412D86</ShortName><Code>ЧККР</Code></TournamentRank>
+<TournamentRank><Name>39AE1DD8-59C5-4D1E-B964-32274E307A22</Name><ShortName>B7080054-7141-4614-8371-3C1C0ECC7A3A</ShortName><Code>ЧР Секвей</Code></TournamentRank>
+<TournamentRank><Name>786F988F-6CE1-46CA-947F-8D43FFA5FA46</Name><ShortName>E2A22759-740D-463E-8177-15CA22FF090E</ShortName><Code>Чемпионат Европы</Code></TournamentRank>
+<TournamentRank><Name>D9FB1A2F-4451-4723-9EFC-963B668FDCDA</Name><ShortName>E8C5F83D-2AE0-4A5B-A94D-CE0AEA50EC73</ShortName><Code>Чемпионат Европы среди студентов</Code></TournamentRank>
+<TournamentRank><Name>7804B605-3214-4375-B9FB-CAF4FEA2B49A</Name><ShortName>65EF2A2C-5C09-459E-AB8B-264D07D6B236</ShortName><Code>ЧР среди студентов</Code></TournamentRank>
+
+
+<TournamentRank><Name>A1CB5952-D0EF-45A0-ACBC-CE9C78DF520D</Name><ShortName>E6DD641F-FF98-440B-85E3-89AD3C5933E9</ShortName><Code>ЧМ по секвею</Code></TournamentRank>
+<TournamentRank><Name>D034B917-5466-4C6F-82E9-5736803423D5</Name><ShortName>ACA69E1E-04B2-4C3D-8432-7EDB3AAD73AD</ShortName><Code>ЧМ среди ансамблей</Code></TournamentRank>
+<TournamentRank><Name>712AC66D-F748-4C5F-BD1E-A704ED085713</Name><ShortName>2CCD6B7E-1280-4A13-ADED-1857325C6FED</ShortName><Code>ЧР ансамблей</Code></TournamentRank>
+<TournamentRank><Name>80B78B2F-46DA-4084-AD0D-A386319390DD</Name><ShortName>1F05DF59-BFA7-4D3F-8B13-9947803BC38D</ShortName><Code>ПВ</Code></TournamentRank>
+<TournamentRank><Name>4F7A79A8-B79F-48A2-BE3D-88C70496BB7B</Name><ShortName>897F06F6-34E8-4E21-8126-8CD51D4C8010</ShortName><Code>ЧМ среди студентов</Code></TournamentRank>
+<TournamentRank><Name>D235F88B-0625-411D-BC1F-6019D01E298E</Name><ShortName>AC0BA1CD-2FBA-4DE7-93D5-F5B9BCC746C8</ShortName><Code>Первенство СТСР</Code></TournamentRank>
+</ClassXData>
+]]></Data>
+</XData>
+
+<XData name="LTextXData">
+<Data><![CDATA[
+<LTextXData>
+<LText><Guid>CBC20F73-49FC-4325-82AE-FEA3AE61DC20</Guid></LText>
+<LText><Guid>10877D23-6841-450E-B53C-C8F5BBDA6447</Guid></LText>
+
+<LText><Guid>3217E815-4F35-4ED6-8973-08DEA840C5C7</Guid></LText>
+<LText><Guid>03DD8AD8-9857-4D34-8EF5-FB4AC92C9A3A</Guid></LText>
+
+<LText><Guid>48A389A8-7E00-4CD7-94C0-BCB53F7235E3</Guid></LText>
+<LText><Guid>55B7C7B1-D782-4E68-949B-6DC9A42D4DFB</Guid></LText>
+
+<LText><Guid>2D70F332-32CC-449E-ABF1-B07772A4AF0E</Guid></LText>
+<LText><Guid>89483DF0-D61B-468E-9EED-688BA75E852F</Guid></LText>
+
+<LText><Guid>BD169385-BB73-4608-ACC2-0652F8D1FFE1</Guid></LText>
+<LText><Guid>16F57E3F-E1E5-466D-8ED9-087E91B11196</Guid></LText>
+
+<LText><Guid>EAFD525E-5D0E-48C4-B7D6-97A89F9C2FC9</Guid></LText>
+<LText><Guid>DD320337-19E6-4D5C-92D9-C43E94AE600C</Guid></LText>
+
+<LText><Guid>61E3DC65-5C07-44C8-A96F-5652B19A4844</Guid></LText>
+<LText><Guid>2A0A9E83-E078-437A-BB8F-67E85F164693</Guid></LText>
+
+<LText><Guid>ABF7A9E3-50D1-4101-BA41-70AB2188DC28</Guid></LText>
+<LText><Guid>08308466-FDA3-4566-9700-4BB7C0797E17</Guid></LText>
+
+<LText><Guid>F6D97D6F-BFED-484B-BC60-97FF165D4AF8</Guid></LText>
+<LText><Guid>794E0252-1A11-4792-B7AB-7AA9510761E2</Guid></LText>
+
+<LText><Guid>9273C1E7-B9D2-41FA-AA70-57DFA3B5D180</Guid></LText>
+<LText><Guid>F384FA22-E814-4304-B2BD-D8B1F8D18D97</Guid></LText>
+
+
+
+
+<LText><Guid>878BB6F1-BB88-4B95-8532-2F5B37A9F0F5</Guid></LText>
+<LText><Guid>65FBC39B-E418-4C8E-85D9-744F1833699C</Guid></LText>
+
+<LText><Guid>1B316A8B-BB04-4026-BA43-5CD8972578EE</Guid></LText>
+<LText><Guid>CA862D40-8530-4E72-B8A6-8446D2ABF32F</Guid></LText>
+
+<LText><Guid>9EF2CD24-4918-45C7-846D-D40CE2FC2870</Guid></LText>
+<LText><Guid>C4DBB87B-E916-4317-825C-0119A43E670E</Guid></LText>
+
+<LText><Guid>CB1F0E64-B709-4BC4-BAE4-743D890D4F90</Guid></LText>
+<LText><Guid>A60A7510-0ECE-4361-962D-D6E529EDD6A0</Guid></LText>
+
+<LText><Guid>258F7C16-B8F2-4B06-B75B-5DF5C9DC15AA</Guid></LText>
+<LText><Guid>3C6049AD-92BB-4B74-BB7D-05E71EFF1D1C</Guid></LText>
+
+<LText><Guid>32AC4CC9-ED62-453B-8768-B8C00F3E8414</Guid></LText>
+<LText><Guid>8B1ACFAC-F64C-4117-A65E-FBE415412D86</Guid></LText>
+
+<LText><Guid>39AE1DD8-59C5-4D1E-B964-32274E307A22</Guid></LText>
+<LText><Guid>B7080054-7141-4614-8371-3C1C0ECC7A3A</Guid></LText>
+
+<LText><Guid>786F988F-6CE1-46CA-947F-8D43FFA5FA46</Guid></LText>
+<LText><Guid>E2A22759-740D-463E-8177-15CA22FF090E</Guid></LText>
+
+<LText><Guid>D9FB1A2F-4451-4723-9EFC-963B668FDCDA</Guid></LText>
+<LText><Guid>E8C5F83D-2AE0-4A5B-A94D-CE0AEA50EC73</Guid></LText>
+
+<LText><Guid>7804B605-3214-4375-B9FB-CAF4FEA2B49A</Guid></LText>
+<LText><Guid>65EF2A2C-5C09-459E-AB8B-264D07D6B236</Guid></LText>
+
+
+
+<LText><Guid>A1CB5952-D0EF-45A0-ACBC-CE9C78DF520D</Guid></LText>
+<LText><Guid>E6DD641F-FF98-440B-85E3-89AD3C5933E9</Guid></LText>
+
+<LText><Guid>D034B917-5466-4C6F-82E9-5736803423D5</Guid></LText>
+<LText><Guid>ACA69E1E-04B2-4C3D-8432-7EDB3AAD73AD</Guid></LText>
+
+<LText><Guid>712AC66D-F748-4C5F-BD1E-A704ED085713</Guid></LText>
+<LText><Guid>2CCD6B7E-1280-4A13-ADED-1857325C6FED</Guid></LText>
+
+<LText><Guid>80B78B2F-46DA-4084-AD0D-A386319390DD</Guid></LText>
+<LText><Guid>1F05DF59-BFA7-4D3F-8B13-9947803BC38D</Guid></LText>
+
+<LText><Guid>4F7A79A8-B79F-48A2-BE3D-88C70496BB7B</Guid></LText>
+<LText><Guid>897F06F6-34E8-4E21-8126-8CD51D4C8010</Guid></LText>
+
+<LText><Guid>D235F88B-0625-411D-BC1F-6019D01E298E</Guid></LText>
+<LText><Guid>AC0BA1CD-2FBA-4DE7-93D5-F5B9BCC746C8</Guid></LText>
+
+</LTextXData>
+]]></Data>
+</XData>
+
+<XData name="LTextValueXData">
+<Data><![CDATA[
+<LTextValueXData>
+<LTextValue><LText>CBC20F73-49FC-4325-82AE-FEA3AE61DC20</LText><Value>Межклубное соревнование</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>CBC20F73-49FC-4325-82AE-FEA3AE61DC20</LText><Value>Interdojo competition</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>CBC20F73-49FC-4325-82AE-FEA3AE61DC20</LText><Value>Interdojo competition</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>10877D23-6841-450E-B53C-C8F5BBDA6447</LText><Value>МК</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>10877D23-6841-450E-B53C-C8F5BBDA6447</LText><Value>IC</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>10877D23-6841-450E-B53C-C8F5BBDA6447</LText><Value>IC</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>3217E815-4F35-4ED6-8973-08DEA840C5C7</LText><Value>Российское соревнование</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>3217E815-4F35-4ED6-8973-08DEA840C5C7</LText><Value>Russian competition</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>3217E815-4F35-4ED6-8973-08DEA840C5C7</LText><Value>Russian competition</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>03DD8AD8-9857-4D34-8EF5-FB4AC92C9A3A</LText><Value>РС</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>03DD8AD8-9857-4D34-8EF5-FB4AC92C9A3A</LText><Value>RC</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>03DD8AD8-9857-4D34-8EF5-FB4AC92C9A3A</LText><Value>RC</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>48A389A8-7E00-4CD7-94C0-BCB53F7235E3</LText><Value>Международное соревнование</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>48A389A8-7E00-4CD7-94C0-BCB53F7235E3</LText><Value>International competition</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>48A389A8-7E00-4CD7-94C0-BCB53F7235E3</LText><Value>International competition</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>55B7C7B1-D782-4E68-949B-6DC9A42D4DFB</LText><Value>МС</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>55B7C7B1-D782-4E68-949B-6DC9A42D4DFB</LText><Value>InC</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>55B7C7B1-D782-4E68-949B-6DC9A42D4DFB</LText><Value>InC</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>2D70F332-32CC-449E-ABF1-B07772A4AF0E</LText><Value>Рейтинг МФТС</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>2D70F332-32CC-449E-ABF1-B07772A4AF0E</LText><Value>Rating MFDS</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>2D70F332-32CC-449E-ABF1-B07772A4AF0E</LText><Value>Rating MFDS</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>89483DF0-D61B-468E-9EED-688BA75E852F</LText><Value>РФ</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>89483DF0-D61B-468E-9EED-688BA75E852F</LText><Value>RF</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>89483DF0-D61B-468E-9EED-688BA75E852F</LText><Value>RF</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>BD169385-BB73-4608-ACC2-0652F8D1FFE1</LText><Value>Первенство Москвы</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>BD169385-BB73-4608-ACC2-0652F8D1FFE1</LText><Value>Championship of Moscow</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>BD169385-BB73-4608-ACC2-0652F8D1FFE1</LText><Value>Championship of Moscow</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>16F57E3F-E1E5-466D-8ED9-087E91B11196</LText><Value>ПМ</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>16F57E3F-E1E5-466D-8ED9-087E91B11196</LText><Value>CM</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>16F57E3F-E1E5-466D-8ED9-087E91B11196</LText><Value>CM</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>EAFD525E-5D0E-48C4-B7D6-97A89F9C2FC9</LText><Value>Первенство МФТС</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>EAFD525E-5D0E-48C4-B7D6-97A89F9C2FC9</LText><Value>Championship of MFDS</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>EAFD525E-5D0E-48C4-B7D6-97A89F9C2FC9</LText><Value>Championship of MFDS</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>DD320337-19E6-4D5C-92D9-C43E94AE600C</LText><Value>ПФ</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>DD320337-19E6-4D5C-92D9-C43E94AE600C</LText><Value>CF</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>DD320337-19E6-4D5C-92D9-C43E94AE600C</LText><Value>CF</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>61E3DC65-5C07-44C8-A96F-5652B19A4844</LText><Value>Первенство России</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>61E3DC65-5C07-44C8-A96F-5652B19A4844</LText><Value>Championship of Russian</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>61E3DC65-5C07-44C8-A96F-5652B19A4844</LText><Value>Championship of Russian</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>2A0A9E83-E078-437A-BB8F-67E85F164693</LText><Value>ПР</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>2A0A9E83-E078-437A-BB8F-67E85F164693</LText><Value>CR</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>2A0A9E83-E078-437A-BB8F-67E85F164693</LText><Value>CR</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>ABF7A9E3-50D1-4101-BA41-70AB2188DC28</LText><Value>Первенство Клубных Команд Москвы</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>ABF7A9E3-50D1-4101-BA41-70AB2188DC28</LText><Value>Championship club team in Moscow</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>ABF7A9E3-50D1-4101-BA41-70AB2188DC28</LText><Value>Championship club team in Moscow</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>08308466-FDA3-4566-9700-4BB7C0797E17</LText><Value>ПККМ</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>08308466-FDA3-4566-9700-4BB7C0797E17</LText><Value>CCTM</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>08308466-FDA3-4566-9700-4BB7C0797E17</LText><Value>CCTM</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>F6D97D6F-BFED-484B-BC60-97FF165D4AF8</LText><Value>Первенство Москвы по формейшн</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>F6D97D6F-BFED-484B-BC60-97FF165D4AF8</LText><Value>Championship of Moscow on Formations</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>F6D97D6F-BFED-484B-BC60-97FF165D4AF8</LText><Value>Championship of Moscow on Formations</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>794E0252-1A11-4792-B7AB-7AA9510761E2</LText><Value>ПМ Формейшн</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>794E0252-1A11-4792-B7AB-7AA9510761E2</LText><Value>CM Formations</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>794E0252-1A11-4792-B7AB-7AA9510761E2</LText><Value>CM Formations</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>9273C1E7-B9D2-41FA-AA70-57DFA3B5D180</LText><Value>Первенство Москвы среди ансамблей</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>9273C1E7-B9D2-41FA-AA70-57DFA3B5D180</LText><Value>Moscow championship of ensembles</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>9273C1E7-B9D2-41FA-AA70-57DFA3B5D180</LText><Value>Moscow championship of ensembles</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>F384FA22-E814-4304-B2BD-D8B1F8D18D97</LText><Value>ПМ Ансамбли</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>F384FA22-E814-4304-B2BD-D8B1F8D18D97</LText><Value>CM Ensembles</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>F384FA22-E814-4304-B2BD-D8B1F8D18D97</LText><Value>CM Ensembles</Value><Lang>de</Lang></LTextValue>
+
+
+
+
+<LTextValue><LText>878BB6F1-BB88-4B95-8532-2F5B37A9F0F5</LText><Value>Первенство "Буревестник"</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>878BB6F1-BB88-4B95-8532-2F5B37A9F0F5</LText><Value>Championship of "Petrel"</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>878BB6F1-BB88-4B95-8532-2F5B37A9F0F5</LText><Value>Championship of "Petrel"</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>65FBC39B-E418-4C8E-85D9-744F1833699C</LText><Value>Первенство "Буревестник"</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>65FBC39B-E418-4C8E-85D9-744F1833699C</LText><Value>Championship of "Petrel"</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>65FBC39B-E418-4C8E-85D9-744F1833699C</LText><Value>Championship of "Petrel"</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>1B316A8B-BB04-4026-BA43-5CD8972578EE</LText><Value>Чемпионат Москвы</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>1B316A8B-BB04-4026-BA43-5CD8972578EE</LText><Value>Moscow Championship</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>1B316A8B-BB04-4026-BA43-5CD8972578EE</LText><Value>Moscow Championship</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>CA862D40-8530-4E72-B8A6-8446D2ABF32F</LText><Value>ЧМ</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>CA862D40-8530-4E72-B8A6-8446D2ABF32F</LText><Value>MC</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>CA862D40-8530-4E72-B8A6-8446D2ABF32F</LText><Value>MC</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>9EF2CD24-4918-45C7-846D-D40CE2FC2870</LText><Value>Чемпионат России</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>9EF2CD24-4918-45C7-846D-D40CE2FC2870</LText><Value>Russian Championship</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>9EF2CD24-4918-45C7-846D-D40CE2FC2870</LText><Value>Russian Championship</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>C4DBB87B-E916-4317-825C-0119A43E670E</LText><Value>ЧР</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>C4DBB87B-E916-4317-825C-0119A43E670E</LText><Value>RC</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>C4DBB87B-E916-4317-825C-0119A43E670E</LText><Value>RC</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>CB1F0E64-B709-4BC4-BAE4-743D890D4F90</LText><Value>Чемпионат Клубных Команд Москвы</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>CB1F0E64-B709-4BC4-BAE4-743D890D4F90</LText><Value>Championship club team in Moscow</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>CB1F0E64-B709-4BC4-BAE4-743D890D4F90</LText><Value>Championship club team in Moscow</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>A60A7510-0ECE-4361-962D-D6E529EDD6A0</LText><Value>ЧККМ</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>A60A7510-0ECE-4361-962D-D6E529EDD6A0</LText><Value>CCTM</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>A60A7510-0ECE-4361-962D-D6E529EDD6A0</LText><Value>CCTM</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>258F7C16-B8F2-4B06-B75B-5DF5C9DC15AA</LText><Value>Чемпионат Москвы по формейшн</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>258F7C16-B8F2-4B06-B75B-5DF5C9DC15AA</LText><Value>Championship of Moscow Formations</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>258F7C16-B8F2-4B06-B75B-5DF5C9DC15AA</LText><Value>Championship of Moscow Formations</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>3C6049AD-92BB-4B74-BB7D-05E71EFF1D1C</LText><Value>ЧМ Формейшн</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>3C6049AD-92BB-4B74-BB7D-05E71EFF1D1C</LText><Value>CM Formations</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>3C6049AD-92BB-4B74-BB7D-05E71EFF1D1C</LText><Value>CM Formations</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>32AC4CC9-ED62-453B-8768-B8C00F3E8414</LText><Value>Чемпионат Клубных Команд России</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>32AC4CC9-ED62-453B-8768-B8C00F3E8414</LText><Value>Russian championship club teams</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>32AC4CC9-ED62-453B-8768-B8C00F3E8414</LText><Value>Russian championship club teams</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>8B1ACFAC-F64C-4117-A65E-FBE415412D86</LText><Value>ЧККР</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>8B1ACFAC-F64C-4117-A65E-FBE415412D86</LText><Value>RCCT</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>8B1ACFAC-F64C-4117-A65E-FBE415412D86</LText><Value>RCCT</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>39AE1DD8-59C5-4D1E-B964-32274E307A22</LText><Value>Чемпионат России по секвею</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>39AE1DD8-59C5-4D1E-B964-32274E307A22</LText><Value>Championship of Russia on sequence dancing</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>39AE1DD8-59C5-4D1E-B964-32274E307A22</LText><Value>Championship of Russia on sequence dancing</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>B7080054-7141-4614-8371-3C1C0ECC7A3A</LText><Value>ЧР Секвей</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>B7080054-7141-4614-8371-3C1C0ECC7A3A</LText><Value>CR sequence dancing</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>B7080054-7141-4614-8371-3C1C0ECC7A3A</LText><Value>CR sequence dancing</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>786F988F-6CE1-46CA-947F-8D43FFA5FA46</LText><Value>Чемпионат Европы</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>786F988F-6CE1-46CA-947F-8D43FFA5FA46</LText><Value>European Championship</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>786F988F-6CE1-46CA-947F-8D43FFA5FA46</LText><Value>European Championship</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>E2A22759-740D-463E-8177-15CA22FF090E</LText><Value>Чемпионат Европы</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>E2A22759-740D-463E-8177-15CA22FF090E</LText><Value>European Championship</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>E2A22759-740D-463E-8177-15CA22FF090E</LText><Value>European Championship</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>D9FB1A2F-4451-4723-9EFC-963B668FDCDA</LText><Value>Чемпионат Европы среди студентов</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>D9FB1A2F-4451-4723-9EFC-963B668FDCDA</LText><Value>European Championship students</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>D9FB1A2F-4451-4723-9EFC-963B668FDCDA</LText><Value>European Championship students</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>E8C5F83D-2AE0-4A5B-A94D-CE0AEA50EC73</LText><Value>Чемпионат Европы среди студентов</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>E8C5F83D-2AE0-4A5B-A94D-CE0AEA50EC73</LText><Value>European Championship students</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>E8C5F83D-2AE0-4A5B-A94D-CE0AEA50EC73</LText><Value>European Championship students</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>7804B605-3214-4375-B9FB-CAF4FEA2B49A</LText><Value>Чемпионат России среди студентов</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>7804B605-3214-4375-B9FB-CAF4FEA2B49A</LText><Value>Championship of Russia among students</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>7804B605-3214-4375-B9FB-CAF4FEA2B49A</LText><Value>Championship of Russia among students</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>65EF2A2C-5C09-459E-AB8B-264D07D6B236</LText><Value>ЧР среди студентов</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>65EF2A2C-5C09-459E-AB8B-264D07D6B236</LText><Value>CR among students</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>65EF2A2C-5C09-459E-AB8B-264D07D6B236</LText><Value>CR among students</Value><Lang>de</Lang></LTextValue>
+
+
+
+
+
+<LTextValue><LText>A1CB5952-D0EF-45A0-ACBC-CE9C78DF520D</LText><Value>Чемпионат Москвы по секвею</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>A1CB5952-D0EF-45A0-ACBC-CE9C78DF520D</LText><Value>Championship of Moscow on sequence dancing</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>A1CB5952-D0EF-45A0-ACBC-CE9C78DF520D</LText><Value>Championship of Moscow on sequence dancing</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>E6DD641F-FF98-440B-85E3-89AD3C5933E9</LText><Value>ЧМ по секвею</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>E6DD641F-FF98-440B-85E3-89AD3C5933E9</LText><Value>CM on sequence dancing</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>E6DD641F-FF98-440B-85E3-89AD3C5933E9</LText><Value>CM on sequence dancing</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>D034B917-5466-4C6F-82E9-5736803423D5</LText><Value>Чемпионат Москвы среди ансамблей</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>D034B917-5466-4C6F-82E9-5736803423D5</LText><Value>Moscow Championship of ensembles</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>D034B917-5466-4C6F-82E9-5736803423D5</LText><Value>Moscow Championship of ensembles</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>ACA69E1E-04B2-4C3D-8432-7EDB3AAD73AD</LText><Value>ЧМ среди ансамблей</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>ACA69E1E-04B2-4C3D-8432-7EDB3AAD73AD</LText><Value>CM of ensembles</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>ACA69E1E-04B2-4C3D-8432-7EDB3AAD73AD</LText><Value>CM of ensembles</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>712AC66D-F748-4C5F-BD1E-A704ED085713</LText><Value>Чемпионат России ансамблей</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>712AC66D-F748-4C5F-BD1E-A704ED085713</LText><Value>Russian Championship ensembles</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>712AC66D-F748-4C5F-BD1E-A704ED085713</LText><Value>Russian Championship ensembles</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>2CCD6B7E-1280-4A13-ADED-1857325C6FED</LText><Value>ЧР ансамблей</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>2CCD6B7E-1280-4A13-ADED-1857325C6FED</LText><Value>CR of ensembles</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>2CCD6B7E-1280-4A13-ADED-1857325C6FED</LText><Value>CR of ensembles</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>80B78B2F-46DA-4084-AD0D-A386319390DD</LText><Value>Первенство ВУЗов</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>80B78B2F-46DA-4084-AD0D-A386319390DD</LText><Value>Universities championship</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>80B78B2F-46DA-4084-AD0D-A386319390DD</LText><Value>Universities championship</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>1F05DF59-BFA7-4D3F-8B13-9947803BC38D</LText><Value>ПВ</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>1F05DF59-BFA7-4D3F-8B13-9947803BC38D</LText><Value>UC</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>1F05DF59-BFA7-4D3F-8B13-9947803BC38D</LText><Value>UC</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>4F7A79A8-B79F-48A2-BE3D-88C70496BB7B</LText><Value>Чемпионат Москвы среди студентов</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>4F7A79A8-B79F-48A2-BE3D-88C70496BB7B</LText><Value>Moscow championship among students</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>4F7A79A8-B79F-48A2-BE3D-88C70496BB7B</LText><Value>Moscow championship among students</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>897F06F6-34E8-4E21-8126-8CD51D4C8010</LText><Value>ЧМ среди студентов</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>897F06F6-34E8-4E21-8126-8CD51D4C8010</LText><Value>CM among students</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>897F06F6-34E8-4E21-8126-8CD51D4C8010</LText><Value>CM among students</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>D235F88B-0625-411D-BC1F-6019D01E298E</LText><Value>Первенство СТСР</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>D235F88B-0625-411D-BC1F-6019D01E298E</LText><Value>Championship of UDSR</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>D235F88B-0625-411D-BC1F-6019D01E298E</LText><Value>Championship of UDSR</Value><Lang>de</Lang></LTextValue>
+<LTextValue><LText>AC0BA1CD-2FBA-4DE7-93D5-F5B9BCC746C8</LText><Value>Первенство СТСР</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>AC0BA1CD-2FBA-4DE7-93D5-F5B9BCC746C8</LText><Value>Championship of UDSR</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>AC0BA1CD-2FBA-4DE7-93D5-F5B9BCC746C8</LText><Value>Championship of UDSR</Value><Lang>de</Lang></LTextValue>
+
+
+</LTextValueXData>
+]]></Data>
+</XData>
+
+<Method name="CopyValueFromEngToAnother">
+<Description>
+w ##class(Dance.Utils.Init.TournamentRank).CopyValueFromEngToAnother("it")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>newLang:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+    
+        &sql(DECLARE CCur CURSOR FOR
+             SELECT %NOLOCK ID
+             FROM Dance_Data.TournamentRank)
+        
+        &sql(OPEN CCur)
+        for{
+            &sql(FETCH CCur INTO :id) 
+            quit:(SQLCODE '= 0)
+            
+            set obj = ##class(Dance.Data.TournamentRank).%OpenId(id)
+            $$$THROWONERROR(st, obj.Name.SetValueByLang(obj.Name.GetValueByLang("en"), newLang))
+            $$$THROWONERROR(st, obj.ShortName.SetValueByLang(obj.ShortName.GetValueByLang("en"), newLang))
+        }
+        
+        &sql(CLOSE CCur)
+    
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

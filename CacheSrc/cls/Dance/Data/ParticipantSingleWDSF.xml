@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.ParticipantSingleWDSF">
+<Description>
+Участник - одиночка - WDSF </Description>
+<Super>Participant</Super>
+<TimeCreated>63440,4342.608805</TimeCreated>
+
+<Property name="Athlete">
+<Description>
+WDSF спортсмен</Description>
+<Type>PersonWDSF</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="DOB">
+<Description>
+ДР </Description>
+<Type>%Date</Type>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Index name="CmpAtWDSFIdx">
+<Properties>Competition,Athlete</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Конвертация в JSON</Description>
+<FormalSpec>params:%ZEN.proxyObject</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##super(params)
+	set proxy.athlete = ..Athlete.ConvertToProxyObject()
+	set proxy.athlete.otherInfo.city = ..City
+	set proxy.athlete.otherInfo.club = ..Club
+	set proxy.athlete.otherInfo.mainTrainer = ..MainTrainer
+	set proxy.athlete.otherInfo.otherTrainers = ..OtherTrainers
+	
+	set proxy.athlete.competitionsCount = "-"
+	set proxy.athlete.paymentsCount = "-"
+	if $ISOBJECT(proxy.competition.tournament){
+		if (params.loadPrtObjCompetitionsCount){
+			set proxy.athlete.competitionsCount = ..PrtObjCompetitionsCount
+		}
+		
+		if (params.loadPrtObjPaymentsCount){
+			set proxy.athlete.paymentsCount = ..PrtObjPaymentsCount
+		}
+	}
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Create">
+<Description>
+Создание записи</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[recorder:Recorder,competition:Competition,athlete:%ZEN.proxyObject,&st]]></FormalSpec>
+<ReturnType>Participant</ReturnType>
+<Implementation><![CDATA[
+	if ..CmpAtWDSFIdxExists(competition.%Id(), athlete.id) {
+		set obj = ..CmpAtWDSFIdxOpen(competition.%Id(), athlete.id)
+		set obj.IsActive = 1
+		set st = obj.%Save()
+		quit obj
+	}
+	
+	set obj = ..%New()
+	
+	// Свойства класса
+	set obj.Athlete = ##class(PersonWDSF).%OpenId(athlete.id)
+	
+	if ($LENGTH(athlete.dob = 10)) set obj.DOB = $ZDH(athlete.dob, 3)
+	
+	// Свойства базового класса
+	set obj.Recorder = recorder
+	set obj.Competition = competition 
+	set obj.Tournament = competition.Tournament 
+	
+	set obj.FullName = ##class(Dance.Data.Localization.LText).Create("")
+	set st = ..UpdateParticipantFullName(obj)
+	quit:$$$ISERR(st) $$$NULLOREF
+
+	set obj.Country = obj.Athlete.Country
+	set obj.City = athlete.otherInfo.city
+	set obj.Club = athlete.otherInfo.club
+	set obj.MainTrainer = athlete.otherInfo.mainTrainer
+	set obj.OtherTrainers = athlete.otherInfo.otherTrainers
+	
+	set obj.PrtObjKey = obj.Athlete.%ClassName(1)_"@"_obj.Athlete.%Id()
+	
+	set st = obj.%Save()
+	
+	quit obj
+]]></Implementation>
+</Method>
+
+<Method name="GetFullNameForLang">
+<Description>
+Имя участника для выбранного языка</Description>
+<FormalSpec>lang:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit ..Athlete.LastName.GetValueByLang(lang)_" "_..Athlete.FirstName.GetValueByLang(lang)
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>ParticipantSingleWDSFDefaultData</DefaultData>
+<Data name="ParticipantSingleWDSFDefaultData">
+<Subscript>"ParticipantSingleWDSF"</Subscript>
+<Value name="1">
+<Value>Athlete</Value>
+</Value>
+<Value name="2">
+<Value>DOB</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

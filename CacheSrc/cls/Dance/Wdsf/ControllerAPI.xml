@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Wdsf.ControllerAPI">
+<Abstract>1</Abstract>
+<TimeCreated>63425,77020.931316</TimeCreated>
+
+<Method name="Call">
+<Description>
+do ##class(Dance.Wdsf.ControllerAPI).Call("GET", "/couple", .sc)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pMethod:%String,pUrl:%String,data:%ZEN.proxyObject="",&st:%Status=$$$OK,recorder:Dance.Data.Recorder=""]]></FormalSpec>
+<Private>1</Private>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set st = $$$OK
+	set pResponse = ##class(%ZEN.proxyObject).%New()
+	
+ 	try 
+ 	{
+  		set req = ##class(%Net.HttpRequest).%New()
+  		set req.Server = $G(^Settings("Dance","WdsfController", "Server"))
+  		set req.Port = $G(^Settings("Dance","WdsfController", "Port"), 80)
+  		do req.SetHeader("Accept-Language", ##class(%MessageDictionary).GetSessionLanguage())
+  		
+  		if '$ISOBJECT(recorder){
+  			set recorder = ##class(Dance.Data.Recorder).GetSystemRecorder()
+  		}
+  		
+  		set req.Authorization = "Basic "_$system.Encryption.Base64Encode(recorder.Login_":"_recorder.Password)
+  		
+  		if $ISOBJECT(data) {
+   			set req.ContentType="application/json"
+   			set tIO = $IO
+   			set tMnemSpace = ##class(%Library.Device).GetMnemonicRoutine()
+   			try{
+	  			$$$TOE(sc,##class(%ZEN.Auxiliary.jsonProvider).%WriteJSONStreamFromObject(req.EntityBody, data))
+	  			use tIO::("^"_tMnemSpace)
+   			}
+   			catch ex{
+	  			use tIO::("^"_tMnemSpace)
+	  			throw ex
+   			}
+  		}
+
+  		set pUrl = $G(^Settings("Dance","WdsfController", "API"))_pUrl
+  		//w !,pUrl,!
+  		$$$TOE(st, req.Send($zconvert(pMethod, "U"), pUrl))
+		
+		set json = req.HttpResponse.Data.Read(1000000000)
+ 		set ^temp("json") = json
+ 		
+ 		$$$TOE(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(json,,.pResponse))
+ 		
+ 		if (req.HttpResponse.StatusCode '= 200){
+ 			$$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_BadResponseStatus", " Code="_req.HttpResponse.StatusCode))
+ 		}
+ 	}
+ 	catch (ex) {
+  		set st = ex.AsStatus()
+ 	}
+
+ 	quit pResponse
+]]></Implementation>
+</Method>
+
+<Method name="Registration">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[data:%ZEN.proxyObject,recorder:Dance.Data.Recorder,&st:%Status]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[	quit ..Call("POST", "/registration", data, .st, recorder)
+]]></Implementation>
+</Method>
+
+<Method name="Deregistration">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[competitionId:%String,manNumber:%String,womanNumber:%String,&st:%Status]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set data = ##class(%ZEN.proxyObject).%New()
+	set data.competitionId = competitionId
+	set data.manNumber = manNumber
+	set data.womanNumber = womanNumber
+	
+	quit ..Call("POST", "/deregistration", data, .st)
+]]></Implementation>
+</Method>
+
+<Method name="GetCouples">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[min:%String="",&st:%Status]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set filter = ""
+	if (min){
+		set filter = "?min="_min
+	}
+	
+	quit ..Call("GET", "/couple"_filter,, .st)
+]]></Implementation>
+</Method>
+
+<Method name="GetCoupleByName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[manFullName:%String,womanFullName:%String,&st:%Status]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set filter = "?manFullName="_manFullName_"&womanFullName="_womanFullName
+	
+	quit ..Call("GET", "/couple"_filter,, .st)
+]]></Implementation>
+</Method>
+
+<Method name="GetCoupleByNumbers">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[manNumber:%String,womanNumber:%String,&st:%Status]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[	quit ..Call("GET", "/couple?manNumber="_manNumber_"&womanNumber="_womanNumber,, .st)
+]]></Implementation>
+</Method>
+
+<Method name="GetPerson">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[id:%String,&st:%Status]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[	quit ..Call("GET", "/person/"_id,, .st)
+]]></Implementation>
+</Method>
+
+<Method name="GetPersonsByFullName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[lastName:%String,firstName:%String,&st:%Status]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[	quit ..Call("GET", "/person?name="_lastName_","_firstName,, .st)
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitions">
+<Description>
+country(any word), tournamentId, status, from(YYYY-MM-DD), to(YYYY-MM-DD), modifiedsince(YYYY-MM-DDThh:mm:ss)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[from:%String="",to:%String="",modifiedsince:%TimeStamp="",&st:%Status]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set filter = "?v=1"
+	
+	if (from '= "") set filter = filter_"&from="_from
+	if (to '= "") set filter = filter_"&to="_to 
+	if (modifiedsince '= "") set filter = filter_"&modifiedsince="_$REPLACE(modifiedsince, " ", "T")
+	
+	quit ..Call("GET", "/competition"_filter,, .st)
+]]></Implementation>
+</Method>
+
+<Method name="GetAgeGroups">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[&st:%Status]]></FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[	quit ..Call("GET", "/ageGroup",, .st)
+]]></Implementation>
+</Method>
+</Class>
+</Export>

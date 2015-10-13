@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.AgeCategory">
+<Description>
+Age categories, Young, Adult etc. </Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeCreated>63289,4616.303823</TimeCreated>
+
+<Property name="Name">
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+<Parameter name="XMLREFERENCE" value="ID"/>
+</Property>
+
+<Property name="YoungestPartnerMaxAge">
+<Type>%Integer</Type>
+<Required>1</Required>
+<Parameter name="MAXVAL" value="100"/>
+<Parameter name="MINVAL" value="0"/>
+</Property>
+
+<Property name="YoungestPartnerMinAge">
+<Type>%Integer</Type>
+<Required>1</Required>
+<Parameter name="MAXVAL" value="100"/>
+<Parameter name="MINVAL" value="0"/>
+</Property>
+
+<Property name="OldestPartnerMaxAge">
+<Type>%Integer</Type>
+<Required>1</Required>
+<Parameter name="MAXVAL" value="100"/>
+<Parameter name="MINVAL" value="0"/>
+</Property>
+
+<Property name="OldestPartnerMinAge">
+<Type>%Integer</Type>
+<Required>1</Required>
+<Parameter name="MAXVAL" value="100"/>
+<Parameter name="MINVAL" value="0"/>
+</Property>
+
+<Property name="SpecialLogic">
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="TitleAge">
+<Type>%String</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {TitleAge} = ##class({%%CLASSNAME}).GetTitleAge({YoungestPartnerMinAge}, {YoungestPartnerMaxAge}, {OldestPartnerMinAge}, {OldestPartnerMaxAge})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="Code">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="CodeIdx">
+<Properties>Code</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()    
+    set proxy.id = ..%Id()
+    set proxy.name = ..Name.Value
+    set proxy.code = ..Code
+    
+    set proxy.titleAge = ..TitleAge
+    
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Save">
+<Description>
+Create or update age category</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[data:%RegisteredObject,&st]]></FormalSpec>
+<ReturnType>AgeCategory</ReturnType>
+<Implementation><![CDATA[
+   
+    if (data.id = ""){
+        set obj = ..%New()
+        set obj.Name = ##class(Dance.Data.Localization.LText).Create(data.name)
+    }
+    else{
+        set obj = ..%OpenId(data.id)
+        set obj.Name.Value = data.name
+    }
+    
+    set obj.Code = data.code
+    set obj.MaxAge = data.maxAge
+    set obj.MinAge = data.minAge
+    
+    set st = obj.%Save()
+    
+    quit obj
+]]></Implementation>
+</Method>
+
+<Method name="GetTitleAge">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>youngestPartnerMinAge,youngestPartnerMaxAge,oldestPartnerMinAge,oldestPartnerMaxAge</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    
+    set result = ""
+    
+    if (youngestPartnerMinAge = oldestPartnerMinAge){
+        set result = youngestPartnerMinAge_" - "
+    }
+    else{
+        set result = oldestPartnerMinAge_"/"_youngestPartnerMinAge_" - "
+    }
+    
+    if (oldestPartnerMaxAge = youngestPartnerMaxAge){
+        set result = result_oldestPartnerMaxAge
+    }
+    else{
+        set result = result_oldestPartnerMaxAge_"/"_youngestPartnerMaxAge
+    }
+    
+    quit result
+]]></Implementation>
+</Method>
+
+<Method name="ReUpdate">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    
+    
+    do ..ReUpdateOne("1", "Взрослые", "7108024F-7A08-4FC5-9F76-18220887A7C8", 19, 99, 19, 99)
+    do ..ReUpdateOne("2", "Молодежь", "C4515A91-C0ED-4F68-809A-9F1443AF3544", 16, 18, 16, 18)
+    do ..ReUpdateOne("3", "Д-1", "C61DD6D3-C807-4FCF-AD63-5311E5C0BF43", 0, 9, 0, 9)
+    do ..ReUpdateOne("4", "Д-2", "BF7A236F-F28E-42D3-A07F-6D931E48A9B9", 10, 11, 10, 11)
+    do ..ReUpdateOne("5", "Ю-1", "8665AFB4-90A3-4E87-BEF6-970D483CB82A", 12, 13, 12, 13)
+    do ..ReUpdateOne("6", "Ю-2", "9E0168F9-6003-4EC7-AEB9-1CE52D688A35", 14, 15, 14, 15)
+    do ..ReUpdateOne("7", "С-1", "2FC2E1E9-8A68-40A1-B943-E940125F6182", 30, 99, 35, 99, $$$YES)
+    do ..ReUpdateOne("8", "С-2", "4AEB5D76-2F80-438F-A396-E16CE297BB1E", 40, 99, 45, 99, $$$YES)
+    do ..ReUpdateOne("9", "С-3", "2FC2E1E9-8A68-40A1-B943-E9401SENIOR3", 50, 99, 55, 99, $$$YES)
+    do ..ReUpdateOne("10", "С-4", "4AEB5D76-2F80-438F-A396-E16CESENIOR4", 60, 99, 65, 99, $$$YES)
+    do ..ReUpdateOne("11", "Взрослые+Молодежь", "FB43C02D-9611-458E-BB8F-C9D6F563F308", 16, 99, 16, 99)
+    do ..ReUpdateOne("12", "Ю-2+Ю-1", "A5976D0D-5049-4259-A85D-CFABAC535A61", 12, 15, 12, 15)
+    do ..ReUpdateOne("13", "Д-2+Д-1", "C3E499CF-300B-4D19-B5CF-2B497D8D2899", 0, 11, 0, 11)
+    do ..ReUpdateOne("14", "Сеньоры 2+1", "F65CDBD0-3C7B-42B8-B9A7-585453E71075", 30, 99, 35, 99, $$$YES)
+    do ..ReUpdateOne("15", "Н-6", "516F4FAC-F1CE-43A2-A97B-B40BBE203EEE", 0, 10, 0, 10)
+    do ..ReUpdateOne("16", "Н-5", "C66DB327-9BB0-4E6C-BDF5-C0CD67DDBA62", 0, 10, 0, 10)
+    do ..ReUpdateOne("17", "Н-4", "A5763E6E-6A29-4AF2-9D11-859008C62F21", 0, 10, 0, 10)
+    do ..ReUpdateOne("18", "Н-3", "DE134BC9-A46D-40D3-BCDC-0D4236EFD95F", 0, 10, 0, 10)
+    do ..ReUpdateOne("19", "Н-2", "97CB1BCC-F46C-466F-AFA7-EAEDD151B5A2", 0, 10, 0, 10)
+    do ..ReUpdateOne("20", "Молодежь до 21", "74B08EC4-8F76-4AA7-BD27-234B25006831", 16, 20, 16, 20)
+    do ..ReUpdateOne("21", "WDSF Open", "EADFE474-71FE-43B1-9F39-2304E2DFB45D", 16, 99, 16, 99)
+    do ..ReUpdateOne("22", "Молодежь-2", "8E10AE1D-579E-40ED-8525-76A6E51C9592", 19, 20, 19, 20)
+    do ..ReUpdateOne("23", "Н5+Н6", "9D098846-6FA2-4CEA-9ABD-A2CCF30DFA13", 0, 10, 0, 10)
+]]></Implementation>
+</Method>
+
+<Method name="ReUpdateOne">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>oldId,code,lTextId,ypMin,ypMax,opMin,opMax,spec=0</FormalSpec>
+<Implementation><![CDATA[
+    set obj = ..%New()
+    set obj.Code = code
+    set obj.Name = ##class(Dance.Data.Localization.LText).GuidIdxOpen(lTextId)
+    set obj.YoungestPartnerMaxAge = ypMax
+    set obj.YoungestPartnerMinAge = ypMin
+    set obj.OldestPartnerMaxAge = opMax
+    set obj.OldestPartnerMinAge = opMin
+    set obj.SpecialLogic = spec
+    set st = obj.%Save()
+    w !,st
+    if (obj.%Id() '= oldId){
+        w !, "oldId not set ="_oldId
+    }
+]]></Implementation>
+</Method>
+
+<Method name="TestAges">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    do ..TestCouple(14, 17)
+    do ..TestCouple(20, 22)
+    do ..TestCouple(31, 34)
+    do ..TestCouple(31, 36)
+    do ..TestCouple(29, 40)
+]]></Implementation>
+</Method>
+
+<Method name="TestCouple">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>maleAge,femaleAge</FormalSpec>
+<Implementation><![CDATA[
+    w !,!, "MaleAge = "_maleAge_", FemaleAge = "_femaleAge
+    
+    set minAge = femaleAge
+    set maxAge = maleAge
+    
+    if (femaleAge > maleAge){
+        set minAge = maleAge
+        set maxAge = femaleAge
+    }
+    
+    &sql(DECLARE CurAgeCategories CURSOR FOR 
+            SELECT %NOLOCK Code, TitleAge
+            FROM Dance_Data.AgeCategory
+            WHERE YoungestPartnerMinAge <= :minAge AND :minAge <= YoungestPartnerMaxAge 
+                AND OldestPartnerMinAge <= :maxAge AND :maxAge <= OldestPartnerMaxAge)  
+        
+    &sql(OPEN CurAgeCategories)
+    for  
+    {   
+        &sql(FETCH CurAgeCategories INTO :code, :titleAge) 
+        quit:(SQLCODE '= 0)
+        
+        w !,"-> "_code_" ("_titleAge_")"
+            
+    }
+    
+    &sql(CLOSE CurAgeCategories)
+]]></Implementation>
+</Method>
+
+<Method name="GetAgeGategoriesForCouple">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>maleAge:%Integer,femaleAge:%Integer</FormalSpec>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    set list = ##class(%ListOfObjects).%New()
+    
+    set minAge = femaleAge
+    set maxAge = maleAge
+    
+    if (femaleAge > maleAge){
+        set minAge = maleAge
+        set maxAge = femaleAge
+    }
+    
+    &sql(DECLARE CurAge2Categories CURSOR FOR 
+            SELECT %NOLOCK ID
+            FROM Dance_Data.AgeCategory
+            WHERE YoungestPartnerMinAge <= :minAge AND :minAge <= YoungestPartnerMaxAge 
+                AND OldestPartnerMinAge <= :maxAge AND :maxAge <= OldestPartnerMaxAge)  
+        
+    &sql(OPEN CurAge2Categories)
+    for  
+    {   
+        &sql(FETCH CurAge2Categories INTO :id) 
+        quit:(SQLCODE '= 0)
+        
+        do list.Insert(..%OpenId(id).ConvertToProxyObject())
+    }
+    
+    &sql(CLOSE CurAge2Categories)
+    
+    quit list
+]]></Implementation>
+</Method>
+
+<Method name="GetAllAvailableList">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>maleAge:%Integer,femaleAge:%Integer</FormalSpec>
+<ReturnType>%List</ReturnType>
+<Implementation><![CDATA[
+    set list = $LISTBUILD("0")
+    
+    set minAge = femaleAge
+    set maxAge = maleAge
+    
+    if (femaleAge > maleAge){
+        set minAge = maleAge
+        set maxAge = femaleAge
+    }
+    
+    set count = 0
+    
+    &sql(DECLARE CurAC CURSOR FOR 
+            SELECT %NOLOCK 
+            ID
+            FROM Dance_Data.AgeCategory
+            WHERE SpecialLogic = 0 AND YoungestPartnerMinAge <= :maxAge AND :maxAge <= OldestPartnerMaxAge
+            
+            UNION
+            
+            SELECT %NOLOCK 
+            ID
+            FROM Dance_Data.AgeCategory
+            WHERE SpecialLogic = 1 AND YoungestPartnerMinAge <= :minAge AND :minAge <= YoungestPartnerMaxAge 
+                                     AND OldestPartnerMinAge <= :maxAge AND :maxAge <= OldestPartnerMaxAge) 
+        
+    &sql(OPEN CurAC)
+    for  
+    {   
+        &sql(FETCH CurAC INTO :id) 
+        quit:(SQLCODE '= 0)
+        
+        set count = count + 1
+        set $LIST(list, count) = id
+    }
+    
+    &sql(CLOSE CurAC)
+    
+    
+    if ($LISTLENGTH(list) = 0) set list = $LISTBUILD("0")
+    
+    quit list
+]]></Implementation>
+</Method>
+
+<Method name="TestPrt">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    try{
+        set count = 0
+        &sql(DECLARE Prt2Cur CURSOR FOR 
+            SELECT %NOLOCK ID, FullName, Couple
+            FROM Dance_Data.ParticipantCoupleUDSR
+            WHERE Competition->Tournament = 6)  
+        
+        &sql(OPEN Prt2Cur)
+        for  
+        {   
+            &sql(FETCH Prt2Cur INTO :id, :fullName, :coupleId) 
+            quit:(SQLCODE '= 0)
+        
+            set count = count + 1
+        
+        
+            set prt = ##class(ParticipantCoupleUDSR).%OpenId(id)
+        
+            set couple = ##class(Dance.Data.CoupleUDSR).%OpenId(coupleId).ConvertToProxyObject()
+            set maleAge = $P($ZD($NOW(),3), "-", 1) - $P(couple.man.dob, "-", 1)
+            set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P(couple.woman.dob, "-", 1)
+
+            set prtCatList = ..GetAllAvailableList(maleAge, femaleAge)
+        
+            if ($LISTFIND(prtCatList, prt.Competition.AgeCategory.%Id()) = 0){
+                w !,!,count_" -> "_fullName_"("_maleAge_", "_femaleAge_"). List="_$LISTTOSTRING(prtCatList)
+                w !,"Age category = "_prt.Competition.AgeCategory.Code
+            }
+        
+        }
+    
+        &sql(CLOSE Prt2Cur)
+    }
+    catch(ex){
+        w !, $System.Status.GetErrorText(ex.AsStatus())
+    }
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.AgeCategoryD</DataLocation>
+<DefaultData>AgeCategoryDefaultData</DefaultData>
+<IdLocation>^Dance.Data.AgeCategoryD</IdLocation>
+<IndexLocation>^Dance.Data.AgeCategoryI</IndexLocation>
+<StreamLocation>^Dance.Data.AgeCategoryS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="AgeCategoryDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>MaxAge</Value>
+</Value>
+<Value name="4">
+<Value>MinAge</Value>
+</Value>
+<Value name="5">
+<Value>Code</Value>
+</Value>
+<Value name="6">
+<Value>YoungestPartnerMaxAge</Value>
+</Value>
+<Value name="7">
+<Value>YoungestPartnerMinAge</Value>
+</Value>
+<Value name="8">
+<Value>OldestPartnerMaxAge</Value>
+</Value>
+<Value name="9">
+<Value>OldestPartnerMinAge</Value>
+</Value>
+<Value name="10">
+<Value>SpecialLogic</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

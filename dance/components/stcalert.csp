@@ -1,0 +1,5 @@
+<div ng-class="data.cssClass" ng-show="data.visible">
+     <button class="close" type="button" ng-click="close()">&times;</button>
+     <strong ng-bind="data.title"></strong>&nbsp;<span ng-bind="data.msg"></span>
+</div>
+    

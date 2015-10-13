@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Web.JsonBase">
+<Abstract>1</Abstract>
+<TimeCreated>63289,63229.669243</TimeCreated>
+
+<Method name="GetProxyObject">
+<Description>
+Get proxyObject by id and class</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String,id:%String,params:%ZEN.proxyObject</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	
+	try{
+		set object = $CLASSMETHOD(className, "%OpenId", id)
+		set proxy = object.ConvertToProxyObject(params)
+	}
+	catch (ex){
+		set proxy.error = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+	}
+	
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="WriteJsonFromSql">
+<Description>
+Transform sql to json</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>sql:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+  	set status = $$$OK
+  	
+   	try{
+	   	do ##class(%ZEN.Auxiliary.jsonSQLProvider).%WriteJSONFromSQL(,sql)
+	}
+	catch ex{
+		set status = ex.AsStatus()
+	}
+	
+  	quit status
+]]></Implementation>
+</Method>
+
+<Method name="GetProxyObjectsForGrid">
+<Description>
+Paged output of table, for any class with parameters, sorting and searching</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>sql:%String,className:%String,params:%RegisteredObject,convertParams:%ZEN.proxyObject,whereRequired:%String="",groupCondition:%String=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set status = $$$OK
+	set proxyResult = ##class(%ZEN.proxyObject).%New()
+	
+	try{
+		// Определяем что находится в WHERE.
+		if (whereRequired = "") && (params.searchText '= ""){
+			// Одно условие - поиск
+			set sql = sql_" WHERE "_..ParseParameter(params.searchSqlName)_" LIKE '%"_..ParseParameter(params.searchText)_"%'"
+		}
+		elseif (whereRequired '= "") && (params.searchText = ""){
+			// Одно условие - заданное, например - выборка по статусу
+			set sql = sql_" WHERE "_whereRequired
+		}
+		elseif (whereRequired '= "") && (params.searchText '= ""){
+			// Два(+) условия = поиск и дополнительные
+			set sql = sql_" WHERE "_whereRequired_" AND "_..ParseParameter(params.searchSqlName)_" LIKE '%"_..ParseParameter(params.searchText)_"%'"
+		}
+		
+		// Сортировка
+		set isDown = "ASC"
+		if (params.isDown '= 1) set isDown = "DESC"
+		
+		set sql = sql_" "_groupCondition_" ORDER BY "_..ParseParameter(params.sqlName)_" "_isDown
+		
+			
+		set statement = ##class(%SQL.Statement).%New()	
+		$$$THROWONERROR(status, statement.%Prepare(sql))		
+		set rs = statement.%Execute()
+
+		set proxyItems = ##class(%ListOfObjects).%New()			
+		set ^temp = sql
+		// Все элементы, попавшие в заданный диапазон конвертируются в proxy и помещаются в результирующий список
+		while (rs.%Next() '= 0){
+			if (rs.%ROWCOUNT >= params.first) && (rs.%ROWCOUNT <= params.last){
+				do proxyItems.Insert(..GetProxyObject(className, rs.%GetData(1), convertParams))
+			}
+		}
+		// Общее число элементов с заданными параметрами в WHERE
+		set itemsTotal = rs.%ROWCOUNT
+		
+		do rs.%Close()						
+		do statement.%Close()
+		
+		set proxyResult = ##class(%ZEN.proxyObject).%New()
+		set proxyResult.children = ##class(%ZEN.proxyObject).%New()
+		set proxyResult.children.items = proxyItems
+	    set proxyResult.children.itemsTotal = itemsTotal
+	}
+	catch ex {
+		set proxyResult.status = $SYSTEM.Status.GetErrorText(ex.AsStatus())	
+	}
+	
+	quit proxyResult
+]]></Implementation>
+</Method>
+
+<Method name="ParseParameter">
+<Description>
+Delete "garbage" from input parameters</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>parameter:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set parameter = $ZCONVERT(parameter, "U")
+	
+	quit $REPLACE(
+		 $REPLACE(
+		 $REPLACE(
+		 $REPLACE(
+		 $REPLACE(
+		 $REPLACE(parameter, "SELECT",""), "DELETE", ""), "UNION", ""), "FROM",""), "INSERT", ""), "'", "")
+]]></Implementation>
+</Method>
+</Class>
+</Export>

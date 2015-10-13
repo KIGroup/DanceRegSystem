@@ -1,0 +1,87 @@
+<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Выберите год и турнир. Ярким синим цветом выделены группы, которые уже есть базе данных. Сравнение идет по IdInternal. Красным выделены группы с ошибками, их можно исправить.'|localize}}</p>
+
+<div class="row-fluid">
+    <div class="span1">
+        <div class="control-group">
+            <label class="control-label" ng-bind="('Год'|localize) + '*'"></label>
+            <div class="controls">
+                <select class="span12" ng-model="page.filter.year" ng-options="year as year for year in page.years" ng-change="page.loadTournamentsByYear(page.filter.year)" required>
+                </select>           
+            </div>
+        </div>
+    </div>
+    <div class="span11">
+        <div class="control-group">
+            <label class="control-label" ng-bind="('Турнир'|localize) + '*'"></label>
+            <div class="controls">
+                <select class="span12" ng-model="page.tournament.id" ng-options="trn.id as trn.name + '; ' + trn.cityName + ', ' + trn.countryName for trn in page.tournaments" ng-disabled="!page.filter.year" ng-change="page.loadTournament(page.tournament.id)" required>
+                </select>           
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid">
+    <button type="button" ng-hide="page.competitionTable.itemsTotal==0" style="margin-right: 20px;" class="btn btn-success btn-small" ng-click="page.importAll()" ng-bind="('Импортировать доступные'|localize) + ' (' + (page.competitionTable.itemsTotal - page.competitionTable.itemsErroredTotal - page.competitionTable.itemsExistedTotal) + ')'"></button>
+	
+	<span ng-show="page.tournament.id">{{'Ссылка на источник данных:'|localize}}</span>&nbsp;
+	<input ng-show="page.tournament.id" style="width:50%" value="{{'view-source:http://' + page.link}}"/>
+</div>
+
+<div class="row-fluid" style="padding-top: 10px;" ng-show="page.competitionTable.items.length > 0">
+    <stcgrid 
+        grid="pageStore.importcompetitions.grid"
+        table-class="table table-bordered table-hover"
+        caption="'Группы, доступные для импорта'"
+        columns="page.competitionTable.columns"
+        items="page.competitionTable.items"
+        properties="page.competitionTable.properties"
+        update-items="page.competitionTable.loadItems(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText)"
+
+        page-curr="page.competitionTable.pageCurr"
+        page-total="page.competitionTable.pageTotal"
+        page-size="page.competitionTable.pageSize"
+        navigator-visible="false"
+
+        selectable="false"
+        selected-items="page.competitionTable.selectedItems"
+        multi-select-mode="page.competitionTable.multiSelectMode"
+            
+        action-column-visible="true"
+        action-column-icon="'fa fa-ellipsis-h'"
+     
+        first-row-action-icon="'fa fa-download'"
+        first-row-action-title="'Импортировать'|localize"
+        first-row-action-method="page.competitionTable.edit(item)"
+                    
+        forcibly-update="page.competitionTable.forciblyUpdate"
+    />
+</div>
+
+<div class="modal" id="InfoModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="InfoLabel" aria-hidden="true" ng-show="page.infoModalVisible">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"  ng-click="page.infoModalVisible=false">×</button>
+        <h3 id="InfoLabel" ng-bind="'Группа'|localize"></h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid">
+            <form name="form_competition" ng-submit="page.saveImportedCompetition()" style="margin: 0;" ng-hide="page.competitionTable.IsVisibleItemErrors">                  
+                <competitionform competition="page.competitionTable.selected"/>
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary btn-small" ng-bind="'Импорт'|localize" ng-disabled="!form_competition.$valid"></button>
+                        <button type="button" class="btn btn-small" ng-click="page.cancel()" ng-bind="'Отмена'|localize"></button>
+                        <button type="button" class="btn btn-small btn-danger pull-right" ng-click="page.competitionTable.IsVisibleItemErrors=true;" ng-disabled="page.competitionTable.selected.info.errorMessages.length==0" ng-bind="('Показать ошибки'|localize) + ' (' + page.competitionTable.selected.info.errorMessages.length + ')'"></button>
+                    </div>
+                </div>                                          
+            </form>
+            <div ng-show="page.competitionTable.IsVisibleItemErrors">
+                <div ng-repeat="error in page.competitionTable.selected.info.errorMessages">
+                    <span ng-bind="($index + 1) + '. ' + error + '\n'"></span><br>
+                </div>
+                <br>
+                <button type="button" class="btn btn-small btn-primary" ng-click="page.competitionTable.IsVisibleItemErrors=false;" ng-bind="('Просмотр формы'|localize)"></button>
+	       </div>
+        </div>
+    </div>
+</div>

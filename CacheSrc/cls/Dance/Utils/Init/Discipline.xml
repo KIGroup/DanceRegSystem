@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.Discipline">
+<Super>BaseInit</Super>
+<TimeCreated>63275,73755.722757</TimeCreated>
+
+<Parameter name="PClassName">
+<Default>Discipline</Default>
+</Parameter>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    w !,"=== "_..#PClassName_" ==="
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LText", "LTextXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data.Localization.LTextValue", "LTextValueXData")
+    do ..ImportXData("Dance.Utils.Init."_..#PClassName, "Dance.Data."_..#PClassName, "ClassXData")
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="ClassXData">
+<Data><![CDATA[
+<ClassXData>
+<Discipline><Name>52831462-E498-45F4-9742-211EF41E5F06</Name><Code>Ст</Code></Discipline>
+<Discipline><Name>FF36D399-8475-4361-BEDB-D75AC209A4DB</Name><Code>Ла</Code></Discipline>
+<Discipline><Name>EA17B27B-657A-4840-99CB-ABE90F3CF59D</Name><Code>10т</Code></Discipline>
+<Discipline><Name>E4B19870-D9AB-49BF-94D3-57CC968902D5</Name><Code>6т</Code></Discipline>
+<Discipline><Name>3801F313-7C38-4178-8E97-8691908ED4AD</Name><Code>8т</Code></Discipline>
+<Discipline><Name>B6A3D6A0-76A7-48EE-AD46-35FB09706F0F</Name><Code>3т</Code></Discipline>
+<Discipline><Name>0A4B5D08-E6CF-43FE-A799-F7E6BA05119D</Name><Code>4т</Code></Discipline>
+<Discipline><Name>27B73376-C80A-419D-BD37-1C1434D8E04A</Name><Code>5т</Code></Discipline>
+<Discipline><Name>379ED6B9-D447-4A3B-BADB-D80C9AABE54F</Name><Code>кубок польки</Code></Discipline>
+
+<Discipline><Name>70983979-E74A-4340-B1CB-578D2C06FF7D</Name><Code>кубок ча-ча-ча</Code></Discipline>
+<Discipline><Name>F76FD6FA-8253-43B1-A786-138CF1AE12F6</Name><Code>кубок вальса</Code></Discipline>
+<Discipline><Name>FAC7D8AF-01F3-42E0-803C-CA0420B137D5</Name><Code>кубок самбы</Code></Discipline>
+<Discipline><Name>452B37B4-3DDF-4610-84F7-84C25FB2E73A</Name><Code>кубок джайва</Code></Discipline>
+<Discipline><Name>9587CF2F-CBEC-4978-8AEA-1638F8B5B008</Name><Code>кубок фокстрота</Code></Discipline>
+<Discipline><Name>D7F00E69-490A-4B08-9E25-ACC0AD461879</Name><Code>кубок квикстепа</Code></Discipline>
+</ClassXData>
+]]></Data>
+</XData>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+-Европейская [Cт]
+-Латиноамериканская [Ла]
+-Двоеборье [10т]
+-Сокращенное двоеборье (6 танцев) [6т]
+-Сокращенное двоеборье (8 танцев) [8т]
+-3 танца [3т]
+-4 танца [4т]
+-5 танцев [5т]
+-Кубок польки [кубок польки]
+-Кубок ча-ча-ча [кубок ча-ча-ча]
+-Кубок вальса [кубок вальса]
+-Кубок самбы [кубок самбы]
+-Кубок джайва [кубок джайва]
+-Кубок фокстрота [кубок фокстрота]
+-Кубок квикстепа [кубок квикстепа]
+*/
+]]></Content>
+</UDLText>
+
+<XData name="LTextXData">
+<Data><![CDATA[
+<LTextXData>
+<LText><Guid>52831462-E498-45F4-9742-211EF41E5F06</Guid></LText>
+<LText><Guid>FF36D399-8475-4361-BEDB-D75AC209A4DB</Guid></LText>
+<LText><Guid>EA17B27B-657A-4840-99CB-ABE90F3CF59D</Guid></LText>
+<LText><Guid>E4B19870-D9AB-49BF-94D3-57CC968902D5</Guid></LText>
+<LText><Guid>3801F313-7C38-4178-8E97-8691908ED4AD</Guid></LText>
+<LText><Guid>B6A3D6A0-76A7-48EE-AD46-35FB09706F0F</Guid></LText>
+<LText><Guid>0A4B5D08-E6CF-43FE-A799-F7E6BA05119D</Guid></LText>
+<LText><Guid>27B73376-C80A-419D-BD37-1C1434D8E04A</Guid></LText>
+<LText><Guid>379ED6B9-D447-4A3B-BADB-D80C9AABE54F</Guid></LText>
+
+<LText><Guid>70983979-E74A-4340-B1CB-578D2C06FF7D</Guid></LText>
+<LText><Guid>F76FD6FA-8253-43B1-A786-138CF1AE12F6</Guid></LText>
+<LText><Guid>FAC7D8AF-01F3-42E0-803C-CA0420B137D5</Guid></LText>
+<LText><Guid>452B37B4-3DDF-4610-84F7-84C25FB2E73A</Guid></LText>
+<LText><Guid>9587CF2F-CBEC-4978-8AEA-1638F8B5B008</Guid></LText>
+<LText><Guid>D7F00E69-490A-4B08-9E25-ACC0AD461879</Guid></LText>
+</LTextXData>
+]]></Data>
+</XData>
+
+<XData name="LTextValueXData">
+<Data><![CDATA[
+<LTextValueXData>
+<LTextValue><LText>52831462-E498-45F4-9742-211EF41E5F06</LText><Value>Европейская</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>52831462-E498-45F4-9742-211EF41E5F06</LText><Value>Standard</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>52831462-E498-45F4-9742-211EF41E5F06</LText><Value>Standard</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>FF36D399-8475-4361-BEDB-D75AC209A4DB</LText><Value>Латиноамериканская</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>FF36D399-8475-4361-BEDB-D75AC209A4DB</LText><Value>Latin</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>FF36D399-8475-4361-BEDB-D75AC209A4DB</LText><Value>Latin</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>EA17B27B-657A-4840-99CB-ABE90F3CF59D</LText><Value>Двоеборье</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>EA17B27B-657A-4840-99CB-ABE90F3CF59D</LText><Value>10 dances</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>EA17B27B-657A-4840-99CB-ABE90F3CF59D</LText><Value>10 dances</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>E4B19870-D9AB-49BF-94D3-57CC968902D5</LText><Value>Сокращенное двоеборье (6 танцев)</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>E4B19870-D9AB-49BF-94D3-57CC968902D5</LText><Value>6 dances</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>E4B19870-D9AB-49BF-94D3-57CC968902D5</LText><Value>6 dances</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>3801F313-7C38-4178-8E97-8691908ED4AD</LText><Value>Сокращенное двоеборье (8 танцев)</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>3801F313-7C38-4178-8E97-8691908ED4AD</LText><Value>8 dances</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>3801F313-7C38-4178-8E97-8691908ED4AD</LText><Value>8 dances</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>B6A3D6A0-76A7-48EE-AD46-35FB09706F0F</LText><Value>3 танца</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>B6A3D6A0-76A7-48EE-AD46-35FB09706F0F</LText><Value>3 dances</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>B6A3D6A0-76A7-48EE-AD46-35FB09706F0F</LText><Value>3 dances</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>0A4B5D08-E6CF-43FE-A799-F7E6BA05119D</LText><Value>4 танца</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>0A4B5D08-E6CF-43FE-A799-F7E6BA05119D</LText><Value>4 dances</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>0A4B5D08-E6CF-43FE-A799-F7E6BA05119D</LText><Value>4 dances</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>27B73376-C80A-419D-BD37-1C1434D8E04A</LText><Value>5 танцев</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>27B73376-C80A-419D-BD37-1C1434D8E04A</LText><Value>5 dances</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>27B73376-C80A-419D-BD37-1C1434D8E04A</LText><Value>5 dances</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>379ED6B9-D447-4A3B-BADB-D80C9AABE54F</LText><Value>Кубок польки</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>379ED6B9-D447-4A3B-BADB-D80C9AABE54F</LText><Value>Polka</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>379ED6B9-D447-4A3B-BADB-D80C9AABE54F</LText><Value>Polka</Value><Lang>de</Lang></LTextValue>
+
+
+
+<LTextValue><LText>70983979-E74A-4340-B1CB-578D2C06FF7D</LText><Value>Кубок ча-ча-ча</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>70983979-E74A-4340-B1CB-578D2C06FF7D</LText><Value>Cha cha cha</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>70983979-E74A-4340-B1CB-578D2C06FF7D</LText><Value>Cha cha cha</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>F76FD6FA-8253-43B1-A786-138CF1AE12F6</LText><Value>Кубок вальса</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>F76FD6FA-8253-43B1-A786-138CF1AE12F6</LText><Value>Waltz</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>F76FD6FA-8253-43B1-A786-138CF1AE12F6</LText><Value>Waltz</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>FAC7D8AF-01F3-42E0-803C-CA0420B137D5</LText><Value>Кубок самбы</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>FAC7D8AF-01F3-42E0-803C-CA0420B137D5</LText><Value>Samba</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>FAC7D8AF-01F3-42E0-803C-CA0420B137D5</LText><Value>Samba</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>452B37B4-3DDF-4610-84F7-84C25FB2E73A</LText><Value>Кубок джайва</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>452B37B4-3DDF-4610-84F7-84C25FB2E73A</LText><Value>Jive</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>452B37B4-3DDF-4610-84F7-84C25FB2E73A</LText><Value>Jive</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>9587CF2F-CBEC-4978-8AEA-1638F8B5B008</LText><Value>Кубок фокстрота</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>9587CF2F-CBEC-4978-8AEA-1638F8B5B008</LText><Value>Foxtrot</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>9587CF2F-CBEC-4978-8AEA-1638F8B5B008</LText><Value>Foxtrot</Value><Lang>de</Lang></LTextValue>
+
+<LTextValue><LText>D7F00E69-490A-4B08-9E25-ACC0AD461879</LText><Value>Кубок квикстепа</Value><Lang>ru</Lang></LTextValue>
+<LTextValue><LText>D7F00E69-490A-4B08-9E25-ACC0AD461879</LText><Value>Quickstep</Value><Lang>en</Lang></LTextValue>
+<LTextValue><LText>D7F00E69-490A-4B08-9E25-ACC0AD461879</LText><Value>Quickstep</Value><Lang>de</Lang></LTextValue>
+
+</LTextValueXData>
+]]></Data>
+</XData>
+
+<Method name="CopyValueFromEngToAnother">
+<Description>
+w ##class(Dance.Utils.Init.Discipline).CopyValueFromEngToAnother("it")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>newLang:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+    
+        &sql(DECLARE CCur CURSOR FOR
+             SELECT %NOLOCK ID
+             FROM Dance_Data.Discipline)
+        
+        &sql(OPEN CCur)
+        for{
+            &sql(FETCH CCur INTO :id) 
+            quit:(SQLCODE '= 0)
+            
+            set obj = ##class(Dance.Data.Discipline).%OpenId(id)
+            $$$THROWONERROR(st, obj.Name.SetValueByLang(obj.Name.GetValueByLang("en"), newLang))
+        }
+        
+        &sql(CLOSE CCur)
+    
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

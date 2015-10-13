@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.TournamentStatus">
+<Description>
+Status of the tournament: registration, canceled ...</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeCreated>63293,8556.829586</TimeCreated>
+
+<Property name="Name">
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+<Parameter name="XMLREFERENCE" value="ID"/>
+</Property>
+
+<Property name="Code">
+<Description>
+Valid values are:PreRegistration, Registering, RegistrationClosed, Processing, Closed, Canceled</Description>
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Sequence">
+<Type>%Integer</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="CodeIdx">
+<Properties>Code</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	set proxy.id = ..%Id()
+	set proxy.code = ..Code
+	set proxy.name = ..Name.Value
+	quit proxy
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.TournamentStatusD</DataLocation>
+<DefaultData>TournamentStatusDefaultData</DefaultData>
+<IdLocation>^Dance.Data.TournamentStatusD</IdLocation>
+<IndexLocation>^Dance.Data.TournamentStatusI</IndexLocation>
+<StreamLocation>^Dance.Data.TournamentStatusS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="TournamentStatusDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>Code</Value>
+</Value>
+<Value name="4">
+<Value>Sequence</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

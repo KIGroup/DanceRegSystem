@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.Person">
+<Abstract>1</Abstract>
+<TimeCreated>63298,59345.87708</TimeCreated>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>fileFullName:%String,killAll:%Boolean</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set st = $$$OK
+	
+	try{
+		TSTART
+		
+		if (killAll){
+			&sql(DECLARE CRS1 CURSOR FOR 
+		  	 	 SELECT ID
+		 	 	 FROM Dance_Data.Person)	
+		
+			&sql(OPEN CRS1)
+			for  
+			{	
+				&sql(FETCH CRS1 INTO :id) 
+				quit:(SQLCODE '= 0)
+		
+				set st = ##class(Dance.Data.Person).Delete(id)
+				$$$THROWONERROR(st, st)		
+			}
+			&sql(CLOSE CRS1)
+		
+			do ##class(Dance.Data.Couple).%KillExtent()
+			kill ^couples
+		}
+		
+		TCOMMIT
+	}
+	catch(ex){
+		TROLLBACK
+		
+		set st = ex.AsStatus()
+	}
+]]></Implementation>
+</Method>
+
+<Method name="ImportFromFile">
+<Description>
+w ##class(Dance.Utils.Init.Person).ImportFromFile("e:\boys.csv", "M")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>fileFullName:%String,gender:%Char</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	/*
+	1 Номер
+	2 Фамилия Имя
+	3 Отчество
+	4 Дата рождения
+	5 Класс ST
+	6 Присвоен ST
+	7 Класс LA
+	8 Присвоен LA
+	9 Сп.разряд
+	10 Разряд присвоен
+	11 Фио на англ.
+	12 Клуб
+	13 Город/регион
+	14 Старший тренер
+	15 Тренер 2
+	16 Тренер 3
+	17 Код региона
+	18 Дата перехода
+	19 Номер партнера
+	20 Страховка до
+	*/
+	set status = $$$OK
+	set line = ""
+	do ##class(%MessageDictionary).SetSessionLanguage("ru")
+	
+	try{
+		TSTART
+
+		set stream = ##class(%FileCharacterStream).%New()
+	 	set stream.Filename = fileFullName
+		while 'stream.AtEnd {
+			set line = stream.ReadLine()
+			if ($FIND(line,";") = 0) continue
+			
+			set propList = $LISTFROMSTRING(line, ";")
+			
+			set person = ##class(Dance.Data.Person).GetByNumberUSDR($LIST(propList, 1))
+			
+			if ($ISOBJECT(person) = 0){
+				set person = ##class(Dance.Data.Person).%New()
+				set person.Gender = gender
+			
+				//1 Номер
+				set person.NumberUDSR = $LIST(propList, 1)
+				
+				//2 Фамилия Имя
+				set person.LastName =  ##class(Dance.Data.Localization.LText).Create($P($LIST(propList, 2)," ",1), "Dance.Data.Localization.Translation;PersonLTextValue")		
+				set person.FirstName =  ##class(Dance.Data.Localization.LText).Create($P($LIST(propList, 2)," ",2), "Dance.Data.Localization.Translation;PersonLTextValue")		
+			
+				//11 Фио на англ.
+				do ##class(%MessageDictionary).SetSessionLanguage("en")
+				set person.LastName.Value = $P($LIST(propList, 11)," ",1)
+				set person.FirstName.Value = $P($LIST(propList, 11)," ",2)
+				do ##class(%MessageDictionary).SetSessionLanguage("ru")
+			}
+			
+			//4 Дата рождения
+			set dob = $LIST(propList, 4)
+			if (dob '= "") && ($LENGTH(dob) = 10) set person.DOB = $ZDATEH($REPLACE(dob,".","/"), 4)
+			
+			//5 Класс ST
+			set person.STClass = ##class(Dance.Data.DancerClass).GetByName($REPLACE($ZCONVERT($LIST(propList, 5), "U"), "М", "M"), .status)
+			if (status '= $$$OK) {
+				w !,"DancerClass=["_$LIST(propList, 5)_"] not found"
+			}
+			
+			//7 Класс LA
+			set person.LAClass = ##class(Dance.Data.DancerClass).GetByName( $REPLACE($ZCONVERT($LIST(propList, 7), "U"), "М", "M"), .status)
+			if (status '= $$$OK) {
+				w !,"DancerClass=["_$LIST(propList, 7)_"] not found"
+			}
+			
+			
+			//12 Клуб
+			set person.Club = $LIST(propList, 12)
+	
+			//13 Город/регион
+			set person.City = $LIST(propList, 13)
+	
+			//14 Старший тренер
+			set person.MainTrainer = $LIST(propList, 14)
+
+			//15 Тренер 2
+			//16 Тренер 3
+			if ($LIST(propList, 16) '= ""){
+				set person.OtherTrainers = $LIST(propList, 15)_", "_$LIST(propList, 16)
+			}
+			else{
+				set person.OtherTrainers = $LIST(propList, 15)
+			}
+			
+			//19 Номер партнера
+			if ($LIST(propList, 19) '= "") set ^couples(person.NumberUDSR) = $LIST(propList, 19)
+			
+			//20 Страховка до
+			set insDate = $LIST(propList, 20)
+			if (insDate '= "") && ($LENGTH(insDate) = 10) set person.InsuranceValidDate = $ZDATEH($REPLACE(insDate,".","/"), 4)
+			
+			
+			set person.Country = ##class(Dance.Data.Country).WDSFNameIdxOpen("Russian Federation")
+			
+			set status = person.%Save()
+			if (status '= $$$OK){
+				$$$THROWONERROR(status,status)
+			}
+		}
+		
+		TCOMMIT
+	}
+	catch(ex){
+		TROLLBACK
+		set status = ex.AsStatus()
+		w !,line
+	}
+	
+	quit status
+]]></Implementation>
+</Method>
+
+<Method name="CreateCouples">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set status = $$$OK
+	
+	try{
+		TSTART
+		
+		set (firstNumber,secondNumber) = ""	
+		
+		for {
+			set firstNumber = $O(^couples(firstNumber))
+			if (firstNumber = "") quit
+			
+			set secondNumber = ^couples(firstNumber)
+			
+			set person1 = ##class(Dance.Data.Person).GetByNumber(firstNumber)
+			set person2 = ##class(Dance.Data.Person).GetByNumber(secondNumber)
+			
+			if ($ISOBJECT(person1)=0) || ($ISOBJECT(person2)=0) {
+				w !,"Not found couple => firstNumber="_firstNumber_"  secondNumber="_secondNumber
+				continue
+			}
+		
+			set (man,woman) = ""
+			
+			if (person1.Gender = "M"){
+				set man = person1
+				set woman = person2
+			}
+			else{
+				set man = person2
+				set woman = person1
+			}
+			
+			set manId = man.%Id()
+			set womanId = woman.%Id()
+			set coupleExists = 0
+			if (##class(Dance.Data.Couple).CommonIdxExists(man.%Id(), woman.%Id()) = 0){
+				set couple = ##class(Dance.Data.Couple).%New()
+				set couple.Man = man
+				set couple.woman = woman
+				set st = couple.%Save()
+				if (st '= $$$OK){
+					$$$THROWONERROR(st, st)
+				}
+			}
+			
+			kill man,woman,couple,person1,person2
+		}
+		
+		TCOMMIT
+	}
+	catch(ex){
+		TROLLBACK
+		set status = ex.AsStatus()
+		w !,"FATAL ERROR for firstNumber="_firstNumber_"  secondNumber="_secondNumber,!
+	}
+	do $system.OBJ.DisplayError(status) 
+	q status
+]]></Implementation>
+</Method>
+</Class>
+</Export>

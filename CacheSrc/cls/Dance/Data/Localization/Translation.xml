@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Localization.Translation">
+<TimeCreated>63286,49912.484865</TimeCreated>
+
+<Method name="PersonLTextValue">
+<Description>
+Name translation method; if language is unknown, returns input string</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>inputStr:%Text,fromLang:%String,toLang:%String</FormalSpec>
+<ReturnType>%Text</ReturnType>
+<Implementation><![CDATA[
+	set outputStr = ""
+	
+	for i=1:1:$L(inputStr){
+		set inputChar = $E(inputStr, i)
+		set lower = $ZCONVERT(inputChar, "L")
+		set outputChar = $GET(^CacheMsg("Dance", fromLang, toLang, lower), inputChar)
+		if (lower '= inputChar) set outputChar = $ZCONVERT($E(outputChar, 1), "U")_$E(outputChar, 2, *)
+		set outputStr = outputStr_outputChar
+	}
+	
+	quit outputStr
+]]></Implementation>
+</Method>
+
+<Method name="Init">
+<Description>
+Translation dictionary</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set ^CacheMsg("Dance", "ru", "en", "а") = "a"
+	set ^CacheMsg("Dance", "ru", "en", "б") = "b"
+	set ^CacheMsg("Dance", "ru", "en", "в") = "v"
+	set ^CacheMsg("Dance", "ru", "en", "г") = "g"
+	set ^CacheMsg("Dance", "ru", "en", "д") = "d"
+	set ^CacheMsg("Dance", "ru", "en", "е") = "e"
+	set ^CacheMsg("Dance", "ru", "en", "ё") = "e"
+	set ^CacheMsg("Dance", "ru", "en", "ж") = "zh"
+	set ^CacheMsg("Dance", "ru", "en", "з") = "z"
+	set ^CacheMsg("Dance", "ru", "en", "и") = "i"
+	set ^CacheMsg("Dance", "ru", "en", "й") = "y"
+	set ^CacheMsg("Dance", "ru", "en", "к") = "k"
+	set ^CacheMsg("Dance", "ru", "en", "л") = "l"
+	set ^CacheMsg("Dance", "ru", "en", "м") = "m"
+	set ^CacheMsg("Dance", "ru", "en", "н") = "n"
+	set ^CacheMsg("Dance", "ru", "en", "о") = "o"
+	set ^CacheMsg("Dance", "ru", "en", "п") = "p"
+	set ^CacheMsg("Dance", "ru", "en", "р") = "r"	
+	set ^CacheMsg("Dance", "ru", "en", "с") = "s"
+	set ^CacheMsg("Dance", "ru", "en", "т") = "t"
+	set ^CacheMsg("Dance", "ru", "en", "у") = "u"
+	set ^CacheMsg("Dance", "ru", "en", "ф") = "f"
+	set ^CacheMsg("Dance", "ru", "en", "х") = "kh"
+	set ^CacheMsg("Dance", "ru", "en", "ц") = "ts"
+	set ^CacheMsg("Dance", "ru", "en", "ч") = "ch"
+	set ^CacheMsg("Dance", "ru", "en", "ш") = "sh"
+	set ^CacheMsg("Dance", "ru", "en", "щ") = "shch"	
+	set ^CacheMsg("Dance", "ru", "en", "ь") = ""
+	set ^CacheMsg("Dance", "ru", "en", "ъ") = ""
+	set ^CacheMsg("Dance", "ru", "en", "ы") = ""
+	set ^CacheMsg("Dance", "ru", "en", "э") = "e"
+	set ^CacheMsg("Dance", "ru", "en", "ю") = "yu"
+	set ^CacheMsg("Dance", "ru", "en", "я") = "ya"
+	
+	// Reverse translation is not good enough
+	set ^CacheMsg("Dance", "en", "ru", "a") = "а"
+	set ^CacheMsg("Dance", "en", "ru", "b") = "б"
+	set ^CacheMsg("Dance", "en", "ru", "c") = "ц"
+	set ^CacheMsg("Dance", "en", "ru", "d") = "д"
+	set ^CacheMsg("Dance", "en", "ru", "e") = "е"
+	set ^CacheMsg("Dance", "en", "ru", "f") = "ф"
+	set ^CacheMsg("Dance", "en", "ru", "g") = "ж"
+	set ^CacheMsg("Dance", "en", "ru", "h") = "ш"
+	set ^CacheMsg("Dance", "en", "ru", "i") = "и"
+	set ^CacheMsg("Dance", "en", "ru", "j") = "й"
+	set ^CacheMsg("Dance", "en", "ru", "k") = "к"
+	set ^CacheMsg("Dance", "en", "ru", "l") = "л"
+	set ^CacheMsg("Dance", "en", "ru", "m") = "м"
+	set ^CacheMsg("Dance", "en", "ru", "n") = "н"
+	set ^CacheMsg("Dance", "en", "ru", "o") = "о"
+	set ^CacheMsg("Dance", "en", "ru", "p") = "п"
+	set ^CacheMsg("Dance", "en", "ru", "r") = "р"
+	set ^CacheMsg("Dance", "en", "ru", "s") = "с"	
+	set ^CacheMsg("Dance", "en", "ru", "q") = "ку"
+	set ^CacheMsg("Dance", "en", "ru", "t") = "т"
+	set ^CacheMsg("Dance", "en", "ru", "u") = "у"
+	set ^CacheMsg("Dance", "en", "ru", "v") = "в"
+	set ^CacheMsg("Dance", "en", "ru", "w") = "в"
+	set ^CacheMsg("Dance", "en", "ru", "x") = "кс"
+	set ^CacheMsg("Dance", "en", "ru", "y") = "у"
+	set ^CacheMsg("Dance", "en", "ru", "z") = "з"
+]]></Implementation>
+</Method>
+</Class>
+</Export>

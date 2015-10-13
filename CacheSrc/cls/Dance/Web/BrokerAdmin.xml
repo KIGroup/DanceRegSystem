@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Web.BrokerAdmin">
+<Description>
+Protected REST URLs</Description>
+<Super>Dance.Web.BrokerBase</Super>
+<TimeCreated>63289,65480.266604</TimeCreated>
+
+<XData name="UrlMap">
+<Data><![CDATA[
+<Routes>
+
+<!-- ========================================================================================================= -->
+<!-- Tournament                                                                                     Tournament -->
+<!-- ========================================================================================================= -->
+
+<!-- SAVE Tournament -->
+<Route Method="POST"   Url="/tournament"     Call="Dance.Web.JsonAdmin:SaveTournament"/>
+
+<!-- DELETE BY ID (Hide from table), Tournament -->
+<Route Method="DELETE" Url="/tournament/:id"   Call="Dance.Web.JsonAdmin:DeactivateTournament"/>
+
+
+<!-- ========================================================================================================= -->
+<!-- Competition                                                                                   Competition -->
+<!-- ========================================================================================================= -->
+
+<!-- SAVE Competition -->
+<Route Method="POST"   Url="/tournament/:id/competition"     Call="Dance.Web.JsonAdmin:SaveCompetition"/>
+
+<!-- SAVE ALL Competitions -->
+<Route Method="POST"   Url="/tournament/:id/competition/all"  Call="Dance.Web.JsonAdmin:SaveAllCompetitions"/>
+
+<!-- DELETE BY ID (Hide from table), Competition -->
+<Route Method="DELETE" Url="/tournament/competition/:id" Call="Dance.Web.JsonAdmin:DeactivateCompetition"/>
+
+<!-- -->
+<Route Method="GET" Url="/tournament/:id/competition/importlink" Call="Dance.Web.JsonAdmin:GetImportLinkForTournamentCompetitions"/>
+
+
+<!-- ========================================================================================================= -->
+<!-- Participant                                                                                   Participant -->
+<!-- ========================================================================================================= -->
+
+<!-- DELETE BY ID (Hide from table), Participant -->
+<Route Method="DELETE" Url="/participant/:id" Call="Dance.Web.JsonAdmin:DeactivateParticipant"/>
+
+
+
+<!-- ========================================================================================================= -->
+<!-- Import                                                                                             Import -->
+<!-- ========================================================================================================= -->
+
+<!-- GET BY ID, Tournament -->
+<Route Method="GET" Url="/tournament/:id"   Call="Dance.Web.JsonUser:GetTournamentById"/>
+
+<!-- GET ALL [GRID], Tournament Import -->
+<Route Method="POST" Url="/import/tournament/grid" Call="Dance.Web.JsonAdmin:GetImportedTournamentsForGrid"/>
+
+<!-- GET ALL [GRID], Competition Import -->
+<Route Method="POST" Url="/import/competition/grid" Call="Dance.Web.JsonAdmin:GetImportedCompetitionsForGrid"/>
+
+
+<!-- Check access, authorization call, if needed -->
+<Route Method="GET" Url="/checkAdmin/:isLogin" Call="Dance.Web.JsonAdmin:CheckAdmin"/>
+
+<Route Method="GET" Url="/recorder/tournament/:id" Call="Dance.Web.JsonAdmin:GetRecordersHashesForTournament"/>
+
+
+
+<Route Method="GET" Url="/report/:lang/tournament/:trnId/participant" Call="Dance.Web.ReportTournamentParticipants:GetFile"/>
+<Route Method="GET" Url="/report/:lang/tournament/:trnId/payer" Call="Dance.Web.ReportTournamentPayers:GetFile"/>
+
+<!-- All currencies -->
+<Route Method="GET" Url="/currency" Call="Dance.Web.JsonAdmin:GetCurrencies"/>
+
+</Routes>
+]]></Data>
+</XData>
+</Class>
+</Export>

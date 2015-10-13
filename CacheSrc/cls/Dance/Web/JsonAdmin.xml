@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Web.JsonAdmin">
+<Super>Dance.Web.JsonBase</Super>
+<TimeCreated>63437,5355.000325</TimeCreated>
+
+<Method name="SaveTournament">
+<Description>
+====================================================================================================================
+Tournament                                                                                                Tournament
+====================================================================================================================
+
+Create or Update object</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.Tournament).CheckUpdatePrivilege())
+        
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.data, 1))
+        
+        do ##class(Dance.Data.Tournament).Save(data, .st)
+        if $$$ISERR(st) $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_TournamentSave"," | "_st))
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        set st = ex.AsStatus()
+    }
+            
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="DeactivateTournament">
+<Description>
+Change IsActive property to 0. (hide item from table)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.Tournament).CheckUpdatePrivilege())
+        
+        set st = ##class(Dance.Data.Tournament).Deactivate(id)
+        if $$$ISERR(st) $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_TournamentDeactivate"," | "_st))
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        set st = ex.AsStatus()
+    }
+            
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="SaveCompetition">
+<Description>
+====================================================================================================================
+Competition                                                                                              Competition
+====================================================================================================================
+
+Create or Update object</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.Tournament).CheckUpdatePrivilege())
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.data, 1))
+        
+        set data.tournamentId = tournamentId
+        do ##class(Dance.Data.Competition).Save(data,.st)
+        if $$$ERROR(st) do ##class(Dance.Utils.Msg).GetErrorStatus("error_CompetitionSave"," | "_st)
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        set st = ex.AsStatus()
+    }
+            
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="SaveAllCompetitions">
+<Description>
+Create or Update object</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{    
+        $$$THROWONERROR(st, ##class(Dance.Data.Tournament).CheckUpdatePrivilege())
+        
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.data, 1))
+        
+        set proxy = ##class(%ZEN.proxyObject).%New()
+        set proxy.info = ##class(%ZEN.proxyObject).%New()
+        set proxy.info.success = 0
+        set proxy.info.errors = 0
+        set proxy.info.errorMessages = ##class(%ListOfDataTypes).%New()
+        
+        for i=1:1:data.Count(){
+            TSTART
+            set item = data.GetAt(i)    
+            set item.tournamentId = tournamentId
+            do ##class(Dance.Data.Competition).Save(item,.st)
+            if $$$ISERR(st) {
+                TROLLBACK
+                set st = ##class(Dance.Utils.Msg).GetErrorStatus("error_CompetitionSave"," | "_st)
+                set proxy.info.errors = proxy.info.errors + 1
+                do proxy.info.errorMessages.Insert(st)
+            }
+            else{
+                TCOMMIT
+                set proxy.info.success = proxy.info.success + 1
+            }
+        }
+        
+        do proxy.%ToJSON()
+    }
+    catch ex {
+        if ($TLEVEL '= 0) TROLLBACK
+        set st = ex.AsStatus()
+    }
+    
+    if $$$ISOK(st){
+        d ##class(Dance.Data.Tournament).UpdateAllTournaments()
+    }
+            
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="DeactivateCompetition">
+<Description>
+Change IsActive property to 0. (hide item from table)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.Tournament).CheckUpdatePrivilege())
+        
+        set st = ##class(Dance.Data.Competition).Deactivate(id)
+        if $$$ISERR(st) $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_CompetitionDeactivate"," | "_st))
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        set st = ex.AsStatus()
+    }
+            
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="DeactivateParticipant">
+<Description>
+====================================================================================================================
+Participant                                                                                              Participant
+====================================================================================================================
+
+Change IsActive property to 0. (hide item from table)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.Tournament).CheckUpdatePrivilege())
+        
+        set st = ##class(Dance.Data.Participant).Deactivate(id)
+        if $$$ISERR(st) $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_ParticipantDeactivate"," | "_st))
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        set st = ex.AsStatus()
+    }
+            
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetImportedTournamentsForGrid">
+<Description>
+====================================================================================================================
+Import                                                                                                        Import
+====================================================================================================================
+
+ </Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.Tournament).CheckUpdatePrivilege())
+    
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.params, 1))
+        
+        if (params.other.isFirstLoad = $$$YES){
+            $$$THROWONERROR(st, ##class(Dance.Data.Import.ImportDanceplat).Import("Dance.Data.Import.TournamentDanceplat", $G(^Settings("Dance", "ImportDanceplat", "TournamentsPage"))))
+        }
+            
+        set whereCondition = ""
+        
+        do ..GetProxyObjectsForGrid("SELECT ID FROM Dance_Data_Import.TournamentDanceplat", "Dance.Data.Import.TournamentDanceplat", params,"", whereCondition).%ToJSON()
+    }
+    catch ex {
+        set st = ex.AsStatus()
+    }
+
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetImportedCompetitionsForGrid">
+<Description>
+Write objects to device, page by page for grid. </Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        
+        $$$THROWONERROR(st, ##class(Dance.Data.Tournament).CheckUpdatePrivilege())
+    
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.params, 1))
+        
+        set tournament = ##class(Dance.Data.Tournament).%OpenId(params.other.tournamentId)
+        
+        if (params.other.isFirstLoad = $$$YES){
+            set page = $G(^Settings("Dance", "ImportDanceplat", "CompetitionsPage"))_"?trn="_tournament.IdInternal_"&hash="_tournament.Hash_"&all=1"
+            $$$THROWONERROR(st, ##class(Dance.Data.Import.ImportDanceplat).Import("Dance.Data.Import.CompetitionDanceplat", page))
+        }
+            
+        set whereCondition = "TournamentIdExternal = "_tournament.IdExternal
+        
+        do ..GetProxyObjectsForGrid("SELECT ID FROM Dance_Data_Import.CompetitionDanceplat", "Dance.Data.Import.CompetitionDanceplat", params, "", whereCondition).%ToJSON()
+    }
+    catch ex {
+        set st = ex.AsStatus()
+    }
+
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetImportLinkForTournamentCompetitions">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set tournament = ##class(Dance.Data.Tournament).%OpenId(trnId)
+    
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    
+    if $$$ISOK(##class(Dance.Data.Tournament).CheckUpdatePrivilege()){  
+        set proxy.link = $G(^Settings("Dance", "ImportDanceplat", "Server"))_"/"_$G(^Settings("Dance", "ImportDanceplat", "CompetitionsPage"))_"?trn="_tournament.IdInternal_"&hash="_tournament.Hash_"&all=1"
+    }
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetRecordersHashesForTournament">
+<Description>
+Get recorders</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set trn = ##class(Dance.Data.Tournament).%OpenId(trnId)
+    
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.recorders = ##class(%ListOfObjects).%New()
+    
+    &sql(DECLARE CRRec CURSOR FOR 
+            SELECT ID
+            FROM Dance_Data.Recorder
+            ORDER BY Name)  
+        
+    &sql(OPEN CRRec)
+    for  
+    {   
+        &sql(FETCH CRRec INTO :id) 
+        quit:(SQLCODE '= 0)
+        
+        set recObj = ##class(Dance.Data.Recorder).%OpenId(id)
+        
+        set rec = ##class(%ZEN.proxyObject).%New()  
+        set rec.name = recObj.Name
+        set rec.hash = ##class(Dance.Data.Recorder).GetAccessHashForTournament(trn, recObj)
+        
+        do proxy.recorders.Insert(rec)  
+    }
+    
+    &sql(CLOSE CRRec)
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="CheckAdmin">
+<Description>
+Check access, authorization call, if needed</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>isLogin:%Boolean</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (isLogin = 1){
+        if (##class(Dance.Data.Tournament).CheckDeletePrivilege() = $$$OK){
+            w "{""privileges"":""all""}"
+        }
+        else{
+            w "{""privileges"":""read""}"
+        }
+        q $$$OK
+    }
+
+    #; Don't want the session token
+    Set %response.OutputSessionToken=0
+            
+    #; Set the Http Status
+    Set %response.Status="401 Unauthorized"
+        
+    #; Write out the header
+    Do %response.WriteHTTPHeader()
+            
+    Set %session.EndSession=1
+
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetCurrencies">
+<Description>
+All currencies
+Method="GET" Url="/currency"</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT ID As id, Name->Value As name, Code as code FROM Dance_Data.Currency")
+]]></Implementation>
+</Method>
+</Class>
+</Export>

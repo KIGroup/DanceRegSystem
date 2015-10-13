@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.Participant">
+<Description>
+Участник турнира</Description>
+<Super>%Persistent</Super>
+<TimeCreated>63295,5554.902115</TimeCreated>
+
+<Property name="Created">
+<Description>
+Дата создания записи</Description>
+<Type>%TimeStamp</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Recorder">
+<Description>
+Организатор, который создал эту запись</Description>
+<Type>Recorder</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Tournament">
+<Description>
+Турнир</Description>
+<Type>Tournament</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Competition">
+<Description>
+Соревнование турнира, в котором участвует</Description>
+<Type>Competition</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="FullName">
+<Description>
+Полное имя пары/соло участника </Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Country">
+<Description>
+Страна участника</Description>
+<Type>Country</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="City">
+<Description>
+Город участника</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="Club">
+<Description>
+Клуб участника</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="MainTrainer">
+<Description>
+Главный тренер</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="OtherTrainers">
+<Description>
+Другие тренеры</Description>
+<Type>%Text</Type>
+<Parameter name="MAXLEN" value="2000"/>
+</Property>
+
+<Property name="IsActive">
+<Description>
+Является ли активной запись в базе</Description>
+<Type>%Boolean</Type>
+<InitialExpression>1</InitialExpression>
+<Required>1</Required>
+</Property>
+
+<Property name="Tickets">
+<Description>
+Релейшен - билеты</Description>
+<Type>Dance.Data.Ticket</Type>
+<Cardinality>many</Cardinality>
+<Inverse>Participant</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Property name="PrtObjKey">
+<Description>
+Класс@ИД - объекта участника</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+</Property>
+
+<Property name="PrtObjPaymentsCountCalc">
+<Description>
+Количество оплаченных билетов участника во всем турнире</Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {PrtObjPaymentsCountCalc} = ##class({%%CLASSNAME}).GetPrtObjPaymentsCount({%%ID}, {PrtObjKey}, {Tournament})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="PrtObjPaymentsCount">
+<Description>
+Количество оплаченных билетов участника во всем турнире</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="PrtObjCompetitionsCountCalc">
+<Description>
+Количество соревнований турнира, в которых участвует участник(пара/соло) </Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {PrtObjCompetitionsCountCalc} = ##class({%%CLASSNAME}).GetPrtObjCompetitionsCount({%%ID}, {PrtObjKey}, {Tournament})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="PrtObjCompetitionsCount">
+<Description>
+Количество соревнований турнира, в которых участвует участник(пара/соло) </Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="TicketStatus">
+<Description>
+Статус билета участника</Description>
+<Type>%String</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode>set {TicketStatus} = ##class({%%CLASSNAME}).GetTicketStatus({%%ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Index name="TournamentPrtIdx">
+<Properties>Tournament</Properties>
+</Index>
+
+<Index name="CompetitionIdx">
+<Data>Competition</Data>
+<Properties>Competition</Properties>
+</Index>
+
+<Index name="PrtObjKeyIndex">
+<Properties>PrtObjKey</Properties>
+</Index>
+
+<Index name="IsActiveIndex">
+<Properties>IsActive</Properties>
+</Index>
+
+<Index name="CommonIdx">
+<Properties>Tournament,PrtObjKey,IsActive</Properties>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Преобразование в json</Description>
+<FormalSpec>params:%ZEN.proxyObject</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.id = ..%Id()
+    set proxy.competition = ..Competition.ConvertToProxyObject(params.competitionParams)
+    set proxy.isActive = ..IsActive
+    set proxy.created = ..Created
+    set proxy.ticketStatus = ##class(TicketStatus).CodeIdxOpen(..TicketStatus).ConvertToProxyObject()
+        
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="%OnNew">
+<Description>
+Обработка при создании</Description>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<ServerOnly>1</ServerOnly>
+<Implementation><![CDATA[
+    set ..Created = $ZDT($ZTS, 3)   
+    Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetFullNameForLang">
+<Description>
+Имя участника для выбранного языка</Description>
+<FormalSpec>lang:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("GetFullNameForLang - не перекрыт!"))
+]]></Implementation>
+</Method>
+
+<Method name="UpdateAllParticipantsFullName">
+<Description>
+Обновить имена для всех участников (актуальное значение присвоить) w ##class(Dance.Data.Participant).UpdateAllParticipantsFullName()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        //TSTART
+        
+        &sql(DECLARE PrtFullNameCur CURSOR FOR
+             SELECT %NOLOCK ID 
+             FROM Dance_Data.Participant
+             WHERE Tournament->IsActive = 1 AND Competition->IsActive = 1 AND IsActive = 1)
+        
+        &sql(OPEN PrtFullNameCur)
+        for{
+            &sql(FETCH PrtFullNameCur INTO :prtId) 
+            quit:(SQLCODE '= 0)
+            
+            set prt = ..%OpenId(prtId,,.st)
+            $$$THROWONERROR(st, st)
+            
+            if $ISOBJECT(prt.FullName) = $$$NO{
+                set prt.FullName = ##class(Dance.Data.Localization.LText).Create("")
+                $$$THROWONERROR(st, prt.%Save())
+            }
+            
+            $$$THROWONERROR(st, ..UpdateParticipantFullName(prt))   
+            kill prt
+        }
+        
+        &sql(CLOSE PrtFullNameCur)
+        
+        //TCOMMIT
+    }
+    catch(ex){
+        //TROLLBACK
+        
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="UpdateParticipantFullName">
+<Description>
+Обновить имя одного участника (актуальное значение присвоить) </Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>prt:Participant</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        &sql(DECLARE LangCurs CURSOR FOR
+             SELECT %NOLOCK  Code 
+             FROM Dance_Data_Localization.LTextLanguage
+             ORDER BY Code)
+        
+        &sql(OPEN LangCurs)
+        for{
+            &sql(FETCH LangCurs INTO :code) 
+            quit:(SQLCODE '= 0)
+            
+            // Чтобы в немецком|(другом) были английские имена, всяко лучше чем по русски
+            set langCodeForSearch = code
+            if (code = "de") || (code = "it"){
+                set langCodeForSearch = "en" 
+            }
+            
+            $$$THROWONERROR(st, prt.FullName.SetValueByLang(prt.GetFullNameForLang(langCodeForSearch), code))   
+        }
+        
+        &sql(CLOSE LangCurs)
+        
+        TCOMMIT
+    }
+    catch(ex){
+        TROLLBACK 1
+        
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="Deactivate">
+<Description>
+Change IsActive property to 0</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ##class(Dance.Utils.Journal).Create("Log", "Data.Participant.Deactivate", "ID="_id_";")
+    
+    set obj = ..%OpenId(id)
+    set obj.IsActive = 0
+    
+    quit obj.%Save()
+]]></Implementation>
+</Method>
+
+<Method name="GetTicketStatus">
+<Description>
+Статус билета участника</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>participantId:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set status = "Not paid"
+    
+    &sql(SELECT %NOLOCK TStatus->Code INTO :status FROM Dance_Data.Ticket WHERE Participant = :participantId)   
+
+    quit status
+]]></Implementation>
+</Method>
+
+<Method name="GetPrtObjPaymentsCount">
+<Description>
+Получить количество оплаченных билетов в турнире для объекта-участника (пара или соло)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>prtId:%String,prtObjKey:%String,trnId:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set count = ##class(Ticket).GetPrtObjPaymentsCountInTournament(prtObjKey, trnId)    
+    
+    // ID - объекта участника
+    set prtObjId = $P(prtObjKey, "@", 2)
+    
+    if (##class(ParticipantCoupleUDSR).%ExistsId(prtId)) && (##class(MatchingCoupleUDSRWDSF).UDSRIdxExists(prtObjId)){
+        // Если пара СТСР еще и является парой WDSF, то нужно посчитать ещё платежи WDSF версии пары
+        set wdsfCoupleId = ##class(MatchingCoupleUDSRWDSF).GetWDSFCoupleIDByUDSR(prtObjId)
+        set prtObjKey = ##class(CoupleWDSF).%ClassName(1)_"@"_wdsfCoupleId
+            
+        set count = count + ##class(Ticket).GetPrtObjPaymentsCountInTournament(prtObjKey, trnId)
+    }
+    elseif (##class(ParticipantCoupleWDSF).%ExistsId(prtId)) && (##class(MatchingCoupleUDSRWDSF).WDSFIdxExists(prtObjId)){
+        // Если пара WDSF еще и является парой СТСР, то нужно посчитать ещё платежи СТСР версии пары
+        set udsrCoupleId = ##class(MatchingCoupleUDSRWDSF).GetUDSRCoupleIDByWDSF(prtObjId) 
+        set prtObjKey = ##class(CoupleUDSR).%ClassName(1)_"@"_udsrCoupleId
+            
+        set count = count + ##class(Ticket).GetPrtObjPaymentsCountInTournament(prtObjKey, trnId)
+    }
+    
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="GetPrtObjCompetitionsCount">
+<Description>
+Количество соревнований  участника в турнире (с учетом пар-совпадений)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>prtId:%String,prtObjKey:%String,trnId:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set count = ..GetCompetitionsCountForPrtObject(prtObjKey, trnId)    
+    
+    set prtObjId = $P(prtObjKey, "@", 2)
+    if (##class(ParticipantCoupleUDSR).%ExistsId(prtId)) && (##class(MatchingCoupleUDSRWDSF).UDSRIdxExists(prtObjId)){
+        set wdsfCoupleId = ##class(MatchingCoupleUDSRWDSF).GetWDSFCoupleIDByUDSR(prtObjId)
+        set prtObjWDSFKey = ##class(CoupleWDSF).%ClassName(1)_"@"_wdsfCoupleId
+        
+        set count = count + ..GetCompetitionsCountForPrtObject(prtObjWDSFKey, trnId)    
+    }
+    elseif (##class(ParticipantCoupleWDSF).%ExistsId(prtId)) && (##class(MatchingCoupleUDSRWDSF).WDSFIdxExists(prtObjId)){
+        set udsrCoupleId = ##class(MatchingCoupleUDSRWDSF).GetUDSRCoupleIDByWDSF(prtObjId)
+        set prtObjUDSRKey = ##class(CoupleUDSR).%ClassName(1)_"@"_udsrCoupleId
+        
+        set count = count + ..GetCompetitionsCountForPrtObject(prtObjUDSRKey, trnId)
+    }
+    
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionsCountForPrtObject">
+<Description>
+Количество соревнований  определенного участника в турнире</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>prtObjKey:%String,trnId:%String</FormalSpec>
+<Implementation><![CDATA[
+    set count = 0   
+    &sql(SELECT %NOLOCK COUNT(ID) INTO :count 
+         FROM Dance_Data.Participant 
+         WHERE Tournament = :trnId AND PrtObjKey = :prtObjKey AND IsActive = 1)
+    quit count
+]]></Implementation>
+</Method>
+
+<Method name="GetPrtObjKey">
+<Description>
+ClassName@ID - объекта участника</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>prtId:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set key = ""
+    
+    if (##class(ParticipantCoupleUDSR).%ExistsId(prtId)){
+        set prt1 = ##class(ParticipantCoupleUDSR).%OpenId(prtId)
+        set key = prt1.Couple.%ClassName(1)_"@"_ prt1.Couple.%Id()
+    }
+    elseif (##class(ParticipantCoupleWDSF).%ExistsId(prtId)){
+        set prt2 = ##class(ParticipantCoupleWDSF).%OpenId(prtId)
+        set key = prt2.Couple.%ClassName(1)_"@"_ prt2.Couple.%Id()      
+    }
+    elseif (##class(ParticipantCoupleOther).%ExistsId(prtId)){
+        set prt3 = ##class(ParticipantCoupleOther).%OpenId(prtId)
+        set key = prt3.%ClassName(1)_"@"_ prt3.CoupleKey        
+    }
+    elseif (##class(ParticipantSingleUDSR).%ExistsId(prtId)){
+        set prt4 = ##class(ParticipantSingleUDSR).%OpenId(prtId)
+        set key = prt4.Athlete.%ClassName(1)_"@"_ prt4.Athlete.%Id()        
+    }
+    elseif (##class(ParticipantSingleWDSF).%ExistsId(prtId)){
+        set prt5 = ##class(ParticipantSingleWDSF).%OpenId(prtId)
+        set key = prt5.Athlete.%ClassName(1)_"@"_ prt5.Athlete.%Id()        
+    }
+    elseif (##class(ParticipantSingleOther).%ExistsId(prtId)){
+        set prt6 = ##class(ParticipantSingleOther).%OpenId(prtId)
+        set key = prt6.%ClassName(1)_"@"_ prt6.AthleteKey       
+    }
+    
+    quit key
+]]></Implementation>
+</Method>
+
+<Method name="UpdatePrtKey">
+<Description>
+do ##class(Dance.Data.Participant).UpdatePrtKey()</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    set st = $$$OK
+    try{
+        TSTART
+        
+        &sql(DECLARE PrtUPDDCurs CURSOR FOR 
+             SELECT ID
+             FROM Dance_Data.Participant)   
+                    
+        &sql(OPEN PrtUPDDCurs)
+        for  
+        {   
+            &sql(FETCH PrtUPDDCurs INTO :id) 
+            quit:(SQLCODE '= 0)
+            
+            set obj = ..%OpenId(id)
+            set obj.PrtObjKey = ..GetPrtObjKey(obj.%Id())
+            set obj.Tournament = obj.Competition.Tournament
+            $$$THROWONERROR(st, obj.%Save())
+        }
+        
+        &sql(CLOSE PrtUPDDCurs)
+        
+        TCOMMIT 
+    }
+    catch(ex){
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+        w $SYSTEM.Status.GetErrorText(st)
+    }
+]]></Implementation>
+</Method>
+
+<Method name="UpdatePrtObjPaymentsCount">
+<Description>
+Обновить свойство: количество платежей объекта-участника в турнире</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>prtId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set (trnId, prtObjKey) = ""
+    &sql(SELECT %NOLOCK Tournament, PrtObjKey INTO :trnId, :prtObjKey 
+         FROM Dance_Data.Participant
+         WHERE ID = :prtId)
+    
+    set count = ..GetPrtObjPaymentsCount(prtId, prtObjKey, trnId)
+    &sql(UPDATE %NOLOCK Dance_Data.Participant
+         SET PrtObjPaymentsCount = :count
+         WHERE ID = :prtId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdatePrtObjCompetitionsCount">
+<Description>
+Обновить свойство: количество групп объекта-участника в турнире</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>prtId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set (trnId, prtObjKey) = ""
+    
+    &sql(SELECT %NOLOCK Tournament, PrtObjKey INTO :trnId, :prtObjKey 
+         FROM Dance_Data.Participant
+         WHERE ID = :prtId)
+    
+    set count = ..GetPrtObjCompetitionsCount(prtId, prtObjKey, trnId)
+    
+    &sql(UPDATE %NOLOCK Dance_Data.Participant
+         SET PrtObjCompetitionsCount = :count
+         WHERE ID = :prtId)
+
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdateAllByTournament">
+<Description>
+Обновить свойства всех групп турнира</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set status = $$$OK
+    
+    try{       
+        //TSTART
+        
+        &sql(DECLARE PrtCurs CURSOR FOR
+             SELECT %NOLOCK ID
+             FROM Dance_Data.Participant
+             WHERE Tournament = :trnId)
+        
+        &sql(OPEN PrtCurs)
+        for{
+            &sql(FETCH PrtCurs INTO :id) 
+            quit:(SQLCODE '= 0)
+            
+            do ..UpdatePrtObjCompetitionsCount(id)
+            do ..UpdatePrtObjPaymentsCount(id)
+        }
+        
+        &sql(CLOSE PrtCurs)
+        
+        //TCOMMIT
+    }
+    catch(ex){
+        //TROLLBACK 1
+        
+        set status = ex.AsStatus()
+    }
+    
+    quit status
+]]></Implementation>
+</Method>
+
+<Method name="IsParticipationExists">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>prtObjId:%String,prtObjClassName:%String,cmpId:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    SET SQLCODE = ""
+    
+    set prtObjKey = prtObjClassName_"@"_prtObjId
+     
+    set prtId = ""
+    &sql(SELECT ID INTO :prtId
+         FROM Dance_Data.Participant 
+         WHERE PrtObjKey = :prtObjKey AND Competition = :cmpId AND IsActive = 1)
+    
+    quit:(SQLCODE=0) $$$YES
+    
+    quit $$$NO
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.ParticipantD</DataLocation>
+<DefaultData>ParticipantDefaultData</DefaultData>
+<IdLocation>^Dance.Data.ParticipantD</IdLocation>
+<IndexLocation>^Dance.Data.ParticipantI</IndexLocation>
+<StreamLocation>^Dance.Data.ParticipantS</StreamLocation>
+<Data name="ParticipantDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Created</Value>
+</Value>
+<Value name="3">
+<Value>Recorder</Value>
+</Value>
+<Value name="4">
+<Value>Tournament</Value>
+</Value>
+<Value name="5">
+<Value>Competition</Value>
+</Value>
+<Value name="6">
+<Value>FullName</Value>
+</Value>
+<Value name="7">
+<Value>Country</Value>
+</Value>
+<Value name="8">
+<Value>City</Value>
+</Value>
+<Value name="9">
+<Value>Club</Value>
+</Value>
+<Value name="10">
+<Value>MainTrainer</Value>
+</Value>
+<Value name="11">
+<Value>OtherTrainers</Value>
+</Value>
+<Value name="12">
+<Value>IsActive</Value>
+</Value>
+<Value name="13">
+<Value>PrtObjKey</Value>
+</Value>
+<Value name="14">
+<Value>PrtObjPaymentsCount</Value>
+</Value>
+<Value name="15">
+<Value>PrtObjCompetitionsCount</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

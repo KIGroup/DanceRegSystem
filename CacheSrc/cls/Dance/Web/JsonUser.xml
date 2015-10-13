@@ -1,0 +1,1741 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Web.JsonUser">
+<Super>Dance.Web.JsonBase</Super>
+<TimeCreated>63436,73778.660914</TimeCreated>
+
+<Method name="RegistrationUDSR">
+<Description>
+
+====================================================================================================================
+Registration                                                                                            Registration
+====================================================================================================================
+
+Registration UDSR participants in the tournament</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    set currentTournamentId = ""
+    
+    set regResults = ##class(%ListOfObjects).%New()
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    
+    try{
+        set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")
+        do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationUDSR", content)
+        
+        TSTART
+
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
+        
+        set prt = ##class(%ZEN.proxyObject).%New()
+        set prtClass = ""
+        
+        set dancers = ##class(%ListOfObjects).%New()
+         
+        if $ISOBJECT(data.couple){
+            set prt = data.couple
+            set prtClass = "Dance.Data.ParticipantCoupleUDSR"
+            do dancers.Insert(data.couple.man)
+            do dancers.Insert(data.couple.woman)
+        }
+        elseif $ISOBJECT(data.athlete){
+            set prt = data.athlete
+            set prtClass = "Dance.Data.ParticipantSingleUDSR"
+            do dancers.Insert(data.athlete)
+        }
+            
+        for i=1:1:data.competitions.Count(){
+            set competition = ##class(Dance.Data.Competition).%OpenId(data.competitions.GetAt(i))
+            
+            set regResult = ##class(%ZEN.proxyObject).%New()
+            set regResult.competition = competition.ConvertToProxyObject(##class(%ZEN.proxyObject).%New())
+            set regResult.otherInfo = ##class(%ZEN.proxyObject).%New()
+            
+            set currentTournamentId = competition.Tournament.%Id()   
+            if (competition.Tournament.TStatus.Code '= "Registration") {
+                set regResult.status = 0
+                set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_RegistrationClosed")
+                do regResults.Insert(regResult)
+                continue
+            }
+            
+            
+            // Find recorder by access hash
+            #dim recorder As Dance.Data.Recorder = ##class(Dance.Data.Recorder).GetByAccessHashForTournament(competition.Tournament, data.recorderHash) 
+            if '$ISOBJECT(recorder) {
+                set regResult.status = 0
+                set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_Recorder_AccessDenied")
+                do regResults.Insert(regResult)
+                continue
+            }
+        
+            set isCmpConflict = $$$NO
+            for d=1:1:dancers.Count(){
+                set cmpListConflict = ##class(Dance.Data.Person).GetConflictCompetitions(dancers.GetAt(d).id, competition.%Id(), .st)
+                if (cmpListConflict.Count() > 0){
+                    set regResult.status = 0
+                    set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_ConflictCompetitionIsFound")
+                    set regResult.otherInfo.conflictCompetitions = cmpListConflict
+                    set regResult.otherInfo.athlete = ##class(Dance.Data.Person).%OpenId(dancers.GetAt(d).id).ConvertToProxyObject()
+                    set isCmpConflict = $$$YES
+                }
+            }
+            
+            if (isCmpConflict = $$$NO) {            
+                set participant = $CLASSMETHOD(prtClass, "Create", recorder, competition, prt, .st)
+                
+                if $$$ISERR(st) {
+                    set regResult.status = 0
+                    set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_ParticipantNotCreated")_" "_$SYSTEM.Status.GetErrorText(st)
+                }
+                else{
+                    set regResult.status = $$$OK
+                }
+            }
+            
+            do regResults.Insert(regResult)
+        }
+    
+        TCOMMIT
+        
+        set proxy.results = regResults
+    }
+    catch ex {
+        TROLLBACK 
+        set %response.Status = 400
+        set proxy.status = 0
+        set proxy.message = ##class(Dance.Utils.Msg).GetMsg("error_FatalError")_" "_$SYSTEM.Status.GetErrorText(ex.AsStatus())      
+    }
+    
+    if (proxy.status '= 0){
+        do ##class(Dance.Data.Tournament).UpdateTournament(currentTournamentId)
+    }
+    
+    quit proxy.%ToJSON()
+]]></Implementation>
+</Method>
+
+<Method name="RegistrationWDSF">
+<Description>
+Registration WDSF participants in the tournament</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.status = $$$OK
+    
+    
+    set currentTournamentId = ""
+    set regResults = ##class(%ListOfObjects).%New()
+    
+    try{
+        set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")
+        do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationWDSF", content)
+        
+        TSTART
+
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
+    
+        set prt = ##class(%ZEN.proxyObject).%New()
+        
+        // Data for sending to controller
+        set wcPostData = ##class(%ZEN.proxyObject).%New()
+        set wcPostData.competitions = ##class(%ListOfDataTypes).%New()
+        
+        set prt = ##class(%ZEN.proxyObject).%New()
+        set prtClass = ""
+        
+        if $ISOBJECT(data.couple){
+            set prtClass = "Dance.Data.ParticipantCoupleWDSF"
+            set prt = data.couple
+            set wcPostData.manNumber = prt.man.number
+            set wcPostData.womanNumber = prt.woman.number
+        }
+        elseif $ISOBJECT(data.athlete){
+            set prtClass = "Dance.Data.ParticipantSingleWDSF"
+            set prt = data.athlete
+            // It does not matter what gender. Controller will understand.
+            set wcPostData.manNumber = prt.number
+        }
+        
+        set convertParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.loadWDSF = $$$YES
+        
+        // Registration in our system
+        for i=1:1:data.competitions.Count(){
+            set competition = ##class(Dance.Data.Competition).%OpenId(data.competitions.GetAt(i))
+        
+            set regResult = ##class(%ZEN.proxyObject).%New()
+            set regResult.competition = competition.ConvertToProxyObject(convertParams)
+            
+            set currentTournamentId = competition.Tournament.%Id()   
+            if (competition.Tournament.TStatus.Code '= "Registration"){
+                set regResult.status = 0 
+                set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_RegistrationClosed")
+                do regResults.Insert(regResult)
+                continue
+            }
+    
+            // Find recorder by access hash
+            #dim recorder As Dance.Data.Recorder = ##class(Dance.Data.Recorder).GetByAccessHashForTournament(competition.Tournament, data.recorderHash) 
+            if '$ISOBJECT(recorder) {
+                set regResult.status = 0
+                set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_Recorder_AccessDenied")
+                do regResults.Insert(regResult)
+                continue
+            }
+                    
+            #dim participant As Dance.Data.Participant = $CLASSMETHOD(prtClass, "Create", recorder, competition, prt, .st)
+                
+            if $$$ISERR(st){
+                set regResult.status = 0
+                set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_ParticipantNotCreated")_" "_$SYSTEM.Status.GetErrorText(st)
+            }
+            else{
+                set regResult.status = $$$OK
+                set regResult.participantId = participant.%Id()
+                
+                if $ISOBJECT(competition.WDSF){
+                    do wcPostData.competitions.Insert(competition.WDSF.%Id())
+                }
+            }
+            
+            do regResults.Insert(regResult)
+        }
+        
+        // Not removed! This is string fix a bug! Bug - empty response.
+        w ""
+        
+        // Registration in the wdsf controller
+        if (wcPostData.competitions.Count() > 0){
+            set wcResponseData = ##class(Dance.Wdsf.ControllerAPI).Registration(wcPostData, recorder, .st)
+            
+            if $$$ISERR(st){
+                if ($ISOBJECT(wcResponseData) && (wcResponseData.status '= $$$OK)) || '$ISOBJECT(wcResponseData){
+                    set proxy.errorDetails = wcResponseData
+                    $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_ConnectionWDSFControllerFailed", "| "_$SYSTEM.Status.GetErrorText(st)))
+                }
+            }  
+            
+            for i=1:1:wcResponseData.results.Count(){
+                set wcRequest = wcResponseData.results.GetAt(i).request
+                set wcResponse = wcResponseData.results.GetAt(i).response
+                
+                set regResult = ##class(%ZEN.proxyObject).%New()
+                for r=1:1:regResults.Count(){
+                    if (regResults.GetAt(r).competition.wdsf.id = wcRequest.competitionId){
+                        set regResult = regResults.GetAt(r)
+                        quit
+                    }
+                }
+                
+                set regResult.otherInfo = wcResponse
+                if (wcResponse.code < 2000){
+                    set regResult.status = $$$OK
+                }
+                else{
+                    set st = ##class(Dance.Data.Participant).%DeleteId(regResult.participantId)
+                    if $$$ISERR(st){
+                        do ##class(Dance.Data.Participant).Deactivate(regResult.participantId)
+                    }
+                    
+                    set regResult.participantId = ""
+                    set regResult.status = 0
+                    set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_RegistrationInWDSFController")
+                }       
+            }
+        }
+     
+        TCOMMIT
+        
+        set proxy.results = regResults
+    }
+    catch ex {
+        TROLLBACK 
+        set proxy.status = 0
+        set proxy.message = ##class(Dance.Utils.Msg).GetMsg("error_FatalError")_" "_$SYSTEM.Status.GetErrorText(ex.AsStatus())      
+    }
+    
+    if (proxy.status '= 0){
+        do ##class(Dance.Data.Tournament).UpdateTournament(currentTournamentId)
+    }
+    
+    quit proxy.%ToJSON()
+]]></Implementation>
+</Method>
+
+<Method name="RegistrationOTHER">
+<Description>
+Registration OTHER participants in the tournament</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    set regResults = ##class(%ListOfObjects).%New()
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    
+    set currentTournamentId = ""   
+    
+    try{
+        set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")
+        do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationOTHER", content)
+        
+        TSTART
+
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
+
+        set prt = ##class(%ZEN.proxyObject).%New()
+        set prtClass = ""
+        
+        if $ISOBJECT(data.couple){
+            set prt = data.couple
+            set prtClass = "Dance.Data.ParticipantCoupleOther"
+        }
+        elseif $ISOBJECT(data.athlete){
+            set prt = data.athlete
+            set prtClass = "Dance.Data.ParticipantSingleOther"
+        }
+            
+        set convertParams = ##class(%ZEN.proxyObject).%New()    
+        for i=1:1:data.competitions.Count(){
+            set competition = ##class(Dance.Data.Competition).%OpenId(data.competitions.GetAt(i))
+            
+            set regResult = ##class(%ZEN.proxyObject).%New()
+            set regResult.competition = competition.ConvertToProxyObject(convertParams)
+            set regResult.participant = ##class(%ZEN.proxyObject).%New()
+            set regResult.otherInfo = ##class(%ZEN.proxyObject).%New()
+            
+            set currentTournamentId = competition.Tournament.%Id()       
+            if (competition.Tournament.TStatus.Code '= "Registration") {
+                set regResult.status = 0
+                set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_RegistrationClosed")
+                do regResults.Insert(regResult)
+                continue
+            }
+            
+            // Find recorder by access hash
+            #dim recorder As Dance.Data.Recorder = ##class(Dance.Data.Recorder).GetByAccessHashForTournament(competition.Tournament, data.recorderHash) 
+            if '$ISOBJECT(recorder) {
+                set regResult.status = 0
+                set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_Recorder_AccessDenied")
+                do regResults.Insert(regResult)
+                continue
+            }
+                
+            set participant = $CLASSMETHOD(prtClass, "Create", recorder, competition, prt, .st)
+            if $$$ISERR(st) {
+                set regResult.status = 0
+                set regResult.message = ##class(Dance.Utils.Msg).GetMsg("error_ParticipantNotCreated")_" "_$SYSTEM.Status.GetErrorText(st)
+            }
+            else{
+                set regResult.status = $$$OK
+            }
+            
+            do regResults.Insert(regResult)
+        }
+          
+        TCOMMIT
+        
+        set proxy.results = regResults
+    }
+    catch ex {
+        TROLLBACK 
+        set %response.Status = 400
+        set proxy.status = 0
+        set proxy.message = ##class(Dance.Utils.Msg).GetMsg("error_FatalError")_" "_$SYSTEM.Status.GetErrorText(ex.AsStatus())      
+    }
+    
+    if (proxy.status '= 0){
+        do ##class(Dance.Data.Tournament).UpdateTournament(currentTournamentId)
+    }
+    
+    quit proxy.%ToJSON()
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentById">
+<Description>
+
+====================================================================================================================
+Tournament                                                                                                Tournament
+====================================================================================================================
+
+Get one tournament by Id</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set convertParams = ##class(%ZEN.proxyObject).%New()
+    set convertParams.loadName = $GET(%request.Data("loadName", 1), $$$NO) = $$$YES
+    set convertParams.loadFullName = $GET(%request.Data("loadFullName", 1), $$$NO) = $$$YES
+    set convertParams.loadStatus = $GET(%request.Data("loadStatus", 1), $$$NO) = $$$YES
+    set convertParams.loadRank = $GET(%request.Data("loadRank", 1), $$$NO) = $$$YES
+    set convertParams.loadLocation = $GET(%request.Data("loadLocation", 1), $$$NO) = $$$YES
+    set convertParams.loadUrls = $GET(%request.Data("loadUrls", 1), $$$NO) = $$$YES
+    set convertParams.loadOrganizer = $GET(%request.Data("loadOrganizer", 1), $$$NO) = $$$YES
+    set convertParams.loadCompetitionsCount = $GET(%request.Data("loadCompetitionsCount", 1), $$$NO) = $$$YES
+    set convertParams.loadParticipantsCount = $GET(%request.Data("loadParticipantsCount", 1), $$$NO) = $$$YES
+    set convertParams.loadParticipantsUniqueCount = $GET(%request.Data("loadParticipantsUniqueCount", 1), $$$NO) = $$$YES
+    set convertParams.loadPaymentsCount = $GET(%request.Data("loadPaymentsCount", 1), $$$NO) = $$$YES
+    
+    quit ..GetProxyObject("Dance.Data.Tournament", id, convertParams).%ToJSON()
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentsByYear">
+<Description>
+Get tournament by year for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>year:%Integer</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.children = ##class(%ListOfObjects).%New()
+    
+    &sql(DECLARE CursTrnYear CURSOR FOR 
+         SELECT %NOLOCK ID, Name->Value, Country->Name->Value, City->Value
+         FROM Dance_Data.Tournament
+         WHERE IsActive = 1 AND DATEPART('year', StartDate) = :year 
+         ORDER BY StartDate DESC)   
+        
+    &sql(OPEN CursTrnYear)
+    for  
+    {   
+        &sql(FETCH CursTrnYear INTO :id, :name, :country, :city) 
+        quit:(SQLCODE '= 0)
+        
+        set obj = ##class(%ZEN.proxyObject).%New()
+        set obj.id = id
+        set obj.name = name
+        set obj.countryName = country
+        set obj.cityName = city 
+        do proxy.children.Insert(obj)           
+    }
+    
+    &sql(CLOSE CursTrnYear)
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentsForGrid">
+<Description>
+Get all tournaments for grid</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.params, 1))
+        
+        set whereCondition = "IsActive = 1"
+        
+        // filters
+        if (params.other.rankId '= "") && (params.other.statusId = ""){
+            set whereCondition = whereCondition_" AND TRank="_..ParseParameter(params.other.rankId)
+        }
+        elseif (params.other.rankId = "") && (params.other.statusId '= ""){
+            set whereCondition = whereCondition_" AND TStatus="_..ParseParameter(params.other.statusId)
+        }
+        elseif (params.other.rankId '= "") && (params.other.statusId '= ""){
+            set whereCondition = whereCondition_" AND TRank="_..ParseParameter(params.other.rankId)_" AND TStatus="_..ParseParameter(params.other.statusId)
+        }
+        
+        set convertParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.loadName = $$$YES
+        set convertParams.loadRank = $$$YES
+        set convertParams.loadStatus = $$$YES
+        set convertParams.loadLocation = $$$YES
+        set convertParams.loadOrganizer = $$$YES
+        set convertParams.loadUrls = $$$YES
+        set convertParams.loadCompetitionsCount = $$$YES
+        set convertParams.loadParticipantsCount = $$$YES
+        
+        do ..GetProxyObjectsForGrid("SELECT %NOLOCK ID FROM Dance_Data.Tournament", "Dance.Data.Tournament", params, convertParams, whereCondition).%ToJSON()
+    }
+    catch ex {
+        set st = ex.AsStatus()
+    }
+
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentYears">
+<Description>
+Get all years of the tournaments for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.children = ##class(%ListOfDataTypes).%New()
+    
+    &sql(DECLARE CursYear CURSOR FOR 
+            SELECT %NOLOCK DISTINCT DATEPART('year', StartDate) As Year
+            FROM Dance_Data.Tournament
+            WHERE IsActive = 1
+            ORDER BY Year)  
+        
+    &sql(OPEN CursYear)
+    for  
+    {   
+        &sql(FETCH CursYear INTO :year) 
+        quit:(SQLCODE '= 0)
+        do proxy.children.Insert(year)  
+    }
+    
+    &sql(CLOSE CursYear)
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentRanks">
+<Description>
+Get tournament ranks for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.children = ##class(%ListOfObjects).%New()
+    
+    &sql(DECLARE TRCurFirst CURSOR FOR 
+            SELECT %NOLOCK ID, Name->Value
+            FROM Dance_Data.TournamentRank
+            ORDER BY Name->Value)   
+        
+    &sql(OPEN TRCurFirst)
+    for  
+    {   
+        &sql(FETCH TRCurFirst INTO :id, :name) 
+        quit:(SQLCODE '= 0)
+        set rankProxy = ##class(%ZEN.proxyObject).%New()
+        set rankProxy.id = id
+        set rankProxy.name = name
+        do proxy.children.Insert(rankProxy)
+    }
+    &sql(CLOSE TRCurFirst)
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentStatuses">
+<Description>
+Get tournament statuses for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.children = ##class(%ListOfObjects).%New()
+    
+    &sql(DECLARE CR1 CURSOR FOR 
+            SELECT %NOLOCK ID, Name->Value, Code
+            FROM Dance_Data.TournamentStatus
+            ORDER BY Sequence)  
+        
+    &sql(OPEN CR1)
+    for  
+    {   
+        &sql(FETCH CR1 INTO :id, :name, :code) 
+        quit:(SQLCODE '= 0)
+        
+        set tstatus = ##class(%ZEN.proxyObject).%New()  
+        set tstatus.id = id
+        set tstatus.name = name
+        set tstatus.code = code
+        
+        do proxy.children.Insert(tstatus)   
+    }
+    
+    &sql(CLOSE CR1)
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentDates">
+<Description>
+Get tournament dates for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tournamentId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.children = ##class(%ListOfDataTypes).%New()
+    
+    &sql(DECLARE CRS1 CURSOR FOR 
+            SELECT DISTINCT(StartDate)
+            FROM Dance_Data.Competition
+            WHERE IsActive = 1 AND Tournament = :tournamentId
+            ORDER BY StartDate) 
+        
+    &sql(OPEN CRS1)
+    for  
+    {   
+        &sql(FETCH CRS1 INTO :startDate) 
+        quit:(SQLCODE '= 0)
+        
+        do proxy.children.Insert($ZDATE(startDate, 3))  
+    }
+    
+    &sql(CLOSE CRS1)
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionById">
+<Description>
+====================================================================================================================
+Competition                                                                                              Competition
+====================================================================================================================
+
+Get one competition by id</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>competitionId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set convertParams = ##class(%ZEN.proxyObject).%New()
+    set convertParams.loadDiscipline = $GET(%request.Data("loadDiscipline", 1), $$$NO) = $$$YES
+    set convertParams.loadAgeCategory = $GET(%request.Data("loadAgeCategory", 1), $$$NO) = $$$YES
+    set convertParams.loadDancerClasses = $GET(%request.Data("loadDancerClasses", 1), $$$NO) = $$$YES
+    set convertParams.loadType = $GET(%request.Data("loadType", 1), $$$NO) = $$$YES
+    set convertParams.loadWDSF = $GET(%request.Data("loadWDSF", 1), $$$NO) = $$$YES
+    set convertParams.loadTournament = $GET(%request.Data("loadTournament", 1), $$$NO) = $$$YES
+    if (convertParams.loadTournament){
+        set convertParams.tournamentParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.tournamentParams.loadName = $GET(%request.Data("loadTournamentName", 1), $$$NO) = $$$YES
+        set convertParams.tournamentParams.loadFullName = $GET(%request.Data("loadTournamentFullName", 1), $$$NO) = $$$YES
+        set convertParams.tournamentParams.loadLocation = $GET(%request.Data("loadTournamentLocation", 1), $$$NO) = $$$YES
+        set convertParams.tournamentParams.loadOrganizer = $GET(%request.Data("loadTournamentOrganizer", 1), $$$NO) = $$$YES
+        set convertParams.tournamentParams.loadRank = $GET(%request.Data("loadTournamentRank", 1), $$$NO) = $$$YES
+        set convertParams.tournamentParams.loadStatus = $GET(%request.Data("loadTournamentStatus", 1), $$$NO) = $$$YES
+        set convertParams.tournamentParams.loadParticipantsCount = $GET(%request.Data("loadTournamentParticipantsCount", 1), $$$NO) = $$$YES
+        set convertParams.tournamentParams.loadParticipantsUniqueCount = $GET(%request.Data("loadTournamentParticipantsUniqueCount", 1), $$$NO) = $$$YES
+        set convertParams.tournamentParams.loadCompetitionsCount = $GET(%request.Data("loadTournamentCompetitionsCount", 1), $$$NO) = $$$YES
+    }
+    
+    do ##class(Dance.Data.Competition).%OpenId(competitionId).ConvertToProxyObject(convertParams).%ToJSON()
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentCompetitionsForGrid">
+<Description>
+Get all tournament competitions for grid</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.params, 1))
+        
+        set whereCondition = "cmpT.IsActive = 1 AND cmpT.Tournament = '"_..ParseParameter(params.other.tournamentId)_"' AND cmpT.IsClosed = 0 "
+        
+        if (params.other.date '= ""){
+            set whereCondition = whereCondition_" AND cmpT.StartDate = "_$ZDATEH(params.other.date,15)
+        }
+        
+        if (params.other.type = "UDSR"){
+            set whereCondition = whereCondition_" AND cmpT.WDSF IS NULL  "
+        }
+        elseif (params.other.type = "WDSF"){
+            set whereCondition = whereCondition_" AND (cmpT.WDSF IS NOT NULL OR cmpT.IsInternational = 1) "
+        }
+        elseif (params.other.type = "OTHER"){
+            set whereCondition = whereCondition_" AND cmpT.WDSF IS NULL AND cmpT.IsInternational=1 "
+        }
+      
+        do ..GetProxyObjectsForGrid("SELECT %NOLOCK cmpT.ID FROM Dance_Data.Competition as cmpT ", "Dance.Data.Competition", params, params.other.convertParams, whereCondition).%ToJSON()
+    }
+    catch ex {
+        set st = ex.AsStatus()
+    }
+
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionTypes">
+<Description>
+Get competition types for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.children = ##class(%ListOfObjects).%New()
+    
+    &sql(DECLARE CurCmpTypes CURSOR FOR 
+            SELECT ID, Name->Value
+            FROM Dance_Data.CompetitionType)    
+        
+    &sql(OPEN CurCmpTypes)
+    for  
+    {   
+        &sql(FETCH CurCmpTypes INTO :id, :name) 
+        quit:(SQLCODE '= 0)
+        
+        set type = ##class(%ZEN.proxyObject).%New() 
+        set type.id = id
+        set type.name = name
+        
+        do proxy.children.Insert(type)  
+    }
+    
+    &sql(CLOSE CurCmpTypes)
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetAvailableCompetitionsForGrid">
+<Description>
+Available participants competitions for grid</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.params, 1))
+        
+        if (params.other.type = "UDSR"){
+            set prtObj = ""
+            if $ISOBJECT(params.other.couple){
+                set prtObj = ##class(Dance.Data.CoupleUDSR).%OpenId(params.other.couple.id) 
+            }
+            else{
+                set prtObj = ##class(Dance.Data.PersonUDSR).%OpenId(params.other.athlete.id)
+            }
+            
+            set competitionsList = ..GetCompetitionsListForUDSRRegistration(params.other.tournamentId, prtObj)
+        }
+        elseif(params.other.type = "WDSF"){
+            set prtObj = ""
+            if $ISOBJECT(params.other.couple){
+                set prtObj = ##class(Dance.Data.CoupleWDSF).%OpenId(params.other.couple.id) 
+            }
+            else{
+                set prtObj = ##class(Dance.Data.PersonWDSF).%OpenId(params.other.athlete.id)
+            }
+            
+            set competitionsList = ..GetCompetitionsListForWDSFRegistration(params.other.tournamentId, prtObj, params.other)
+        }
+        elseif (params.other.type = "OTHER"){
+            set competitionsList = ..GetCompetitionsListForOTHERRegistration(params.other.tournamentId, params.other)
+        }
+        
+       
+        set proxyResult = ##class(%ZEN.proxyObject).%New()
+        set proxyResult.children = ##class(%ZEN.proxyObject).%New()
+        set proxyResult.children.items = ##class(%ListOfObjects).%New()
+        set proxyResult.children.itemsTotal = competitionsList.Count()
+        
+        // Конвертируем в %ZEN.poxyObject
+        for i=1:1:competitionsList.Count(){
+            do proxyResult.children.items.Insert(competitionsList.GetAt(i).ConvertToProxyObject(params.other.convertParams))
+        }
+        
+        do proxyResult.%ToJSON()
+    }
+    catch ex {
+        set st = ex.AsStatus()
+    }
+
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentCompetitionsList">
+<Description>
+Список групп турнира выбранного типа</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String,isCouple:%Boolean</FormalSpec>
+<Private>1</Private>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    set competitionsList = ##class(%ListOfObjects).%New()         
+    
+    set sql = ""_
+    "SELECT %NOLOCK ID "_
+    "FROM Dance_Data.Competition "_
+    "WHERE Tournament = '"_..ParseParameter(trnId)_"' AND IsActive = 1 AND IsClosed = 0 "
+    
+    if (isCouple = $$$YES){
+        set sql = sql_" AND Type->Code = 'Couples' "
+    }
+    elseif $ISOBJECT(params.other.athlete){
+        set sql = sql_" AND Type->Code = 'Solo' "
+    }
+    
+    set sql = sql_" ORDER BY StartDate, IdInternal"
+            
+    set statement = ##class(%SQL.Statement).%New()  
+    $$$THROWONERROR(st, statement.%Prepare(sql))        
+
+    set rs = statement.%Execute()
+    
+    while (rs.%Next() '= 0){
+        set cmp = ##class(Dance.Data.Competition).%OpenId(rs.%GetData(1),,.st)
+        do competitionsList.Insert(cmp)
+    }
+    
+    do rs.%Close()                      
+    do statement.%Close()
+    
+    quit competitionsList
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionsListForUDSRRegistration">
+<Description>
+Отобрать только те группы, которые соответствуют правилам для регистрации СТСР</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String,prtData:%RegisteredObject</FormalSpec>
+<Private>1</Private>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    #dim man As Dance.Data.PersonUDSR = ""
+    #dim woman As Dance.Data.PersonUDSR = ""
+    #dim athlete As Dance.Data.PersonUDSR = ""
+    #dim couple As Dance.Data.CoupleUDSR = ""
+    #dim coupleWDSF As Dance.Data.CoupleWDSF = ""
+    
+    if ($CLASSNAME(prtData) = ##class(Dance.Data.PersonUDSR).%ClassName(1)){
+        set athlete = prtData
+        set man = prtData
+        set woman = prtData
+    }
+    elseif ($CLASSNAME(prtData) = ##class(Dance.Data.CoupleUDSR).%ClassName(1)){
+        set couple = prtData
+        set man = couple.Man
+        set woman = couple.Woman
+        
+        // Если есть WDSF версия, то открываем её
+        if (##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxExists(couple.%Id()) = $$$YES){
+            set coupleWDSF = ##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxOpen(couple.%Id(),,.st).WDSF
+            set ageWDSFList = ##class(Dance.Data.AgeCategoryWDSF).GetAllAvailableList(coupleWDSF.AgeCategory) 
+        }
+    }
+    
+    set maleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(man.DOB, 3), "-", 1)
+    set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(woman.DOB, 3), "-", 1)
+    set ageUDSRList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
+    
+    
+    set sourceList = ..GetTournamentCompetitionsList(trnId, $ISOBJECT(couple))
+    set resultList = ##class(%ListOfObjects).%New()
+    
+    for i=1:1:sourceList.Count(){
+        #dim cmp As Dance.Data.Competition = sourceList.GetAt(i)
+        
+        // Если СТСР пара уже записалась в эту группу, то исключаем эту группу
+        if (##class(Dance.Data.Participant).IsParticipationExists(couple.%Id(), couple.%ClassName(1), cmp.%Id()) = $$$YES){
+            continue
+        }
+        
+        // Если WDSF версия пары уже записалась в эту группу, то исключаем эту группу
+        if $ISOBJECT(coupleWDSF) && (##class(Dance.Data.Participant).IsParticipationExists(coupleWDSF.%Id(), coupleWDSF.%ClassName(1), cmp.%Id()) = $$$YES){
+            continue
+        }
+        
+        // Если группа WDSF и есть у СТСР пары версия WDSF
+        if $ISOBJECT(cmp.WDSF){
+             if $ISOBJECT(coupleWDSF){
+                // Если по возрасту нельзя записаться в группу, то переходим к следующей группе
+                if ($LISTFIND(ageWDSFList, cmp.WDSF.AgeCategory.%Id()) = 0){
+                    continue
+                }
+             }
+             else{
+                 // Если группа для WDSF и нет WDSF-версии пары, то пропускаем группу
+                 continue
+             }
+        }
+        else{       
+            // Если по возрасту нельзя записаться в группу, то переходим к следующей группе
+            if ($LISTFIND(ageUDSRList, cmp.AgeCategory.%Id()) = 0){
+                continue
+            }
+        
+            if $ISOBJECT(man.LAClass){
+                // Если Латина и группа НЕ доступна для класса партнера, то НЕ добавляем в рез. список
+                if (cmp.Discipline.Code = "Ла") && (##class(Dance.Data.Competition).IsAvailableForDancerClass(cmp.%Id(), man.LAClass.%Id()) = $$$NO){
+                    continue            
+                }
+            }
+            
+            if $ISOBJECT(man.STClass){
+                // Если Стандарт и группа НЕ доступна для класса партнера, то НЕ добавляем в рез. список
+                if (cmp.Discipline.Code = "Ст") && (##class(Dance.Data.Competition).IsAvailableForDancerClass(cmp.%Id(), man.STClass.%Id()) = $$$NO){
+                    continue            
+                }
+            }
+        }
+        
+        do resultList.Insert(cmp)
+    }
+    
+    quit resultList
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionsListForWDSFRegistration">
+<Description>
+Отобрать только те группы, которые соответствуют правилам для регистрации WDSF</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String,prtData:%RegisteredObject,params:%ZEN.proxyObject</FormalSpec>
+<Private>1</Private>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    #dim man As Dance.Data.PersonUDSR = ""
+    #dim woman As Dance.Data.PersonUDSR = ""
+    #dim athlete As Dance.Data.PersonWDSF = ""
+    #dim couple As Dance.Data.CoupleWDSF = ""
+    #dim coupleUDSR As Dance.Data.CoupleWDSF = ""
+    
+    if ($CLASSNAME(prtData) = ##class(Dance.Data.PersonWDSF).%ClassName(1)){
+        set athlete = prtData
+    }
+    elseif ($CLASSNAME(prtData) = ##class(Dance.Data.CoupleWDSF).%ClassName(1)){
+        set couple = prtData
+        
+        // Если есть UDSR версия, то открываем её
+        if (##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxExists(couple.%Id()) = $$$YES){
+            set coupleUDSR = ##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(couple.%Id()).UDSR
+            
+            set man = coupleUDSR.Man
+            set woman = coupleUDSR.Woman
+    
+            set maleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(coupleUDSR.Man.DOB, 3), "-", 1)
+            set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(coupleUDSR.Woman.DOB, 3), "-", 1)
+            set ageUDSRList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
+        }
+        else{
+            if (params.couple.man.dob '= "") && (params.couple.woman.dob '= ""){
+                set maleAge = $P($ZD($NOW(),3), "-", 1) - $P(params.couple.man.dob, "-", 1)
+                set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P(params.couple.woman.dob, "-", 1)
+                set ageUDSRList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
+            }
+            else{
+                set wdsfAgeCategory = ##class(Dance.Data.AgeCategoryWDSF).NameIdxOpen(couple.AgeCategory)
+                set ageUDSRList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(wdsfAgeCategory.FromAge, wdsfAgeCategory.FromAge)
+            }
+        }
+    }
+    
+    set ageWDSFList = ##class(Dance.Data.AgeCategoryWDSF).GetAllAvailableList(couple.AgeCategory) 
+    
+    set sourceList = ..GetTournamentCompetitionsList(trnId, $ISOBJECT(couple))
+    set resultList = ##class(%ListOfObjects).%New()
+    
+    for i=1:1:sourceList.Count(){
+        #dim cmp As Dance.Data.Competition = sourceList.GetAt(i)
+        
+        // Если WDSF версия пары уже записалась в эту группу, то исключаем эту группу
+        if (##class(Dance.Data.Participant).IsParticipationExists(couple.%Id(), couple.%ClassName(1), cmp.%Id()) = $$$YES){
+            continue
+        }
+        
+         // Если СТСР пара уже записалась в эту группу, то исключаем эту группу
+        if $ISOBJECT(coupleUDSR) && (##class(Dance.Data.Participant).IsParticipationExists(coupleUDSR.%Id(), coupleUDSR.%ClassName(1), cmp.%Id()) = $$$YES){
+            continue
+        }
+        
+        // Если группа WDSF и есть у WDSF пары версия UDSR
+        if $ISOBJECT(cmp.WDSF){
+            // Если по возрасту нельзя записаться в группу, то переходим к следующей группе
+            if ($LISTFIND(ageWDSFList, cmp.WDSF.AgeCategory.%Id()) = 0){
+                continue
+            }
+        }
+        else{     
+            // Если по возрасту нельзя записаться в группу, то переходим к следующей группе
+            if ($LISTFIND(ageUDSRList, cmp.AgeCategory.%Id()) = 0){
+                continue
+            }
+            
+            // WDSF паре нельзя регистрироваться в группах только для СТСР.
+            if ($ISOBJECT(coupleUDSR) = $$$NO) && (cmp.IsInternational = $$$NO){
+                continue
+            }
+            else{
+                // Если у WDSF пары есть СТСР версия, то проверяем классы 
+                if $ISOBJECT(coupleUDSR){
+                    if $ISOBJECT(man.LAClass){
+                        // Если Латина и группа НЕ доступна для класса партнера, то НЕ добавляем в рез. список
+                        if (cmp.Discipline.Code = "Ла") && (##class(Dance.Data.Competition).IsAvailableForDancerClass(cmp.%Id(), man.LAClass.%Id()) = $$$NO){
+                            continue            
+                        }
+                    }
+                
+                    if $ISOBJECT(man.STClass){
+                        // Если Стандарт и группа НЕ доступна для класса партнера, то НЕ добавляем в рез. список
+                        if (cmp.Discipline.Code = "Ст") && (##class(Dance.Data.Competition).IsAvailableForDancerClass(cmp.%Id(), man.STClass.%Id()) = $$$NO){
+                            continue            
+                        }
+                    }
+                }
+            }
+        }
+        
+        do resultList.Insert(cmp)
+    }
+    
+    quit resultList
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionsListForOTHERRegistration">
+<Description>
+Отобрать только те группы, которые соответствуют правилам для регистрации ПРОЧИХ УЧАСТНИКОВ</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String,params:%ZEN.proxyObject</FormalSpec>
+<Private>1</Private>
+<ReturnType>%ListOfObjects</ReturnType>
+<Implementation><![CDATA[
+    set (man, woman) = ""
+    set (athleteData, coupleData) = ""
+    set (prtObjKey, prtObjClassName) = ""
+    
+    if $ISOBJECT(params.athlete){
+        set athleteData = params.athlete
+        set (man, woman) = params.athlete.man
+        set prtObjKey = params.athlete.key
+        set prtObjClassName = ##class(Dance.Data.ParticipantSingleOther).%ClassName(1)
+    }
+    elseif $ISOBJECT(params.couple){
+        set coupleData = params.couple
+        set man = params.couple.man
+        set woman = params.couple.woman
+        set prtObjKey = params.couple.key
+        set prtObjClassName = ##class(Dance.Data.ParticipantCoupleOther).%ClassName(1)
+    }
+   
+    set maleAge = $P($ZD($NOW(),3), "-", 1) - $P(man.dob, "-", 1)
+    set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P(woman.dob, "-", 1)
+    set ageList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
+        
+    set sourceList = ..GetTournamentCompetitionsList(trnId, $ISOBJECT(coupleData))
+    set resultList = ##class(%ListOfObjects).%New()
+    
+    for i=1:1:sourceList.Count(){
+        #dim cmp As Dance.Data.Competition = sourceList.GetAt(i)
+        
+        // Если пара/соло уже записалась в эту группу, то пропускаем
+        if (##class(Dance.Data.Participant).IsParticipationExists(prtObjKey, prtObjClassName, cmp.%Id()) = $$$YES){
+            continue
+        }
+        
+        // Нельзя допускать в WDSF группы и в группы, которые не разрешены для международников
+        if $ISOBJECT(cmp.WDSF) || (cmp.IsInternational = $$$NO){
+            continue
+        }
+        
+        // Если по возрасту нельзя записаться в группу, то переходим к следующей группе
+        if ($LISTFIND(ageList, cmp.AgeCategory.%Id()) = 0){
+            continue
+        }
+        
+        do resultList.Insert(cmp)
+    }
+    
+    quit resultList
+]]></Implementation>
+</Method>
+
+<Method name="GetAvailableCompetitionsWDSFByFilter">
+<Description>
+Get WDSF competitions by filter</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>countryId:%String,date:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        set date = $ZDH(date, 15)       
+        set list = ##class(%ListOfObjects).%New()
+        
+        &sql(DECLARE CmpWDSFCur1 CURSOR FOR
+             SELECT %NOLOCK cmpWDSF.ID
+             FROM Dance_Data.CompetitionWDSF as cmpWDSF
+             WHERE cmpWDSF.StartDate = :date AND cmpWDSF.Country = :countryId 
+             ORDER BY cmpWDSF.ID)
+        
+        &sql(OPEN CmpWDSFCur1)
+        for{
+            &sql(FETCH CmpWDSFCur1 INTO :id) 
+            quit:(SQLCODE '= 0)
+        
+            do list.Insert(##class(Dance.Data.CompetitionWDSF).%OpenId(id).ConvertToProxyObject())  
+        }
+        
+        &sql(CLOSE CmpWDSFCur1)
+        
+        set proxy = ##class(%ZEN.proxyObject).%New()
+        set proxy.children = list
+        do proxy.%ToJSON()
+    }
+    catch(ex){
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetAllParticipantsForGrid">
+<Description>
+
+====================================================================================================================
+Participant                                                                                              Participant
+====================================================================================================================
+
+Get all participants for grid</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.params, 1))
+        
+        set convertParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.competitionParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.competitionParams.loadTournament = $$$YES
+        set convertParams.competitionParams.tournamentParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.competitionParams.tournamentParams.loadLocation = $$$YES
+        set convertParams.competitionParams.tournamentParams.loadName = params.other.loadTournamentName
+        set convertParams.loadPrtObjCompetitionsCount = $$$YES
+        
+        set result = ..GetProxyObjectsForGrid("SELECT %NOLOCK ID FROM Dance_Data.Participant", "Dance.Data.Participant", params, convertParams, "IsActive=1 AND Tournament->IsActive = 1")
+        do result.%ToJSON()
+    }
+    catch ex {
+        set st = ex.AsStatus()
+    }
+
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetTournamentParticipantsForGrid">
+<Description>
+Get all participants of the tournament for grid</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.params, 1))
+        
+        set whereCondition = "Tournament = '"_..ParseParameter(params.other.tournamentId)_"' AND Competition->IsActive = 1 AND IsActive = 1 "
+        
+        set convertParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.competitionParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.competitionParams.loadTournament = $$$YES
+        set convertParams.competitionParams.tournamentParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.loadPrtObjCompetitionsCount = $$$YES
+        set convertParams.loadPrtObjPaymentsCount = $$$YES
+        
+        set result = ..GetProxyObjectsForGrid("SELECT %NOLOCK ID FROM Dance_Data.Participant", "Dance.Data.Participant", params, convertParams, whereCondition, "GROUP BY FullName->Value")
+        do result.%ToJSON()
+    }
+    catch ex {
+        set st = ex.AsStatus()
+    }
+
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionParticipantsForGrid">
+<Description>
+Get all participants of the competition for grid</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.params, 1))
+        
+        set whereCondition = "IsActive = 1 AND Competition = '"_..ParseParameter(params.other.competitionId)_"' AND Competition->IsActive = 1 "
+        
+        set convertParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.competitionParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.competitionParams.loadTournament = $$$YES
+        set convertParams.competitionParams.tournamentParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.loadPrtObjCompetitionsCount = $$$YES       
+        do ..GetProxyObjectsForGrid("SELECT ID FROM Dance_Data.Participant", "Dance.Data.Participant", params, convertParams, whereCondition).%ToJSON()
+    }
+    catch ex {
+        set st = ex.AsStatus()
+    }
+
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetAllDancerParticipants">
+<Description>
+Все группы участника в турнире</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+
+    try{
+        set shortView = $GET(%request.Data("shortView", 1), 1)
+        set trnId = $GET(%request.Data("tournamentId", 1))
+        set cplId = $GET(%request.Data("coupleId", 1))
+        set athId = $GET(%request.Data("athleteId", 1))
+        set cplKey = $GET(%request.Data("coupleKey", 1))
+        set athKey = $GET(%request.Data("athleteKey", 1))
+        
+        set table = ""
+        set where = "Competition->Tournament = '"_..ParseParameter(trnId)_"' "
+        
+        set convertParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.competitionParams = ##class(%ZEN.proxyObject).%New()
+        set convertParams.competitionParams.loadPaymentsCount = $$$YES
+        
+        if (shortView = $$$NO){
+            set convertParams.competitionParams.loadDiscipline = $$$YES
+            set convertParams.competitionParams.loadType = $$$YES
+            set convertParams.competitionParams.loadDancerClasses = $$$YES
+            set convertParams.competitionParams.loadAgeCategory = $$$YES
+        }
+        
+        if (cplId '= ""){
+            if (##class(Dance.Data.CoupleWDSF).%ExistsId(cplId)) {
+                set table = "Dance_Data.ParticipantCoupleWDSF"
+            }
+            else{
+                set table = "Dance_Data.ParticipantCoupleUDSR"
+            }
+            
+            set where = where_" AND Couple = '"_..ParseParameter(cplId)_"' "        
+        }
+        elseif (athId '= ""){
+            if (##class(Dance.Data.PersonWDSF).%ExistsId(athId)) {
+                set table = "Dance_Data.ParticipantSingleWDSF"
+            }
+            else{
+                set table = "Dance_Data.ParticipantSingleUDSR"
+            }
+            
+            set where = where_" AND Athlete = '"_..ParseParameter(athId)_"' "       
+        }
+        elseif (cplKey '= ""){
+            set cplKey = $REPLACE(cplKey, " ", "+")
+            set table = "Dance_Data.ParticipantCoupleOther"
+            set where = where_" AND CoupleKey = '"_cplKey_"' "      
+        }
+        elseif (athKey '= ""){
+            set athKey = $REPLACE(athKey, " ", "+")
+            set table = "Dance_Data.ParticipantSingleOther"
+            set where = where_" AND AthleteKey = '"_athKey_"' "     
+        }
+        
+        set sql = "SELECT %NOLOCK ID "_
+                  "FROM "_table_" "_
+                  "WHERE "_where_" "_
+                  "ORDER BY Competition->StartDate, Competition->IdInternal"
+        
+        
+        // Костыль
+        if (cplId '= ""){ 
+            if (##class(Dance.Data.CoupleUDSR).%ExistsId(cplId)) && (##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxExists(cplId)){
+                set sql = "SELECT %NOLOCK ID FROM Dance_Data.ParticipantCoupleUDSR WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_..ParseParameter(cplId)_"' AND IsActive=1 "_
+                          " UNION "_
+                          "SELECT %NOLOCK ID FROM Dance_Data.ParticipantCoupleWDSF WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxOpen(cplId).WDSF.%Id()_"' AND IsActive=1"         
+            }
+            elseif (##class(Dance.Data.CoupleWDSF).%ExistsId(cplId)) && (##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxExists(cplId)){
+                set sql = "SELECT %NOLOCK ID FROM Dance_Data.ParticipantCoupleUDSR WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(cplId).UDSR.%Id()_"' AND IsActive=1 "_
+                          " UNION "_
+                          "SELECT %NOLOCK ID FROM Dance_Data.ParticipantCoupleWDSF WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_..ParseParameter(cplId)_"' AND IsActive=1 "
+                                    
+            }
+        }
+        
+        set statement = ##class(%SQL.Statement).%New()  
+        $$$THROWONERROR(st, statement.%Prepare(sql))        
+        set rs = statement.%Execute()
+
+        set proxy = ##class(%ZEN.proxyObject).%New()
+        set proxy.children = ##class(%ListOfObjects).%New()
+        set ^temp("sql") = sql
+        while (rs.%Next() '= 0){
+            do proxy.children.Insert(##class(Dance.Data.Participant).%OpenId(rs.%GetData(1)).ConvertToProxyObject(convertParams))
+        }
+        
+        do rs.%Close()                      
+        do statement.%Close()
+        
+        do proxy.%ToJSON()
+    }
+    catch ex {
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetCoupleById">
+<Description>
+
+====================================================================================================================
+Couple                                                                                                        Couple
+====================================================================================================================
+
+Get one couple by Id</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set couple = ##class(Dance.Data.Couple).%OpenId(id)
+    
+    if $ISOBJECT(couple) {
+        do couple.ConvertToProxyObject().%ToJSON()
+    }
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetCoupleUDSRByNumbers">
+<Description>
+Get couple UDSR by numbers</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>manNumber:%String,womanNumber:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        if ($DATA(^Dance.Data.ManPartnersUDSR(+manNumber)) '= 1) || ($GET(^Dance.Data.ManPartnersUDSR(+manNumber)) '= +womanNumber){
+            set ^Dance.Data.CoupleUDSRNotFoundByNumbers($ZDT($ZTS, 3)) = $LB(manNumber, womanNumber)
+            //$$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_CoupleUDSRNotFoundByNumbers", " | Man - "_+manNumber_", Woman - "_+womanNumber))
+        }
+        
+        set couple = ##class(Dance.Data.CoupleUDSR).GetByNumbers(+manNumber, +womanNumber, .st)
+        $$$THROWONERROR(st, st)
+        
+        do ##class(Dance.Data.MatchingCoupleUDSRWDSF).CreateByUDSR(couple, .stWDSF)
+            
+        do couple.ConvertToProxyObject().%ToJSON()
+    }
+    catch(ex){
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetCoupleWDSFByNumbers">
+<Description>
+Get couple UDSR by numbers</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>manNumber:%String,womanNumber:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        set couple = ##class(Dance.Data.CoupleWDSF).GetByNumbers(manNumber, womanNumber, .st)
+        $$$THROWONERROR(st, st)
+        
+        set match = ##class(Dance.Data.MatchingCoupleUDSRWDSF).CreateByWDSF(couple, .stUDSR)
+        
+        set proxyCouple = couple.ConvertToProxyObject()
+        
+        if $ISOBJECT(match){
+            set coupleUDSRProxy = match.UDSR.ConvertToProxyObject()
+            set proxyCouple.man.dob = coupleUDSRProxy.man.dob
+            set proxyCouple.woman.dob = coupleUDSRProxy.woman.dob
+            set proxyCouple.otherInfo.city = coupleUDSRProxy.otherInfo.city
+            set proxyCouple.otherInfo.club = coupleUDSRProxy.otherInfo.club
+            set proxyCouple.otherInfo.mainTrainer = coupleUDSRProxy.otherInfo.mainTrainer
+            set proxyCouple.otherInfo.otherTrainers = coupleUDSRProxy.otherInfo.otherTrainers
+        }
+        
+        do proxyCouple.%ToJSON()
+        
+        TCOMMIT
+    }
+    catch(ex){
+        TROLLBACK
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetPersonByUDSRNumber">
+<Description>
+
+====================================================================================================================
+Person                                                                                                        Person
+====================================================================================================================
+
+Get person UDSR by numbers</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>number:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        set athlete = ##class(Dance.Data.PersonUDSR).NumberUDSRIdxOpen(number,,.st)
+        $$$THROWONERROR(st, st)
+        do athlete.ConvertToProxyObject().%ToJSON()
+    }
+    catch(ex){
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetPersonByWDSFNumber">
+<Description>
+Get person UDSR by numbers</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>number:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        if (##class(Dance.Data.PersonWDSF).NumberWDSFIdxExists(number)){
+            set athlete = ##class(Dance.Data.PersonWDSF).NumberWDSFIdxOpen(number,,.st)
+            set diffDays = $SYSTEM.SQL.DATEDIFF("dd", $P(athlete.Updated, " ", 1), $P($ZDT($ZTS, 3), " ", 1))
+            if (diffDays <= 7){
+                return athlete.ConvertToProxyObject().%ToJSON()
+            }       
+        }
+        
+        set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetPerson(number, .st)
+        $$$THROWONERROR(st, st)
+        
+        set athlete = ##class(Dance.Data.PersonWDSF).SaveFromWDSF(wdsfData, .st)        
+        $$$THROWONERROR(st, st)
+        
+        do athlete.ConvertToProxyObject().%ToJSON()
+    }
+    catch(ex){
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetCountries">
+<Description>
+
+====================================================================================================================
+Other                                                                                                          Other
+====================================================================================================================
+
+WDSF countries for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.children = ##class(%ListOfObjects).%New()
+    
+    &sql(DECLARE Curr1 CURSOR FOR 
+            SELECT %NOLOCK ID, Name->Value
+            FROM Dance_Data.Country
+            ORDER BY Name->Value)   
+        
+    &sql(OPEN Curr1)
+    for  
+    {   
+        &sql(FETCH Curr1 INTO :id, :name) 
+        quit:(SQLCODE '= 0)
+        
+        set country = ##class(%ZEN.proxyObject).%New()  
+        set country.id = id
+        set country.name = name
+        
+        do proxy.children.Insert(country)   
+    }
+    
+    &sql(CLOSE Curr1)
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetLanguages">
+<Description>
+All System languages for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set status = $$$OK
+    
+    try{        
+        set list = ##class(%ListOfObjects).%New()
+        
+        &sql(DECLARE LangCurs CURSOR FOR
+             SELECT %NOLOCK Code, Name 
+             FROM Dance_Data_Localization.LTextLanguage
+             ORDER BY Code)
+        
+        &sql(OPEN LangCurs)
+        for{
+            &sql(FETCH LangCurs INTO :code, :name) 
+            quit:(SQLCODE '= 0)
+            
+            set proxy = ##class(%ZEN.proxyObject).%New()
+            set proxy.code = code
+            set proxy.name = name
+            set proxy.flagUrl = "img/flags/"_code_".gif"
+            
+            do list.Insert(proxy)   
+        }
+        
+        &sql(CLOSE LangCurs)
+        
+        set proxy = ##class(%ZEN.proxyObject).%New()
+        set proxy.children = list
+        do proxy.%ToJSON()
+    }
+    catch(ex){
+        set status = ex.AsStatus()
+    }
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetDisciplines">
+<Description>
+All disciplines for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT %NOLOCK ID as id, Name->Value as name FROM Dance_Data.Discipline")
+]]></Implementation>
+</Method>
+
+<Method name="GetDancerClasses">
+<Description>
+All dancer classes for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ##class(Dance.Data.DancerClass).GetAll().%ToJSON()   
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetAgeCategories">
+<Description>
+All age categories for combobox</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.children = ##class(%ListOfObjects).%New()
+    
+    &sql(DECLARE CurAgeCategories CURSOR FOR 
+            SELECT ID
+            FROM Dance_Data.AgeCategory
+            ORDER BY Name->Value)   
+        
+    &sql(OPEN CurAgeCategories)
+    for  
+    {   
+        &sql(FETCH CurAgeCategories INTO :id) 
+        quit:(SQLCODE '= 0)
+        
+        do proxy.children.Insert(##class(Dance.Data.AgeCategory).%OpenId(id).ConvertToProxyObject())    
+    }
+    
+    &sql(CLOSE CurAgeCategories)
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="CreateFeedBack">
+<Description>
+Feedback from users </Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART
+        
+        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.data, 1))
+        
+        set fb = ##class(Dance.Data.FeedBack).%New()
+        set fb.Author = data.author
+        set fb.Email = data.email
+        set fb.Subject = data.subject
+        set fb.Msg = data.msg
+        
+        set st = fb.%Save()
+        
+        if $$$ISERR(st) $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_FeedBackSave"," | "_st))
+        
+        
+        do ##class(Dance.Utils.Email).Send($GET(^Settings("Dance","OperatorEmail")), 
+        "Танцы. Обратная связь "_$ZDT($ZTS,3), 
+        "Автор: "_fb.Author_"<br>"_
+        "Email: "_fb.Email_"<br>"_
+        "Тема: "_fb.Subject_"<br>"_
+        "Сообщение: <br>"_fb.Msg)
+        
+        do ##class(Dance.Utils.Email).Send("evgeny.shvarov@gmail.com", 
+        "Танцы. Обратная связь "_$ZDT($ZTS,3), 
+        "Автор: "_fb.Author_"<br>"_
+        "Email: "_fb.Email_"<br>"_
+        "Тема: "_fb.Subject_"<br>"_
+        "Сообщение: <br>"_fb.Msg)
+                
+        
+        TCOMMIT
+    }
+    catch ex {
+        TROLLBACK
+        set st = ex.AsStatus()
+    }
+            
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetPersonStatistics">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.allCount = 0
+    set proxy.udsrCount = 0
+    set proxy.wdsfCount = 0
+    set proxy.otherCount = 0
+    
+    &sql(SELECT %NOLOCK COUNT(ID) INTO :proxy.allCount FROM Dance_Data.Person)
+    &sql(SELECT %NOLOCK COUNT(ID) INTO :proxy.udsrCount FROM Dance_Data.PersonUDSR)
+    &sql(SELECT %NOLOCK COUNT(ID) INTO :proxy.wdsfCount FROM Dance_Data.PersonWDSF)
+    
+    set proxy.udsrLastUpdated = $G(^Settings("Dance","UDSRPersonsLastUpdated"))
+    
+    do proxy.%ToJSON()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetCountParticipantCompetitions">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.count = 0
+    set st = $$$OK
+    
+    try{
+        set trnId = $GET(%request.Data("tournamentId", 1))
+        set cplId = $GET(%request.Data("coupleId", 1))
+        set athId = $GET(%request.Data("athleteId", 1))
+        set cplKey = $GET(%request.Data("coupleKey", 1))
+        set athKey = $GET(%request.Data("athleteKey", 1))
+        
+        if (cplId '= ""){
+            // WDSF or UDSR
+            set couple = ##class(Dance.Data.Couple).%OpenId(cplId)
+
+            if (##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxExists(couple.%Id())) || (##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxExists(couple.%Id())){
+                set match = $CASE($CLASSNAME(couple), "Dance.Data.CoupleWDSF" : ##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(couple.%Id()), "Dance.Data.CoupleUDSR" : ##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxOpen(couple.%Id()))       
+                set udsrCplId = match.UDSR.%Id()
+                set wdsfCplId = match.WDSF.%Id()
+                set udsrCount = 0
+                set wdsfCount = 0
+                &sql(SELECT %NOLOCK COUNT(ID) INTO :udsrCount 
+                     FROM Dance_Data.ParticipantCoupleUDSR 
+                     WHERE Couple = :udsrCplId AND Tournament = :trnId AND IsActive = 1)
+                
+                &sql(SELECT COUNT(ID) INTO :wdsfCount 
+                     FROM Dance_Data.ParticipantCoupleWDSF 
+                     WHERE Couple = :wdsfCplId AND Tournament = :trnId AND IsActive = 1)
+                     
+                set proxy.count = udsrCount + wdsfCount
+            }
+            else{
+                if ($CLASSNAME(couple) = "Dance.Data.CoupleUDSR") {
+                    &sql(SELECT %NOLOCK COUNT(ID) INTO :proxy.count FROM Dance_Data.ParticipantCoupleUDSR WHERE Couple = :cplId AND Tournament = :trnId AND IsActive = 1)
+                }
+                else {
+                    &sql(SELECT %NOLOCK COUNT(ID) INTO :proxy.count FROM Dance_Data.ParticipantCoupleWDSF WHERE Couple = :cplId AND Tournament = :trnId AND IsActive = 1)
+                }
+            }
+        }
+        elseif (athId '= ""){
+            // WDSF or UDSR
+            set athlete = ##class(Dance.Data.Person).%OpenId(athId)
+            if ($CLASSNAME(athlete) = "Dance.Data.PersonUDSR") {
+                &sql(SELECT %NOLOCK COUNT(ID) INTO :proxy.count FROM Dance_Data.ParticipantSingleUDSR WHERE Athlete = :athId AND Tournament = :trnId AND IsActive = 1)
+            }
+            else {
+                &sql(SELECT %NOLOCK COUNT(ID) INTO :proxy.count FROM Dance_Data.ParticipantSingleWDSF WHERE Athlete = :athId AND Tournament = :trnId AND IsActive = 1)
+            }
+        }
+        elseif (cplKey '= ""){
+            // Other couple
+            &sql(SELECT %NOLOCK COUNT(ID) INTO :proxy.count FROM Dance_Data.ParticipantCoupleOther WHERE CoupleKey = :cplKey AND Tournament = :trnId AND IsActive = 1)
+        }
+        elseif (athKey '= ""){
+            // Other athlete
+            &sql(SELECT %NOLOCK COUNT(ID) INTO :proxy.count FROM Dance_Data.ParticipantSingleOther WHERE AthleteKey = :athKey AND Tournament = :trnId AND IsActive = 1)
+        }       
+    }
+    catch(ex){
+        set st = ex.AsStatus()
+    }
+    
+    do proxy.%ToJSON()
+    
+    quit st
+]]></Implementation>
+</Method>
+</Class>
+</Export>

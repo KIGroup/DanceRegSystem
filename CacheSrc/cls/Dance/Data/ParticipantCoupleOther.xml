@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.ParticipantCoupleOther">
+<Description>
+Пара - другой участник</Description>
+<Super>Participant</Super>
+<TimeCreated>63440,4317.627564</TimeCreated>
+
+<Property name="CoupleKey">
+<Description>
+Ключ как хеш полей при заполнении, для определения уникальности</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="ManLastName">
+<Description>
+Фамилия партнера</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="ManFirstName">
+<Description>
+Имя партнера</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="ManDOB">
+<Description>
+ДР партнера</Description>
+<Type>%Date</Type>
+<Required>1</Required>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Property name="WomanLastName">
+<Description>
+Фамилия партнерши</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="WomanFirstName">
+<Description>
+Имя партнерши</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="WomanDOB">
+<Description>
+ДР партнерши</Description>
+<Type>%Date</Type>
+<Required>1</Required>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
+<Index name="CoupleKeyIdx">
+<Properties>CoupleKey</Properties>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<FormalSpec>params:%ZEN.proxyObject</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##super(params)
+    set proxy.couple = ##class(%ZEN.proxyObject).%New()
+    set proxy.couple.key = ..CoupleKey
+    set proxy.couple.type = "Other"
+    
+    set proxy.couple.man = ##class(%ZEN.proxyObject).%New()
+    set proxy.couple.man.gender = "Male"
+    set proxy.couple.man.lastName = ..ManLastName
+    set proxy.couple.man.firstName = ..ManFirstName
+    set proxy.couple.man.dob = $ZD(..ManDOB, 3)
+    
+    set proxy.couple.woman = ##class(%ZEN.proxyObject).%New()
+    set proxy.couple.woman.gender = "Female"
+    set proxy.couple.woman.lastName = ..WomanLastName
+    set proxy.couple.woman.firstName = ..WomanFirstName
+    set proxy.couple.woman.dob = $ZD(..WomanDOB, 3)
+    
+    set proxy.couple.otherInfo = ##class(%ZEN.proxyObject).%New()
+    set proxy.couple.otherInfo.country = ..Country.ConvertToProxyObject()
+    set proxy.couple.otherInfo.city = ..City
+    set proxy.couple.otherInfo.club = ..Club
+    set proxy.couple.otherInfo.mainTrainer = ..MainTrainer
+    set proxy.couple.otherInfo.otherTrainers = ..OtherTrainers
+    
+    set proxy.couple.competitionsCount = "-"
+    set proxy.couple.paymentsCount = "-"
+    if $ISOBJECT(proxy.competition.tournament){     
+        if (params.loadPrtObjCompetitionsCount){
+            set proxy.couple.competitionsCount = ..PrtObjCompetitionsCount
+        }
+        
+        if (params.loadPrtObjPaymentsCount){
+            set proxy.couple.paymentsCount = ..PrtObjPaymentsCount
+        }
+    }
+    
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="Create">
+<Description>
+Создать запись</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[recorder:Recorder,competition:Competition,couple:%ZEN.proxyObject,&st]]></FormalSpec>
+<ReturnType>Participant</ReturnType>
+<Implementation><![CDATA[
+    set obj = ..%New()
+
+    // Свойства класса
+    set obj.ManLastName = couple.man.lastName
+    set obj.ManFirstName = couple.man.firstName
+    set obj.ManDOB = $ZDH(couple.man.dob, 3)
+    
+    set obj.WomanLastName = couple.woman.lastName
+    set obj.WomanFirstName = couple.woman.firstName
+    set obj.WomanDOB = $ZDH(couple.woman.dob, 3)
+    
+    set obj.CoupleKey = couple.key  
+    
+    // Свойства базового класса
+    set obj.Recorder = recorder
+    set obj.Competition = competition 
+    set obj.Tournament = competition.Tournament
+    set obj.FullName = ##class(Dance.Data.Localization.LText).Create("")
+    set st = ..UpdateParticipantFullName(obj)
+    quit:$$$ISERR(st) $$$NULLOREF
+    
+    set obj.Country = ##class(Country).%OpenId(couple.otherInfo.country.id) 
+    set obj.City = couple.otherInfo.city
+    set obj.Club = couple.otherInfo.club
+    set obj.MainTrainer = couple.otherInfo.mainTrainer
+    set obj.OtherTrainers = couple.otherInfo.otherTrainers
+    
+    set obj.PrtObjKey = ..%ClassName(1)_"@"_couple.key
+    
+    set st = obj.%Save()
+    
+    quit obj
+]]></Implementation>
+</Method>
+
+<Method name="GetByFilter">
+<Description>
+Найти пару по параметрам</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>filter:%RegisteredObject</FormalSpec>
+<ReturnType>ParticipantCoupleOther</ReturnType>
+<Implementation><![CDATA[
+    set id = ""
+
+    &sql(SELECT %NOLOCK ID INTO :id
+         FROM Dance_Data.ParticipantCoupleOther 
+         WHERE Competition = :filter.competitionId 
+               AND
+               %UPPER(ManLastName) = %UPPER(TRIM(BOTH ' ' FROM :filter.man.lastName)) 
+               AND 
+               %UPPER(ManFirstName) = %UPPER(TRIM(BOTH ' ' FROM :filter.man.firstName))
+               AND
+               %UPPER(WomanLastName) = %UPPER(TRIM(BOTH ' ' FROM :filter.woman.lastName)) 
+               AND 
+               %UPPER(WomanFirstName) = %UPPER(TRIM(BOTH ' ' FROM :filter.woman.firstName))
+               AND
+               (
+                 %UPPER(Club) = %UPPER(TRIM(BOTH ' ' FROM :filter.otherInfo.club)) 
+                 OR 
+                 %UPPER(City) = %UPPER(TRIM(BOTH ' ' FROM :filter.otherInfo.city))
+               ))
+               
+    quit ..%OpenId(id)
+]]></Implementation>
+</Method>
+
+<Method name="GetFullNameForLang">
+<Description>
+Имя участника для выбранного языка</Description>
+<FormalSpec>lang:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit ..ManLastName_" "_..ManFirstName_" - "_..WomanLastName_" "_..WomanFirstName
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>ParticipantCoupleOtherDefaultData</DefaultData>
+<Data name="ParticipantCoupleOtherDefaultData">
+<Subscript>"ParticipantCoupleOther"</Subscript>
+<Value name="1">
+<Value>CoupleKey</Value>
+</Value>
+<Value name="2">
+<Value>ManLastName</Value>
+</Value>
+<Value name="3">
+<Value>ManFirstName</Value>
+</Value>
+<Value name="4">
+<Value>ManDOB</Value>
+</Value>
+<Value name="5">
+<Value>WomanLastName</Value>
+</Value>
+<Value name="6">
+<Value>WomanFirstName</Value>
+</Value>
+<Value name="7">
+<Value>WomanDOB</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

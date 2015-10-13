@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Test">
+<Abstract>1</Abstract>
+<TimeCreated>63339,74275.849932</TimeCreated>
+
+<Method name="TestDef">
+<Description>
+d ##class(Dance.Utils.Test).TestDef()</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    set clDef = ##class(%Library.ClassDefinition).%New("Dance.Data.Participant")
+    for i=1:1:clDef.Properties.Count(){
+        #dim property As %Library.PropertyDefinition = clDef.Properties.GetAt(i)
+        w !, property.Name_"IsCalc="_property.Calculated
+    }
+    
+    set prt = ##class(Dance.Data.Participant).%OpenId(2342)
+    #dim prtClone As Dance.Data.Participant = prt.%ConstructClone()
+    
+    w !,prtClone
+    w !,prt.%Id()_"; "_prtClone.%Id()
+    w !,prt.FullName.%Id()_"; "_prtClone.FullName.%Id()
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Recorder</Value>
+</Value>
+<Value name="3">
+<Value>Competition</Value>
+</Value>
+<Value name="4">
+<Value>IsActive</Value>
+</Value>
+<Value name="5">
+<Value>PType</Value>
+</Value>
+<Value name="6">
+<Value>Created</Value>
+</Value>
+*/
+]]></Content>
+</UDLText>
+
+<Method name="SaveParticipant">
+<Description>
+SELECT 'do ..SaveParticipant("' || ID || '", "'|| Competition || '", "' || Created || '", "'|| IsActive || '", "'|| PType || '", "'|| Recorder || '")'</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ID,Competition,Created,IsActive,PType,Recorder</FormalSpec>
+<Implementation><![CDATA[
+    set className = "---"
+    if (PType = "CoupleUDSR"){
+        set className = "~Dance.Data.ParticipantCoupleUDSR~"
+    }
+    elseif(PType = "CoupleWDSF"){
+        set className = "~Dance.Data.ParticipantCoupleWDSF~"
+    }
+    elseif(PType = "CoupleOther"){
+        set className = "~Dance.Data.ParticipantCoupleOther~"
+    }
+    
+    set ^Dance.Data.ParticipantD(ID) = $lb(className, Recorder, Competition, IsActive = $$$YES, PType, Created)
+]]></Implementation>
+</Method>
+
+<Method name="SaveParticipantCoupleUDSR">
+<Description>
+select 'do ..SaveParticipantCoupleUDSR("' || ID || '", "' || Couple  || '")'</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ID,Couple</FormalSpec>
+<Implementation><![CDATA[    set ^Dance.Data.ParticipantD(ID, "ParticipantCoupleUDSR") = $lb(Couple)
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+
+<Storage name="Default">
+<Data name="ParticipantCoupleWDSFDefaultData">
+<Subscript>"ParticipantCoupleWDSF"</Subscript>
+<Value name="1">
+<Value>Couple</Value>
+</Value>
+<Value name="2">
+<Value>ManDOB</Value>
+</Value>
+<Value name="3">
+<Value>WomanDOB</Value>
+</Value>
+<Value name="4">
+<Value>City</Value>
+</Value>
+<Value name="5">
+<Value>Club</Value>
+</Value>
+<Value name="6">
+<Value>MainTrainer</Value>
+</Value>
+<Value name="7">
+<Value>OtherTrainers</Value>
+</Value>
+</Data>
+<DefaultData>ParticipantCoupleWDSFDefaultData</DefaultData>
+<Type>%Library.CacheStorage</Type>
+</Storage>
+*/
+]]></Content>
+</UDLText>
+
+<Method name="SaveParticipantCoupleWDSF">
+<Description>
+select 'do ..SaveParticipantCoupleWDSF("' || ID || '", "' || City || '", "' || Club || '", "' || Couple || '", "' || ManDOB || '", "' || WomanDOB || '", "' || IFNULL(MainTrainer, "", MainTrainer)  || '", "' || IFNULL(OtherTrainers, "", OtherTrainers)  || '")'</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ID,City,Club,Couple,ManDOB,WomanDOB,MainTrainer,OtherTrainers</FormalSpec>
+<Implementation><![CDATA[    set ^Dance.Data.ParticipantD(ID, "ParticipantCoupleWDSF")   =   $lb(Couple, ManDOB, WomanDOB, City, Club, MainTrainer, OtherTrainers)
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+select 
+'do ..SaveParticipantCoupleOther("' || ID || '", "' || 
+IFNULL(City, "", City) || '", "' || 
+IFNULL(Club, "", Club)  || '", "' || 
+Country  || '", "' ||  
+CoupleKey  || '", "' || 
+IFNULL(ManDOB, "", ManDOB)  || '", "' ||  
+IFNULL(ManFirstName,  "", ManFirstName)  || '", "' || 
+IFNULL(ManLastName,  "", ManLastName)  || '", "' || 
+IFNULL(WomanDOB,  "", WomanDOB)  || '", "' || 
+IFNULL(WomanFirstName,  "", WomanFirstName)  || '", "' || 
+IFNULL(WomanLastName, "", WomanLastName)  || '", "' || 
+IFNULL(MainTrainer, "", MainTrainer) || '", "' || 
+IFNULL(OtherTrainers, "", OtherTrainers) || '")'
+from Dance_Data.ParticipantCoupleOther
+
+<Storage name="Default">
+<Data name="ParticipantCoupleOtherDefaultData">
+<Subscript>"ParticipantCoupleOther"</Subscript>
+<Value name="1">
+<Value>CoupleKey</Value>
+</Value>
+<Value name="2">
+<Value>ManLastName</Value>
+</Value>
+<Value name="3">
+<Value>ManFirstName</Value>
+</Value>
+<Value name="4">
+<Value>ManDOB</Value>
+</Value>
+<Value name="5">
+<Value>WomanLastName</Value>
+</Value>
+<Value name="6">
+<Value>WomanFirstName</Value>
+</Value>
+<Value name="7">
+<Value>WomanDOB</Value>
+</Value>
+<Value name="8">
+<Value>Country</Value>
+</Value>
+<Value name="9">
+<Value>City</Value>
+</Value>
+<Value name="10">
+<Value>Club</Value>
+</Value>
+<Value name="11">
+<Value>MainTrainer</Value>
+</Value>
+<Value name="12">
+<Value>OtherTrainers</Value>
+</Value>
+</Data>
+<DefaultData>ParticipantCoupleOtherDefaultData</DefaultData>
+<Type>%Library.CacheStorage</Type>
+</Storage>
+*/
+]]></Content>
+</UDLText>
+
+<Method name="SaveParticipantCoupleOther">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ID,City,Club,Country,CoupleKey,ManDOB,ManFirstName,ManLastName,WomanDOB,WomanFirstName,WomanLastName,MainTrainer,OtherTrainers</FormalSpec>
+<Implementation><![CDATA[    set ^Dance.Data.ParticipantD(ID, "ParticipantCoupleOther")  = $lb(CoupleKey, ManLastName, ManFirstName, ManDOB, WomanLastName, WomanFirstName, WomanDOB, Country, City, Club, MainTrainer, OtherTrainers)
+]]></Implementation>
+</Method>
+
+<Method name="Test">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set rec = ##class(Dance.Data.Recorder).%New()
+    set rec.Name = "Test"
+    set rec.LoginHash = "Test"
+    set rec.Login = "Test"
+    set rec.IsInUse = 1
+    set rec.OtherInfo = "TEst"
+    set rec.Password = "Test"
+]]></Implementation>
+</Method>
+
+<Method name="TestRegistrationWDSF">
+<Description>
+do ##class(Dance.Utils.Test).TestRegistrationWDSF()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    try{
+        set data = ##class(%ZEN.proxyObject).%New()
+        set data.competitions = ##class(%ListOfDataTypes).%New()
+        do data.competitions.Insert(2)
+        set data.couple = ##class(Dance.Data.CoupleWDSF).GetByNumbers(10073546,10073691,.st).ConvertToProxyObject()
+        set data.couple.man.dob = "1995-01-01"
+        set data.couple.woman.dob = "1996-03-05"
+        set data.couple.otherInfo.city = "London"
+        set data.couple.otherInfo.club = "Cha-cah club"
+        set data.couple.otherInfo.mainTrainer = "Petrov Oleg"
+        set data.couple.otherInfo.otherTrainers = "Volkov Pavel, Andreev Victor"
+        
+        w !, ##class(Dance.Web.JsonUser).RegistrationWDSF(data)
+    }
+    catch(ex){
+        do $SYSTEM.OBJ.DisplayError(ex.AsStatus())
+    }
+        
+    q $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="InitTest">
+<Description>
+do ##class(Dance.Utils.Test).InitTest()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    try{
+    do ##class(Dance.Utils.Init.BaseInit).KillThemAll()
+    
+    do ##class(Dance.Utils.Init.LTextLanguage).Import()
+    
+    do ##class(Dance.Utils.Init.DancerClass).Import()
+    do ##class(Dance.Utils.Init.Country).Import()
+    do ##class(Dance.Utils.Init.CompetitionType).Import()
+    do ##class(Dance.Utils.Init.TournamentStatus).Import()
+    do ##class(Dance.Utils.Init.TournamentRank).Import()
+    do ##class(Dance.Utils.Init.Discipline).Import()
+    do ##class(Dance.Utils.Init.AgeCategory).Import()
+    
+    //=============== TOURNAMENT =============================================
+    set trn = ##class(Dance.Data.Tournament).%New()
+    set trn.Name = ##class(Dance.Data.Localization.LText).Create("Турнир 1")
+    set trn.FullName = ##class(Dance.Data.Localization.LText).Create("Турнир 1 Москва СТСР")
+    set trn.City = ##class(Dance.Data.Localization.LText).Create("Москва")
+    set trn.OrganizerInfo = ##class(Dance.Data.Localization.LText).Create("СТСР")
+        
+    set trn.IdInternal = 1000
+    set trn.IdExternal = 10
+    set trn.Hash = "H-1000-10"
+        
+    set trn.OrganizerSite = "www.test.com"
+    
+    set trn.Country = ##class(Dance.Data.Country).GetByName("Российская Федерация")
+    set trn.TStatus = ##class(Dance.Data.TournamentStatus).%OpenId(1)
+    set trn.TRank = ##class(Dance.Data.TournamentRank).%OpenId(1)
+        
+    set trn.StartDate = $ZDATEH("2014-01-22", 15)
+    set trn.EndDate = $ZDATEH("2014-01-24", 15)
+                
+    $$$THROWONERROR(st, trn.%Save())
+    
+    w !,"Tournament created = "_(st = 1)
+    
+    
+    //=============== COMPETITION =============================================
+    set cmp = ##class(Dance.Data.Competition).%New()
+    set cmp.Name = ##class(Dance.Data.Localization.LText).Create("Группа 1")
+    set cmp.Tournament = trn
+        
+    set cmp.Discipline = ##class(Dance.Data.Discipline).%OpenId(1)
+    set cmp.AgeCategory = ##class(Dance.Data.AgeCategory).%OpenId(1)
+    set cmp.Type = ##class(Dance.Data.CompetitionType).%OpenId(1)
+        
+    set cmp.StartDate = $ZDATEH("2014-01-22", 15)
+    set cmp.StartTime = ##class(%Library.Time).DisplayToLogical("20:00")
+        
+    set cmp.Price = 123
+    set cmp.Limit = 0
+    set cmp.IsInternational = $$$YES
+      
+    set cmp.IdInternal = 2000
+    set cmp.IdExternal = 20
+        
+    do cmp.DancerClasses.SetAt(##class(Dance.Data.DancerClass).%OpenId(1), 1)
+    do cmp.DancerClasses.SetAt(##class(Dance.Data.DancerClass).%OpenId(2), 2)
+        
+    $$$THROWONERROR(st, cmp.%Save())
+    w !,"Competition created = "_(st = 1)
+    
+    //================================ PERSON ==================================
+    w !,"Man created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("122;Алексеевский Павел;Александрович;24.10.1983;.;  -   -;.;;;;Alexeevskiy Pavel;Вдохновение;С.-Петербург;;;;78;;121;;;0", "M"))
+    w !,"Man created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("156;Казмирчук Евгений;Петрович;22.05.1976;.;  -   -;.;;;;Kazmirchuk Evgeny;;Москва;;;;77;;272;;;0", "M"))
+    w !,"Man created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("163;Белозеров Сергей;Олегович;10.06.1979;.;  -   -;.;;;;Belozerov Sergey;;Москва;;;;77;;154;;;0", "M"))
+    w !,"Man created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("198;Эйдинов Павел;Александрович;01.09.1983;.;  -   -;.;;;;Eydinov Pavel;Динамо;Москва;;;;77;;197;;;0", "M"))
+    w !,"Man created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("236;Чешаев Дмитрий;Александрович;27.11.1988;.;  -   -;.;;;;Cheshaev Dmitriy;;Рязань;;;;62;;244;;;0", "M"))
+
+    w !,"Woman created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("106;Пашкова Елена;Александровна;18.01.1979;.;;.;;;;Pashkova Elena;;Москва;;;;77;;;;;0", "F"))
+    w !,"Woman created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("121;Жуплева Екатерина;Сергеевна;04.02.1985;.;;.;;;;Zhupleva Ekaterina;Вдохновение;С.-Петербург;;;;78;;;;31.12.2014;0", "F"))
+    w !,"Woman created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("154;Белозерова Екатерина;Владимировна;18.08.1982;.;;.;;;;Belozerova Ekaterina;;Москва;;;;77;;;;;0", "F"))
+    w !,"Woman created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("197;Ливатова Татьяна;Михайловна;14.07.1986;.;;.;;;;Livatova Tatiana;Динамо;Москва;;;;77;;;;;0", "F"))
+    w !,"Woman created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("244;Чешаева Юлия;Олеговна;15.07.1986;.;;.;;;;Cheshaeva Juliya;;Рязань;;;;62;;;;;0", "F"))
+    
+    w !,"Man created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("247;Савицкий Сергей;Анатольевич;01.07.1985;.;  -   -;.;;;;Savitsky Sergey;;Москва;;;;77;;;;;0", "M"))
+    w !,"Man created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("249;Воропаев Илья;Александрович;21.04.1978;.;  -   -;.;;;;Voropaev Ilya;;Новосибирск;;;;54;;246;;;0", "M"))
+    w !,"Woman created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("268;Минаева Елена;Владимировна;15.01.1985;.;;.;;;;Minaeva Elena;;Орел;;;;57;;;;;0", "F"))
+    w !,"Woman created = "_(1 = ##class(Dance.Data.Person).UpdateFromString("272;Ким Екатерина;Сергеевна;30.06.1988;.;;.;;_;;Kim Ekaterina;;Москва;;;;77;;;;;0", "F"))
+
+
+    //================================ PARTICIPANTS ==================================
+    
+    set participant = ##class(Dance.Data.Participant).Create(cmp.%Id(), ##class(Dance.Data.Couple).Create(1,6,.st).%Id(), .st)
+    w !,"Participant created = "_(st = 1)
+    
+    set participant = ##class(Dance.Data.Participant).Create(cmp.%Id(), ##class(Dance.Data.Couple).Create(2,7,.st).%Id(), .st)
+    w !,"Participant created = "_(st = 1)
+    
+    set participant = ##class(Dance.Data.Participant).Create(cmp.%Id(), ##class(Dance.Data.Couple).Create(3,8,.st).%Id(), .st)
+    w !,"Participant created = "_(st = 1)
+    
+    set participant = ##class(Dance.Data.Participant).Create(cmp.%Id(), ##class(Dance.Data.Couple).Create(4,9,.st).%Id(), .st)
+    w !,"Participant created = "_(st = 1)
+    
+    set participant = ##class(Dance.Data.Participant).Create(cmp.%Id(), ##class(Dance.Data.Couple).Create(5,10,.st).%Id(), .st)
+    w !,"Participant created = "_(st = 1)
+    
+    
+    set participant = ##class(Dance.Data.Participant).Create(cmp.%Id(), ##class(Dance.Data.Couple).Create(11,11,.st).%Id(), .st)
+    w !,"Participant created = "_(st = 1)
+    
+    set participant = ##class(Dance.Data.Participant).Create(cmp.%Id(), ##class(Dance.Data.Couple).Create(12,12,.st).%Id(), .st)
+    w !,"Participant created = "_(st = 1)
+    
+    set participant = ##class(Dance.Data.Participant).Create(cmp.%Id(), ##class(Dance.Data.Couple).Create(13,13,.st).%Id(), .st)
+    w !,"Participant created = "_(st = 1)
+    
+    set participant = ##class(Dance.Data.Participant).Create(cmp.%Id(), ##class(Dance.Data.Couple).Create(14,14,.st).%Id(), .st)
+    w !,"Participant created = "_(st = 1)
+    
+    
+    //================================ PARTICIPANTS TEMP ==================================
+    set prtTemp = ##class(Dance.Data.ParticipantTemp).%New()
+    set prtTemp.ManLastName = "Подолько"
+    set prtTemp.ManFirstName = "Илья"
+    set prtTemp.ManDOB = $ZDATEH("1990-01-22", 15)
+    
+    set prtTemp.WomanLastName = "Филипова"
+    set prtTemp.WomanFirstName = "Мария"
+    set prtTemp.WomanDOB = $ZDATEH("1993-04-25", 15)
+    
+    set prtTemp.Country = ##class(Dance.Data.Country).WDSFNameIdxOpen("Australia")
+    set prtTemp.City = "Город Н"
+    set prtTemp.Club = "Клуб К"
+    set prtTemp.MainTrainer = "Визнюк Наталья"
+    set prtTemp.OtherTrainers = "Архипова Мария, Арахисов Виктор"
+    set prtTemp.Tournament = trn
+    set prtTemp.Created = $ZD($ZTS,3)
+    do prtTemp.Competitions.Insert(cmp)
+    $$$THROWONERROR(st, prtTemp.%Save())
+    //-----------
+    
+    set prtTemp = ##class(Dance.Data.ParticipantTemp).%New()
+    set prtTemp.ManLastName = "Юдин"
+    set prtTemp.ManFirstName = "Павел"
+    set prtTemp.ManDOB = $ZDATEH("1990-01-22", 15)
+    
+    set prtTemp.WomanLastName = "Мостовая"
+    set prtTemp.WomanFirstName = "Екатерина"
+    set prtTemp.WomanDOB = $ZDATEH("1993-04-25", 15)
+    
+    set prtTemp.Country = ##class(Dance.Data.Country).WDSFNameIdxOpen("Austria")
+    set prtTemp.City = "Город О"
+    set prtTemp.Club = "Клуб Д"
+    set prtTemp.MainTrainer = "Поаова Паша"
+    set prtTemp.OtherTrainers = "Арахисов Виктор"
+    set prtTemp.Tournament = trn
+    set prtTemp.Created = $ZD($ZTS,3)
+    do prtTemp.Competitions.Insert(cmp)
+    $$$THROWONERROR(st, prtTemp.%Save())
+    
+    //-----------
+    
+    set prtTemp = ##class(Dance.Data.ParticipantTemp).%New()
+    set prtTemp.WomanLastName = "Зубова"
+    set prtTemp.WomanFirstName = "Юлия"
+    set prtTemp.WomanDOB = $ZDATEH("1994-05-25", 15)
+    
+    set prtTemp.Country = ##class(Dance.Data.Country).WDSFNameIdxOpen("Russian Federation")
+    set prtTemp.City = "Город 1"
+    set prtTemp.Club = "Клуб 1"
+    set prtTemp.MainTrainer = "Hоркоманов Виктор"
+    set prtTemp.OtherTrainers = "Попова Мария"
+    set prtTemp.Tournament = trn
+    set prtTemp.Created = $ZD($ZTS,3)
+    do prtTemp.Competitions.Insert(cmp)
+    $$$THROWONERROR(st, prtTemp.%Save())
+
+    //-----------
+
+    set prtTemp = ##class(Dance.Data.ParticipantTemp).%New()
+    set prtTemp.ManLastName = "Удалов"
+    set prtTemp.ManFirstName = "Константин"
+    set prtTemp.ManDOB = $ZDATEH("1990-01-22", 15)
+    
+    set prtTemp.Country = ##class(Dance.Data.Country).WDSFNameIdxOpen("Russian Federation")
+    set prtTemp.City = "Город T"
+    set prtTemp.Club = "Клуб T"
+    set prtTemp.MainTrainer = "Hоркоманов Виктор"
+    set prtTemp.OtherTrainers = "Попова Мария"
+    set prtTemp.Tournament = trn
+    set prtTemp.Created = $ZD($ZTS,3)
+    do prtTemp.Competitions.Insert(cmp)
+    $$$THROWONERROR(st, prtTemp.%Save())
+    
+    
+    
+    
+    //================================ Tickets ==================================
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 1
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "---"
+    set ticket.Club = "----"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет UDSR участника"
+    set ticket.FemaleDOBOrAge = "23"
+    set ticket.FemaleFirstName = "Елена"
+    set ticket.FemaleLastName = "Пашкова"
+    set ticket.FemaleNumber = "106"
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "33"
+    set ticket.MaleFirstName = "Павел"
+    set ticket.MaleLastName = "Алексеевский"
+    set ticket.MaleNumber = "122"
+    set ticket.OrderIdInternal = "X-02"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "-----"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 2
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "-----"
+    set ticket.Club = "-----"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет UDSR участника"
+    set ticket.FemaleDOBOrAge = "22"
+    set ticket.FemaleFirstName = "Екатерина"
+    set ticket.FemaleLastName = "Жуплева"
+    set ticket.FemaleNumber = "121"
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "22"
+    set ticket.MaleFirstName = "Евгений"
+    set ticket.MaleLastName = "Казмирчук"
+    set ticket.MaleNumber = "156"
+    set ticket.OrderIdInternal = "X-02"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "----"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+    
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 3
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "----"
+    set ticket.Club = "----"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет UDSR участника"
+    set ticket.FemaleDOBOrAge = "22"
+    set ticket.FemaleFirstName = "Екатерина"
+    set ticket.FemaleLastName = "Белозерова"
+    set ticket.FemaleNumber = "154"
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "21"
+    set ticket.MaleFirstName = "Сергей"
+    set ticket.MaleLastName = "Белозеров"
+    set ticket.MaleNumber = "163"
+    set ticket.OrderIdInternal = "X-02"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "-----"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+    
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 4
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "----"
+    set ticket.Club = "----"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет UDSR участника"
+    set ticket.FemaleDOBOrAge = "21"
+    set ticket.FemaleFirstName = "Татьяна"
+    set ticket.FemaleLastName = "Ливатова"
+    set ticket.FemaleNumber = "197"
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "22"
+    set ticket.MaleFirstName = "Павел"
+    set ticket.MaleLastName = "Эйдинов"
+    set ticket.MaleNumber = "198"
+    set ticket.OrderIdInternal = "X-02"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "----"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+    
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 5
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "----"
+    set ticket.Club = "-----"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет UDSR участника"
+    set ticket.FemaleDOBOrAge = "11"
+    set ticket.FemaleFirstName = "Юлия"
+    set ticket.FemaleLastName = "Чешаева"
+    set ticket.FemaleNumber = "244"
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "23"
+    set ticket.MaleFirstName = "Дмитрий"
+    set ticket.MaleLastName = "Чешаев"
+    set ticket.MaleNumber = "236"
+    set ticket.OrderIdInternal = "X-02"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "----"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+    
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 6
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "----"
+    set ticket.Club = "----"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет SOLO UDSR участника"
+    set ticket.FemaleDOBOrAge = " "
+    set ticket.FemaleFirstName = " "
+    set ticket.FemaleLastName = " "
+    set ticket.FemaleNumber = " "
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "22"
+    set ticket.MaleFirstName = "Сергей"
+    set ticket.MaleLastName = "Савицкий"
+    set ticket.MaleNumber = "247"
+    set ticket.OrderIdInternal = "X-02"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "-----"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+    
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 7
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = ""
+    set ticket.Club = ""
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет SOLO UDSR участника"
+    set ticket.FemaleDOBOrAge = " "
+    set ticket.FemaleFirstName = " "
+    set ticket.FemaleLastName = " "
+    set ticket.FemaleNumber = " "
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "22"
+    set ticket.MaleFirstName = "Илья"
+    set ticket.MaleLastName = "Воропаев"
+    set ticket.MaleNumber = "249"
+    set ticket.OrderIdInternal = "X-02"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = ""
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+    
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 8
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "---"
+    set ticket.Club = "---"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет SOLO UDSR участника"
+    set ticket.FemaleDOBOrAge = " "
+    set ticket.FemaleFirstName = " "
+    set ticket.FemaleLastName = " "
+    set ticket.FemaleNumber = " "
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "23"
+    set ticket.MaleFirstName = "Елена"
+    set ticket.MaleLastName = "Минаева"
+    set ticket.MaleNumber = "268"
+    set ticket.OrderIdInternal = "X-02"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "----"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+    
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 9
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "----"
+    set ticket.Club = "----"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет SOLO UDSR участника"
+    set ticket.FemaleDOBOrAge = " "
+    set ticket.FemaleFirstName = " "
+    set ticket.FemaleLastName = " "
+    set ticket.FemaleNumber = " "
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "22"
+    set ticket.MaleFirstName = "Екатерина"
+    set ticket.MaleLastName = "Ким"
+    set ticket.MaleNumber = "272"
+    set ticket.OrderIdInternal = "X-02"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "----"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+ 
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 10
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "Город T-Т"
+    set ticket.Club = "Клуб Т-Т"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет соло муждународного участника"
+    set ticket.FemaleDOBOrAge = " "
+    set ticket.FemaleFirstName = " "
+    set ticket.FemaleLastName = " "
+    set ticket.FemaleNumber = " "
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "1990-01-22"
+    set ticket.MaleFirstName = "Константин"
+    set ticket.MaleLastName = "Удалов"
+    set ticket.MaleNumber = ""
+    set ticket.OrderIdInternal = "X-01"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "Писюкин Артур"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())
+    
+    //------
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 11
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "Город T-Т"
+    set ticket.Club = "Клуб Т-Т"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет соло муждународного участника"
+    set ticket.FemaleDOBOrAge = " "
+    set ticket.FemaleFirstName = " "
+    set ticket.FemaleLastName = " "
+    set ticket.FemaleNumber = " "
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "1995-08-12"
+    set ticket.MaleFirstName = "Виктор"
+    set ticket.MaleLastName = "Арбузов"
+    set ticket.MaleNumber = ""
+    set ticket.OrderIdInternal = "X-01"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "Аладинов Виктор"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save()) 
+    
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 12
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "Город G-R"
+    set ticket.Club = "Клуб G-R"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет пара муждународного участника"
+    set ticket.FemaleDOBOrAge = "1990-01-09"
+    set ticket.FemaleFirstName = "Мария"
+    set ticket.FemaleLastName = "Попова"
+    set ticket.FemaleNumber = " "
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "1993-04-12"
+    set ticket.MaleFirstName = "Алексей"
+    set ticket.MaleLastName = "Попов"
+    set ticket.MaleNumber = ""
+    set ticket.OrderIdInternal = "X-0343"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "Кермиков Виктор"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save()) 
+    
+    
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 13
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "Город Н-R"
+    set ticket.Club = "Клуб Л-R"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет пара муждународного участника"
+    set ticket.FemaleDOBOrAge = "1999-11-11"
+    set ticket.FemaleFirstName = "Екатерина"
+    set ticket.FemaleLastName = "Мостовая"
+    set ticket.FemaleNumber = " "
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = "2000-01-01"
+    set ticket.MaleFirstName = "Павел"
+    set ticket.MaleLastName = "Юдин"
+    set ticket.MaleNumber = ""
+    set ticket.OrderIdInternal = "X-0343"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "Кермиков Виктор"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save()) 
+
+
+    set ticket = ##class(Dance.Data.Import.Ticket).%New()
+    set ticket.IdInternal = 14
+    set ticket.Amount = 23432
+    set ticket.PaymentCreated = $ZD($ZTS, 3)
+    set ticket.City = "Город АН-R"
+    set ticket.Club = "Клуб ККЛ-R"
+    set ticket.CodeOne = 234234
+    set ticket.CodeTwo = 2343243
+    set ticket.Description = "Билет соло муждународного участника"
+    set ticket.FemaleDOBOrAge = "1999-11-11"
+    set ticket.FemaleFirstName = "Юлия"
+    set ticket.FemaleLastName = "Зубова"
+    set ticket.FemaleNumber = " "
+    set ticket.GroupIdInternal = 2000
+    set ticket.MaleDOBOrAge = " "
+    set ticket.MaleFirstName = " "
+    set ticket.MaleLastName = " "
+    set ticket.MaleNumber = ""
+    set ticket.OrderIdInternal = "X-0343"
+    set ticket.TournamentIdExternal = 10
+    set ticket.Trainers = "Прокопсук Виктор"
+    set ticket.TStatus = "pay"
+    $$$THROWONERROR(st, ticket.%Save())     
+    
+    }catch(ex){
+        w !,ex.AsStatus()
+    }
+]]></Implementation>
+</Method>
+
+<Method name="TestPerformance">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    w !,"Start time:"_$H
+    set whereCondition = "IsActive = 1 AND Tournament = '5'"
+    
+    set params = ##class(%ZEN.proxyObject).%New()
+    set params.first = 1
+    set params.last = 500
+    set params.searchText = ""
+    set params.sqlName = "StartDate"
+
+    set result = ##class(Dance.Web.JsonBase).GetProxyObjectsForGrid("SELECT ID FROM Dance_Data.Competition", "Dance.Data.Competition", params, whereCondition)
+    w !,"result.children.itemsTotal=",result.children.itemsTotal
+    w !,"End time:"_$H
+]]></Implementation>
+</Method>
+</Class>
+</Export>

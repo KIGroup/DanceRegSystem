@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.IndexBuilder">
+<Abstract>1</Abstract>
+<TimeCreated>63690,40677.531494</TimeCreated>
+
+<Method name="RebuildAll">
+<Description>
+Перестроить индексы классов в пакете
+w ##class(Dance.Utils.IndexBuilder).RebuildAll("Dance")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>mainPackageName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        set mainPackageName = mainPackageName_".%"
+        
+        set count = 0
+        &sql(DECLARE ClDefCursor CURSOR FOR 
+             SELECT ID
+             FROM %Dictionary.ClassDefinition
+             WHERE Name LIKE :mainPackageName AND Abstract = 0)
+            
+        &sql(OPEN ClDefCursor)
+        
+        for { 
+            &sql(FETCH ClDefCursor INTO :id)
+            quit:SQLCODE'=0  
+            
+            
+            set count = count + 1
+            w !,count,". Build: ",id
+            
+            set startDateTime = $ZDT($ZTS, 3)
+            // Перестроить индексы только хранимых классов
+            if ($CLASSMETHOD(id, "%IsA", "%Persistent") = $$$YES){
+                $$$THROWONERROR(st,$CLASSMETHOD(id, "%BuildIndices")) 
+                //$$$THROWONERROR(st, ..RebuildClassIndices(id)) 
+            }
+            set endDateTime = $ZDT($ZTS, 3)
+            w ", duration: ",$SYSTEM.SQL.DATEDIFF("MINUTE", startDateTime, endDateTime)_" min."
+        }
+        
+        &sql(CLOSE ClDefCursor)
+    }
+    catch(ex){
+        set st = ex.AsStatus()
+    }
+    
+    w !
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="RebuildClassIndices">
+<Description>
+Перестроить индексы класса, всё или какой-то один индекс</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String,pIndex=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set tmsg = ""
+    if (pIndex '= "") {
+        set $li(tParms("Indices"), 1) = pIndex
+    }
+    
+    set tParms("ClassName") = className
+    
+    quit ##class(%CSP.UI.System.BackgroundTask).RunTask("RebuildIndices", $zu(5), .tParms, .tJob)
+]]></Implementation>
+</Method>
+</Class>
+</Export>
