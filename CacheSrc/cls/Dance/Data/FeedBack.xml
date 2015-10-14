@@ -15,7 +15,7 @@
 
 <Property name="Email">
 <Type>%String</Type>
-<Parameter name="MAXLEN" value="60"/>
+<Parameter name="MAXLEN" value="50"/>
 </Property>
 
 <Property name="Subject">

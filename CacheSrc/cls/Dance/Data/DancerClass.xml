@@ -47,7 +47,7 @@ Convert "DancerClass" object to %ZEN.proxyObject (for JSON)</Description>
 <ReturnType>DancerClass</ReturnType>
 <Implementation><![CDATA[
 	set id = ""
-	&sql(SELECT %NOLOCK ID INTO :id FROM Dance_Data.DancerClass WHERE Name = :name)
+	&sql(SELECT ID INTO :id FROM Dance_Data.DancerClass WHERE Name = :name)
 	quit ..%OpenId(id,,.st)
 ]]></Implementation>
 </Method>
@@ -60,7 +60,7 @@ Convert "DancerClass" object to %ZEN.proxyObject (for JSON)</Description>
 	set proxy.children = ##class(%ListOfObjects).%New()
 	
 	&sql(DECLARE Curr1 CURSOR FOR 
-		 	SELECT %NOLOCK ID, Name, Code
+		 	SELECT ID, Name, Code
 		 	FROM Dance_Data.DancerClass)	
 		
 	&sql(OPEN Curr1)

@@ -1188,7 +1188,7 @@ Get all participants of the competition for grid</Description>
         set convertParams.competitionParams.loadTournament = $$$YES
         set convertParams.competitionParams.tournamentParams = ##class(%ZEN.proxyObject).%New()
         set convertParams.loadPrtObjCompetitionsCount = $$$YES       
-        do ..GetProxyObjectsForGrid("SELECT ID FROM Dance_Data.Participant", "Dance.Data.Participant", params, convertParams, whereCondition).%ToJSON()
+        do ..GetProxyObjectsForGrid("SELECT ID FROM Dance_Data.Participant", "Dance.Data.Participant", params, convertParams, whereCondition, "GROUP BY FullName->Value").%ToJSON()
     }
     catch ex {
         set st = ex.AsStatus()
@@ -1268,16 +1268,26 @@ Get all participants of the competition for grid</Description>
         // Костыль
         if (cplId '= ""){ 
             if (##class(Dance.Data.CoupleUDSR).%ExistsId(cplId)) && (##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxExists(cplId)){
-                set sql = "SELECT %NOLOCK ID FROM Dance_Data.ParticipantCoupleUDSR WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_..ParseParameter(cplId)_"' AND IsActive=1 "_
+                set sql = "SELECT %NOLOCK ID, Competition FROM Dance_Data.ParticipantCoupleUDSR WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_..ParseParameter(cplId)_"' AND IsActive=1 "_
                           " UNION "_
-                          "SELECT %NOLOCK ID FROM Dance_Data.ParticipantCoupleWDSF WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxOpen(cplId).WDSF.%Id()_"' AND IsActive=1"         
+                          "SELECT %NOLOCK ID, Competition FROM Dance_Data.ParticipantCoupleWDSF WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxOpen(cplId).WDSF.%Id()_"' AND IsActive=1"         
+            
+             set sql = "SELECT ID "_ 
+                      "FROM ( "_sql_" )"_
+                      "GROUP BY Competition"
             }
             elseif (##class(Dance.Data.CoupleWDSF).%ExistsId(cplId)) && (##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxExists(cplId)){
-                set sql = "SELECT %NOLOCK ID FROM Dance_Data.ParticipantCoupleUDSR WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(cplId).UDSR.%Id()_"' AND IsActive=1 "_
+                set sql = "SELECT %NOLOCK ID, Competition FROM Dance_Data.ParticipantCoupleUDSR WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(cplId).UDSR.%Id()_"' AND IsActive=1 "_
                           " UNION "_
-                          "SELECT %NOLOCK ID FROM Dance_Data.ParticipantCoupleWDSF WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_..ParseParameter(cplId)_"' AND IsActive=1 "
-                                    
+                          "SELECT %NOLOCK ID, Competition FROM Dance_Data.ParticipantCoupleWDSF WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_..ParseParameter(cplId)_"' AND IsActive=1 "
+             
+              set sql = "SELECT ID "_ 
+                      "FROM ( "_sql_" )"_
+                      "GROUP BY Competition"                       
             }
+            
+           
+                      
         }
         
         set statement = ##class(%SQL.Statement).%New()  

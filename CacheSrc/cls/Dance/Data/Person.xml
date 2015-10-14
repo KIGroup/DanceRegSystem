@@ -89,25 +89,25 @@ Last name</Description>
 	
 	
 	&sql(DECLARE CrsCmpConflict CURSOR FOR
-			SELECT %NOLOCK ID INTO :cmpConflictId
+			SELECT ID INTO :cmpConflictId
 		 	FROM Dance_Data.Competition
 		 	WHERE Tournament->TStatus->Code <> 'Canceled' 
 		 	   AND Tournament->TStatus->Code <> 'Completed'
 		 	   AND Tournament <> :cmpTournamentId 
 		 	   AND StartDate = :cmp.StartDate
-		 	   AND ID IN (SELECT %NOLOCK prtCoupleUDSR.Competition 
+		 	   AND ID IN (SELECT prtCoupleUDSR.Competition 
 		 	   			  FROM Dance_Data.ParticipantCoupleUDSR as prtCoupleUDSR 
 		 	   			  WHERE prtCoupleUDSR.Competition->StartDate = :cmp.StartDate AND (prtCoupleUDSR.Couple->Man = :personId OR prtCoupleUDSR.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
 		 	   			  UNION
-		 	   			  SELECT %NOLOCK prtCoupleWDSF.Competition 
+		 	   			  SELECT prtCoupleWDSF.Competition 
 		 	   			  FROM Dance_Data.ParticipantCoupleWDSF as prtCoupleWDSF 
 		 	   			  WHERE prtCoupleWDSF.Competition->StartDate = :cmp.StartDate AND (prtCoupleWDSF.Couple->Man = :personId OR prtCoupleWDSF.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
 		 	   			  UNION
-		 	   			  SELECT %NOLOCK prtSingleUDSR.Competition 
+		 	   			  SELECT prtSingleUDSR.Competition 
 		 	   			  FROM Dance_Data.ParticipantSingleUDSR as prtSingleUDSR 
 		 	   			  WHERE prtSingleUDSR.Competition->StartDate = :cmp.StartDate AND prtSingleUDSR.Athlete = :personId  AND TicketStatus = 'Piad'
 		 	   			  UNION
-		 	   			  SELECT %NOLOCK prtSingleWDSF.Competition 
+		 	   			  SELECT prtSingleWDSF.Competition 
 		 	   			  FROM Dance_Data.ParticipantSingleWDSF as prtSingleWDSF 
 		 	   			  WHERE prtSingleWDSF.Competition->StartDate = :cmp.StartDate AND prtSingleWDSF.Athlete = :personId AND TicketStatus = 'Piad'))
 		

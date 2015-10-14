@@ -1,20 +1,20 @@
 
 <div class="row-fluid">
-    <pre ng-bind="tournament.fullName" style="text-align: center; font-weight: bold; font-size: 1.3em !important;"></pre>
-    <pre ng-hide="tournament.id" style="text-align: center;"><i class="fa fa-spinner fa-spin fa-lg" style="color: rgb(204, 204, 204);"></i></pre>
+	<pre ng-bind="tournament.fullName" style="text-align: center; font-weight: bold; font-size: 1.3em !important;"></pre>
+	<pre ng-hide="tournament.id" style="text-align: center;"><i class="fa fa-spinner fa-spin fa-lg" style="color: rgb(204, 204, 204);"></i></pre>
 </div>
 <div ng-show="tournament && tournament.addInfoUrl!=''" style="text-align: center; color: darkred; padding-top: 12px;" title="{{'Перейдите по ссылке для получения подробной информации'|localize}}">
-    <a class="trnAdditionInfoUrl" ng-href="{{tournament.addInfoUrl}}" target="_blank">{{('ВАЖНОЕ ОБЪЯВЛЕНИЕ'|localize)}}</a>
+	<a class="trnAdditionInfoUrl" ng-href="{{tournament.addInfoUrl}}" target="_blank">{{('ВАЖНОЕ ОБЪЯВЛЕНИЕ'|localize)}}</a>
 </div>
 <br>
 <div class="row-fluid" style="text-align: center;">
-    <a ng-href="{{tournament.infoUrl}}" target="_blank" class="trnMenu" title="{{'Информация о турнире'|localize}}" ng-bind="'Информация »'|localize"></a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <a ng-href="" class="trnMenuSelected" title="{{'Сейчас Вы на этой странице'|localize}}" ng-bind="'Регистрация •'|localize"></a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <a ng-href="" class="trnMenu" title="{{'Список всех групп турнира'|localize}}" ng-bind="'Группы »'|localize" ng-click="locationSrvc.goTo(':recorderHash/tournament/' + tournament.id + '/competitions', recorderHash)"></a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <a ng-href="" class="trnMenu" title="{{'Список всех уникальных участников турнира'|localize}}" ng-bind="'Участники »'|localize" ng-click="locationSrvc.goTo(':recorderHash/tournament/' + tournament.id + '/participants', recorderHash)"></a>
+	<a ng-href="{{tournament.infoUrl}}" target="_blank" class="trnMenu" title="{{'Информация о турнире'|localize}}" ng-bind="'Информация »'|localize"></a>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<a ng-href="" class="trnMenuSelected" title="{{'Сейчас Вы на этой странице'|localize}}" ng-bind="'Регистрация •'|localize"></a>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<a ng-href="" class="trnMenu" title="{{'Список всех групп турнира'|localize}}" ng-bind="'Группы »'|localize" ng-click="locationSrvc.goTo(':recorderHash/tournament/' + tournament.id + '/competitions', recorderHash)"></a>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<a ng-href="" class="trnMenu" title="{{'Список всех уникальных участников турнира'|localize}}" ng-bind="'Участники »'|localize" ng-click="locationSrvc.goTo(':recorderHash/tournament/' + tournament.id + '/participants', recorderHash)"></a>
 </div>
 
 <br>
@@ -22,693 +22,693 @@
 <stcalert data="alert" style="margin-bottom: 25px;"/>
 
 <div class="row-fluid" ng-show="tabUDSR.visible || tabWDSF.visible || tabOTHER.visible">
-     <tabset>
-        <!-- ================================================================================================================================== -->
-        <!-- UDSR                                                       UDSR                                                               UDSR -->
-        <!-- ================================================================================================================================== -->
-        <tab heading="{{'Регистрация СТСР'|localize}}" ng-show="tabUDSR.visible" active="tabUDSR.active" disabled="tabUDSR.disabled" select="tabUDSR.select()" title="{{tabUDSR.disabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация участников по СТСР номерам'|localize)}}">
-            <!-- ================== -->
-            <!-- Search form (UDSR) -->
-            <!-- ================== -->
-            <form name="form_udsrSearch" ng-hide="tabUDSR.couple || tabUDSR.athlete">
-                <div class="row-fluid" style="margin-bottom: 5px;">
-                    <label ng-bind="'Введите номера классификационных книжек СТСР'|localize" style="font-weight: bold;"></label>
-                </div>
-                <div class="row-fluid">
-                    <input type="text" style="height: 16px!important;line-height: 16px!important; width: 150px;" placeholder="{{'Номер партнера'|localize}}" ng-model="tabUDSR.searchForm.manNumber"/>
-                    <input type="text" style="height: 16px!important;line-height: 16px!important; width: 150px;" placeholder="{{'Номер партнерши'|localize}}" ng-model="tabUDSR.searchForm.womanNumber"/>
-                    <button class="btn btn-small" style="margin-bottom: 10px;" ng-disabled="!form_udsrSearch.$valid || tabUDSR.searchForm.processing" ng-click="tabUDSR.searchForm.search(tabUDSR.searchForm.manNumber, tabUDSR.searchForm.womanNumber)"><i class="fa fa-search"></i>&nbsp;&nbsp;{{'Поиск'|localize}}</button>                  
-                    <button class="btn btn-small" style="margin-bottom: 10px;" ng-disabled="!form_udsrSearch.$dirty || tabUDSR.searchForm.processing" ng-click="tabUDSR.searchForm.clear()"><i class="fa fa-eraser"></i>&nbsp;&nbsp;{{'Очистить'|localize}}</button>                        
-                    <img ng-show="tabUDSR.searchForm.processing" style="padding: 5px 5px 13px 5px;" src="img/loader2.gif"/>
-                </div>
-                <div class="row-fluid" style="padding-top: 12px; padding-bottom: 2px;">
-                    <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Регистрация осуществляется по номерам классификационных книжек и на основании информации Базы данных спортсменов "Союза танцевального спорта России" на момент регистрации.'|localize}}</p>
-                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
-                    <p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
-                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в \"соло\" заполните только одно поле.'|localize}}</p> 
-                </div>
-            </form>
-            <!-- ================== -->
-            <!-- Couple data (UDSR) -->
-            <!-- ================== -->
-            <div class="row-fluid" ng-show="tabUDSR.couple" >
-                <!-- Man -->
-                <div class="span4">
-                    <div class="row-fluid" style="margin-bottom: 5px;">
-                        <label ng-bind="'Партнер'|localize"  style="font-weight: bold;"></label>
-                    </div>
-                    <p>
-                        <span class="spnTitle" ng-bind="'Номер СТСР'|localize"></span>: <span ng-bind="tabUDSR.couple.man.number"></span>
-                        &nbsp;
-                        <span ng-show="tabUDSR.couple.man.numberWDSF" class="spnTitle" ng-bind="('Номер WDSF'|localize) + ':'"></span>&nbsp;<span ng-bind="tabUDSR.couple.man.numberWDSF"></span>
-                    </p>
-                    <p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabUDSR.couple.man.lastName + ' ' + tabUDSR.couple.man.firstName"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Дата рождения'|localize"></span>: <span ng-bind="tabUDSR.couple.man.dob|convertCacheDate:('d MMMM y'|localize)"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Класс'|localize"></span>: <span ng-show="tabUDSR.couple.man.stClass.name" ng-bind="('Ст: '|localize) + tabUDSR.couple.man.stClass.name"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span ng-show="tabUDSR.couple.man.laClass.name" ng-bind="('Ла: '|localize) + tabUDSR.couple.man.laClass.name"></span></p>
-                    
-                    <div ng-hide="resultTableVisible">
-                        <button type="button" ng-show="tabUDSR.couple" style="margin-top: 25px;" class="btn btn-small" ng-click="tabUDSR.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
-                        <button type="button" ng-show="tabUDSR.couple" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize) :''}}" style="margin-top: 25px;" class="btn btn-small" ng-click="confirmDialog.open('UDSR', tabUDSR.registration)" ng-disabled="competitionTable.selectedItems.length==0">
-                            <i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
-                            <i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
-                            &nbsp;&nbsp;{{'Регистрация'|localize}}
-                        </button>
-                    </div>
-                </div>
-                <!-- Woman -->
-                <div class="span4">
-                    <div class="row-fluid" style="margin-bottom: 5px;">
-                        <label ng-bind="'Партнерша'|localize" style="font-weight: bold;"></label>
-                    </div>
-                    <p>
-                        <span class="spnTitle" ng-bind="'Номер СТСР'|localize"  ></span>: <span ng-bind="tabUDSR.couple.woman.number"></span>&nbsp;
-                        <span ng-show="tabUDSR.couple.woman.numberWDSF" class="spnTitle" ng-bind="('Номер WDSF'|localize) + ':'"></span>&nbsp;<span ng-bind="tabUDSR.couple.woman.numberWDSF"></span>
-                    </p>
-                    <p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabUDSR.couple.woman.lastName + ' ' + tabUDSR.couple.woman.firstName"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Дата рождения'|localize"></span>: <span ng-bind="tabUDSR.couple.woman.dob|convertCacheDate:('d MMMM y'|localize)"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Класс'|localize"        ></span>: <span ng-show="tabUDSR.couple.woman.stClass.name" ng-bind="('Ст: '|localize) + tabUDSR.couple.woman.stClass.name"></span>&nbsp;&nbsp;&nbsp;<span ng-show="tabUDSR.couple.woman.laClass.name" ng-bind="'Ла: ' + tabUDSR.couple.woman.laClass.name"></span></p>
-                </div>
-                <!-- Other info -->
-                <div class="span4">
-                    <div class="row-fluid" style="margin-bottom: 5px;">
-                        <label ng-bind="'Дополнительная информация'|localize" style="font-weight: bold;"></label>
-                    </div>
-                    <p><span class="spnTitle" ng-bind="'Страна'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.country.name"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Город'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.city"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Клуб'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.club"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Главный тренер'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.mainTrainer"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Другие тренеры'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.otherTrainers"></span></p>
-                </div>
-            </div>
-            <!-- =================== -->
-            <!-- Athlete data (UDSR) -->
-            <!-- =================== -->
-            <div class="row-fluid" ng-show="tabUDSR.athlete" >
-                <!-- Athlete -->
-                <div class="span4">
-                    <div class="row-fluid" style="margin-bottom: 5px;">
-                        <label ng-bind="'Участник'|localize"  style="font-weight: bold;"></label>
-                    </div>
-                    <p><span class="spnTitle" ng-bind="'Номер СТСР'|localize"></span>: <span ng-bind="tabUDSR.athlete.number"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabUDSR.athlete.lastName + ' ' + tabUDSR.athlete.firstName"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Дата рождения'|localize"></span>: <span ng-bind="tabUDSR.athlete.dob|convertCacheDate:('d MMMM y'|localize)"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Класс'|localize"></span>: <span ng-show="tabUDSR.athlete.stClass.name" ng-bind="('Ст: '|localize) + tabUDSR.athlete.stClass.name"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span ng-show="tabUDSR.athlete.laClass.name" ng-bind="('Ла: '|localize) + tabUDSR.athlete.laClass.name"></span></p>
-                    
-                    <div ng-hide="resultTableVisible">
-                        <button type="button" ng-show="tabUDSR.athlete" style="margin-top: 25px;" class="btn btn-small" ng-click="tabUDSR.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
-                        <button type="button" ng-show="tabUDSR.athlete" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize) :''}}" style="margin-top: 25px;" class="btn btn-small" ng-click="confirmDialog.open('UDSR', tabUDSR.registration)" ng-disabled="competitionTable.selectedItems.length==0">
-                            <i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
-                            <i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
-                            &nbsp;&nbsp;{{'Регистрация'|localize}}
-                        </button>
-                    </div>
-                </div>
-                <!-- Other info -->
-                <div class="span4">
-                    <div class="row-fluid" style="margin-bottom: 5px;">
-                        <label ng-bind="'Дополнительная информация'|localize" style="font-weight: bold;"></label>
-                    </div>
-                    <p><span class="spnTitle" ng-bind="'Страна'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.country.name"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Город'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.city"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Класс'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.club"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Главный тренер'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.mainTrainer"></span></p>
-                    <p><span class="spnTitle" ng-bind="'Другие тренеры'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.otherTrainers"></span></p>
-                </div>
-            </div>
+	 <tabset>
+		<!-- ================================================================================================================================== -->
+		<!-- UDSR 														UDSR                                                               UDSR -->
+		<!-- ================================================================================================================================== -->
+		<tab heading="{{'Регистрация СТСР'|localize}}" ng-show="tabUDSR.visible" active="tabUDSR.active" disabled="tabUDSR.disabled" select="tabUDSR.select()" title="{{tabUDSR.disabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация участников по СТСР номерам'|localize)}}">
+			<!-- ================== -->
+			<!-- Search form (UDSR) -->
+			<!-- ================== -->
+			<form name="form_udsrSearch" ng-hide="tabUDSR.couple || tabUDSR.athlete">
+				<div class="row-fluid" style="margin-bottom: 5px;">
+					<label ng-bind="'Введите номера классификационных книжек СТСР'|localize" style="font-weight: bold;"></label>
+				</div>
+				<div class="row-fluid">
+					<input type="text" style="height: 16px!important;line-height: 16px!important; width: 150px;" placeholder="{{'Номер партнера'|localize}}" ng-model="tabUDSR.searchForm.manNumber"/>
+					<input type="text" style="height: 16px!important;line-height: 16px!important; width: 150px;" placeholder="{{'Номер партнерши'|localize}}" ng-model="tabUDSR.searchForm.womanNumber"/>
+					<button class="btn btn-small" style="margin-bottom: 10px;" ng-disabled="!form_udsrSearch.$valid || tabUDSR.searchForm.processing" ng-click="tabUDSR.searchForm.search(tabUDSR.searchForm.manNumber, tabUDSR.searchForm.womanNumber)"><i class="fa fa-search"></i>&nbsp;&nbsp;{{'Поиск'|localize}}</button>					
+					<button class="btn btn-small" style="margin-bottom: 10px;" ng-disabled="!form_udsrSearch.$dirty || tabUDSR.searchForm.processing" ng-click="tabUDSR.searchForm.clear()"><i class="fa fa-eraser"></i>&nbsp;&nbsp;{{'Очистить'|localize}}</button>						
+					<img ng-show="tabUDSR.searchForm.processing" style="padding: 5px 5px 13px 5px;" src="img/loader2.gif"/>
+				</div>
+				<div class="row-fluid" style="padding-top: 12px; padding-bottom: 2px;">
+					<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Регистрация осуществляется по номерам классификационных книжек и на основании информации Базы данных спортсменов "Союза танцевального спорта России" на момент регистрации.'|localize}}</p>
+					<p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
+					<p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
+					<p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в \"соло\" заполните только одно поле.'|localize}}</p> 
+				</div>
+			</form>
+			<!-- ================== -->
+			<!-- Couple data (UDSR) -->
+			<!-- ================== -->
+			<div class="row-fluid" ng-show="tabUDSR.couple" >
+				<!-- Man -->
+				<div class="span4">
+					<div class="row-fluid" style="margin-bottom: 5px;">
+						<label ng-bind="'Партнер'|localize"  style="font-weight: bold;"></label>
+					</div>
+					<p>
+						<span class="spnTitle" ng-bind="'Номер СТСР'|localize"></span>: <span ng-bind="tabUDSR.couple.man.number"></span>
+						&nbsp;
+						<span ng-show="tabUDSR.couple.man.numberWDSF" class="spnTitle" ng-bind="('Номер WDSF'|localize) + ':'"></span>&nbsp;<span ng-bind="tabUDSR.couple.man.numberWDSF"></span>
+					</p>
+					<p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabUDSR.couple.man.lastName + ' ' + tabUDSR.couple.man.firstName"></span></p>
+					<p><span class="spnTitle" ng-bind="'Дата рождения'|localize"></span>: <span ng-bind="tabUDSR.couple.man.dob|convertCacheDate:('d MMMM y'|localize)"></span></p>
+					<p><span class="spnTitle" ng-bind="'Класс'|localize"></span>: <span ng-show="tabUDSR.couple.man.stClass.name" ng-bind="('Ст: '|localize) + tabUDSR.couple.man.stClass.name"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span ng-show="tabUDSR.couple.man.laClass.name" ng-bind="('Ла: '|localize) + tabUDSR.couple.man.laClass.name"></span></p>
+					
+					<div ng-hide="resultTableVisible">
+						<button type="button" ng-show="tabUDSR.couple" style="margin-top: 25px;" class="btn btn-small" ng-click="tabUDSR.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
+					    <button type="button" ng-show="tabUDSR.couple" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize) :''}}" style="margin-top: 25px;" class="btn btn-small" ng-click="confirmDialog.open('UDSR', tabUDSR.registration)" ng-disabled="competitionTable.selectedItems.length==0">
+					    	<i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
+					    	<i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
+					    	&nbsp;&nbsp;{{'Регистрация'|localize}}
+					    </button>
+					</div>
+				</div>
+				<!-- Woman -->
+				<div class="span4">
+					<div class="row-fluid" style="margin-bottom: 5px;">
+						<label ng-bind="'Партнерша'|localize" style="font-weight: bold;"></label>
+					</div>
+					<p>
+						<span class="spnTitle" ng-bind="'Номер СТСР'|localize"  ></span>: <span ng-bind="tabUDSR.couple.woman.number"></span>&nbsp;
+						<span ng-show="tabUDSR.couple.woman.numberWDSF" class="spnTitle" ng-bind="('Номер WDSF'|localize) + ':'"></span>&nbsp;<span ng-bind="tabUDSR.couple.woman.numberWDSF"></span>
+					</p>
+					<p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabUDSR.couple.woman.lastName + ' ' + tabUDSR.couple.woman.firstName"></span></p>
+					<p><span class="spnTitle" ng-bind="'Дата рождения'|localize"></span>: <span ng-bind="tabUDSR.couple.woman.dob|convertCacheDate:('d MMMM y'|localize)"></span></p>
+					<p><span class="spnTitle" ng-bind="'Класс'|localize"        ></span>: <span ng-show="tabUDSR.couple.woman.stClass.name" ng-bind="('Ст: '|localize) + tabUDSR.couple.woman.stClass.name"></span>&nbsp;&nbsp;&nbsp;<span ng-show="tabUDSR.couple.woman.laClass.name" ng-bind="'Ла: ' + tabUDSR.couple.woman.laClass.name"></span></p>
+				</div>
+				<!-- Other info -->
+				<div class="span4">
+					<div class="row-fluid" style="margin-bottom: 5px;">
+						<label ng-bind="'Дополнительная информация'|localize" style="font-weight: bold;"></label>
+					</div>
+					<p><span class="spnTitle" ng-bind="'Страна'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.country.name"></span></p>
+					<p><span class="spnTitle" ng-bind="'Город'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.city"></span></p>
+					<p><span class="spnTitle" ng-bind="'Клуб'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.club"></span></p>
+					<p><span class="spnTitle" ng-bind="'Главный тренер'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.mainTrainer"></span></p>
+					<p><span class="spnTitle" ng-bind="'Другие тренеры'|localize"></span>: <span ng-bind="tabUDSR.couple.otherInfo.otherTrainers"></span></p>
+				</div>
+			</div>
+			<!-- =================== -->
+			<!-- Athlete data (UDSR) -->
+			<!-- =================== -->
+			<div class="row-fluid" ng-show="tabUDSR.athlete" >
+				<!-- Athlete -->
+				<div class="span4">
+					<div class="row-fluid" style="margin-bottom: 5px;">
+						<label ng-bind="'Участник'|localize"  style="font-weight: bold;"></label>
+					</div>
+					<p><span class="spnTitle" ng-bind="'Номер СТСР'|localize"></span>: <span ng-bind="tabUDSR.athlete.number"></span></p>
+					<p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabUDSR.athlete.lastName + ' ' + tabUDSR.athlete.firstName"></span></p>
+					<p><span class="spnTitle" ng-bind="'Дата рождения'|localize"></span>: <span ng-bind="tabUDSR.athlete.dob|convertCacheDate:('d MMMM y'|localize)"></span></p>
+					<p><span class="spnTitle" ng-bind="'Класс'|localize"></span>: <span ng-show="tabUDSR.athlete.stClass.name" ng-bind="('Ст: '|localize) + tabUDSR.athlete.stClass.name"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span ng-show="tabUDSR.athlete.laClass.name" ng-bind="('Ла: '|localize) + tabUDSR.athlete.laClass.name"></span></p>
+					
+					<div ng-hide="resultTableVisible">
+						<button type="button" ng-show="tabUDSR.athlete" style="margin-top: 25px;" class="btn btn-small" ng-click="tabUDSR.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
+					    <button type="button" ng-show="tabUDSR.athlete" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize) :''}}" style="margin-top: 25px;" class="btn btn-small" ng-click="confirmDialog.open('UDSR', tabUDSR.registration)" ng-disabled="competitionTable.selectedItems.length==0">
+					    	<i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
+					    	<i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
+					    	&nbsp;&nbsp;{{'Регистрация'|localize}}
+					    </button>
+					</div>
+				</div>
+				<!-- Other info -->
+				<div class="span4">
+					<div class="row-fluid" style="margin-bottom: 5px;">
+						<label ng-bind="'Дополнительная информация'|localize" style="font-weight: bold;"></label>
+					</div>
+					<p><span class="spnTitle" ng-bind="'Страна'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.country.name"></span></p>
+					<p><span class="spnTitle" ng-bind="'Город'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.city"></span></p>
+					<p><span class="spnTitle" ng-bind="'Класс'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.club"></span></p>
+					<p><span class="spnTitle" ng-bind="'Главный тренер'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.mainTrainer"></span></p>
+					<p><span class="spnTitle" ng-bind="'Другие тренеры'|localize"></span>: <span ng-bind="tabUDSR.athlete.otherInfo.otherTrainers"></span></p>
+				</div>
+			</div>
 
-            <div class="row-fluid" ng-show="(tabUDSR.couple || tabUDSR.athlete) && !resultTableVisible" style="padding-top: 20px; padding-bottom: 0px;">
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('UDSR')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p>  
-            </div>
-            <stcalert data="tabUDSR.alert" style="margin-top: 25px;"/>
-        </tab>
-    
-
-
-        <!-- ================================================================================================================================== -->
-        <!-- WDSF                                                       WDSF                                                               WDSF -->
-        <!-- ================================================================================================================================== -->
-        <tab heading="{{'Регистрация WDSF'|localize}}" ng-show="tabWDSF.visible" active="tabWDSF.active" disabled="tabWDSF.disabled" select="tabWDSF.select()" title="{{tabWDSF.disabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация участников по WDSF номерам'|localize)}}">
-            <!-- ================== -->
-            <!-- Search form (WDSF) -->
-            <!-- ================== -->
-            <form name="form_wdsfSearch" ng-hide="tabWDSF.couple || tabWDSF.athlete">
-                <div class="row-fluid" style="margin-bottom: 5px;">
-                    <label ng-bind="'Введите номера классификационных книжек WDSF'|localize" style="font-weight: bold;"></label>
-                </div>
-                <div class="row-fluid">
-                    <input type="text" style="height: 16px!important;line-height: 16px!important; width: 150px;" placeholder="{{'Номер партнера'|localize}}" ng-model="tabWDSF.searchForm.manNumber"/>
-                    <input type="text" style="height: 16px!important;line-height: 16px!important; width: 150px;" placeholder="{{'Номер партнерши'|localize}}" ng-model="tabWDSF.searchForm.womanNumber"/>
-                    <button class="btn btn-small" style="margin-bottom: 10px;" ng-disabled="!form_wdsfSearch.$valid || tabWDSF.searchForm.processing" ng-click="tabWDSF.searchForm.search(tabWDSF.searchForm.manNumber, tabWDSF.searchForm.womanNumber)"><i class="fa fa-search"></i>&nbsp;&nbsp;{{'Поиск'|localize}}</button>                  
-                    <button class="btn btn-small" style="margin-bottom: 10px;" ng-disabled="!form_wdsfSearch.$dirty || tabWDSF.searchForm.processing" ng-click="tabWDSF.searchForm.clear()"><i class="fa fa-eraser"></i>&nbsp;&nbsp;{{'Очистить'|localize}}</button>                        
-                    <img ng-show="tabWDSF.searchForm.processing" style="padding: 5px 5px 13px 5px;" src="img/loader2.gif"/>
-                </div>
-                <div class="row-fluid" style="padding-top: 12px; padding-bottom: 2px;">
-                    <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Регистрация осуществляется по MIN номерам WDSF. Поиск участников идет по базе данных "World DanceSport Federation".'|localize}}</p>
-                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
-                    <p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
-                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в \"соло\" заполните только одно поле.'|localize}}</p> 
-                </div>
-            </form>
-            <!-- ================== -->
-            <!-- Couple data (WDSF) -->
-            <!-- ================== -->
-            <div class="row-fluid" ng-show="tabWDSF.couple">
-                <form name="form_wdsfCoupleData">
-                    <!-- Man -->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <label ng-bind="'Партнер'|localize" style="font-weight: bold;"></label>
-                        </div>
-                        <p><span class="spnTitle" ng-bind="'Номер WDSF'|localize"></span>: <span ng-bind="tabWDSF.couple.man.number"></span></p>
-                        <p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabWDSF.couple.man.lastName + ' ' + tabWDSF.couple.man.firstName"></span></p>
-                        <div class="control-group" style="">
-                            <label class="control-label spnTitle" style="border: none!important;">{{('Дата рождения'|localize)}}</label>
-                            <div class="controls">
-                                <input name="manDob" style="width:150px" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabWDSF.couple.man.dob" min="'1900-01-01'" show-weeks="false" ng-disabled="tabWDSF.formCouple.disabled"/>
-                            </div>
-                        </div>
-                        <div style="position: absolute; width: 300px;">
-                            <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Часть данных получена от WDSF.'|localize}}</p>
-                            <p style="padding-bottom: 7px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Доп. поля можно не заполнять.'|localize}}</p>
-                        </div>
-                        <div ng-hide="resultTableVisible" style="padding-top: 70px;">
-                            <button type="button" ng-show="tabWDSF.formCouple.btnBackVisible" class="btn btn-small" ng-click="tabWDSF.formCouple.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
-                            <button type="button" ng-show="tabWDSF.formCouple.btnRegistrationVisible" class="btn btn-small" ng-click="confirmDialog.open('WDSF', tabWDSF.registration)" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize):''}}" ng-disabled="competitionTable.selectedItems.length==0 || tabWDSF.regProcessing">
-                                <i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
-                                <i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
-                                &nbsp;&nbsp;{{'Регистрация'|localize}}
-                            </button>
-                            <img ng-show="tabWDSF.regProcessing" style="padding: 5px;" src="img/loader2.gif"/>
-                        </div>
-                    </div>
-                    <!-- Woman -->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <label ng-bind="'Партнерша'|localize" style="font-weight: bold;"></label>
-                        </div>
-                        <p><span class="spnTitle" ng-bind="'Номер WDSF'|localize"></span>: <span ng-bind="tabWDSF.couple.woman.number"></span></p>
-                        <p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabWDSF.couple.woman.lastName + ' ' + tabWDSF.couple.woman.firstName"></span></p>
-                        <div class="control-group">
-                            <label class="control-label spnTitle" style="border: none!important;">{{('Дата рождения'|localize)}}</label>
-                            <div class="controls">
-                                <input name="womanDob" style="width:150px" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabWDSF.couple.woman.dob" min="'1900-01-01'" show-weeks="false" ng-disabled="tabWDSF.formCouple.disabled"/>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Other info -->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <label ng-bind="'Дополнительная информация'|localize" style="font-weight: bold;"></label>
-                        </div>
-                        <p><span class="spnTitle" ng-bind="('Статус пары'|localize) + ' (WDSF)'"></span>: <span ng-style="{color: tabWDSF.couple.otherInfo.status=='Active' ? 'green' : 'red'}" ng-bind="tabWDSF.couple.otherInfo.status"></span></p>
-                        <p><span class="spnTitle" ng-bind="('Возрастная группа пары'|localize) + ' (WDSF)'"></span>: <span ng-bind="tabWDSF.couple.otherInfo.ageCategory"></span></p>
-                        <p><span class="spnTitle" ng-bind="'Страна'|localize"></span>: <span ng-bind="tabWDSF.couple.otherInfo.country.name"></span></p>
-                        <div class="row-fluid">
-                            <div class="span6">
-                                <div class="control-group">
-                                    <label class="control-label">{{('Город'|localize)}}</label>
-                                    <div class="controls">
-                                        <input name="city" class="span12" type="text" ng-model="tabWDSF.couple.otherInfo.city" ng-disabled="tabWDSF.formCouple.disabled"></input>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="span6">
-                                <div class="control-group">
-                                    <label class="control-label">{{('Клуб'|localize)}}</label>
-                                    <div class="controls">
-                                        <input name="club" class="span12" type="text" ng-model="tabWDSF.couple.otherInfo.club" ng-disabled="tabWDSF.formCouple.disabled"></input>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{('Тренер. Фамилия, Имя'|localize)}}</label>
-                            <div class="controls">
-                                <input name="mainTrainer" class="span12" type="text" ng-model="tabWDSF.couple.otherInfo.mainTrainer" ng-disabled="tabWDSF.formCouple.disabled"></input>
-                            </div>
-                        </div>
-                        <!--
-                        <div class="control-group">
-                            <label class="control-label" ng-bind="('Тренер #2. Фамилия, Имя'|localize) + ''"></label>
-                            <div class="controls">
-                                <input class="span12" type="text" ng-model="tabWDSF.couple.otherInfo.otherTrainers" ng-disabled="tabWDSF.formCouple.disabled"></input>
-                            </div>
-                        </div>-->
-                    </div>
-                </form>
-            </div>
-            <!-- =================== -->
-            <!-- Athlete data (WDSF) -->
-            <!-- =================== -->
-            <div class="row-fluid" ng-show="tabWDSF.athlete">
-                <form name="form_wdsfAthleteData">
-                    <!-- Man -->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <label ng-bind="'Участник'|localize" style="font-weight: bold;"></label>
-                        </div>
-                        <p><span class="spnTitle" ng-bind="'Номер WDSF'|localize"></span>: <span ng-bind="tabWDSF.athlete.number"></span></p>
-                        <p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabWDSF.athlete.lastName + ' ' + tabWDSF.athlete.firstName"></span></p>
-                        <div class="control-group" style="">
-                            <label class="control-label spnTitle" style="border: none!important;">{{'Дата рождения'|localize}}<i class="requiredStar" ng-style="{color: (form_wdsfAthleteData.dob.$error.required ? 'red' : 'green')}">*</i></label>
-                            <div class="controls">
-                                <input name="dob" style="width:150px" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabWDSF.athlete.dob" min="'1900-01-01'" show-weeks="false" required ng-disabled="tabWDSF.formSingle.disabled"/>
-                            </div>
-                        </div>
-
-                        <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Часть данных получена от WDSF.'|localize}}</p>
-                        <p style="padding-bottom: 7px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Заполните / измените остальные поля.'|localize}}</p>
-
-                        <div ng-hide="resultTableVisible">
-                            <button type="button" ng-show="tabWDSF.formSingle.btnBackVisible" class="btn btn-small" ng-click="tabWDSF.formSingle.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
-                            <button type="button" ng-show="tabWDSF.formSingle.btnNextVisible" class="btn btn-small" ng-click="tabWDSF.formSingle.next()" ng-disabled="!form_wdsfAthleteData.$valid">{{'Далее'|localize}}&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
-                            <button type="button" ng-show="tabWDSF.formSingle.btnRegistrationVisible" class="btn btn-small" ng-click="confirmDialog.open('WDSF', tabWDSF.registration)" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize):''}}" ng-disabled="competitionTable.selectedItems.length==0 || tabWDSF.regProcessing">
-                                <i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
-                                <i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
-                                &nbsp;&nbsp;{{'Регистрация'|localize}}
-                            </button>
-                            <img ng-show="tabWDSF.regProcessing" style="padding: 5px;" src="img/loader2.gif"/>
-                        </div>
-                    </div>
-                    <!-- Other info -->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <label ng-bind="'Дополнительная информация'|localize" style="font-weight: bold;"></label>
-                        </div>
-                        <p><span class="spnTitle" ng-bind="'Страна'|localize"></span>: <span ng-bind="tabWDSF.athlete.otherInfo.country.name"></span></p>
-                        <div class="row-fluid">
-                            <div class="span6">
-                                <div class="control-group">
-                                    <label class="control-label">{{('Город'|localize)}}</label>
-                                    <div class="controls">
-                                        <input name="city" class="span12" type="text" ng-model="tabWDSF.athlete.otherInfo.city" ng-disabled="tabWDSF.formSingle.disabled"></input>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="span6">
-                                <div class="control-group">
-                                    <label class="control-label">{{'Клуб'|localize}}</label>
-                                    <div class="controls">
-                                        <input name="club" class="span12" type="text" ng-model="tabWDSF.athlete.otherInfo.club" ng-disabled="tabWDSF.formSingle.disabled"></input>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{'Тренер. Фамилия, Имя'|localize}}</label>
-                            <div class="controls">
-                                <input name="mainTrainer" class="span12" type="text" ng-model="tabWDSF.athlete.otherInfo.mainTrainer" ng-disabled="tabWDSF.formSingle.disabled"></input>
-                            </div>
-                        </div>
-                        <!--
-                        <div class="control-group">
-                            <label class="control-label">{{'Тренер #2. Фамилия, Имя'|localize}}</label>
-                            <div class="controls">
-                                <input name="otherTrainers" class="span12" type="text" ng-model="tabWDSF.athlete.otherInfo.otherTrainers" ng-disabled="tabWDSF.formSingle.disabled"></input>
-                            </div>
-                        </div>-->
-                    </div>
-                    <div class="span4">
-                    </div>  
-                </form>
-            </div>
-
-            <div class="row-fluid" ng-show="(tabWDSF.formCouple.btnRegistrationVisible || tabWDSF.formSingle.btnRegistrationVisible) && !resultTableVisible" style="padding-top: 20px; padding-bottom: 0px;">
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('WDSF')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p>  
-            </div>
-            <stcalert data="tabWDSF.alert" style="margin-top: 25px;"/>
-        </tab>
+			<div class="row-fluid" ng-show="(tabUDSR.couple || tabUDSR.athlete) && !resultTableVisible" style="padding-top: 20px; padding-bottom: 0px;">
+				<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
+				<p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('UDSR')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p>  
+			</div>
+			<stcalert data="tabUDSR.alert" style="margin-top: 25px;"/>
+		</tab>
+	
 
 
+		<!-- ================================================================================================================================== -->
+		<!-- WDSF 											            WDSF	                                                           WDSF -->
+		<!-- ================================================================================================================================== -->
+		<tab heading="{{'Регистрация WDSF'|localize}}" ng-show="tabWDSF.visible" active="tabWDSF.active" disabled="tabWDSF.disabled" select="tabWDSF.select()" title="{{tabWDSF.disabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация участников по WDSF номерам'|localize)}}">
+			<!-- ================== -->
+			<!-- Search form (WDSF) -->
+			<!-- ================== -->
+			<form name="form_wdsfSearch" ng-hide="tabWDSF.couple || tabWDSF.athlete">
+				<div class="row-fluid" style="margin-bottom: 5px;">
+					<label ng-bind="'Введите номера классификационных книжек WDSF'|localize" style="font-weight: bold;"></label>
+				</div>
+				<div class="row-fluid">
+					<input type="text" style="height: 16px!important;line-height: 16px!important; width: 150px;" placeholder="{{'Номер партнера'|localize}}" ng-model="tabWDSF.searchForm.manNumber"/>
+					<input type="text" style="height: 16px!important;line-height: 16px!important; width: 150px;" placeholder="{{'Номер партнерши'|localize}}" ng-model="tabWDSF.searchForm.womanNumber"/>
+					<button class="btn btn-small" style="margin-bottom: 10px;" ng-disabled="!form_wdsfSearch.$valid || tabWDSF.searchForm.processing" ng-click="tabWDSF.searchForm.search(tabWDSF.searchForm.manNumber, tabWDSF.searchForm.womanNumber)"><i class="fa fa-search"></i>&nbsp;&nbsp;{{'Поиск'|localize}}</button>					
+					<button class="btn btn-small" style="margin-bottom: 10px;" ng-disabled="!form_wdsfSearch.$dirty || tabWDSF.searchForm.processing" ng-click="tabWDSF.searchForm.clear()"><i class="fa fa-eraser"></i>&nbsp;&nbsp;{{'Очистить'|localize}}</button>						
+					<img ng-show="tabWDSF.searchForm.processing" style="padding: 5px 5px 13px 5px;" src="img/loader2.gif"/>
+				</div>
+				<div class="row-fluid" style="padding-top: 12px; padding-bottom: 2px;">
+					<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Регистрация осуществляется по MIN номерам WDSF. Поиск участников идет по базе данных "World DanceSport Federation".'|localize}}</p>
+					<p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
+					<p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
+					<p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в \"соло\" заполните только одно поле.'|localize}}</p> 
+				</div>
+			</form>
+			<!-- ================== -->
+			<!-- Couple data (WDSF) -->
+			<!-- ================== -->
+			<div class="row-fluid" ng-show="tabWDSF.couple">
+				<form name="form_wdsfCoupleData">
+					<!-- Man -->
+					<div class="span4">
+						<div class="row-fluid" style="margin-bottom: 5px;">
+							<label ng-bind="'Партнер'|localize" style="font-weight: bold;"></label>
+						</div>
+						<p><span class="spnTitle" ng-bind="'Номер WDSF'|localize"></span>: <span ng-bind="tabWDSF.couple.man.number"></span></p>
+						<p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabWDSF.couple.man.lastName + ' ' + tabWDSF.couple.man.firstName"></span></p>
+						<div class="control-group" style="">
+							<label class="control-label spnTitle" style="border: none!important;">{{('Дата рождения'|localize)}}</label>
+							<div class="controls">
+							    <input name="manDob" style="width:150px" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabWDSF.couple.man.dob" min="'1900-01-01'" show-weeks="false" ng-disabled="tabWDSF.formCouple.disabled"/>
+							</div>
+						</div>
+						<div style="position: absolute; width: 300px;">
+							<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Часть данных получена от WDSF.'|localize}}</p>
+							<p style="padding-bottom: 7px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Доп. поля можно не заполнять.'|localize}}</p>
+						</div>
+						<div ng-hide="resultTableVisible" style="padding-top: 70px;">
+							<button type="button" ng-show="tabWDSF.formCouple.btnBackVisible" class="btn btn-small" ng-click="tabWDSF.formCouple.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
+						    <button type="button" ng-show="tabWDSF.formCouple.btnRegistrationVisible" class="btn btn-small" ng-click="confirmDialog.open('WDSF', tabWDSF.registration)" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize):''}}" ng-disabled="competitionTable.selectedItems.length==0 || tabWDSF.regProcessing">
+						    	<i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
+						    	<i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
+						    	&nbsp;&nbsp;{{'Регистрация'|localize}}
+						    </button>
+						    <img ng-show="tabWDSF.regProcessing" style="padding: 5px;" src="img/loader2.gif"/>
+						</div>
+					</div>
+					<!-- Woman -->
+					<div class="span4">
+						<div class="row-fluid" style="margin-bottom: 5px;">
+							<label ng-bind="'Партнерша'|localize" style="font-weight: bold;"></label>
+						</div>
+						<p><span class="spnTitle" ng-bind="'Номер WDSF'|localize"></span>: <span ng-bind="tabWDSF.couple.woman.number"></span></p>
+						<p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabWDSF.couple.woman.lastName + ' ' + tabWDSF.couple.woman.firstName"></span></p>
+						<div class="control-group">
+							<label class="control-label spnTitle" style="border: none!important;">{{('Дата рождения'|localize)}}</label>
+							<div class="controls">
+							    <input name="womanDob" style="width:150px" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabWDSF.couple.woman.dob" min="'1900-01-01'" show-weeks="false" ng-disabled="tabWDSF.formCouple.disabled"/>
+							</div>
+						</div>
+					</div>
+					<!-- Other info -->
+					<div class="span4">
+						<div class="row-fluid" style="margin-bottom: 5px;">
+							<label ng-bind="'Дополнительная информация'|localize" style="font-weight: bold;"></label>
+						</div>
+						<p><span class="spnTitle" ng-bind="('Статус пары'|localize) + ' (WDSF)'"></span>: <span ng-style="{color: tabWDSF.couple.otherInfo.status=='Active' ? 'green' : 'red'}" ng-bind="tabWDSF.couple.otherInfo.status"></span></p>
+						<p><span class="spnTitle" ng-bind="('Возрастная группа пары'|localize) + ' (WDSF)'"></span>: <span ng-bind="tabWDSF.couple.otherInfo.ageCategory"></span></p>
+						<p><span class="spnTitle" ng-bind="'Страна'|localize"></span>: <span ng-bind="tabWDSF.couple.otherInfo.country.name"></span></p>
+						<div class="row-fluid">
+							<div class="span6">
+								<div class="control-group">
+			            			<label class="control-label">{{('Город'|localize)}}</label>
+			            			<div class="controls">
+			            				<input name="city" class="span12" type="text" ng-model="tabWDSF.couple.otherInfo.city" ng-disabled="tabWDSF.formCouple.disabled"></input>
+			            			</div>
+			        			</div>
+			        		</div>
+			        		<div class="span6">
+								<div class="control-group">
+			            			<label class="control-label">{{('Клуб'|localize)}}</label>
+			            			<div class="controls">
+			            				<input name="club" class="span12" type="text" ng-model="tabWDSF.couple.otherInfo.club" ng-disabled="tabWDSF.formCouple.disabled"></input>
+			            			</div>
+			        			</div>
+			        		</div>
+			        	</div>
+				    	<div class="control-group">
+				        	<label class="control-label">{{('Тренер. Фамилия, Имя'|localize)}}</label>
+				        	<div class="controls">
+				    			<input name="mainTrainer" class="span12" type="text" ng-model="tabWDSF.couple.otherInfo.mainTrainer" ng-disabled="tabWDSF.formCouple.disabled"></input>
+		                	</div>
+				    	</div>
+				    	<!--
+				    	<div class="control-group">
+				        	<label class="control-label" ng-bind="('Тренер #2. Фамилия, Имя'|localize) + ''"></label>
+				        	<div class="controls">
+				    			<input class="span12" type="text" ng-model="tabWDSF.couple.otherInfo.otherTrainers" ng-disabled="tabWDSF.formCouple.disabled"></input>
+		                	</div>
+				    	</div>-->
+					</div>
+				</form>
+			</div>
+			<!-- =================== -->
+			<!-- Athlete data (WDSF) -->
+			<!-- =================== -->
+			<div class="row-fluid" ng-show="tabWDSF.athlete">
+				<form name="form_wdsfAthleteData">
+					<!-- Man -->
+					<div class="span4">
+						<div class="row-fluid" style="margin-bottom: 5px;">
+							<label ng-bind="'Участник'|localize" style="font-weight: bold;"></label>
+						</div>
+						<p><span class="spnTitle" ng-bind="'Номер WDSF'|localize"></span>: <span ng-bind="tabWDSF.athlete.number"></span></p>
+						<p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabWDSF.athlete.lastName + ' ' + tabWDSF.athlete.firstName"></span></p>
+						<div class="control-group" style="">
+							<label class="control-label spnTitle" style="border: none!important;">{{'Дата рождения'|localize}}<i class="requiredStar" ng-style="{color: (form_wdsfAthleteData.dob.$error.required ? 'red' : 'green')}">*</i></label>
+							<div class="controls">
+							    <input name="dob" style="width:150px" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabWDSF.athlete.dob" min="'1900-01-01'" show-weeks="false" required ng-disabled="tabWDSF.formSingle.disabled"/>
+							</div>
+						</div>
 
-        <!-- ================================================================================================================================== -->
-        <!-- OTHER                                                      OTHER                                                             OTHER -->
-        <!-- ================================================================================================================================== -->
-        <tab heading="{{'Регистрация других участников'|localize}}" ng-show="tabOTHER.visible" active="tabOTHER.active" disabled="tabOTHER.disabled" select="tabOTHER.select()" title="{{tabOTHER.isabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация других участников'|localize)}}">
-            <!-- =================== -->
-            <!-- Couple data (OTHER) -->
-            <!-- =================== -->
-            <div class="row-fluid" ng-show="tabOTHER.couple">
-                <form name="form_otherCoupleData" style="margin: 0;">
-                    <!-- Man (OTHER)-->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <span style="font-weight: bold;" ng-bind="'Партнер'|localize"></span>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="control-group">
-                                <label class="control-label">{{'Фамилия'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.manLastName.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="manLastName" class="span12" type="text" ng-model="tabOTHER.couple.man.lastName" ng-disabled="tabOTHER.formCouple.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">{{'Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.manFirstName.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="manFirstName" class="span12" type="text" ng-model="tabOTHER.couple.man.firstName" ng-disabled="tabOTHER.formCouple.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="row-fluid">
-                                <div class="span7">
-                                    <div class="control-group">
-                                        <label class="control-label">{{'Дата рождения'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.manDob.$error.required ? 'red' : 'green')}">*</i></label>
-                                        <div class="controls">
-                                            <input name="manDob" class="span12" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabOTHER.couple.man.dob" show-weeks="false" min="'1900-01-01'" ng-disabled="tabOTHER.formCouple.disabled" required/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="span5">
-                                </div>
-                            </div>
-                            <div class="control-group" style="margin-top: 25px;" ng-hide="resultTableVisible">
-                                <div class="controls">
-                                    <button type="button" ng-show="tabOTHER.formCouple.btnBackVisible" class="btn btn-small" ng-click="tabOTHER.formCouple.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
-                                    <button type="button" ng-show="tabOTHER.formCouple.btnNextVisible" class="btn btn-small" ng-click="tabOTHER.formCouple.next()" ng-disabled="!form_otherCoupleData.$valid">{{'Далее'|localize}}&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
-                                    <button type="button" ng-show="tabOTHER.formCouple.btnRegistrationVisible" class="btn btn-small" ng-click="confirmDialog.open('OTHER', tabOTHER.registration)" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize):''}}" ng-disabled="competitionTable.selectedItems.length==0">
-                                        <i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
-                                        <i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
-                                        &nbsp;&nbsp;{{'Регистрация'|localize}}
-                                    </button>
-                                    <label class="checkbox" style="width: 50px;display: inline-block;margin: 0 0 2px 27px;vertical-align: bottom;" ng-show="tournament.isContainsSolo">
-                                        <input type="checkbox" ng-model="tabOTHER.type" ng-true-value="Solo" ng-false-value="Couple" ng-change="tabOTHER.couple=null; tabOTHER.athlete={};" ng-disabled="tabOTHER.formCouple.disabled">{{'Соло'|localize}}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Woman (OTHER)-->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <span style="font-weight: bold;" ng-bind="'Партнерша'|localize"></span>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="control-group">
-                                <label class="control-label">{{'Фамилия'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.womanLastName.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="womanLastName" class="span12" type="text" ng-model="tabOTHER.couple.woman.lastName" ng-disabled="tabOTHER.formCouple.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">{{'Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.womanFirstName.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="womanFirstName" class="span12" type="text" ng-model="tabOTHER.couple.woman.firstName" ng-disabled="tabOTHER.formCouple.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="row-fluid">
-                                <div class="span7">
-                                    <div class="control-group">
-                                        <label class="control-label">{{'Дата рождения'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.womanDob.$error.required ? 'red' : 'green')}">*</i></label>
-                                        <div class="controls">
-                                            <input name="womanDob" class="span12" type="text" datepicker-popup="{{'d MMMM y'|localize}}" min="'1900-01-01'" ng-model="tabOTHER.couple.woman.dob" show-weeks="false" ng-disabled="tabOTHER.formCouple.disabled" required/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="span5">
-                                </div>
-                            </div>
-            
-                        </div>
-                    </div>
-                    <!-- Other info (OTHER) -->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <span style="font-weight: bold;">{{'Дополнительная информация'|localize}}</span>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="row-fluid">
-                                <div class="span7">
-                                    <div class="control-group">
-                                        <label class="control-label">{{('Страна'|localize) + ' (WDSF)'}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.country.$error.required ? 'red' : 'green')}">*</i></label>
-                                        <div class="controls">
-                                            <select name="country" class="span12 pull-right" ng-model="tabOTHER.couple.otherInfo.country.id" ng-options="country.id as country.name for country in countries" ng-disabled="tabOTHER.formCouple.disabled" required>
-                                            </select>           
-                                        </div>
-                                    </div>
-                                </div>    
-                                <div class="span5">    
-                                    <div class="control-group">
-                                        <label class="control-label">{{'Город'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.city.$error.required ? 'red' : 'green')}">*</i></label>
-                                        <div class="controls">
-                                            <input name="city" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.city" ng-disabled="tabOTHER.formCouple.disabled" required></input>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>      
-                            <div class="control-group">
-                                <label class="control-label">{{'Клуб'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.club.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="club" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.club" ng-disabled="tabOTHER.formCouple.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">{{'Тренер #1. Фамилия, Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.mainTrainer.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="mainTrainer" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.mainTrainer" ng-disabled="tabOTHER.formCouple.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">{{'Тренер #2. Фамилия, Имя'|localize}}</label>
-                                <div class="controls">
-                                    <input name="otherTrainers" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.otherTrainers" ng-disabled="tabOTHER.formCouple.disabled"></input>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
+						<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Часть данных получена от WDSF.'|localize}}</p>
+						<p style="padding-bottom: 7px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Заполните / измените остальные поля.'|localize}}</p>
 
-            <!-- =================== -->
-            <!-- Athlete data (OTHER) -->
-            <!-- =================== -->
-            <div class="row-fluid" ng-show="tabOTHER.athlete">
-                <form name="form_otherSingleData" style="margin: 0;">
-                    <!-- Athlete (OTHER) -->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <span style="font-weight: bold;" ng-bind="'Участник'|localize"></span>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="control-group">
-                                <label class="control-label">{{'Фамилия'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.manLastName.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="manLastName" class="span12" type="text" ng-model="tabOTHER.athlete.lastName" ng-disabled="tabOTHER.formSingle.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">{{'Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.manFirstName.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="manFirstName" class="span12" type="text" ng-model="tabOTHER.athlete.firstName" ng-disabled="tabOTHER.formSingle.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="row-fluid">
-                                <div class="span7">
-                                    <div class="control-group">
-                                        <label class="control-label">{{'Дата рождения'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.manDob.$error.required ? 'red' : 'green')}">*</i></label>
-                                        <div class="controls">
-                                            <input name="manDob" class="span12" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabOTHER.athlete.dob" show-weeks="false" min="'1900-01-01'" ng-disabled="tabOTHER.formSingle.disabled" required/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="span5">
-                                    <div class="control-group">
-                                        <label class="control-label">{{'Пол'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.gender.$error.required ? 'red' : 'green')}">*</i></label>
-                                        <select name="gender" class="span12" ng-model="tabOTHER.athlete.gender" ng-options="gender.code as gender.name for gender in tabOTHER.genders" ng-disabled="tabOTHER.formSingle.disabled"  required>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="control-group" ng-hide="resultTableVisible">
-                                <div class="controls" style="margin-top: 25px;">
-                                    <button type="button" ng-show="tabOTHER.formSingle.btnBackVisible" class="btn btn-small" ng-click="tabOTHER.formSingle.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
-                                    <button type="button" ng-show="tabOTHER.formSingle.btnNextVisible" class="btn btn-small" ng-click="tabOTHER.formSingle.next()" ng-disabled="!form_otherSingleData.$valid">{{'Далее'|localize}}&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
-                                    <button type="button" ng-show="tabOTHER.formSingle.btnRegistrationVisible" class="btn btn-small" ng-click="confirmDialog.open('OTHER', tabOTHER.registration)" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize):''}}" ng-disabled="competitionTable.selectedItems.length==0">
-                                        <i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
-                                        <i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
-                                        &nbsp;&nbsp;{{'Регистрация'|localize}}
-                                    </button>
-                                    <label class="checkbox" style="width: 50px;display: inline-block;margin: 0 0 2px 27px;vertical-align: bottom;" >
-                                        <input type="checkbox" ng-model="tabOTHER.type" ng-true-value="Solo" ng-false-value="Couple" ng-change="tabOTHER.athlete=null; tabOTHER.couple={};" ng-disabled="tabOTHER.formSingle.disabled">{{'Соло'|localize}}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Other info (OTHER) -->
-                    <div class="span4">
-                        <div class="row-fluid" style="margin-bottom: 5px;">
-                            <span style="font-weight: bold;">{{'Дополнительная информация'|localize}}</span>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="row-fluid">
-                                <div class="span7">
-                                    <div class="control-group">
-                                        <label class="control-label">{{('Страна'|localize) + ' (WDSF)'}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.country.$error.required ? 'red' : 'green')}">*</i></label>
-                                        <div class="controls">
-                                            <select name="country" class="span12 pull-right" ng-model="tabOTHER.athlete.otherInfo.country.id" ng-options="country.id as country.name for country in countries" ng-disabled="tabOTHER.formSingle.disabled" required>
-                                            </select>           
-                                        </div>
-                                    </div>
-                                </div>    
-                                <div class="span5">    
-                                    <div class="control-group">
-                                        <label class="control-label">{{'Город'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.city.$error.required ? 'red' : 'green')}">*</i></label>
-                                        <div class="controls">
-                                            <input name="city" class="span12" type="text" ng-model="tabOTHER.athlete.otherInfo.city" ng-disabled="tabOTHER.formSingle.disabled" required></input>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>      
-                            <div class="control-group">
-                                <label class="control-label">{{'Клуб'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.club.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="club" class="span12" type="text" ng-model="tabOTHER.athlete.otherInfo.club" ng-disabled="tabOTHER.formSingle.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">{{'Тренер #1. Фамилия, Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.mainTrainer.$error.required ? 'red' : 'green')}">*</i></label>
-                                <div class="controls">
-                                    <input name="mainTrainer" class="span12" type="text" ng-model="tabOTHER.athlete.otherInfo.mainTrainer" ng-disabled="tabOTHER.formSingle.disabled" required></input>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">{{'Тренер #2. Фамилия, Имя'|localize}}</label>
-                                <div class="controls">
-                                    <input name="otherTrainers" class="span12" type="text" ng-model="tabOTHER.athlete.otherInfo.otherTrainers" ng-disabled="tabOTHER.formSingle.disabled"></input>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="span4">
-                    </div>
-                </form>
-            </div>
+						<div ng-hide="resultTableVisible">
+							<button type="button" ng-show="tabWDSF.formSingle.btnBackVisible" class="btn btn-small" ng-click="tabWDSF.formSingle.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
+						    <button type="button" ng-show="tabWDSF.formSingle.btnNextVisible" class="btn btn-small" ng-click="tabWDSF.formSingle.next()" ng-disabled="!form_wdsfAthleteData.$valid">{{'Далее'|localize}}&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
+						    <button type="button" ng-show="tabWDSF.formSingle.btnRegistrationVisible" class="btn btn-small" ng-click="confirmDialog.open('WDSF', tabWDSF.registration)" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize):''}}" ng-disabled="competitionTable.selectedItems.length==0 || tabWDSF.regProcessing">
+						    	<i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
+						    	<i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
+						    	&nbsp;&nbsp;{{'Регистрация'|localize}}
+						    </button>
+						    <img ng-show="tabWDSF.regProcessing" style="padding: 5px;" src="img/loader2.gif"/>
+						</div>
+					</div>
+					<!-- Other info -->
+					<div class="span4">
+						<div class="row-fluid" style="margin-bottom: 5px;">
+							<label ng-bind="'Дополнительная информация'|localize" style="font-weight: bold;"></label>
+						</div>
+						<p><span class="spnTitle" ng-bind="'Страна'|localize"></span>: <span ng-bind="tabWDSF.athlete.otherInfo.country.name"></span></p>
+						<div class="row-fluid">
+							<div class="span6">
+								<div class="control-group">
+			            			<label class="control-label">{{('Город'|localize)}}</label>
+			            			<div class="controls">
+			            				<input name="city" class="span12" type="text" ng-model="tabWDSF.athlete.otherInfo.city" ng-disabled="tabWDSF.formSingle.disabled"></input>
+			            			</div>
+			        			</div>
+			        		</div>
+			        		<div class="span6">
+								<div class="control-group">
+			            			<label class="control-label">{{'Клуб'|localize}}</label>
+			            			<div class="controls">
+			            				<input name="club" class="span12" type="text" ng-model="tabWDSF.athlete.otherInfo.club" ng-disabled="tabWDSF.formSingle.disabled"></input>
+			            			</div>
+			        			</div>
+			        		</div>
+			        	</div>
+				    	<div class="control-group">
+				        	<label class="control-label">{{'Тренер. Фамилия, Имя'|localize}}</label>
+				        	<div class="controls">
+				    			<input name="mainTrainer" class="span12" type="text" ng-model="tabWDSF.athlete.otherInfo.mainTrainer" ng-disabled="tabWDSF.formSingle.disabled"></input>
+		                	</div>
+				    	</div>
+				    	<!--
+				    	<div class="control-group">
+				        	<label class="control-label">{{'Тренер #2. Фамилия, Имя'|localize}}</label>
+				        	<div class="controls">
+				    			<input name="otherTrainers" class="span12" type="text" ng-model="tabWDSF.athlete.otherInfo.otherTrainers" ng-disabled="tabWDSF.formSingle.disabled"></input>
+		                	</div>
+				    	</div>-->
+					</div>
+					<div class="span4">
+					</div>	
+				</form>
+			</div>
 
-            <div class="row-fluid" ng-show="(tabOTHER.formCouple.btnBackVisible || tabOTHER.formSingle.btnBackVisible) && !resultTableVisible" style="padding-top: 5px; padding-bottom: 0px;">
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('OTHER')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p> 
-            </div>
-            <div class="row-fluid" ng-hide="tabOTHER.formCouple.btnBackVisible || tabOTHER.formSingle.btnBackVisible" style="padding-top: 5px; padding-bottom: 0px;">
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Поля отмеченные * обязательны для заполнения.'|localize}}</p>
-                <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
-                <p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
-                <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в \"соло\" нажмите на переключатель.'|localize}}</p> 
-            </div>
-            <stcalert data="tabOTHER.alert" style="margin-top: 25px;"/>
-        </tab>
-    </tabset>
+			<div class="row-fluid" ng-show="(tabWDSF.formCouple.btnRegistrationVisible || tabWDSF.formSingle.btnRegistrationVisible) && !resultTableVisible" style="padding-top: 20px; padding-bottom: 0px;">
+				<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
+				<p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('WDSF')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p>  
+			</div>
+			<stcalert data="tabWDSF.alert" style="margin-top: 25px;"/>
+		</tab>
+
+
+
+		<!-- ================================================================================================================================== -->
+		<!-- OTHER 													    OTHER			                                                  OTHER -->
+		<!-- ================================================================================================================================== -->
+		<tab heading="{{'Регистрация других участников'|localize}}" ng-show="tabOTHER.visible" active="tabOTHER.active" disabled="tabOTHER.disabled" select="tabOTHER.select()" title="{{tabOTHER.isabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация других участников'|localize)}}">
+			<!-- =================== -->
+			<!-- Couple data (OTHER) -->
+			<!-- =================== -->
+			<div class="row-fluid" ng-show="tabOTHER.couple">
+				<form name="form_otherCoupleData" style="margin: 0;">
+					<!-- Man (OTHER)-->
+					<div class="span4">
+				    	<div class="row-fluid" style="margin-bottom: 5px;">
+				    		<span style="font-weight: bold;" ng-bind="'Партнер'|localize"></span>
+				    	</div>
+						<div class="row-fluid">
+							<div class="control-group">
+					            <label class="control-label">{{'Фамилия'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.manLastName.$error.required ? 'red' : 'green')}">*</i></label>
+					            <div class="controls">
+					            	<input name="manLastName" class="span12" type="text" ng-model="tabOTHER.couple.man.lastName" ng-disabled="tabOTHER.formCouple.disabled" required></input>
+					            </div>
+					        </div>
+					        <div class="control-group">
+					            <label class="control-label">{{'Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.manFirstName.$error.required ? 'red' : 'green')}">*</i></label>
+					            <div class="controls">
+					            	<input name="manFirstName" class="span12" type="text" ng-model="tabOTHER.couple.man.firstName" ng-disabled="tabOTHER.formCouple.disabled" required></input>
+					            </div>
+					        </div>
+					        <div class="row-fluid">
+								<div class="span7">
+									<div class="control-group">
+							        	<label class="control-label">{{'Дата рождения'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.manDob.$error.required ? 'red' : 'green')}">*</i></label>
+							        	<div class="controls">
+							            	<input name="manDob" class="span12" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabOTHER.couple.man.dob" show-weeks="false" min="'1900-01-01'" ng-disabled="tabOTHER.formCouple.disabled" required/>
+							        	</div>
+							    	</div>
+							    </div>
+							    <div class="span5">
+							    </div>
+					    	</div>
+					  		<div class="control-group" style="margin-top: 25px;" ng-hide="resultTableVisible">
+					            <div class="controls">
+							        <button type="button" ng-show="tabOTHER.formCouple.btnBackVisible" class="btn btn-small" ng-click="tabOTHER.formCouple.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
+								    <button type="button" ng-show="tabOTHER.formCouple.btnNextVisible" class="btn btn-small" ng-click="tabOTHER.formCouple.next()" ng-disabled="!form_otherCoupleData.$valid">{{'Далее'|localize}}&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
+								    <button type="button" ng-show="tabOTHER.formCouple.btnRegistrationVisible" class="btn btn-small" ng-click="confirmDialog.open('OTHER', tabOTHER.registration)" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize):''}}" ng-disabled="competitionTable.selectedItems.length==0">
+								    	<i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
+								    	<i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
+								    	&nbsp;&nbsp;{{'Регистрация'|localize}}
+								    </button>
+								    <label class="checkbox" style="width: 50px;display: inline-block;margin: 0 0 2px 27px;vertical-align: bottom;" ng-show="tournament.isContainsSolo">
+			    						<input type="checkbox" ng-model="tabOTHER.type" ng-true-value="Solo" ng-false-value="Couple" ng-change="tabOTHER.couple=null; tabOTHER.athlete={};" ng-disabled="tabOTHER.formCouple.disabled">{{'Соло'|localize}}
+			    					</label>
+					            </div>
+					        </div>
+				    	</div>
+					</div>
+					<!-- Woman (OTHER)-->
+					<div class="span4">
+				    	<div class="row-fluid" style="margin-bottom: 5px;">
+				    		<span style="font-weight: bold;" ng-bind="'Партнерша'|localize"></span>
+				    	</div>
+						<div class="row-fluid">
+							<div class="control-group">
+					            <label class="control-label">{{'Фамилия'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.womanLastName.$error.required ? 'red' : 'green')}">*</i></label>
+					            <div class="controls">
+					            	<input name="womanLastName" class="span12" type="text" ng-model="tabOTHER.couple.woman.lastName" ng-disabled="tabOTHER.formCouple.disabled" required></input>
+					            </div>
+					        </div>
+					        <div class="control-group">
+					            <label class="control-label">{{'Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.womanFirstName.$error.required ? 'red' : 'green')}">*</i></label>
+					            <div class="controls">
+					            	<input name="womanFirstName" class="span12" type="text" ng-model="tabOTHER.couple.woman.firstName" ng-disabled="tabOTHER.formCouple.disabled" required></input>
+					            </div>
+					        </div>
+					        <div class="row-fluid">
+								<div class="span7">
+									<div class="control-group">
+							        	<label class="control-label">{{'Дата рождения'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.womanDob.$error.required ? 'red' : 'green')}">*</i></label>
+							        	<div class="controls">
+							            	<input name="womanDob" class="span12" type="text" datepicker-popup="{{'d MMMM y'|localize}}" min="'1900-01-01'" ng-model="tabOTHER.couple.woman.dob" show-weeks="false" ng-disabled="tabOTHER.formCouple.disabled" required/>
+							        	</div>
+							    	</div>
+							    </div>
+							    <div class="span5">
+							    </div>
+					    	</div>
+			
+				    	</div>
+					</div>
+					<!-- Other info (OTHER) -->
+					<div class="span4">
+				    	<div class="row-fluid" style="margin-bottom: 5px;">
+				    		<span style="font-weight: bold;">{{'Дополнительная информация'|localize}}</span>
+				    	</div>
+						<div class="row-fluid">
+							<div class="row-fluid">
+								<div class="span7">
+									<div class="control-group">
+							            <label class="control-label">{{('Страна'|localize) + ' (WDSF)'}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.country.$error.required ? 'red' : 'green')}">*</i></label>
+							            <div class="controls">
+											<select name="country" class="span12 pull-right" ng-model="tabOTHER.couple.otherInfo.country.id" ng-options="country.id as country.name for country in countries" ng-disabled="tabOTHER.formCouple.disabled" required>
+				                			</select>           
+				             			</div>
+							        </div>
+							    </div>    
+							    <div class="span5">    
+							        <div class="control-group">
+							        	<label class="control-label">{{'Город'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.city.$error.required ? 'red' : 'green')}">*</i></label>
+							        	<div class="controls">
+							    			<input name="city" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.city" ng-disabled="tabOTHER.formCouple.disabled" required></input>
+					                	</div>
+							    	</div>
+							    </div>
+							</div>   	
+			        		<div class="control-group">
+					        	<label class="control-label">{{'Клуб'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.club.$error.required ? 'red' : 'green')}">*</i></label>
+					        	<div class="controls">
+					    			<input name="club" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.club" ng-disabled="tabOTHER.formCouple.disabled" required></input>
+			                	</div>
+					    	</div>
+					    	<div class="control-group">
+					        	<label class="control-label">{{'Тренер #1. Фамилия, Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.mainTrainer.$error.required ? 'red' : 'green')}">*</i></label>
+					        	<div class="controls">
+					    			<input name="mainTrainer" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.mainTrainer" ng-disabled="tabOTHER.formCouple.disabled" required></input>
+			                	</div>
+					    	</div>
+					    	<div class="control-group">
+					        	<label class="control-label">{{'Тренер #2. Фамилия, Имя'|localize}}</label>
+					        	<div class="controls">
+					    			<input name="otherTrainers" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.otherTrainers" ng-disabled="tabOTHER.formCouple.disabled"></input>
+			                	</div>
+					    	</div>
+					    </div>
+					</div>
+				</form>
+			</div>
+
+			<!-- =================== -->
+			<!-- Athlete data (OTHER) -->
+			<!-- =================== -->
+			<div class="row-fluid" ng-show="tabOTHER.athlete">
+				<form name="form_otherSingleData" style="margin: 0;">
+					<!-- Athlete (OTHER) -->
+					<div class="span4">
+				    	<div class="row-fluid" style="margin-bottom: 5px;">
+				    		<span style="font-weight: bold;" ng-bind="'Участник'|localize"></span>
+				    	</div>
+						<div class="row-fluid">
+							<div class="control-group">
+					            <label class="control-label">{{'Фамилия'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.manLastName.$error.required ? 'red' : 'green')}">*</i></label>
+					            <div class="controls">
+					            	<input name="manLastName" class="span12" type="text" ng-model="tabOTHER.athlete.lastName" ng-disabled="tabOTHER.formSingle.disabled" required></input>
+					            </div>
+					        </div>
+					        <div class="control-group">
+					            <label class="control-label">{{'Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.manFirstName.$error.required ? 'red' : 'green')}">*</i></label>
+					            <div class="controls">
+					            	<input name="manFirstName" class="span12" type="text" ng-model="tabOTHER.athlete.firstName" ng-disabled="tabOTHER.formSingle.disabled" required></input>
+					            </div>
+					        </div>
+					        <div class="row-fluid">
+								<div class="span7">
+									<div class="control-group">
+							        	<label class="control-label">{{'Дата рождения'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.manDob.$error.required ? 'red' : 'green')}">*</i></label>
+							        	<div class="controls">
+							            	<input name="manDob" class="span12" type="text" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tabOTHER.athlete.dob" show-weeks="false" min="'1900-01-01'" ng-disabled="tabOTHER.formSingle.disabled" required/>
+							        	</div>
+							    	</div>
+							    </div>
+							    <div class="span5">
+								    <div class="control-group">
+							        	<label class="control-label">{{'Пол'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.gender.$error.required ? 'red' : 'green')}">*</i></label>
+							    		<select name="gender" class="span12" ng-model="tabOTHER.athlete.gender" ng-options="gender.code as gender.name for gender in tabOTHER.genders" ng-disabled="tabOTHER.formSingle.disabled"  required>
+	           							</select>
+	           						</div>
+							    </div>
+					    	</div>
+					  		<div class="control-group" ng-hide="resultTableVisible">
+					            <div class="controls" style="margin-top: 25px;">
+							        <button type="button" ng-show="tabOTHER.formSingle.btnBackVisible" class="btn btn-small" ng-click="tabOTHER.formSingle.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
+								    <button type="button" ng-show="tabOTHER.formSingle.btnNextVisible" class="btn btn-small" ng-click="tabOTHER.formSingle.next()" ng-disabled="!form_otherSingleData.$valid">{{'Далее'|localize}}&nbsp;&nbsp;<i class="fa fa-chevron-right"></i></button>
+								    <button type="button" ng-show="tabOTHER.formSingle.btnRegistrationVisible" class="btn btn-small" ng-click="confirmDialog.open('OTHER', tabOTHER.registration)" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize):''}}" ng-disabled="competitionTable.selectedItems.length==0">
+								    	<i class="fa fa-check" style="color: green;" ng-hide="competitionTable.selectedItems.length==0"></i>
+								    	<i class="fa fa-ban" style="color: red;" ng-show="competitionTable.selectedItems.length==0"></i>
+								    	&nbsp;&nbsp;{{'Регистрация'|localize}}
+								    </button>
+								    <label class="checkbox" style="width: 50px;display: inline-block;margin: 0 0 2px 27px;vertical-align: bottom;" >
+			    						<input type="checkbox" ng-model="tabOTHER.type" ng-true-value="Solo" ng-false-value="Couple" ng-change="tabOTHER.athlete=null; tabOTHER.couple={};" ng-disabled="tabOTHER.formSingle.disabled">{{'Соло'|localize}}
+			    					</label>
+					            </div>
+					        </div>
+				    	</div>
+					</div>
+					<!-- Other info (OTHER) -->
+					<div class="span4">
+				    	<div class="row-fluid" style="margin-bottom: 5px;">
+				    		<span style="font-weight: bold;">{{'Дополнительная информация'|localize}}</span>
+				    	</div>
+						<div class="row-fluid">
+							<div class="row-fluid">
+								<div class="span7">
+									<div class="control-group">
+							            <label class="control-label">{{('Страна'|localize) + ' (WDSF)'}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.country.$error.required ? 'red' : 'green')}">*</i></label>
+							            <div class="controls">
+											<select name="country" class="span12 pull-right" ng-model="tabOTHER.athlete.otherInfo.country.id" ng-options="country.id as country.name for country in countries" ng-disabled="tabOTHER.formSingle.disabled" required>
+				                			</select>           
+				             			</div>
+							        </div>
+							    </div>    
+							    <div class="span5">    
+							        <div class="control-group">
+							        	<label class="control-label">{{'Город'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.city.$error.required ? 'red' : 'green')}">*</i></label>
+							        	<div class="controls">
+							    			<input name="city" class="span12" type="text" ng-model="tabOTHER.athlete.otherInfo.city" ng-disabled="tabOTHER.formSingle.disabled" required></input>
+					                	</div>
+							    	</div>
+							    </div>
+							</div>   	
+			        		<div class="control-group">
+					        	<label class="control-label">{{'Клуб'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.club.$error.required ? 'red' : 'green')}">*</i></label>
+					        	<div class="controls">
+					    			<input name="club" class="span12" type="text" ng-model="tabOTHER.athlete.otherInfo.club" ng-disabled="tabOTHER.formSingle.disabled" required></input>
+			                	</div>
+					    	</div>
+					    	<div class="control-group">
+					        	<label class="control-label">{{'Тренер #1. Фамилия, Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherSingleData.mainTrainer.$error.required ? 'red' : 'green')}">*</i></label>
+					        	<div class="controls">
+					    			<input name="mainTrainer" class="span12" type="text" ng-model="tabOTHER.athlete.otherInfo.mainTrainer" ng-disabled="tabOTHER.formSingle.disabled" required></input>
+			                	</div>
+					    	</div>
+					    	<div class="control-group">
+					        	<label class="control-label">{{'Тренер #2. Фамилия, Имя'|localize}}</label>
+					        	<div class="controls">
+					    			<input name="otherTrainers" class="span12" type="text" ng-model="tabOTHER.athlete.otherInfo.otherTrainers" ng-disabled="tabOTHER.formSingle.disabled"></input>
+			                	</div>
+					    	</div>
+					    </div>
+					</div>
+					<div class="span4">
+					</div>
+				</form>
+			</div>
+
+			<div class="row-fluid" ng-show="(tabOTHER.formCouple.btnBackVisible || tabOTHER.formSingle.btnBackVisible) && !resultTableVisible" style="padding-top: 5px; padding-bottom: 0px;">
+				<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
+				<p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('OTHER')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p> 
+			</div>
+			<div class="row-fluid" ng-hide="tabOTHER.formCouple.btnBackVisible || tabOTHER.formSingle.btnBackVisible" style="padding-top: 5px; padding-bottom: 0px;">
+				<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Поля отмеченные * обязательны для заполнения.'|localize}}</p>
+				<p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
+				<p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
+				<p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в \"соло\" нажмите на переключатель.'|localize}}</p> 
+			</div>
+			<stcalert data="tabOTHER.alert" style="margin-top: 25px;"/>
+		</tab>
+	</tabset>
 </div>
 
 <!-- Competitions -->
 <div class="row-fluid" ng-hide="resultTableVisible || (tabUDSR.visible==false && tabWDSF.visible==false && tabOTHER.visible==false)" style="padding-top: 10px;">
-    <div id="divTableCmpButtons" class="row-fluid">
-        <div class="span8">
-            <strong><span ng-bind="competitionTable.caption"></span></strong>
-        </div>
-        <div class="span4">
-            <div id="divTypeOfView" class="btn-group pull-right">
-                <button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.registration.grid.tableShortView" btn-radio="true" ng-bind="'Коротко'|localize" title="{{'Скрывать дополнительные столбцы'|localize}}" ng-click="competitionTable.setHiddenCoulumns(true)"></button>
-                <button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.registration.grid.tableShortView" btn-radio="false" ng-bind="'Детально'|localize" title="{{'Отображать дополнительные столбцы'|localize}}" ng-click="competitionTable.setHiddenCoulumns(false)"></button>
-            </div>
-        </div> 
-    </div>
+	<div id="divTableCmpButtons" class="row-fluid">
+		<div class="span8">
+			<strong><span ng-bind="competitionTable.caption"></span></strong>
+		</div>
+		<div class="span4">
+			<div id="divTypeOfView" class="btn-group pull-right">
+				<button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.registration.grid.tableShortView" btn-radio="true" ng-bind="'Коротко'|localize" title="{{'Скрывать дополнительные столбцы'|localize}}" ng-click="competitionTable.setHiddenCoulumns(true)"></button>
+				<button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.registration.grid.tableShortView" btn-radio="false" ng-bind="'Детально'|localize" title="{{'Отображать дополнительные столбцы'|localize}}" ng-click="competitionTable.setHiddenCoulumns(false)"></button>
+			</div>
+		</div> 
+	</div>
 
-    <div class="row-fluid">
-        <stcgrid
-            id="tableCmp"
-            ng-style="pageStore.registration.gridStyle"
-            grid="pageStore.registration.grid"
-            table-class="table table-bordered table-hover"
-            caption=""
-            columns="competitionTable.columns"
-            items="competitionTable.items"
-            properties="competitionTable.properties"
-            update-items="competitionTable.loadItems(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText)"
+	<div class="row-fluid">
+		<stcgrid
+			id="tableCmp"
+			ng-style="pageStore.registration.gridStyle"
+			grid="pageStore.registration.grid"
+		    table-class="table table-bordered table-hover"
+		    caption=""
+		    columns="competitionTable.columns"
+		    items="competitionTable.items"
+		    properties="competitionTable.properties"
+		    update-items="competitionTable.loadItems(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText)"
 
-            page-curr="competitionTable.pageCurr"
-            page-total="competitionTable.pageTotal"
-            page-size="competitionTable.pageSize"
-            navigator-visible="false"
-            search-hide="false"
+		    page-curr="competitionTable.pageCurr"
+		    page-total="competitionTable.pageTotal"
+		    page-size="competitionTable.pageSize"
+		    navigator-visible="false"
+		    search-hide="false"
 
-            selectable="competitionTable.selectable"
-            selected-items="competitionTable.selectedItems"
-            multi-select-mode="competitionTable.multiSelectMode"
-            on-select="competitionTable.onSelect(item)"
-                
-            action-column-visible="false"
-            action-column-icon="'fa fa-ellipsis-h'"
+		    selectable="competitionTable.selectable"
+		    selected-items="competitionTable.selectedItems"
+		    multi-select-mode="competitionTable.multiSelectMode"
+		    on-select="competitionTable.onSelect(item)"
+				
+			action-column-visible="false"
+		    action-column-icon="'fa fa-ellipsis-h'"
 
-            first-row-action-icon="'fa fa-eye'"
-            first-row-action-title="'Открыть для просмотра'|localize"
-            first-row-action-method="competitionTable.openCompetition(item)"
-                
-            forcibly-update="competitionTable.forciblyUpdate"
-        />
-    </div>
+		    first-row-action-icon="'fa fa-eye'"
+		    first-row-action-title="'Открыть для просмотра'|localize"
+		    first-row-action-method="competitionTable.openCompetition(item)"
+		    	
+			forcibly-update="competitionTable.forciblyUpdate"
+		/>
+	</div>
 
-    <div id="divTableCmpStatus" class="row-fluid" style="text-align: center; width: 300px;" ng-show="competitionTable.itemsStatus != ''">
-        <i ng-bind="competitionTable.itemsStatus"></i>
-    </div>
+	<div id="divTableCmpStatus" class="row-fluid" style="text-align: center; width: 300px;" ng-show="competitionTable.itemsStatus != ''">
+		<i ng-bind="competitionTable.itemsStatus"></i>
+	</div>
 </div>
 
 <div class="row-fluid" ng-show="resultTableVisible">
-    <div class="row-fluid">
-        <button class="btn btn-small" ng-click="resultTableVisible=false; competitionTable.refresh();"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
-    </div>
-    <div class="row-fluid" style="margin-top: 15px;">
-        <strong><span ng-bind="'Результаты регистрации'|localize"></span></strong>&nbsp;&nbsp;
-        <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions(selectedTab)" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a>
-        &nbsp;&nbsp;
-        <a href="" class="cellLink" ng-click="clearAllForms()">{{'Зарегистрировать ещё участников »'|localize}}</a>     
-    </div>
-    <table class="table table-bordered table-hover" style="margin-top: 15px;">
-        <thead>
-            <tr>
-                <th style="text-align: center;"><i class="fa fa-ellipsis-h"></i></th>
-                <th ng-bind="'Информация о регистрации в группу'|localize"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="res in regResponse.results">
-                <td class="tableNumber">
-                    <i class="fa fa-check" ng-show="res.status==1" style="color: green; padding: 4px 3px 4px 5px;"></i>
-                    <i class="fa fa-warning" ng-hide="res.status==1" style="color: red; padding: 4px;"></i>
-                </td>
-                <td><pre ng-bind="getResultTableRow(res)"></pre></td>
-            </tr>
-        </tbody>
-    </table>
+	<div class="row-fluid">
+		<button class="btn btn-small" ng-click="resultTableVisible=false; competitionTable.refresh();"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
+	</div>
+	<div class="row-fluid" style="margin-top: 15px;">
+		<strong><span ng-bind="'Результаты регистрации'|localize"></span></strong>&nbsp;&nbsp;
+		<a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions(selectedTab)" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a>
+		&nbsp;&nbsp;
+		<a href="" class="cellLink" ng-click="clearAllForms()">{{'Зарегистрировать ещё участников »'|localize}}</a>	    
+	</div>
+	<table class="table table-bordered table-hover" style="margin-top: 15px;">
+	    <thead>
+	        <tr>
+	            <th style="text-align: center;"><i class="fa fa-ellipsis-h"></i></th>
+	            <th ng-bind="'Информация о регистрации в группу'|localize"></th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr ng-repeat="res in regResponse.results">
+	            <td class="tableNumber">
+	            	<i class="fa fa-check" ng-show="res.status==1" style="color: green; padding: 4px 3px 4px 5px;"></i>
+	            	<i class="fa fa-warning" ng-hide="res.status==1" style="color: red; padding: 4px;"></i>
+	            </td>
+	            <td><pre ng-bind="getResultTableRow(res)"></pre></td>
+	        </tr>
+	    </tbody>
+	</table>
 </div>
 
 
 
 <div class="row-fluid" ng-hide="menu.devModeIsRelease">
-    <div class="span6">
-        <pre ng-show="tabUDSR.active">
-                СТСР
-                man     woman
-                2864    75367 <a href="" ng-click="tabUDSR.searchForm.manNumber='2864'; tabUDSR.searchForm.womanNumber='75367';">select</a>
-                2915    2890 <a href="" ng-click="tabUDSR.searchForm.manNumber='2915'; tabUDSR.searchForm.womanNumber='2890';">select</a>
-                2934    50810 <a href="" ng-click="tabUDSR.searchForm.manNumber='2934'; tabUDSR.searchForm.womanNumber='50810';">select</a>
-                2938    58251 <a href="" ng-click="tabUDSR.searchForm.manNumber='2938'; tabUDSR.searchForm.womanNumber='58251';">select</a>
-                2974    15153 <a href="" ng-click="tabUDSR.searchForm.manNumber='2974'; tabUDSR.searchForm.womanNumber='15153';">select</a>
-                2977    2962 <a href="" ng-click="tabUDSR.searchForm.manNumber='2977'; tabUDSR.searchForm.womanNumber='2962';">select</a>
-                2978    44604 <a href="" ng-click="tabUDSR.searchForm.manNumber='2978'; tabUDSR.searchForm.womanNumber='44604';">select</a>
-                3071    3092 <a href="" ng-click="tabUDSR.searchForm.manNumber='3071'; tabUDSR.searchForm.womanNumber='3092';">select</a>
-                3072    3104 <a href="" ng-click="tabUDSR.searchForm.manNumber='3072'; tabUDSR.searchForm.womanNumber='3104';">select</a>
-                
-                63156   92779 <a href="" ng-click="tabUDSR.searchForm.manNumber='63156'; tabUDSR.searchForm.womanNumber='92779';">select</a>
-                62743   80619 <a href="" ng-click="tabUDSR.searchForm.manNumber='62743'; tabUDSR.searchForm.womanNumber='80619';">select</a>
-                24069   45633 <a href="" ng-click="tabUDSR.searchForm.manNumber='24069'; tabUDSR.searchForm.womanNumber='45633';">select</a>
-                
-        </pre>
-    </div>
-    <div class="span6">
-        <pre  ng-show="tabWDSF.active">
+	<div class="span6">
+		<pre ng-show="tabUDSR.active">
+				СТСР
+				man		woman
+				2864	75367 <a href="" ng-click="tabUDSR.searchForm.manNumber='2864'; tabUDSR.searchForm.womanNumber='75367';">select</a>
+				2915	2890 <a href="" ng-click="tabUDSR.searchForm.manNumber='2915'; tabUDSR.searchForm.womanNumber='2890';">select</a>
+				2934	50810 <a href="" ng-click="tabUDSR.searchForm.manNumber='2934'; tabUDSR.searchForm.womanNumber='50810';">select</a>
+				2938	58251 <a href="" ng-click="tabUDSR.searchForm.manNumber='2938'; tabUDSR.searchForm.womanNumber='58251';">select</a>
+				2974	15153 <a href="" ng-click="tabUDSR.searchForm.manNumber='2974'; tabUDSR.searchForm.womanNumber='15153';">select</a>
+				2977	2962 <a href="" ng-click="tabUDSR.searchForm.manNumber='2977'; tabUDSR.searchForm.womanNumber='2962';">select</a>
+				2978	44604 <a href="" ng-click="tabUDSR.searchForm.manNumber='2978'; tabUDSR.searchForm.womanNumber='44604';">select</a>
+				3071	3092 <a href="" ng-click="tabUDSR.searchForm.manNumber='3071'; tabUDSR.searchForm.womanNumber='3092';">select</a>
+				3072	3104 <a href="" ng-click="tabUDSR.searchForm.manNumber='3072'; tabUDSR.searchForm.womanNumber='3104';">select</a>
+				
+				63156   92779 <a href="" ng-click="tabUDSR.searchForm.manNumber='63156'; tabUDSR.searchForm.womanNumber='92779';">select</a>
+				62743   80619 <a href="" ng-click="tabUDSR.searchForm.manNumber='62743'; tabUDSR.searchForm.womanNumber='80619';">select</a>
+				24069   45633 <a href="" ng-click="tabUDSR.searchForm.manNumber='24069'; tabUDSR.searchForm.womanNumber='45633';">select</a>
+				
+		</pre>
+	</div>
+	<div class="span6">
+		<pre  ng-show="tabWDSF.active">
 WDSF
-man     woman
+man		woman
 <a href="" ng-click="tabWDSF.searchForm.manNumber='10000877'; tabWDSF.searchForm.womanNumber='10000878';">10000877 10000878 | ADULT</a>
 <a href="" ng-click="tabWDSF.searchForm.manNumber='10028966'; tabWDSF.searchForm.womanNumber='10028967';">10028966 10028967 | ADULT</a>
 <a href="" ng-click="tabWDSF.searchForm.manNumber='10000519'; tabWDSF.searchForm.womanNumber='10000520';">10000519 10000520 | SENIOR I</a>
@@ -724,85 +724,83 @@ man     woman
 <a href="" ng-click="tabWDSF.searchForm.manNumber='10086246'; tabWDSF.searchForm.womanNumber='10086247';">10086246 10086247 | JUNIOR I</a>
 <a href="" ng-click="tabWDSF.searchForm.manNumber='10076712'; tabWDSF.searchForm.womanNumber='10076219';">10076712 10076219 | YOUTH</a>
 <a href="" ng-click="tabWDSF.searchForm.manNumber='10069138'; tabWDSF.searchForm.womanNumber='10069139';">10069138 10069139 | SENIOR I</a>
-<a href="" ng-click="tabWDSF.searchForm.manNumber='10050619'; tabWDSF.searchForm.womanNumber='10050620';">10050619 10050620 | MASTER CLASS II</a>
-
-<a href="" ng-click="tabWDSF.searchForm.manNumber='10027837'; tabWDSF.searchForm.womanNumber='10027838';">10027837 10027838 | SENIOR II</a>       </pre>
-    </div>
+<a href="" ng-click="tabWDSF.searchForm.manNumber='10050619'; tabWDSF.searchForm.womanNumber='10050620';">10050619 10050620 | MASTER CLASS II</a>		</pre>
+	</div>
 </div>
 
 <div class="modal" id="ConfirmDialog" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" ng-show="confirmDialog.visible">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"  ng-click="confirmDialog.visible=false">×</button>
-        <h4 id="ConfirmLabel" ng-bind="'Подтверждение регистрационных данных'|localize"></h4>
-    </div>
-    <div class="modal-body">
-        <div class="row-fluid" ng-hide="confirmDialog.data.type=='OTHER'" > 
-            <div class="row-fluid" ng-show="confirmDialog.data.couple">
-                <p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Партнер'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.couple.man.lastName + ' ' + confirmDialog.data.couple.man.firstName + ' (' + confirmDialog.data.couple.man.number + ')'"></span></p>
-                <p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Партнерша'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.couple.woman.lastName + ' ' + confirmDialog.data.couple.woman.firstName + ' (' + confirmDialog.data.couple.woman.number + ')'"></span></p>    
-            </div>
-            <div class="row-fluid" ng-show="confirmDialog.data.athlete">
-                <p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Участник'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.athlete.lastName + ' ' + confirmDialog.data.athlete.firstName + ' (' + confirmDialog.data.athlete.number + ')'"></span></p>
-            </div>
-        </div>
-        <div class="row-fluid" ng-show="confirmDialog.data.type=='OTHER'" > 
-            <div class="row-fluid" ng-show="confirmDialog.data.couple">
-                <p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Партнер'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.couple.man.lastName + ' ' + confirmDialog.data.couple.man.firstName + ', ' + (confirmDialog.data.couple.man.dob|convertCacheDate:('d MMMM y'|localize))"></span></p>
-                <p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Партнерша'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.couple.woman.lastName + ' ' + confirmDialog.data.couple.woman.firstName + ', ' + (confirmDialog.data.couple.woman.dob|convertCacheDate:('d MMMM y'|localize))"></span></p>    
-            </div>
-            <div class="row-fluid" ng-show="confirmDialog.data.athlete">
-                <p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Участник'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.athlete.lastName + ' ' + confirmDialog.data.athlete.firstName + ', ' + confirmDialog.data.athlete.dob"></span></p>
-            </div>
-        </div>
+ 	<div class="modal-header">
+ 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"  ng-click="confirmDialog.visible=false">×</button>
+		<h4 id="ConfirmLabel" ng-bind="'Подтверждение регистрационных данных'|localize"></h4>
+	</div>
+	<div class="modal-body">
+		<div class="row-fluid" ng-hide="confirmDialog.data.type=='OTHER'" >	
+			<div class="row-fluid" ng-show="confirmDialog.data.couple">
+				<p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Партнер'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.couple.man.lastName + ' ' + confirmDialog.data.couple.man.firstName + ' (' + confirmDialog.data.couple.man.number + ')'"></span></p>
+				<p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Партнерша'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.couple.woman.lastName + ' ' + confirmDialog.data.couple.woman.firstName + ' (' + confirmDialog.data.couple.woman.number + ')'"></span></p>	
+			</div>
+			<div class="row-fluid" ng-show="confirmDialog.data.athlete">
+				<p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Участник'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.athlete.lastName + ' ' + confirmDialog.data.athlete.firstName + ' (' + confirmDialog.data.athlete.number + ')'"></span></p>
+			</div>
+		</div>
+		<div class="row-fluid" ng-show="confirmDialog.data.type=='OTHER'" >	
+			<div class="row-fluid" ng-show="confirmDialog.data.couple">
+				<p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Партнер'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.couple.man.lastName + ' ' + confirmDialog.data.couple.man.firstName + ', ' + (confirmDialog.data.couple.man.dob|convertCacheDate:('d MMMM y'|localize))"></span></p>
+				<p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Партнерша'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.couple.woman.lastName + ' ' + confirmDialog.data.couple.woman.firstName + ', ' + (confirmDialog.data.couple.woman.dob|convertCacheDate:('d MMMM y'|localize))"></span></p>	
+			</div>
+			<div class="row-fluid" ng-show="confirmDialog.data.athlete">
+				<p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Участник'|localize) + ':'"></span> <span ng-bind="confirmDialog.data.athlete.lastName + ' ' + confirmDialog.data.athlete.firstName + ', ' + confirmDialog.data.athlete.dob"></span></p>
+			</div>
+		</div>
 
-        <br>
+		<br>
 
-        <p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Группы'|localize) + ':'"></span></p>
-        <p style="margin: 0 0 2px;" ng-repeat="cmp in competitionTable.selectedItems">
-            <span ng-bind="($index+1) + '. ' + (cmp.startDate|convertCacheDate:('d MMMM y'|localize)) + '. ' + cmp.name + ', ' + cmp.price + ' ' + ('руб.'|localize)"></span>
-        </p>
+		<p style="margin: 0 0 2px;"><span style="font-weight: bold;" ng-bind="('Группы'|localize) + ':'"></span></p>
+		<p style="margin: 0 0 2px;" ng-repeat="cmp in competitionTable.selectedItems">
+			<span ng-bind="($index+1) + '. ' + (cmp.startDate|convertCacheDate:('d MMMM y'|localize)) + '. ' + cmp.name + ', ' + cmp.price + ' ' + ('руб.'|localize)"></span>
+		</p>
 
-        <br>
+		<br>
 
-        <p  style="margin: 0 0 2px; text-align: justify;" ng-bind="'После завершения регистрации перейдите на страницу с группами пары / участника, там вы сможете выбрать необходимые группы и передать данные в платежную систему.'|localize"></p>
-        
-        <br>
-        
-        <button type="button" class="btn btn-small" ng-click="confirmDialog.apply(); confirmDialog.close();"><i class="fa fa-floppy-o"></i>&nbsp;{{('Зарегистрировать'|localize)}}</button>
-        <button type="button" class="btn btn-small pull-right" ng-click="confirmDialog.close();"><i class="fa fa-ban"></i>&nbsp;{{('Отмена'|localize)}}</button>
-        <br>
+		<p  style="margin: 0 0 2px; text-align: justify;" ng-bind="'После завершения регистрации перейдите на страницу с группами пары / участника, там вы сможете выбрать необходимые группы и передать данные в платежную систему.'|localize"></p>
+   		
+   		<br>
+   		
+   		<button type="button" class="btn btn-small" ng-click="confirmDialog.apply(); confirmDialog.close();"><i class="fa fa-floppy-o"></i>&nbsp;{{('Зарегистрировать'|localize)}}</button>
+   		<button type="button" class="btn btn-small pull-right" ng-click="confirmDialog.close();"><i class="fa fa-ban"></i>&nbsp;{{('Отмена'|localize)}}</button>
+    	<br>
     </div>
 </div>
 
 <div class="row-fluid" ng-show="selectedTab=='UDSR' && !menu.devModeIsRelease">
-    <div class="span6">
-        Couple
-        <pre>{{tabUDSR.couple|json}}</pre>
-    </div>
-    <div class="span6">
-        Athlete
-        <pre>{{tabUDSR.athlete|json}}</pre> 
-    </div>
+	<div class="span6">
+		Couple
+		<pre>{{tabUDSR.couple|json}}</pre>
+	</div>
+	<div class="span6">
+		Athlete
+		<pre>{{tabUDSR.athlete|json}}</pre>	
+	</div>
 </div>
 
 <div class="row-fluid" ng-show="selectedTab=='WDSF' && !menu.devModeIsRelease">
-    <div class="span6">
-        Couple
-        <pre>{{tabWDSF.couple|json}}</pre>
-    </div>
-    <div class="span6">
-        Athlete
-        <pre>{{tabWDSF.athlete|json}}</pre> 
-    </div>
+	<div class="span6">
+		Couple
+		<pre>{{tabWDSF.couple|json}}</pre>
+	</div>
+	<div class="span6">
+		Athlete
+		<pre>{{tabWDSF.athlete|json}}</pre>	
+	</div>
 </div>
 
 <div class="row-fluid" ng-show="selectedTab=='OTHER' && !menu.devModeIsRelease">
-    <div class="span6">
-        Couple
-        <pre>{{tabOTHER.couple|json}}</pre>
-    </div>
-    <div class="span6">
-        Athlete
-        <pre>{{tabOTHER.athlete|json}}</pre>    
-    </div>
+	<div class="span6">
+		Couple
+		<pre>{{tabOTHER.couple|json}}</pre>
+	</div>
+	<div class="span6">
+		Athlete
+		<pre>{{tabOTHER.athlete|json}}</pre>	
+	</div>
 </div>

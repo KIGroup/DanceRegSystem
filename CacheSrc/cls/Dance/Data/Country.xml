@@ -39,7 +39,7 @@ WDSF Countries</Description>
 <Implementation><![CDATA[
 	set id = ""
 	
-	&sql(SELECT %NOLOCK country.ID INTO :id
+	&sql(SELECT country.ID INTO :id
 		 FROM Dance_Data.Country as country INNER JOIN
 		 Dance_Data_Localization.LTextValue as ltval ON country.Name = ltval.LText
 		 WHERE ltval.Value = :name)

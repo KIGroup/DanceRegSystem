@@ -162,7 +162,6 @@ Imported competitions from other system</Description>
 					if (proxy.dancerClasses.GetAt(cc).code = 7){
 						continue
 					}
-					
 					set proxy.dancerClasses.GetAt(cc).selected = $$$YES
 				}
 			}

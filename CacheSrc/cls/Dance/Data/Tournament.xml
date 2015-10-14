@@ -255,6 +255,120 @@ Tournaments</Description>
 <Unique>1</Unique>
 </Index>
 
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.TournamentD</DataLocation>
+<DefaultData>TournamentDefaultData</DefaultData>
+<IdLocation>^Dance.Data.TournamentD</IdLocation>
+<IndexLocation>^Dance.Data.TournamentI</IndexLocation>
+<StreamLocation>^Dance.Data.TournamentS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="TournamentDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Title</Value>
+</Value>
+<Value name="3">
+<Value>StartDate</Value>
+</Value>
+<Value name="4">
+<Value>EndDate</Value>
+</Value>
+<Value name="5">
+<Value>OrganizerSite</Value>
+</Value>
+<Value name="6">
+<Value>TClass</Value>
+</Value>
+<Value name="7">
+<Value>Name</Value>
+</Value>
+<Value name="8">
+<Value>TRank</Value>
+</Value>
+<Value name="9">
+<Value>TStatus</Value>
+</Value>
+<Value name="10">
+<Value>OrganizerInfo</Value>
+</Value>
+<Value name="11">
+<Value>Country</Value>
+</Value>
+<Value name="12">
+<Value>City</Value>
+</Value>
+<Value name="13">
+<Value>TournirId</Value>
+</Value>
+<Value name="14">
+<Value>TournirIdExt</Value>
+</Value>
+<Value name="15">
+<Value>IdInternal</Value>
+</Value>
+<Value name="16">
+<Value>Hash</Value>
+</Value>
+<Value name="17">
+<Value>IdExternal</Value>
+</Value>
+<Value name="18">
+<Value>IsRemoved</Value>
+</Value>
+<Value name="19">
+<Value>IsActive</Value>
+</Value>
+<Value name="20">
+<Value>FullName</Value>
+</Value>
+<Value name="21">
+<Value>TabUDSRAllowed</Value>
+</Value>
+<Value name="22">
+<Value>TabWDSFAllowed</Value>
+</Value>
+<Value name="23">
+<Value>TabOtherAllowed</Value>
+</Value>
+<Value name="24">
+<Value>AccessCode</Value>
+</Value>
+<Value name="25">
+<Value>AnnouncementUrl</Value>
+</Value>
+<Value name="26">
+<Value>InfoUrl</Value>
+</Value>
+<Value name="27">
+<Value>AdditionInfoUrl</Value>
+</Value>
+<Value name="28">
+<Value>ParticipantsCount</Value>
+</Value>
+<Value name="29">
+<Value>ParticipantsUniqueCount</Value>
+</Value>
+<Value name="30">
+<Value>PaymentsCount</Value>
+</Value>
+<Value name="31">
+<Value>PaymentsUniqueCount</Value>
+</Value>
+<Value name="32">
+<Value>IsContainsSolo</Value>
+</Value>
+<Value name="33">
+<Value>IsContainsLimit</Value>
+</Value>
+<Value name="34">
+<Value>Currency</Value>
+</Value>
+</Data>
+</Storage>
+
 <Index name="IdExternalIdx">
 <Properties>IdExternal</Properties>
 <Unique>1</Unique>
@@ -702,119 +816,5 @@ Check update privilege</Description>
     quit status
 ]]></Implementation>
 </Method>
-
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Data.TournamentD</DataLocation>
-<DefaultData>TournamentDefaultData</DefaultData>
-<IdLocation>^Dance.Data.TournamentD</IdLocation>
-<IndexLocation>^Dance.Data.TournamentI</IndexLocation>
-<StreamLocation>^Dance.Data.TournamentS</StreamLocation>
-<ExtentSize>100000</ExtentSize>
-<Data name="TournamentDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>Title</Value>
-</Value>
-<Value name="3">
-<Value>StartDate</Value>
-</Value>
-<Value name="4">
-<Value>EndDate</Value>
-</Value>
-<Value name="5">
-<Value>OrganizerSite</Value>
-</Value>
-<Value name="6">
-<Value>TClass</Value>
-</Value>
-<Value name="7">
-<Value>Name</Value>
-</Value>
-<Value name="8">
-<Value>TRank</Value>
-</Value>
-<Value name="9">
-<Value>TStatus</Value>
-</Value>
-<Value name="10">
-<Value>OrganizerInfo</Value>
-</Value>
-<Value name="11">
-<Value>Country</Value>
-</Value>
-<Value name="12">
-<Value>City</Value>
-</Value>
-<Value name="13">
-<Value>TournirId</Value>
-</Value>
-<Value name="14">
-<Value>TournirIdExt</Value>
-</Value>
-<Value name="15">
-<Value>IdInternal</Value>
-</Value>
-<Value name="16">
-<Value>Hash</Value>
-</Value>
-<Value name="17">
-<Value>IdExternal</Value>
-</Value>
-<Value name="18">
-<Value>IsRemoved</Value>
-</Value>
-<Value name="19">
-<Value>IsActive</Value>
-</Value>
-<Value name="20">
-<Value>FullName</Value>
-</Value>
-<Value name="21">
-<Value>TabUDSRAllowed</Value>
-</Value>
-<Value name="22">
-<Value>TabWDSFAllowed</Value>
-</Value>
-<Value name="23">
-<Value>TabOtherAllowed</Value>
-</Value>
-<Value name="24">
-<Value>AccessCode</Value>
-</Value>
-<Value name="25">
-<Value>AnnouncementUrl</Value>
-</Value>
-<Value name="26">
-<Value>InfoUrl</Value>
-</Value>
-<Value name="27">
-<Value>AdditionInfoUrl</Value>
-</Value>
-<Value name="28">
-<Value>IsContainsSolo</Value>
-</Value>
-<Value name="29">
-<Value>IsContainsLimit</Value>
-</Value>
-<Value name="30">
-<Value>ParticipantsCount</Value>
-</Value>
-<Value name="31">
-<Value>ParticipantsUniqueCount</Value>
-</Value>
-<Value name="32">
-<Value>PaymentsCount</Value>
-</Value>
-<Value name="33">
-<Value>PaymentsUniqueCount</Value>
-</Value>
-<Value name="34">
-<Value>Currency</Value>
-</Value>
-</Data>
-</Storage>
 </Class>
 </Export>

@@ -144,9 +144,9 @@ Create or Update object</Description>
     }
     
     if $$$ISOK(st){
-        d ##class(Dance.Data.Tournament).UpdateAllTournaments()
-    }
-            
+        do ##class(Dance.Data.Tournament).UpdateAllTournaments()
+    }  
+         
     quit st
 ]]></Implementation>
 </Method>

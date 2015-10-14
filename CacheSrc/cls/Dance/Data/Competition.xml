@@ -321,6 +321,100 @@ Participants count in the competition</Description>
 ]]></Implementation>
 </Method>
 
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.CompetitionD</DataLocation>
+<DefaultData>CompetitionDefaultData</DefaultData>
+<IdLocation>^Dance.Data.CompetitionD</IdLocation>
+<IndexLocation>^Dance.Data.CompetitionI</IndexLocation>
+<StreamLocation>^Dance.Data.CompetitionS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="AgeCategories">
+<Attribute>AgeCategories</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"AgeCategories"</Subscript>
+</Data>
+<Data name="CompetitionDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Tournament</Value>
+</Value>
+<Value name="3">
+<Value>StartDate</Value>
+</Value>
+<Value name="4">
+<Value>StartTime</Value>
+</Value>
+<Value name="5">
+<Value>Name</Value>
+</Value>
+<Value name="6">
+<Value>Discipline</Value>
+</Value>
+<Value name="7">
+<Value>Price</Value>
+</Value>
+<Value name="8">
+<Value>Currency</Value>
+</Value>
+<Value name="9">
+<Value>AgeCategory</Value>
+</Value>
+<Value name="10">
+<Value>TournamentUDSRID</Value>
+</Value>
+<Value name="11">
+<Value>GroupUDSRID</Value>
+</Value>
+<Value name="12">
+<Value>GroupUDSRIDExt</Value>
+</Value>
+<Value name="13">
+<Value>Limit</Value>
+</Value>
+<Value name="14">
+<Value>Solo</Value>
+</Value>
+<Value name="15">
+<Value>Type</Value>
+</Value>
+<Value name="16">
+<Value>IsInternational</Value>
+</Value>
+<Value name="17">
+<Value>IdInternal</Value>
+</Value>
+<Value name="18">
+<Value>IdExternal</Value>
+</Value>
+<Value name="19">
+<Value>IsActive</Value>
+</Value>
+<Value name="20">
+<Value>IdWDSF</Value>
+</Value>
+<Value name="21">
+<Value>WDSF</Value>
+</Value>
+<Value name="22">
+<Value>IsClosed</Value>
+</Value>
+<Value name="23">
+<Value>ParticipantsCount</Value>
+</Value>
+<Value name="24">
+<Value>PaymentsCount</Value>
+</Value>
+</Data>
+<Data name="DancerClasses">
+<Attribute>DancerClasses</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"DancerClasses"</Subscript>
+</Data>
+</Storage>
+
 <Method name="GetPaymentsCount">
 <Description>
 Payments</Description>
@@ -428,99 +522,5 @@ Payments</Description>
     quit $$$NO
 ]]></Implementation>
 </Method>
-
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Data.CompetitionD</DataLocation>
-<DefaultData>CompetitionDefaultData</DefaultData>
-<IdLocation>^Dance.Data.CompetitionD</IdLocation>
-<IndexLocation>^Dance.Data.CompetitionI</IndexLocation>
-<StreamLocation>^Dance.Data.CompetitionS</StreamLocation>
-<ExtentSize>100000</ExtentSize>
-<Data name="AgeCategories">
-<Attribute>AgeCategories</Attribute>
-<Structure>subnode</Structure>
-<Subscript>"AgeCategories"</Subscript>
-</Data>
-<Data name="CompetitionDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>Tournament</Value>
-</Value>
-<Value name="3">
-<Value>StartDate</Value>
-</Value>
-<Value name="4">
-<Value>StartTime</Value>
-</Value>
-<Value name="5">
-<Value>Name</Value>
-</Value>
-<Value name="6">
-<Value>Discipline</Value>
-</Value>
-<Value name="7">
-<Value>Price</Value>
-</Value>
-<Value name="8">
-<Value>Currency</Value>
-</Value>
-<Value name="9">
-<Value>AgeCategory</Value>
-</Value>
-<Value name="10">
-<Value>TournamentUDSRID</Value>
-</Value>
-<Value name="11">
-<Value>GroupUDSRID</Value>
-</Value>
-<Value name="12">
-<Value>GroupUDSRIDExt</Value>
-</Value>
-<Value name="13">
-<Value>Limit</Value>
-</Value>
-<Value name="14">
-<Value>Solo</Value>
-</Value>
-<Value name="15">
-<Value>Type</Value>
-</Value>
-<Value name="16">
-<Value>IsInternational</Value>
-</Value>
-<Value name="17">
-<Value>IdInternal</Value>
-</Value>
-<Value name="18">
-<Value>IdExternal</Value>
-</Value>
-<Value name="19">
-<Value>IsActive</Value>
-</Value>
-<Value name="20">
-<Value>IdWDSF</Value>
-</Value>
-<Value name="21">
-<Value>WDSF</Value>
-</Value>
-<Value name="22">
-<Value>IsClosed</Value>
-</Value>
-<Value name="23">
-<Value>ParticipantsCount</Value>
-</Value>
-<Value name="24">
-<Value>PaymentsCount</Value>
-</Value>
-</Data>
-<Data name="DancerClasses">
-<Attribute>DancerClasses</Attribute>
-<Structure>subnode</Structure>
-<Subscript>"DancerClasses"</Subscript>
-</Data>
-</Storage>
 </Class>
 </Export>

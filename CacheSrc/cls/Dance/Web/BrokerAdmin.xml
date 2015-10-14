@@ -73,7 +73,6 @@ Protected REST URLs</Description>
 
 <!-- All currencies -->
 <Route Method="GET" Url="/currency" Call="Dance.Web.JsonAdmin:GetCurrencies"/>
-
 </Routes>
 ]]></Data>
 </XData>

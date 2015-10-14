@@ -161,7 +161,7 @@
 <Implementation><![CDATA[
     set id = ""
 
-    &sql(SELECT %NOLOCK ID INTO :id
+    &sql(SELECT ID INTO :id
          FROM Dance_Data.ParticipantCoupleOther 
          WHERE Competition = :filter.competitionId 
                AND

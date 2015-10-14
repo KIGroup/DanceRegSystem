@@ -30,8 +30,6 @@
 </Index>
 
 <Method name="CreateByUDSR">
-<Description>
-Создать</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec><![CDATA[coupleUDSR:CoupleUDSR,&st:%Status]]></FormalSpec>
 <ReturnType>MatchingCoupleUDSRWDSF</ReturnType>
@@ -71,7 +69,10 @@
 	catch(ex){
 		TROLLBACK
 		set st = ex.AsStatus()
+		do ##class(Dance.Utils.Journal).Create("Log", "MatchingCoupleUDSRWDSF CreateByUDSR", "st="_$SYSTEM.Status.GetErrorText(st))
 	}
+	
+	do ..FixLocalization()
 	
 	quit match
 ]]></Implementation>
@@ -99,8 +100,6 @@
 		set udsrManNumber = ""
 		set udsrWomanNumber = ""
 		
-		do ##class(Dance.Utils.Journal).Create("Log", "Matching couple", "manLN="_manLastName_"; manFN="_manFirstName_"; womanLN="_womanLastName_"; womanFN="_womanFirstName)
-		
 		&sql(DECLARE ManCur CURSOR FOR 
 			 SELECT person.Number
 		 	 FROM Dance_Data.PersonUDSR as person 
@@ -117,8 +116,6 @@
 			&sql(FETCH ManCur INTO :udsrManNumber) 
 			quit:(SQLCODE '= 0)
 			
-			do ##class(Dance.Utils.Journal).Create("Log", "Matching couple", "udsrManNumber="_udsrManNumber)
-
 			set womanUDSR = ##class(PersonUDSR).NumberUDSRIdxOpen($GET(^Dance.Data.ManPartnersUDSR(udsrManNumber)))
 			if $ISOBJECT(womanUDSR) && (womanUDSR.LastName.GetValueByLang("en") = womanLastName) && (womanUDSR.FirstName.GetValueByLang("en") = womanFirstName){
 				set udsrWomanNumber = womanUDSR.Number
@@ -126,14 +123,13 @@
 			}
 		}
 		&sql(CLOSE ManCur)
-		
+	
 	
 		set coupleUDSR = ##class(CoupleUDSR).GetByNumbers(udsrManNumber, udsrWomanNumber)
 		if '$ISOBJECT(coupleUDSR){
 			$$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_CoupleUDSRNotFoundByCoupleWDSFFullName"))
 		}
 		
-		do ##class(Dance.Utils.Journal).Create("Log", "Matching couple", "coupleUDSR="_coupleUDSR.%Id())
 		$$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
 		$$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
 		$$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
@@ -149,7 +145,7 @@
 	catch(ex){
 		TROLLBACK 1
 		set st = ex.AsStatus()
-		do ##class(Dance.Utils.Journal).Create("Log", "Matching couple", $SYSTEM.Status.GetErrorText(ex.AsStatus()))
+		do ##class(Dance.Utils.Journal).Create("Log", "MatchingCoupleUDSRWDSF CreateByWDSF", "st="_$SYSTEM.Status.GetErrorText(st))
 	}
 	
 	do ..FixLocalization()
@@ -168,7 +164,7 @@ do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
 		TSTART
 		
 		&sql(DECLARE MtCur CURSOR FOR 
-			 SELECT %NOLOCK UDSR, WDSF
+			 SELECT UDSR, WDSF
 		 	 FROM Dance_Data.MatchingCoupleUDSRWDSF
 		 	 WHERE UDSR->Man->LastName->Value <> WDSF->Man->LastName->Value)	
 		&sql(OPEN MtCur)
@@ -198,28 +194,6 @@ do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
 ]]></Implementation>
 </Method>
 
-<Method name="GetWDSFCoupleIDByUDSR">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>coupleUDSRId:%String</FormalSpec>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[
-	set coupleId = ""
-	&sql(SELECT %NOLOCK  WDSF INTO :coupleId FROM Dance_Data.MatchingCoupleUDSRWDSF WHERE UDSR = :coupleUDSRId)
-	quit coupleId
-]]></Implementation>
-</Method>
-
-<Method name="GetUDSRCoupleIDByWDSF">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>coupleWDSFId:%String</FormalSpec>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[
-	set coupleId = ""
-	&sql(SELECT UDSR INTO :coupleId FROM Dance_Data.MatchingCoupleUDSRWDSF WHERE WDSF = :coupleWDSFId)
-	quit coupleId
-]]></Implementation>
-</Method>
-
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^Dance.Data.MatchingCouF955D</DataLocation>
@@ -240,5 +214,27 @@ do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
 </Value>
 </Data>
 </Storage>
+
+<Method name="GetWDSFCoupleIDByUDSR">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>coupleUDSRId:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set coupleId = ""
+	&sql(SELECT WDSF INTO :coupleId FROM Dance_Data.MatchingCoupleUDSRWDSF WHERE UDSR = :coupleUDSRId)
+	quit coupleId
+]]></Implementation>
+</Method>
+
+<Method name="GetUDSRCoupleIDByWDSF">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>coupleWDSFId:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set coupleId = ""
+	&sql(SELECT UDSR INTO :coupleId FROM Dance_Data.MatchingCoupleUDSRWDSF WHERE WDSF = :coupleWDSFId)
+	quit coupleId
+]]></Implementation>
+</Method>
 </Class>
 </Export>

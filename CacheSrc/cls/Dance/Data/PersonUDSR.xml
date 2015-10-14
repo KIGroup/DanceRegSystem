@@ -103,6 +103,7 @@ Date of birth</Description>
             set person.LastName =  ##class(Dance.Data.Localization.LText).Create($P($LIST(propList, 2)," ",1), "Dance.Data.Localization.Translation;PersonLTextValue")      
             set person.FirstName =  ##class(Dance.Data.Localization.LText).Create($P($LIST(propList, 2)," ",2), "Dance.Data.Localization.Translation;PersonLTextValue")     
             
+            
             //11 Фио на англ. Пусть и для других языков будет на анлийском
             do person.LastName.SetValueByLang($P($LIST(propList, 11)," ",1), "en")
             do person.FirstName.SetValueByLang($P($LIST(propList, 11)," ",2), "en")

@@ -133,8 +133,7 @@ Public REST URLs</Description>
 	
 	
 <Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/participant" Call="Dance.Web.ReportTournamentParticipants:GetFileByAccessCode"/>
-<Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/payer" Call="Dance.Web.ReportTournamentPayers:GetFileByAccessCode"/>
-	
+<Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/payer" Call="Dance.Web.ReportTournamentPayers:GetFileByAccessCode"/>	
 </Routes>
 ]]></Data>
 </XData>

@@ -359,20 +359,20 @@ Change IsActive property to 0</Description>
 <FormalSpec>prtId:%String,prtObjKey:%String,trnId:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-    set count = ..GetCompetitionsCountForPrtObject(prtObjKey, trnId)    
+    set count = ..GetCompetitionsCountForPrtObject(prtObjKey, trnId, "")    
     
     set prtObjId = $P(prtObjKey, "@", 2)
     if (##class(ParticipantCoupleUDSR).%ExistsId(prtId)) && (##class(MatchingCoupleUDSRWDSF).UDSRIdxExists(prtObjId)){
         set wdsfCoupleId = ##class(MatchingCoupleUDSRWDSF).GetWDSFCoupleIDByUDSR(prtObjId)
         set prtObjWDSFKey = ##class(CoupleWDSF).%ClassName(1)_"@"_wdsfCoupleId
         
-        set count = count + ..GetCompetitionsCountForPrtObject(prtObjWDSFKey, trnId)    
+        set count = count + ..GetCompetitionsCountForPrtObject(prtObjWDSFKey, trnId, prtObjKey)    
     }
     elseif (##class(ParticipantCoupleWDSF).%ExistsId(prtId)) && (##class(MatchingCoupleUDSRWDSF).WDSFIdxExists(prtObjId)){
         set udsrCoupleId = ##class(MatchingCoupleUDSRWDSF).GetUDSRCoupleIDByWDSF(prtObjId)
         set prtObjUDSRKey = ##class(CoupleUDSR).%ClassName(1)_"@"_udsrCoupleId
         
-        set count = count + ..GetCompetitionsCountForPrtObject(prtObjUDSRKey, trnId)
+        set count = count + ..GetCompetitionsCountForPrtObject(prtObjUDSRKey, trnId, prtObjKey)
     }
     
     quit count
@@ -383,12 +383,15 @@ Change IsActive property to 0</Description>
 <Description>
 Количество соревнований  определенного участника в турнире</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>prtObjKey:%String,trnId:%String</FormalSpec>
+<FormalSpec>prtObjKey:%String,trnId:%String,withOutPrtObj:%String</FormalSpec>
 <Implementation><![CDATA[
     set count = 0   
     &sql(SELECT %NOLOCK COUNT(ID) INTO :count 
          FROM Dance_Data.Participant 
-         WHERE Tournament = :trnId AND PrtObjKey = :prtObjKey AND IsActive = 1)
+         WHERE Tournament = :trnId AND PrtObjKey = :prtObjKey AND IsActive = 1 AND Competition NOT IN 
+            (SELECT %NOLOCK Competition 
+             FROM Dance_Data.Participant 
+             WHERE Tournament = :trnId AND PrtObjKey = :withOutPrtObj AND IsActive = 1))
     quit count
 ]]></Implementation>
 </Method>
@@ -430,6 +433,63 @@ ClassName@ID - объекта участника</Description>
     quit key
 ]]></Implementation>
 </Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.ParticipantD</DataLocation>
+<DefaultData>ParticipantDefaultData</DefaultData>
+<IdLocation>^Dance.Data.ParticipantD</IdLocation>
+<IndexLocation>^Dance.Data.ParticipantI</IndexLocation>
+<StreamLocation>^Dance.Data.ParticipantS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="ParticipantDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Created</Value>
+</Value>
+<Value name="3">
+<Value>Recorder</Value>
+</Value>
+<Value name="4">
+<Value>Tournament</Value>
+</Value>
+<Value name="5">
+<Value>Competition</Value>
+</Value>
+<Value name="6">
+<Value>FullName</Value>
+</Value>
+<Value name="7">
+<Value>Country</Value>
+</Value>
+<Value name="8">
+<Value>City</Value>
+</Value>
+<Value name="9">
+<Value>Club</Value>
+</Value>
+<Value name="10">
+<Value>MainTrainer</Value>
+</Value>
+<Value name="11">
+<Value>OtherTrainers</Value>
+</Value>
+<Value name="12">
+<Value>IsActive</Value>
+</Value>
+<Value name="13">
+<Value>PrtObjKey</Value>
+</Value>
+<Value name="14">
+<Value>PrtObjPaymentsCount</Value>
+</Value>
+<Value name="15">
+<Value>PrtObjCompetitionsCount</Value>
+</Value>
+</Data>
+</Storage>
 
 <Method name="UpdatePrtKey">
 <Description>
@@ -572,61 +632,5 @@ do ##class(Dance.Data.Participant).UpdatePrtKey()</Description>
     quit $$$NO
 ]]></Implementation>
 </Method>
-
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Data.ParticipantD</DataLocation>
-<DefaultData>ParticipantDefaultData</DefaultData>
-<IdLocation>^Dance.Data.ParticipantD</IdLocation>
-<IndexLocation>^Dance.Data.ParticipantI</IndexLocation>
-<StreamLocation>^Dance.Data.ParticipantS</StreamLocation>
-<Data name="ParticipantDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>Created</Value>
-</Value>
-<Value name="3">
-<Value>Recorder</Value>
-</Value>
-<Value name="4">
-<Value>Tournament</Value>
-</Value>
-<Value name="5">
-<Value>Competition</Value>
-</Value>
-<Value name="6">
-<Value>FullName</Value>
-</Value>
-<Value name="7">
-<Value>Country</Value>
-</Value>
-<Value name="8">
-<Value>City</Value>
-</Value>
-<Value name="9">
-<Value>Club</Value>
-</Value>
-<Value name="10">
-<Value>MainTrainer</Value>
-</Value>
-<Value name="11">
-<Value>OtherTrainers</Value>
-</Value>
-<Value name="12">
-<Value>IsActive</Value>
-</Value>
-<Value name="13">
-<Value>PrtObjKey</Value>
-</Value>
-<Value name="14">
-<Value>PrtObjPaymentsCount</Value>
-</Value>
-<Value name="15">
-<Value>PrtObjCompetitionsCount</Value>
-</Value>
-</Data>
-</Storage>
 </Class>
 </Export>

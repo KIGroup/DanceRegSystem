@@ -49,7 +49,7 @@
 <ReturnType>Recorder</ReturnType>
 <Implementation><![CDATA[
 	set id = ""
-	&sql(SELECT %NOLOCK ID INTO :id FROM Dance_Data.Recorder WHERE LoginHash = :hash)
+	&sql(SELECT ID INTO :id FROM Dance_Data.Recorder WHERE LoginHash = :hash)
 	quit ..%OpenId(id)
 ]]></Implementation>
 </Method>

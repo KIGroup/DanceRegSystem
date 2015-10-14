@@ -72,7 +72,6 @@ WDSF спортсмен</Description>
 	
 	// Свойства класса
 	set obj.Athlete = ##class(PersonWDSF).%OpenId(athlete.id)
-	
 	if ($LENGTH(athlete.dob = 10)) set obj.DOB = $ZDH(athlete.dob, 3)
 	
 	// Свойства базового класса

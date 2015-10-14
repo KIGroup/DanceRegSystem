@@ -81,6 +81,8 @@ Set value for language=lang for object with id=ltxt</Description>
     &sql(UPDATE Dance_Data_Localization.LTextValue (Value) VALUES (:value) 
          WHERE LText = :ltxt AND Lang = :lang)
     
+    //do ##class(Dance.Utils.Journal).Create("Log", "Localization.LTextValue. SetValue", "SQLCODE="_SQLCODE_"; value="_value_"; ltxt="_ltxt_"; lang="_lang)
+    
     if (SQLCODE = 100){
         set lv = ..%New()
         set lv.Lang = ##class(LTextLanguage).%OpenId(lang)

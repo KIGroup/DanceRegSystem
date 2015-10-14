@@ -52,7 +52,6 @@
         if $ISOBJECT(coupleUDSR.Woman.STClass){
             set proxy.woman.stClass = coupleUDSR.Woman.STClass.ConvertToProxyObject()
         }
-        
     }
     
 
@@ -72,7 +71,7 @@
     #dim obj As CoupleWDSF = ""
     
     set (coupleId, SQLCODE) = ""
-    &sql(SELECT %NOLOCK ID INTO :coupleId FROM Dance_Data.CoupleWDSF WHERE Man->Number = :manNumber AND Woman->Number = :womanNumber)
+    &sql(SELECT ID INTO :coupleId FROM Dance_Data.CoupleWDSF WHERE Man->Number = :manNumber AND Woman->Number = :womanNumber)
     if (SQLCODE = 0){
         set obj = ..%OpenId(coupleId,,.st)
         set diffDays = $SYSTEM.SQL.DATEDIFF("dd", $P(obj.Updated, " ", 1), $P($ZDT($ZTS, 3), " ", 1))
@@ -96,6 +95,30 @@
     if '$ISOBJECT(obj){
         set obj = ..%New()
     }
+    
+    
+    try{
+        set message = ""
+        if '$ISOBJECT(wdsfData){
+            set message = "wdsfData - не объект "_$CLASSNAME(wdsfData)
+        } 
+        elseif '$ISOBJECT(wdsfData.man){
+            set message = "Нет партнера"
+        }
+        elseif '$ISOBJECT(wdsfData.woman){
+            set message = "Нет партнерши"
+        }
+        
+        if (message '= ""){
+            do ##class(Dance.Utils.Email).Send("ilsondll@gmail.com", message_"; "_manNumber_";"_womanNumber)
+        }
+    }
+    catch(ex){
+        do ##class(Dance.Utils.Email).Send("ilsondll@gmail.com", $SYSTEM.Status.GetErrorText(ex.AsStatus()_"; "_manNumber_";"_womanNumber))
+    }
+    
+    
+    
     
     set obj.WDSFId = wdsfData.id
     set obj.Man = ##class(PersonWDSF).SaveFromWDSF(wdsfData.man, .st)   

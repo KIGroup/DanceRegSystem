@@ -35,35 +35,19 @@ Couples</Description>
 <FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
 <Implementation><![CDATA[
-    set proxy = ##class(%ZEN.proxyObject).%New()
-    
-    set proxy.id = ..%Id()
-    set proxy.man = ..Man.ConvertToProxyObject()
-    set proxy.woman = ..Woman.ConvertToProxyObject()
+	set proxy = ##class(%ZEN.proxyObject).%New()
+	
+	set proxy.id = ..%Id()
+	set proxy.man = ..Man.ConvertToProxyObject()
+	set proxy.woman = ..Woman.ConvertToProxyObject()
 
-    quit proxy
+	quit proxy
 ]]></Implementation>
 </Method>
 
 <Method name="GetFullName">
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[    quit ..Man.GetFullName()_"; "_..Woman.GetFullName()
-]]></Implementation>
-</Method>
-
-<Method name="Create">
-<ClassMethod>1</ClassMethod>
-<FormalSpec><![CDATA[manId:%String,womanId:%String,&status]]></FormalSpec>
-<ReturnType>Couple</ReturnType>
-<Implementation><![CDATA[
-    if ..CommonIdxExists(manId, womanId) quit ..CommonIdxOpen(manId, womanId)
-    
-    set obj = ..%New()
-    set obj.Man = ##class(Dance.Data.Person).%OpenId(manId)
-    set obj.Woman = ##class(Dance.Data.Person).%OpenId(womanId)
-    set status = obj.%Save()
-    
-    quit obj
+<Implementation><![CDATA[	quit ..Man.GetFullName()_"; "_..Woman.GetFullName()
 ]]></Implementation>
 </Method>
 
@@ -87,5 +71,21 @@ Couples</Description>
 </Value>
 </Data>
 </Storage>
+
+<Method name="Create">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[manId:%String,womanId:%String,&status]]></FormalSpec>
+<ReturnType>Couple</ReturnType>
+<Implementation><![CDATA[
+	if ..CommonIdxExists(manId, womanId) quit ..CommonIdxOpen(manId, womanId)
+	
+	set obj = ..%New()
+	set obj.Man = ##class(Dance.Data.Person).%OpenId(manId)
+	set obj.Woman = ##class(Dance.Data.Person).%OpenId(womanId)
+	set status = obj.%Save()
+	
+	quit obj
+]]></Implementation>
+</Method>
 </Class>
 </Export>

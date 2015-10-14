@@ -91,7 +91,7 @@ value will be same in all languages.</Description>
 	set currLang = $$$SessionLanguage
 	
 	&sql(DECLARE LangCurs CURSOR FOR 
-		 SELECT %NOLOCK ID
+		 SELECT ID
 		 FROM Dance_Data_Localization.LTextLanguage
 		 WHERE ID <> :currLang)	
 		
