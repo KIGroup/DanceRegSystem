@@ -952,7 +952,7 @@ controllersModule.controller('TournamentParticipantsCtrl', function($scope, $rou
         //  
         $scope.page.participantTable.columns = [ 
                           {name: 'Партнер / Партнерша', sqlName: 'FullName->Value', isSorted: true, isSortable: true, isDown: true, isSearched: true, isSearchable: true},
-                          {name: 'Клуб / Город', sqlName: 'City', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: true},
+                          {name: 'Клуб / Город', sqlName: 'City,Club', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: true},
                           {name: 'Класс ST, LA', sqlName: '', isSorted: false, isSortable: false, isDown: true, isSearched: false, isSearchable: false},
                           {name: 'Страна', sqlName: 'Country->Name->Value', isSorted: false, isSortable: true , isDown: true, isSearched: false, isSearchable: true},
                           {name: 'Группы', sqlName: 'PrtObjCompetitionsCount', isSorted: false, isSortable: true , isDown: true, isSearched: false, isSearchable: false, captionStyle: {textAlign: 'center', width: '160px'}},
@@ -1524,7 +1524,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
             }   
         };
         
-        
+         
         if ($scope.competitionTable.avialableMode){
             dataSending.couple = $scope['tab' + $scope.selectedTab].couple || null;
             dataSending.athlete = $scope['tab' + $scope.selectedTab].athlete || null;
@@ -1963,8 +1963,11 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 function(data){
                     $scope.tabWDSF.couple = data;
                     afterSuccess();
-                    if (data.otherInfo.status != 'Active'){
+					
+                    $scope.competitionTable.selectable = true;
+					if (data.otherInfo.status != 'Active'){
                         $scope.tabWDSF.formCouple.disabled = true;
+						$scope.competitionTable.selectable = false;
                         $scope.tabWDSF.alert = UtilsSrvc.getAlert('Внимание!', 'Статус пары не "Active"! Регистрация пары невозможна.', 'error', true);
                     }
                 },
@@ -3448,25 +3451,27 @@ controllersModule.controller('FeedBackCtrl', function($scope, FeedBackSrvc, Util
 Access to REST API
 ===========================================================================================*/
 
-servicesModule.factory('RESTSrvc', function($http, $q) {	
-	return {
-		getPromise: function(config){
-			$http.defaults.headers.common['Accept-Language'] = AppSettings.lang;
-			
+servicesModule.factory('RESTSrvc', function($http, $q) {    
+    return {
+        getPromise: function(config){
+            $http.defaults.headers.common['Accept-Language'] = AppSettings.lang;
+            
             var deferred = $q.defer();
-			//$('#divLoader').show();
+            //$('#divLoader').show();
             $http(config).
                 success(function(data, status, headers, config){
-                    //$('#divLoader').hide();
                     deferred.resolve(data);
                 }).
                 error(function(data, status, headers, config){
-	                //$('#divLoader').hide();
+                    if (data != undefined && data.summary != undefined){
+                        data = data.summary;
+                    }
+                    
                     deferred.reject(data, status, headers, config);
                 });
 
             return deferred.promise;
-    	}
+        }
     }
 });
   
@@ -4158,7 +4163,7 @@ directivesModule.directive('stcalert', function(){
 // File: 35. directives/stcgrid.js
 // ===============================================================================================================================
 'use strict';
-//ddd
+//dd
    
 directivesModule.directive('stcgrid', function(){
     return {
@@ -4206,11 +4211,6 @@ directivesModule.directive('stcgrid', function(){
         },
         controller: function($scope, $filter, $cookieStore, UtilsSrvc){
             $scope.searchText = '';
-            $scope.searchedColumn = {};
-            
-            var idxSearch = UtilsSrvc.getIndexes($scope.columns, 'isSearched', true);
-            if (idxSearch.length != 0) 
-                $scope.searchedColumn = $scope.columns[idxSearch[0]];
             
             var idxSort = UtilsSrvc.getIndexes($scope.columns, 'isSorted', true);
             if (idxSort.length != 0) 
@@ -4375,11 +4375,21 @@ directivesModule.directive('stcgrid', function(){
                     }
                 }
                 
+				var sqlFieldNamesForSearch = '';
+				if ($scope.searchText != ''){
+					for(var i=0; i < $scope.columns.length; i++){
+						if ($scope.columns[i].isSearchable)
+							sqlFieldNamesForSearch += $scope.columns[i].sqlName + ',';
+					}
+					
+					sqlFieldNamesForSearch = sqlFieldNamesForSearch.substring(0, sqlFieldNamesForSearch.length - 1);
+				}
+				
                 $scope.updateItems({pageCurr: parseInt($scope.pageCurr), 
                                     pageSize: parseInt($scope.pageSize), 
                                     sqlName: $scope.sortedColumn.sqlName, 
                                     isDown: $scope.sortedColumn.isDown,
-                                    searchSqlName: $scope.searchedColumn.sqlName,
+                                    searchSqlName: sqlFieldNamesForSearch,
                                     searchText: $scope.searchText}); 
             };
 
@@ -4411,19 +4421,9 @@ directivesModule.directive('stcgrid', function(){
                 return value;
             };
 
-            // Выбор столбца для поиска
-            $scope.selectSearchColumn = function(column){
-                if ($scope.searchedColumn)
-                    $scope.searchedColumn.isSearched = false;
-    
-                $scope.searchedColumn = column;
-                $scope.searchedColumn.isSearched = true;
-            };
-    
+            
             // Поиск
             $scope.search = function(){
-                if (!$scope.searchedColumn)
-                    return;
                 $scope.updateSource();
             };
 
