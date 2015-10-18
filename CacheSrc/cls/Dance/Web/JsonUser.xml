@@ -152,6 +152,11 @@ Registration WDSF participants in the tournament</Description>
         if $ISOBJECT(data.couple){
             set prtClass = "Dance.Data.ParticipantCoupleWDSF"
             set prt = data.couple
+            set couplerWDSF = ##class(Dance.Data.CoupleWDSF).GetByNumbers(prt.man.number, prt.woman.number)
+            if (couplerWDSF.CStatus '= "Active"){
+                $$$ThrowStatus($SYSTEM.Status.Error(5001, "WDSF Couple status is "_couplerWDSF.CStatus_"!"))
+            }
+            
             set wcPostData.manNumber = prt.man.number
             set wcPostData.womanNumber = prt.woman.number
         }

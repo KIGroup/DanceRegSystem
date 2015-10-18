@@ -1,5 +1,5 @@
 'use strict';
-//ddd
+//dd
    
 directivesModule.directive('stcgrid', function(){
     return {
@@ -47,11 +47,6 @@ directivesModule.directive('stcgrid', function(){
         },
         controller: function($scope, $filter, $cookieStore, UtilsSrvc){
             $scope.searchText = '';
-            $scope.searchedColumn = {};
-            
-            var idxSearch = UtilsSrvc.getIndexes($scope.columns, 'isSearched', true);
-            if (idxSearch.length != 0) 
-                $scope.searchedColumn = $scope.columns[idxSearch[0]];
             
             var idxSort = UtilsSrvc.getIndexes($scope.columns, 'isSorted', true);
             if (idxSort.length != 0) 
@@ -216,11 +211,21 @@ directivesModule.directive('stcgrid', function(){
                     }
                 }
                 
+				var sqlFieldNamesForSearch = '';
+				if ($scope.searchText != ''){
+					for(var i=0; i < $scope.columns.length; i++){
+						if ($scope.columns[i].isSearchable)
+							sqlFieldNamesForSearch += $scope.columns[i].sqlName + ',';
+					}
+					
+					sqlFieldNamesForSearch = sqlFieldNamesForSearch.substring(0, sqlFieldNamesForSearch.length - 1);
+				}
+				
                 $scope.updateItems({pageCurr: parseInt($scope.pageCurr), 
                                     pageSize: parseInt($scope.pageSize), 
                                     sqlName: $scope.sortedColumn.sqlName, 
                                     isDown: $scope.sortedColumn.isDown,
-                                    searchSqlName: $scope.searchedColumn.sqlName,
+                                    searchSqlName: sqlFieldNamesForSearch,
                                     searchText: $scope.searchText}); 
             };
 
@@ -252,19 +257,9 @@ directivesModule.directive('stcgrid', function(){
                 return value;
             };
 
-            // Выбор столбца для поиска
-            $scope.selectSearchColumn = function(column){
-                if ($scope.searchedColumn)
-                    $scope.searchedColumn.isSearched = false;
-    
-                $scope.searchedColumn = column;
-                $scope.searchedColumn.isSearched = true;
-            };
-    
+            
             // Поиск
             $scope.search = function(){
-                if (!$scope.searchedColumn)
-                    return;
                 $scope.updateSource();
             };
 

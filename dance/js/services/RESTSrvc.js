@@ -5,25 +5,27 @@
 Access to REST API
 ===========================================================================================*/
 
-servicesModule.factory('RESTSrvc', function($http, $q) {	
-	return {
-		getPromise: function(config){
-			$http.defaults.headers.common['Accept-Language'] = AppSettings.lang;
-			
+servicesModule.factory('RESTSrvc', function($http, $q) {    
+    return {
+        getPromise: function(config){
+            $http.defaults.headers.common['Accept-Language'] = AppSettings.lang;
+            
             var deferred = $q.defer();
-			//$('#divLoader').show();
+            //$('#divLoader').show();
             $http(config).
                 success(function(data, status, headers, config){
-                    //$('#divLoader').hide();
                     deferred.resolve(data);
                 }).
                 error(function(data, status, headers, config){
-	                //$('#divLoader').hide();
+                    if (data != undefined && data.summary != undefined){
+                        data = data.summary;
+                    }
+                    
                     deferred.reject(data, status, headers, config);
                 });
 
             return deferred.promise;
-    	}
+        }
     }
 });
   

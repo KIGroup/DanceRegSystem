@@ -17,7 +17,7 @@ controllersModule.controller('MainCtrl', function($scope, $cookies, $filter, $wi
         return $filter('localize')(word);
     };
     
-    $scope.menu = {devModeIsRelease: !false,
+    $scope.menu = {devModeIsRelease: false,
                    admin: ($cookies.admin === 'true'),
                    readOnlyMode: ($cookies.readOnlyMode === 'true'),
                    loginCaption: ($cookies.admin === 'true' ? 'Выход' : 'Вход')};

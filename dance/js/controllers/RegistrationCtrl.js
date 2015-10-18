@@ -188,7 +188,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
             }   
         };
         
-        
+         
         if ($scope.competitionTable.avialableMode){
             dataSending.couple = $scope['tab' + $scope.selectedTab].couple || null;
             dataSending.athlete = $scope['tab' + $scope.selectedTab].athlete || null;
@@ -627,8 +627,11 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 function(data){
                     $scope.tabWDSF.couple = data;
                     afterSuccess();
-                    if (data.otherInfo.status != 'Active'){
+					
+                    $scope.competitionTable.selectable = true;
+					if (data.otherInfo.status != 'Active'){
                         $scope.tabWDSF.formCouple.disabled = true;
+						$scope.competitionTable.selectable = false;
                         $scope.tabWDSF.alert = UtilsSrvc.getAlert('Внимание!', 'Статус пары не "Active"! Регистрация пары невозможна.', 'error', true);
                     }
                 },

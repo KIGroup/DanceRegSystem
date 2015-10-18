@@ -15807,7 +15807,7 @@ Protected REST URLs</Description>
 <Description>
 Dispatch a REST request according to URL and Method</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>pUrl:%String,pMethod:%String</FormalSpec>
+<FormalSpec>pUrl:%String,pMethod:%String,pForwarded:%Boolean=0</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     set lang = $CASE(%request.CgiEnvs("HTTP_ACCEPT_LANGUAGE"), 
@@ -15819,102 +15819,7 @@ Dispatch a REST request according to URL and Method</Description>
     do ##class(%MessageDictionary).SetSessionLanguage(lang)
     set %session.Language = lang
     
-    #dim tSC As %Status = $$$OK
-    #dim e As %Exception.AbstractException
-    
-    #dim tMatcher As %Regex.Matcher
-    
-    #dim tArgs,tClass,tMatchUrl,tMapEntry,tRegEx,tTarget,tAccess As %String
-    #dim tI,tIndex As %Integer
-    #dim tResourceMatched As %Boolean
-    #dim tMethodMatched As %Boolean
-    
-    Try {
-        #; Check that the effective user ( could be unknown user ) can access this resource
-        Set tAccess=$SYSTEM.Security.Check($Piece($zu(90,21,$namespace),"^",4))
-        If tAccess'["READ,WRITE"
-        {
-            #; Don't want the session token
-            Set %response.OutputSessionToken=0
-            
-            #; Set the Http Status
-            Set %response.Status="401 Unauthorized"
-        
-            #; Write out the header
-            Do %response.WriteHTTPHeader()
-            
-            #; Done
-            Quit
-        }
-        
-        Set (tResourceMatched,tMethodMatched)=0
-        
-        #; Walk the dispatch map in collation order of defintion
-        For tIndex=1:1 {
-            
-            #; Get the next map entry
-            Set tMapEntry=..DispatchMap(tIndex) If tMapEntry="" Quit
-             
-            #; Pick out the RegEx
-            Set tRegEx=$List(tMapEntry,1)
-            
-            #; Create a matcher
-            Set tMatcher=##class(%Regex.Matcher).%New(tRegEx)
-        
-            #; Extract the match url from the application name
-            Set tMatchUrl="/"_$Extract(pUrl,$Length(%request.Application)+1,*)
-            
-            #; Test each regular expression in turn, extracting the arguments,
-            #; dispatching to the named method  
-            If tMatcher.Match(tMatchUrl) {
-                
-                #; We have matched the resource
-                Set tResourceMatched=1
-                
-                #; Now check method name
-                If pMethod'=$List(tMapEntry,2) Continue
-                
-                Set tTarget=$List(tMapEntry,3)
-                
-                #; We have matched a method
-                Set tMethodMatched=1
-                
-                #; Got a match, marshall the arguments
-                If tMatcher.GroupCount {
-                    For tI=1:1:tMatcher.GroupCount Set tArgs(tI)=tMatcher.Group(tI)
-                    Set tArgs=tI
-                } else {
-                    Set tArgs=0
-                }
-                
-                #; Check for optional ClassName prefix
-                Set tClass=$classname()
-                If tTarget[":" Set tClass=$Piece(tTarget,":"),tTarget=$Piece(tTarget,":",2)
-                
-                #; Dispatch
-                Set tSC=$zobjclassmethod(tClass,tTarget,tArgs...)
-                If $$$ISERR(tSC) Do ..Http500(##class(%Exception.StatusException).CreateFromStatus(tSC))
-                
-                #; Don't want multiple matches
-                Quit
-            }
-        }
-        
-        #; Didn't have a match for the resource, report not found
-        If tResourceMatched=0 Set tSC=..Http404() Quit
-        
-        #; Had a match for resource but method not matched
-        If tMethodMatched=0 Set tSC=..Http405() Quit
-            
-    } Catch (e) {
-        
-        #; Issue a '500'
-        Do ..Http500(e)
-    }
-    
-    If ..#UseSession=0 Set %session.EndSession=1
-  
-    Quit tSC
+    quit ##super(pUrl, pMethod, pForwarded)
 ]]></Implementation>
 </Method>
 </Class>
@@ -16556,17 +16461,17 @@ Get proxyObject by id and class</Description>
 <FormalSpec>className:%String,id:%String,params:%ZEN.proxyObject</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
 <Implementation><![CDATA[
-	set proxy = ##class(%ZEN.proxyObject).%New()
-	
-	try{
-		set object = $CLASSMETHOD(className, "%OpenId", id)
-		set proxy = object.ConvertToProxyObject(params)
-	}
-	catch (ex){
-		set proxy.error = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-	}
-	
-	quit proxy
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    
+    try{
+        set object = $CLASSMETHOD(className, "%OpenId", id)
+        set proxy = object.ConvertToProxyObject(params)
+    }
+    catch (ex){
+        set proxy.error = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+    }
+    
+    quit proxy
 ]]></Implementation>
 </Method>
 
@@ -16577,16 +16482,16 @@ Transform sql to json</Description>
 <FormalSpec>sql:%String</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-  	set status = $$$OK
-  	
-   	try{
-	   	do ##class(%ZEN.Auxiliary.jsonSQLProvider).%WriteJSONFromSQL(,sql)
-	}
-	catch ex{
-		set status = ex.AsStatus()
-	}
-	
-  	quit status
+    set status = $$$OK
+    
+    try{
+        do ##class(%ZEN.Auxiliary.jsonSQLProvider).%WriteJSONFromSQL(,sql)
+    }
+    catch ex{
+        set status = ex.AsStatus()
+    }
+    
+    quit status
 ]]></Implementation>
 </Method>
 
@@ -16597,59 +16502,61 @@ Paged output of table, for any class with parameters, sorting and searching</Des
 <FormalSpec>sql:%String,className:%String,params:%RegisteredObject,convertParams:%ZEN.proxyObject,whereRequired:%String="",groupCondition:%String=""</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
 <Implementation><![CDATA[
-	set status = $$$OK
-	set proxyResult = ##class(%ZEN.proxyObject).%New()
-	
-	try{
-		// Определяем что находится в WHERE.
-		if (whereRequired = "") && (params.searchText '= ""){
-			// Одно условие - поиск
-			set sql = sql_" WHERE "_..ParseParameter(params.searchSqlName)_" LIKE '%"_..ParseParameter(params.searchText)_"%'"
-		}
-		elseif (whereRequired '= "") && (params.searchText = ""){
-			// Одно условие - заданное, например - выборка по статусу
-			set sql = sql_" WHERE "_whereRequired
-		}
-		elseif (whereRequired '= "") && (params.searchText '= ""){
-			// Два(+) условия = поиск и дополнительные
-			set sql = sql_" WHERE "_whereRequired_" AND "_..ParseParameter(params.searchSqlName)_" LIKE '%"_..ParseParameter(params.searchText)_"%'"
-		}
-		
-		// Сортировка
-		set isDown = "ASC"
-		if (params.isDown '= 1) set isDown = "DESC"
-		
-		set sql = sql_" "_groupCondition_" ORDER BY "_..ParseParameter(params.sqlName)_" "_isDown
-		
-			
-		set statement = ##class(%SQL.Statement).%New()	
-		$$$THROWONERROR(status, statement.%Prepare(sql))		
-		set rs = statement.%Execute()
+    set status = $$$OK
+    set proxyResult = ##class(%ZEN.proxyObject).%New()
+    
+    try{
+        // Определяем что находится в WHERE.
+        if (whereRequired = "") && (params.searchText '= ""){
+            // Одно условие - поиск
+            //set sql = sql_" WHERE "_..ParseParameter(params.searchSqlName)_" LIKE '%"_..ParseParameter(params.searchText)_"%'"
+            set sql = sql_" WHERE "_..GetSearchCondition(params.searchSqlName, ..ParseParameter(params.searchText))
+        }
+        elseif (whereRequired '= "") && (params.searchText = ""){
+            // Одно условие - заданное, например - выборка по статусу
+            set sql = sql_" WHERE "_whereRequired
+        }
+        elseif (whereRequired '= "") && (params.searchText '= ""){
+            // Два(+) условия = поиск и дополнительные
+            //set sql = sql_" WHERE "_whereRequired_" AND "_..ParseParameter(params.searchSqlName)_" LIKE '%"_..ParseParameter(params.searchText)_"%'"
+            set sql = sql_" WHERE "_whereRequired_" AND "_..GetSearchCondition(params.searchSqlName, ..ParseParameter(params.searchText))
+        }
+        
+        // Сортировка
+        set isDown = "ASC"
+        if (params.isDown '= 1) set isDown = "DESC"
+        
+        set sql = sql_" "_groupCondition_" ORDER BY "_..ParseParameter(params.sqlName)_" "_isDown
+        
+            
+        set statement = ##class(%SQL.Statement).%New()  
+        $$$THROWONERROR(status, statement.%Prepare(sql))        
+        set rs = statement.%Execute()
 
-		set proxyItems = ##class(%ListOfObjects).%New()			
-		set ^temp = sql
-		// Все элементы, попавшие в заданный диапазон конвертируются в proxy и помещаются в результирующий список
-		while (rs.%Next() '= 0){
-			if (rs.%ROWCOUNT >= params.first) && (rs.%ROWCOUNT <= params.last){
-				do proxyItems.Insert(..GetProxyObject(className, rs.%GetData(1), convertParams))
-			}
-		}
-		// Общее число элементов с заданными параметрами в WHERE
-		set itemsTotal = rs.%ROWCOUNT
-		
-		do rs.%Close()						
-		do statement.%Close()
-		
-		set proxyResult = ##class(%ZEN.proxyObject).%New()
-		set proxyResult.children = ##class(%ZEN.proxyObject).%New()
-		set proxyResult.children.items = proxyItems
-	    set proxyResult.children.itemsTotal = itemsTotal
-	}
-	catch ex {
-		set proxyResult.status = $SYSTEM.Status.GetErrorText(ex.AsStatus())	
-	}
-	
-	quit proxyResult
+        set proxyItems = ##class(%ListOfObjects).%New()         
+        set ^temp = sql
+        // Все элементы, попавшие в заданный диапазон конвертируются в proxy и помещаются в результирующий список
+        while (rs.%Next() '= 0){
+            if (rs.%ROWCOUNT >= params.first) && (rs.%ROWCOUNT <= params.last){
+                do proxyItems.Insert(..GetProxyObject(className, rs.%GetData(1), convertParams))
+            }
+        }
+        // Общее число элементов с заданными параметрами в WHERE
+        set itemsTotal = rs.%ROWCOUNT
+        
+        do rs.%Close()                      
+        do statement.%Close()
+        
+        set proxyResult = ##class(%ZEN.proxyObject).%New()
+        set proxyResult.children = ##class(%ZEN.proxyObject).%New()
+        set proxyResult.children.items = proxyItems
+        set proxyResult.children.itemsTotal = itemsTotal
+    }
+    catch ex {
+        set proxyResult.status = $SYSTEM.Status.GetErrorText(ex.AsStatus()) 
+    }
+    
+    quit proxyResult
 ]]></Implementation>
 </Method>
 
@@ -16660,14 +16567,30 @@ Delete "garbage" from input parameters</Description>
 <FormalSpec>parameter:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	set parameter = $ZCONVERT(parameter, "U")
-	
-	quit $REPLACE(
-		 $REPLACE(
-		 $REPLACE(
-		 $REPLACE(
-		 $REPLACE(
-		 $REPLACE(parameter, "SELECT",""), "DELETE", ""), "UNION", ""), "FROM",""), "INSERT", ""), "'", "")
+    set parameter = $ZCONVERT(parameter, "U")
+    
+    quit $REPLACE(
+         $REPLACE(
+         $REPLACE(
+         $REPLACE(
+         $REPLACE(
+         $REPLACE(parameter, "SELECT",""), "DELETE", ""), "UNION", ""), "FROM",""), "INSERT", ""), "'", "")
+]]></Implementation>
+</Method>
+
+<Method name="GetSearchCondition">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>fields:%String,word:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set result = ""
+    set listOfFields = $LISTFROMSTRING(fields, ",")
+    
+    for i=1:1:$LL(listOfFields){
+        set result = result_$LIST(listOfFields, i)_" LIKE '%"_word_"%' OR "
+    }
+    
+    quit "("_$E(result, 1, *-4)_")"
 ]]></Implementation>
 </Method>
 </Class>
@@ -16825,6 +16748,11 @@ Registration WDSF participants in the tournament</Description>
         if $ISOBJECT(data.couple){
             set prtClass = "Dance.Data.ParticipantCoupleWDSF"
             set prt = data.couple
+            set couplerWDSF = ##class(Dance.Data.CoupleWDSF).GetByNumbers(prt.man.number, prt.woman.number)
+            if (couplerWDSF.CStatus '= "Active"){
+                $$$ThrowStatus($SYSTEM.Status.Error(5001, "WDSF Couple status is "_couplerWDSF.CStatus_"!"))
+            }
+            
             set wcPostData.manNumber = prt.man.number
             set wcPostData.womanNumber = prt.woman.number
         }

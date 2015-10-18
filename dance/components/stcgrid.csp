@@ -3,13 +3,9 @@
     <caption class="text-left" style="padding-bottom: 4px;" ng-show="searchTop">
         <form ng-submit="search()" style="margin: 0px; display: inline;">
               <div ng-hide="searchHide" class="input-append" style="margin-bottom: 0px;">
-                <input type="text" class="gridInput" ng-model="searchText" style="width:300px;" placeholder="{{'Поиск в выбранном столбце'|localize}}" ng-disabled="!searchedColumn.name"/>
+                <input type="text" class="gridInput" ng-model="searchText" style="width:300px;" placeholder="{{'Поиск'|localize}}"/>
                 <div class="btn-group dropdown" style="cursor: pointer;">
-                    <button type="submit" class="btn btn-mini" ng-disabled="!searchedColumn.name">&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;&nbsp;</button>
-                    <button type="button" class="btn btn-mini dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a ng-class="{aSelected: column.isSearched==true}" ng-repeat="column in columns | filter: {isSearchable: true}" ng-click="selectSearchColumn(column)" ng-bind="column.name|localize"></a></li>
-                    </ul>
+                    <button type="submit" class="btn btn-mini">&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;&nbsp;</button>
                 </div>
             </div>              
         </form>
@@ -21,8 +17,7 @@
             <th ng-repeat="column in columns" ng-hide="column.hidden" ng-style="column.captionStyle" ng-click="sort(column, column.isDown)" ng-class="{selectableMode:column.isSortable}">
                 <span ng-bind="column.name|localize"></span>
                 <i class="fa fa-sort-down fa-lg pull-right" ng-show="column.isDown && column.isSorted"  style="margin-top: 0px;"></i>
-                <i class="fa fa-sort-up fa-lg pull-right"   ng-show="!column.isDown && column.isSorted" style="margin-top: 6px;"></i>
-                <i class="fa fa-search pull-right"          ng-show="column.isSearched"                 style="margin-top: 3px; padding-right: 4px;"></i>   
+                <i class="fa fa-sort-up fa-lg pull-right"   ng-show="!column.isDown && column.isSorted" style="margin-top: 6px;"></i> 
             </th>
             <th class="atableAction" ng-show="actionColumnVisible" ng-click="actionColumnMethod()" title="{{actionColumnTitle|localize}}"><i ng-class="actionColumnIcon"></i></th>
         </tr>
@@ -47,13 +42,9 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <form ng-submit="search()" style="margin: 0px; display: inline;">
                         <div ng-hide="searchHide || searchTop" class="input-append" style="margin-bottom: 0px;">
-                            <input type="text" class="gridInput" ng-model="searchText" style="width:100px;" placeholder="{{'Поиск'|localize}}" ng-disabled="!searchedColumn.name">
+                            <input type="text" class="gridInput" ng-model="searchText" style="width:100px;" placeholder="{{'Поиск'|localize}}">
                             <div class="btn-group dropup" style="cursor: pointer;">
-                                <button type="submit" class="btn btn-mini" ng-disabled="!searchedColumn.name">&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;&nbsp;</button>
-                                <button type="button" class="btn btn-mini dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                                <ul class="dropdown-menu">
-                                    <li><a ng-class="{aSelected: column.isSearched==true}" ng-repeat="column in columns | filter: {isSearchable: true}" ng-click="selectSearchColumn(column)" ng-bind="column.name|localize"></a></li>
-                                </ul>
+                                <button type="submit" class="btn btn-mini">&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;&nbsp;</button>
                             </div>
                         </div>
                     </form>
