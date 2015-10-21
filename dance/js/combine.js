@@ -1,3 +1,5 @@
+// Combine date time is 21.10.2015 21:56:10
+
 
 // ===============================================================================================================================
 // File: 1. controllers/MainCtrl.js    
@@ -223,18 +225,23 @@ controllersModule.controller('TournamentCtrl', function($scope, $window, $routeP
 ===========================================================================================*/
 
 controllersModule.controller('TournamentsCtrl', function($scope, $location, $filter, UtilsSrvc, TournamentSrvc, CompetitionSrvc, TournamentRankSrvc, TournamentStatusSrvc){
-	$scope.menu.selectMenu($scope.menu.pages.tournaments);
+    $scope.menu.selectMenu($scope.menu.pages.tournaments);
 
-	$scope.page = {};
+    $scope.page = {};
     $scope.page.tournamentTable = {participantsInfo:{}};
     $scope.page.competitionTable = {filterDate: ''};
 
- 	if (!$scope.pageStore.tournaments) $scope.pageStore.tournaments = {gridTournaments:{}, gridCompetitions:{filterDate: ''}};
+    if (!$scope.pageStore.tournaments){ 
+        $scope.pageStore.tournaments = {
+            gridTournaments:{}, 
+            gridCompetitions:{filterDate: '', hideNumbersColumn : true}
+        };
+    }
     
     $scope.page.init = function(){
-    	//
-    	// Tournament table
-    	//
+        //
+        // Tournament table
+        //
         $scope.page.tournamentTable.columns = [
                           {name: 'Название'         , sqlName: 'Name->Value'         , isSorted: false, isSortable: true,  isDown: true ,  isSearched: true,  isSearchable: true},
                           {name: 'Дата начала'      , sqlName: 'StartDate'           , isSorted: true , isSortable: true,  isDown: false,  isSearched: false, isSearchable: false, filter: 'date'},
@@ -246,15 +253,15 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                           {name: 'Регистрация'      , sqlName: ''                    , isSorted: false, isSortable: false, isDown: true ,  isSearched: false, isSearchable: false, captionStyle: {textAlign: 'center', width: '150px'}}];
         
         $scope.page.tournamentTable.properties = [
-        				  {name:'nameShorted', calculate: function(item){
-	        				  						var maxLen = 25;
-	        				  						if (item.name.length > maxLen){
-	        				  				   			item.nameShorted = item.name.substring(0,25) + '...';
-	        				  						}
-	        				  						else{
-		        				  						item.nameShorted = item.name;
-	        				  						}
-	        				  				   }}, 
+                          {name:'nameShorted', calculate: function(item){
+                                                    var maxLen = 25;
+                                                    if (item.name.length > maxLen){
+                                                        item.nameShorted = item.name.substring(0,25) + '...';
+                                                    }
+                                                    else{
+                                                        item.nameShorted = item.name;
+                                                    }
+                                               }}, 
                           {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
                           {name:'endDate'  , filter: 'date', filterParam: $filter('localize')('d MMMM y')},
                           {name:'rank.shortName'},
@@ -296,17 +303,17 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                                                     TournamentSrvc.getRecordersHashes(item.id).then(
                                                         function(data){
                                                             $scope.confirmDialog = {
-	                                                            tournament: item,
-                                                            	recorders: data.recorders,
-                                                            	getLink: function(rec){
-	                                                            	var url = '#/recorder/' + rec.hash + '/tournament/' + this.tournament.id + '/registration';
-	                                                            	if (this.defaultType)
-	                                                            		url += '/type/' + this.defaultType;
-	                                                            	if (this.defaultLang)
-	                                                            		url += '/lang/' + this.defaultLang; 
-	                                                            	
-	                                                            	return url;
-	                                                            }
+                                                                tournament: item,
+                                                                recorders: data.recorders,
+                                                                getLink: function(rec){
+                                                                    var url = '#/recorder/' + rec.hash + '/tournament/' + this.tournament.id + '/registration';
+                                                                    if (this.defaultType)
+                                                                        url += '/type/' + this.defaultType;
+                                                                    if (this.defaultLang)
+                                                                        url += '/lang/' + this.defaultLang; 
+                                                                    
+                                                                    return url;
+                                                                }
                                                             }
 
                                                             $('#ConfirmDialog').modal('show');
@@ -326,27 +333,34 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
         $scope.page.tournamentTable.forciblyUpdate = 0;
         $scope.page.tournamentTable.refresh();
         
- 	 	$scope.$watch('menu.admin', function(){
-        	$scope.page.tournamentTable.columns[7].hidden = !$scope.menu.admin;   
+        $scope.$watch('menu.admin', function(){
+            $scope.page.tournamentTable.columns[7].hidden = !$scope.menu.admin;   
         });
         
         // 
-    	// Competition table
-    	//
+        // Competition table
+        //
         $scope.page.competitionTable.columns = [
+                          {name: '#', sqlName: '%EXACT(idExternal)', isSorted: true , isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, filter: 'date', captionStyle: {width: '30px'}},
                           {name: 'Дата'             , sqlName: 'StartDate'               , isSorted: true , isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, filter: 'date', captionStyle: { width: '130px'}},
-                          {name: 'Время'            , sqlName: 'StartTime'               , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false},
                           {name: 'Название'         , sqlName: 'Name->Value'             , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false},
                           {name: 'Программа'        , sqlName: 'Discipline->Name->Value' , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false},
                           {name: 'Возрастная группа', sqlName: 'AgeCategory'             , isSorted: false, isSortable: false, isDown: true ,  isSearched: false ,  isSearchable: false},
                           {name: 'Класс'            , sqlName: ''                        , isSorted: false, isSortable: false, isDown: true ,  isSearched: false ,  isSearchable: false},
-                          {name: 'Цена, р.'             , sqlName: 'Price'                   , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'right', width: '50px'}},
+                          {name: 'Цена, р.'             , sqlName: 'Price'                   , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'right', width: '100px'}},
                           {name: 'Участники'        , sqlName: 'ParticipantsCount'       , isSorted: false, isSortable: false, isDown: true ,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'center', width: '100px'}}];
+        
+        var getCssClassFuncForClosedCompetitions = function(item){
+            return item.isClosed == 1 ? 'competitionIsClosed' : '';
+        };
          
         $scope.page.competitionTable.properties = [
-        				  {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
-                          {name:'startTime'},
-                          {name:'name'},
+                          {name:'idExternal', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
+                          {name:'fullName', 
+                            calculate: function(item){
+                                item.fullName = item.name + (item.isClosed == 1 ? (' (' + $filter('localize')('Регистрация закрыта') + ')') : '');
+                            }},   
                           {name:'discipline.name'},
                           {name:'ageCategory.name'},
                           {name:'dancerClassesString', calculate: function(item){
@@ -391,7 +405,7 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
     $scope.page.tournamentTable.loadItems = function(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText){
         TournamentSrvc.getAllForGrid(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText, {rankId: $scope.pageStore.tournaments.gridTournaments.filterRankId, statusId: $scope.pageStore.tournaments.gridTournaments.filterStatusId}).then(
             function(data){
-	            data = data.children;
+                data = data.children;
                 $scope.page.tournamentTable.pageTotal = Math.ceil(data.itemsTotal / pageSize);
                 $scope.page.tournamentTable.itemsTotal = data.itemsTotal;
                 $scope.page.tournamentTable.items = data.items;
@@ -411,12 +425,12 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                     selected.rowClass = 'success';
                     $scope.page.tournamentTable.selectedItems = [selected]; 
                     $scope.page.tournamentTable.onSelect(selected);
-                	console.log('tournament found');
+                    console.log('tournament found');
                 }
-				else{
-					console.log('tournament not found');
-               		
-				}
+                else{
+                    console.log('tournament not found');
+                    
+                }
             },
             function(data){
                 $scope.page.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
@@ -460,7 +474,7 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
 
         $scope.page.competitionTable.refresh();
         $scope.page.competitionTable.loadDates(item.id);
-		//$scope.pageStore.tournaments.gridCompetitions = {filterDate: ''};
+        //$scope.pageStore.tournaments.gridCompetitions = {filterDate: ''};
         $scope.pageStore.tournaments.gridTournaments.selectedId = item.id;        
     };
 
@@ -500,24 +514,24 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
     // 
     $scope.page.competitionTable.loadItems = function(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText){
         if ($scope.page.tournamentTable.selectedItems.length == 0)
-        	return;
+            return;
         
         var convertParams = {
-	        loadParticipantsCount: true
-	    };
-	    
+            loadParticipantsCount: true
+        };
+        
         if (!$scope.pageStore.tournaments.gridCompetitions.tableShortView){
-	        convertParams.loadTournament = true;
-	        convertParams.loadDiscipline = true;
-	        convertParams.loadAgeCategory = true;
-	        convertParams.loadType = true;
-	        convertParams.loadDancerClasses = true;
-	        convertParams.tournamentParams = {};
+            convertParams.loadTournament = true;
+            convertParams.loadDiscipline = true;
+            convertParams.loadAgeCategory = true;
+            convertParams.loadType = true;
+            convertParams.loadDancerClasses = true;
+            convertParams.tournamentParams = {};
         }
        
-        CompetitionSrvc.getAllForGrid(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText, {date: $scope.pageStore.tournaments.gridCompetitions.filterDate, tournamentId: $scope.page.tournamentTable.selectedItems[0].id, convertParams: convertParams}).then(
+        CompetitionSrvc.getAllForGrid(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText, {date: $scope.pageStore.tournaments.gridCompetitions.filterDate, tournamentId: $scope.page.tournamentTable.selectedItems[0].id, convertParams: convertParams, showClosed: true}).then(
             function(data){
-	            data = data.children;
+                data = data.children;
                 $scope.page.competitionTable.pageTotal = Math.ceil(data.itemsTotal / pageSize);
                 $scope.page.competitionTable.itemsTotal = data.itemsTotal;
                 $scope.page.competitionTable.items = data.items;
@@ -546,7 +560,7 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
 
 
     $scope.page.competitionTable.setHiddenCoulumns = function(value){
-        var indexes = [1,3,4,5];
+        var indexes = [3,4,5];
         for(var n=0; n < indexes.length; n++){
             $scope.page.competitionTable.columns[indexes[n]].hidden = value;     
         }
@@ -575,9 +589,9 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
         $scope.page.competitionTable.forciblyUpdate++; 
     };
 
-	$scope.page.competitionTable.import = function(){
-		$location.path("/tournament/" + $scope.page.tournamentTable.selectedItems[0].id + "/importcompetitions"); 
-	};
+    $scope.page.competitionTable.import = function(){
+        $location.path("/tournament/" + $scope.page.tournamentTable.selectedItems[0].id + "/importcompetitions"); 
+    };
 
     $scope.page.competitionTable.add = function(){
         $location.path("/tournament/" + $scope.page.tournamentTable.selectedItems[0].id + "/competition"); 
@@ -678,17 +692,20 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
                           {id: "Limit", name: 'Лимит', sqlName: 'Limit', isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, captionStyle: {width: '70px', textAlign: 'center'}},
                           {id: "FreeCount", name: 'Осталось мест', sqlName: '', isSorted: false, isSortable: false, isDown: true,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'center'}, hidden: true}];
         
+        var getCssClassFuncForClosedCompetitions = function(item){
+            return item.isClosed == 1 ? 'competitionIsClosed' : '';
+        };
+        
         $scope.page.competitionTable.properties = [
-                          {name:'idExternal'},
-                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
-                          /*{name:'startTime'},*/
+                          {name:'idExternal', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y'), getCssClass: getCssClassFuncForClosedCompetitions},
                           {name:'fullName', 
                             calculate: function(item){
-                                item.fullName = item.name;
+                                item.fullName = item.name + (item.isClosed == 1 ? (' (' + $filter('localize')('Регистрация закрыта') + ')') : '');
                             }},   
-                          {name:'discipline.name'},
-                          {name:'ageCategory.name'},
-                          {name:'dancerClassesString', 
+                          {name:'discipline.name', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'ageCategory.name', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'dancerClassesString', getCssClass: getCssClassFuncForClosedCompetitions,
                                                     calculate: function(item){
                                                             item.dancerClassesString = '';
                                                             for(var i=0; i < item.dancerClasses.length; i++){
@@ -697,7 +714,7 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
 
                                                             item.dancerClassesString = item.dancerClassesString.substring(2, item.dancerClassesString.length);
                                                     }},
-                          {name:'price', cellStyle: {textAlign: 'right'}},
+                          {name:'price', cellStyle: {textAlign: 'right'}, getCssClass: getCssClassFuncForClosedCompetitions},
                           {name:'participantsCountString', cellStyle: {textAlign: 'center'}, cellSelectable: true, cellTitle: $filter('localize')('Открыть список участников группы'),  
                                                     calculate: function(item){
                                                         item.participantsCountString = item.participantsCount + ' »';
@@ -708,8 +725,8 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
                                                     onClickCell: function(id){
                                                         LocationSrvc.goTo(":recorderHash/competition/" + id +"/participants", $scope.recorderHash); 
                                                     }},
-                          {name:'paymentsCount', cellStyle: {textAlign: 'center'}, cellSelectable: true, cellTitle: $filter('localize')('Количество оплативших участников')},
-                          {name:'limitString', cellStyle: {textAlign: 'center'}, cellTitle: $filter('localize')('Количество доступных мест'),
+                          {name:'paymentsCount', cellStyle: {textAlign: 'center'}, cellSelectable: true, cellTitle: $filter('localize')('Количество оплативших участников')}, 
+                          {name:'limitString', cellStyle: {textAlign: 'center'}, cellTitle: $filter('localize')('Количество доступных мест'), getCssClass: getCssClassFuncForClosedCompetitions, 
                                                     calculate: function(item){
                                                         item.limitString = item.limit == 0 ? '---' : item.limit;
                                                     }},
@@ -720,7 +737,12 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
                                                     getCssClass: function(item){ 
                                                         if (item.freeSlotsCount <= 5)
                                                             return 'competitionFreeSlotsCellWarning';
-                                                         
+                                                        
+                                                        if (item.isClosed == 1) {
+                                                            console.log(item);
+                                                            return 'competitionIsClosed';
+                                                        }
+                                                            
                                                         return '';
                                                     }}];  
 
@@ -1414,25 +1436,28 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                           {id: 'FreeCount', name: 'Осталось мест', sqlName: '', isSorted: false, isSortable: false, isDown: true,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'center'}, hidden: true},
                           {id: 'Price', name: 'Цена', sqlName: 'Price', isSorted: false, isSortable: false , isDown: true , isSearched: false , isSearchable: false, captionStyle: {textAlign: 'right', width: '90px'}}];
         
+        var getCssClassFuncForClosedCompetitions = function(item){
+            return item.isClosed == 1 ? 'competitionIsClosed' : '';
+        };
+        
         $scope.competitionTable.properties = [
-                          {name:'idExternal'},
-                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
-                          /*{name:'startTime'},*/
+                          {name:'idExternal', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y'), getCssClass: getCssClassFuncForClosedCompetitions},
                           {name:'fullName',
                                 calculate: function(item){
-                                    item.fullName = item.name;
+                                    item.fullName = item.name + (item.isClosed == 1 ? (' (' + $filter('localize')('Регистрация закрыта') + ')') : '');
                                     if (item.wdsf){
                                         item.fullName += ' ' + ((item.wdsf.status != 'Registering' && item.wdsf.status!= 'PreRegistration') ? 'WDSF STATUS = ' + item.wdsf.status : '');
                                     } 
                                 }},
-                          {name:'discipline.name'},
-                          {name:'ageCategory.fullName', 
+                          {name:'discipline.name', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'ageCategory.fullName', getCssClass: getCssClassFuncForClosedCompetitions,
                                 calculate: function(item){
                                     if (!item.ageCategory) 
                                         return '';
                                     item.ageCategory.fullName = item.ageCategory.name + ' (' + item.ageCategory.titleAge + ')';
                                 }},
-                          {name:'dancerClassesString', 
+                          {name:'dancerClassesString', getCssClass: getCssClassFuncForClosedCompetitions,
                                 calculate: function(item){
                                     item.dancerClassesString = '';
                                     for(var i=0; i < item.dancerClasses.length; i++){
@@ -1441,7 +1466,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
 
                                     item.dancerClassesString = item.dancerClassesString.substring(2, item.dancerClassesString.length);
                                 }},
-                          {name:'type.name'},
+                          {name:'type.name', getCssClass: getCssClassFuncForClosedCompetitions},
                           {name:'limitString', cellStyle: {textAlign: 'center'}, cellTitle: $filter('localize')('Количество доступных мест'),
                                                     calculate: function(item){
                                                         item.limitString = item.limit == 0 ? '---' : item.limit;
@@ -1458,7 +1483,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                                                          
                                                         return '';
                                                     }},
-                          {name:'price', cellStyle: {textAlign: 'right'}}];
+                          {name:'price', cellStyle: {textAlign: 'right'}, getCssClass: getCssClassFuncForClosedCompetitions}];
 
         $scope.competitionTable.pageSize = 1000; 
         $scope.competitionTable.pageCurr = 1;
@@ -1948,13 +1973,13 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
             $scope.tabUDSR.disabled = true;
             $scope.tabOTHER.disabled = true;
             $scope.tabWDSF.searchForm.processing = false;
-			
-			$scope.tabWDSF.formCouple.btnRegistrationVisible = true;
+            
+            $scope.tabWDSF.formCouple.btnRegistrationVisible = true;
         
-			$scope.competitionTable.selectable = true; 
-			$scope.competitionTable.avialableMode = true;
-			$scope.competitionTable.refresh();  
-		
+            $scope.competitionTable.selectable = true; 
+            $scope.competitionTable.avialableMode = true;
+            $scope.competitionTable.refresh();  
+        
             $scope.loadCountParticipantCompetitions('WDSF');
         };
 
@@ -1963,11 +1988,11 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 function(data){
                     $scope.tabWDSF.couple = data;
                     afterSuccess();
-					
+                    
                     $scope.competitionTable.selectable = true;
-					if (data.otherInfo.status != 'Active'){
+                    if (data.otherInfo.status != 'Active'){
                         $scope.tabWDSF.formCouple.disabled = true;
-						$scope.competitionTable.selectable = false;
+                        $scope.competitionTable.selectable = false;
                         $scope.tabWDSF.alert = UtilsSrvc.getAlert('Внимание!', 'Статус пары не "Active"! Регистрация пары невозможна.', 'error', true);
                     }
                 },
@@ -4682,6 +4707,7 @@ directivesModule.directive('danceplatOtherPay', function(){
 
 localizationModule.constant('DanceDictionary', {
   toEnglish: {
+        'Регистрация закрыта':'Registration is closed',
         'Зарегистрировать ещё группы':'Register another competitions',
         'Регистрация выполнена.': 'Registration is complete.',
         'Регистрация не выполнена.': 'Registration failed.',
@@ -4977,7 +5003,14 @@ localizationModule.constant('DanceDictionary', {
         'Количество доступных мест' : 'The number of tickets available for the participants',
         'Для некоторых групп могут быть введены ограничения. "Доступно мест" это "Лимит" минус "Количество проданных билетов".' : 'Some competition may be restrictions. "Available" this "Limit" minus "Number of tickets sold."',
         'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.' : 'Competitions in which there is no available tickets (0) closed to registration and ticket sales.',
-        'Осталось мест' : 'Available'
+        'Осталось мест' : 'Available',
+        'Перейти на сайт СТСР' : 'Go to UDSR site',
+        'Регистрация осуществляется по номерам классификационных книжек и на основании информации' : 'Registration is carried by numbers and classification of books based on the information',
+        'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
+        'на момент регистрации.' : 'at the time of registration.',
+        'Выберите номинации' : 'Select competitions',
+        'Класс ST, LA' : 'ST, LA class'
+
 
 
  
@@ -5271,7 +5304,16 @@ localizationModule.constant('DanceDictionary', {
     'Количество доступных мест' : 'The number of tickets available for the participants',
     'Для некоторых групп могут быть введены ограничения. "Доступно мест" это "Лимит" минус "Количество проданных билетов".' : 'Some competition may be restrictions. "Available" this "Limit" minus "Number of tickets sold."',
     'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.' : 'Competitions in which there is no available tickets (0) closed to registration and ticket sales.',
-    'Осталось мест' : 'Available'
+    'Осталось мест' : 'Available',
+    
+    'Перейти на сайт СТСР' : 'Go to UDSR site',
+    'Регистрация осуществляется по номерам классификационных книжек и на основании информации' : 'Registration is carried by numbers and classification of books based on the information',
+    'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
+    'на момент регистрации.' : 'at the time of registration.',
+    'Выберите номинации' : 'Select competitions',
+    'Класс ST, LA' : 'ST, LA class',
+    'Регистрация закрыта':'Registration is closed'
+
   },
   toItalian: {
     'Зарегистрировать ещё группы': 'Registrati altro gruppo',
@@ -5563,7 +5605,7 @@ localizationModule.constant('DanceDictionary', {
     'ВАЖНОЕ ОБЪЯВЛЕНИЕ' : 'ANNUNCIO IMPORTANTE',
     'Зарегистрировать ещё участников »' : 'Registrazione più membri »',
 
-    
+     
     'Введите номера классификационных книжек СТСР' : 'Inserire il numero di libri di classificazione UDSR',
     'Введите номера классификационных книжек WDSF' : 'Inserire il numero di libri di classificazione WDSF',
     
@@ -5588,11 +5630,18 @@ localizationModule.constant('DanceDictionary', {
     'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.' : 
     'Gruppi in cui non c\'è spazio (0) chiuso per registrazione e vendita dei biglietti.',
     
-    'Осталось мест' : 'Luoghi sinistra' 
+    'Осталось мест' : 'Luoghi sinistra',
+    'Перейти на сайт СТСР' : 'Go to UDSR site',
+    'Регистрация осуществляется по номерам классификационных книжек и на основании информации' : 'Registration is carried by numbers and classification of books based on the information',
+    'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
+    'на момент регистрации.' : 'at the time of registration.',
+    'Выберите номинации' : 'Select competitions',
+    'Класс ST, LA' : 'ST, LA class',
+    'Регистрация закрыта':'Registration is closed' 
   },
   getTranslate: function(word, toLanguage){
     var def = function(key){
-        //console.log("'" + key + "' : '',");
+        console.log("'" + key + "' : '',");
         
         return key; 
     };  

@@ -42,17 +42,20 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
                           {id: "Limit", name: 'Лимит', sqlName: 'Limit', isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, captionStyle: {width: '70px', textAlign: 'center'}},
                           {id: "FreeCount", name: 'Осталось мест', sqlName: '', isSorted: false, isSortable: false, isDown: true,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'center'}, hidden: true}];
         
+        var getCssClassFuncForClosedCompetitions = function(item){
+            return item.isClosed == 1 ? 'competitionIsClosed' : '';
+        };
+        
         $scope.page.competitionTable.properties = [
-                          {name:'idExternal'},
-                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
-                          /*{name:'startTime'},*/
+                          {name:'idExternal', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y'), getCssClass: getCssClassFuncForClosedCompetitions},
                           {name:'fullName', 
                             calculate: function(item){
-                                item.fullName = item.name;
+                                item.fullName = item.name + (item.isClosed == 1 ? (' (' + $filter('localize')('Регистрация закрыта') + ')') : '');
                             }},   
-                          {name:'discipline.name'},
-                          {name:'ageCategory.name'},
-                          {name:'dancerClassesString', 
+                          {name:'discipline.name', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'ageCategory.name', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'dancerClassesString', getCssClass: getCssClassFuncForClosedCompetitions,
                                                     calculate: function(item){
                                                             item.dancerClassesString = '';
                                                             for(var i=0; i < item.dancerClasses.length; i++){
@@ -61,7 +64,7 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
 
                                                             item.dancerClassesString = item.dancerClassesString.substring(2, item.dancerClassesString.length);
                                                     }},
-                          {name:'price', cellStyle: {textAlign: 'right'}},
+                          {name:'price', cellStyle: {textAlign: 'right'}, getCssClass: getCssClassFuncForClosedCompetitions},
                           {name:'participantsCountString', cellStyle: {textAlign: 'center'}, cellSelectable: true, cellTitle: $filter('localize')('Открыть список участников группы'),  
                                                     calculate: function(item){
                                                         item.participantsCountString = item.participantsCount + ' »';
@@ -72,8 +75,8 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
                                                     onClickCell: function(id){
                                                         LocationSrvc.goTo(":recorderHash/competition/" + id +"/participants", $scope.recorderHash); 
                                                     }},
-                          {name:'paymentsCount', cellStyle: {textAlign: 'center'}, cellSelectable: true, cellTitle: $filter('localize')('Количество оплативших участников')},
-                          {name:'limitString', cellStyle: {textAlign: 'center'}, cellTitle: $filter('localize')('Количество доступных мест'),
+                          {name:'paymentsCount', cellStyle: {textAlign: 'center'}, cellSelectable: true, cellTitle: $filter('localize')('Количество оплативших участников')}, 
+                          {name:'limitString', cellStyle: {textAlign: 'center'}, cellTitle: $filter('localize')('Количество доступных мест'), getCssClass: getCssClassFuncForClosedCompetitions, 
                                                     calculate: function(item){
                                                         item.limitString = item.limit == 0 ? '---' : item.limit;
                                                     }},
@@ -84,7 +87,12 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
                                                     getCssClass: function(item){ 
                                                         if (item.freeSlotsCount <= 5)
                                                             return 'competitionFreeSlotsCellWarning';
-                                                         
+                                                        
+                                                        if (item.isClosed == 1) {
+                                                            console.log(item);
+                                                            return 'competitionIsClosed';
+                                                        }
+                                                            
                                                         return '';
                                                     }}];  
 

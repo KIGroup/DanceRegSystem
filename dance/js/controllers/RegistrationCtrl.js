@@ -78,25 +78,28 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                           {id: 'FreeCount', name: 'Осталось мест', sqlName: '', isSorted: false, isSortable: false, isDown: true,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'center'}, hidden: true},
                           {id: 'Price', name: 'Цена', sqlName: 'Price', isSorted: false, isSortable: false , isDown: true , isSearched: false , isSearchable: false, captionStyle: {textAlign: 'right', width: '90px'}}];
         
+        var getCssClassFuncForClosedCompetitions = function(item){
+            return item.isClosed == 1 ? 'competitionIsClosed' : '';
+        };
+        
         $scope.competitionTable.properties = [
-                          {name:'idExternal'},
-                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
-                          /*{name:'startTime'},*/
+                          {name:'idExternal', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y'), getCssClass: getCssClassFuncForClosedCompetitions},
                           {name:'fullName',
                                 calculate: function(item){
-                                    item.fullName = item.name;
+                                    item.fullName = item.name + (item.isClosed == 1 ? (' (' + $filter('localize')('Регистрация закрыта') + ')') : '');
                                     if (item.wdsf){
                                         item.fullName += ' ' + ((item.wdsf.status != 'Registering' && item.wdsf.status!= 'PreRegistration') ? 'WDSF STATUS = ' + item.wdsf.status : '');
                                     } 
                                 }},
-                          {name:'discipline.name'},
-                          {name:'ageCategory.fullName', 
+                          {name:'discipline.name', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'ageCategory.fullName', getCssClass: getCssClassFuncForClosedCompetitions,
                                 calculate: function(item){
                                     if (!item.ageCategory) 
                                         return '';
                                     item.ageCategory.fullName = item.ageCategory.name + ' (' + item.ageCategory.titleAge + ')';
                                 }},
-                          {name:'dancerClassesString', 
+                          {name:'dancerClassesString', getCssClass: getCssClassFuncForClosedCompetitions,
                                 calculate: function(item){
                                     item.dancerClassesString = '';
                                     for(var i=0; i < item.dancerClasses.length; i++){
@@ -105,7 +108,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
 
                                     item.dancerClassesString = item.dancerClassesString.substring(2, item.dancerClassesString.length);
                                 }},
-                          {name:'type.name'},
+                          {name:'type.name', getCssClass: getCssClassFuncForClosedCompetitions},
                           {name:'limitString', cellStyle: {textAlign: 'center'}, cellTitle: $filter('localize')('Количество доступных мест'),
                                                     calculate: function(item){
                                                         item.limitString = item.limit == 0 ? '---' : item.limit;
@@ -122,7 +125,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                                                          
                                                         return '';
                                                     }},
-                          {name:'price', cellStyle: {textAlign: 'right'}}];
+                          {name:'price', cellStyle: {textAlign: 'right'}, getCssClass: getCssClassFuncForClosedCompetitions}];
 
         $scope.competitionTable.pageSize = 1000; 
         $scope.competitionTable.pageCurr = 1;
@@ -612,13 +615,13 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
             $scope.tabUDSR.disabled = true;
             $scope.tabOTHER.disabled = true;
             $scope.tabWDSF.searchForm.processing = false;
-			
-			$scope.tabWDSF.formCouple.btnRegistrationVisible = true;
+            
+            $scope.tabWDSF.formCouple.btnRegistrationVisible = true;
         
-			$scope.competitionTable.selectable = true; 
-			$scope.competitionTable.avialableMode = true;
-			$scope.competitionTable.refresh();  
-		
+            $scope.competitionTable.selectable = true; 
+            $scope.competitionTable.avialableMode = true;
+            $scope.competitionTable.refresh();  
+        
             $scope.loadCountParticipantCompetitions('WDSF');
         };
 
@@ -627,11 +630,11 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 function(data){
                     $scope.tabWDSF.couple = data;
                     afterSuccess();
-					
+                    
                     $scope.competitionTable.selectable = true;
-					if (data.otherInfo.status != 'Active'){
+                    if (data.otherInfo.status != 'Active'){
                         $scope.tabWDSF.formCouple.disabled = true;
-						$scope.competitionTable.selectable = false;
+                        $scope.competitionTable.selectable = false;
                         $scope.tabWDSF.alert = UtilsSrvc.getAlert('Внимание!', 'Статус пары не "Active"! Регистрация пары невозможна.', 'error', true);
                     }
                 },

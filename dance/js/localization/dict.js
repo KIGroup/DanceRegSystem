@@ -2,6 +2,7 @@
 
 localizationModule.constant('DanceDictionary', {
   toEnglish: {
+        'Регистрация закрыта':'Registration is closed',
         'Зарегистрировать ещё группы':'Register another competitions',
         'Регистрация выполнена.': 'Registration is complete.',
         'Регистрация не выполнена.': 'Registration failed.',
@@ -297,7 +298,14 @@ localizationModule.constant('DanceDictionary', {
         'Количество доступных мест' : 'The number of tickets available for the participants',
         'Для некоторых групп могут быть введены ограничения. "Доступно мест" это "Лимит" минус "Количество проданных билетов".' : 'Some competition may be restrictions. "Available" this "Limit" minus "Number of tickets sold."',
         'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.' : 'Competitions in which there is no available tickets (0) closed to registration and ticket sales.',
-        'Осталось мест' : 'Available'
+        'Осталось мест' : 'Available',
+        'Перейти на сайт СТСР' : 'Go to UDSR site',
+        'Регистрация осуществляется по номерам классификационных книжек и на основании информации' : 'Registration is carried by numbers and classification of books based on the information',
+        'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
+        'на момент регистрации.' : 'at the time of registration.',
+        'Выберите номинации' : 'Select competitions',
+        'Класс ST, LA' : 'ST, LA class'
+
 
 
  
@@ -591,7 +599,16 @@ localizationModule.constant('DanceDictionary', {
     'Количество доступных мест' : 'The number of tickets available for the participants',
     'Для некоторых групп могут быть введены ограничения. "Доступно мест" это "Лимит" минус "Количество проданных билетов".' : 'Some competition may be restrictions. "Available" this "Limit" minus "Number of tickets sold."',
     'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.' : 'Competitions in which there is no available tickets (0) closed to registration and ticket sales.',
-    'Осталось мест' : 'Available'
+    'Осталось мест' : 'Available',
+    
+    'Перейти на сайт СТСР' : 'Go to UDSR site',
+    'Регистрация осуществляется по номерам классификационных книжек и на основании информации' : 'Registration is carried by numbers and classification of books based on the information',
+    'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
+    'на момент регистрации.' : 'at the time of registration.',
+    'Выберите номинации' : 'Select competitions',
+    'Класс ST, LA' : 'ST, LA class',
+    'Регистрация закрыта':'Registration is closed'
+
   },
   toItalian: {
     'Зарегистрировать ещё группы': 'Registrati altro gruppo',
@@ -883,7 +900,7 @@ localizationModule.constant('DanceDictionary', {
     'ВАЖНОЕ ОБЪЯВЛЕНИЕ' : 'ANNUNCIO IMPORTANTE',
     'Зарегистрировать ещё участников »' : 'Registrazione più membri »',
 
-    
+     
     'Введите номера классификационных книжек СТСР' : 'Inserire il numero di libri di classificazione UDSR',
     'Введите номера классификационных книжек WDSF' : 'Inserire il numero di libri di classificazione WDSF',
     
@@ -908,11 +925,18 @@ localizationModule.constant('DanceDictionary', {
     'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.' : 
     'Gruppi in cui non c\'è spazio (0) chiuso per registrazione e vendita dei biglietti.',
     
-    'Осталось мест' : 'Luoghi sinistra' 
+    'Осталось мест' : 'Luoghi sinistra',
+    'Перейти на сайт СТСР' : 'Go to UDSR site',
+    'Регистрация осуществляется по номерам классификационных книжек и на основании информации' : 'Registration is carried by numbers and classification of books based on the information',
+    'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
+    'на момент регистрации.' : 'at the time of registration.',
+    'Выберите номинации' : 'Select competitions',
+    'Класс ST, LA' : 'ST, LA class',
+    'Регистрация закрыта':'Registration is closed' 
   },
   getTranslate: function(word, toLanguage){
     var def = function(key){
-        //console.log("'" + key + "' : '',");
+        console.log("'" + key + "' : '',");
         
         return key; 
     };  

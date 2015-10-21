@@ -652,7 +652,12 @@ Get all tournament competitions for grid</Description>
     try{
         $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject($ZCVT(%request.Content.Read(10000000), "I", "UTF8"),,.params, 1))
         
-        set whereCondition = "cmpT.IsActive = 1 AND cmpT.Tournament = '"_..ParseParameter(params.other.tournamentId)_"' AND cmpT.IsClosed = 0 "
+        set isClosedCondition = " AND cmpT.IsClosed = 0 "
+        if (params.other.showClosed = $$$YES){
+            set isClosedCondition = ""
+        }
+        
+        set whereCondition = "cmpT.IsActive = 1 AND cmpT.Tournament = '"_..ParseParameter(params.other.tournamentId)_"' "_isClosedCondition
         
         if (params.other.date '= ""){
             set whereCondition = whereCondition_" AND cmpT.StartDate = "_$ZDATEH(params.other.date,15)

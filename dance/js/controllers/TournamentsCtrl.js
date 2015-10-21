@@ -6,18 +6,23 @@
 ===========================================================================================*/
 
 controllersModule.controller('TournamentsCtrl', function($scope, $location, $filter, UtilsSrvc, TournamentSrvc, CompetitionSrvc, TournamentRankSrvc, TournamentStatusSrvc){
-	$scope.menu.selectMenu($scope.menu.pages.tournaments);
+    $scope.menu.selectMenu($scope.menu.pages.tournaments);
 
-	$scope.page = {};
+    $scope.page = {};
     $scope.page.tournamentTable = {participantsInfo:{}};
     $scope.page.competitionTable = {filterDate: ''};
 
- 	if (!$scope.pageStore.tournaments) $scope.pageStore.tournaments = {gridTournaments:{}, gridCompetitions:{filterDate: ''}};
+    if (!$scope.pageStore.tournaments){ 
+        $scope.pageStore.tournaments = {
+            gridTournaments:{}, 
+            gridCompetitions:{filterDate: '', hideNumbersColumn : true}
+        };
+    }
     
     $scope.page.init = function(){
-    	//
-    	// Tournament table
-    	//
+        //
+        // Tournament table
+        //
         $scope.page.tournamentTable.columns = [
                           {name: 'Название'         , sqlName: 'Name->Value'         , isSorted: false, isSortable: true,  isDown: true ,  isSearched: true,  isSearchable: true},
                           {name: 'Дата начала'      , sqlName: 'StartDate'           , isSorted: true , isSortable: true,  isDown: false,  isSearched: false, isSearchable: false, filter: 'date'},
@@ -29,15 +34,15 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                           {name: 'Регистрация'      , sqlName: ''                    , isSorted: false, isSortable: false, isDown: true ,  isSearched: false, isSearchable: false, captionStyle: {textAlign: 'center', width: '150px'}}];
         
         $scope.page.tournamentTable.properties = [
-        				  {name:'nameShorted', calculate: function(item){
-	        				  						var maxLen = 25;
-	        				  						if (item.name.length > maxLen){
-	        				  				   			item.nameShorted = item.name.substring(0,25) + '...';
-	        				  						}
-	        				  						else{
-		        				  						item.nameShorted = item.name;
-	        				  						}
-	        				  				   }}, 
+                          {name:'nameShorted', calculate: function(item){
+                                                    var maxLen = 25;
+                                                    if (item.name.length > maxLen){
+                                                        item.nameShorted = item.name.substring(0,25) + '...';
+                                                    }
+                                                    else{
+                                                        item.nameShorted = item.name;
+                                                    }
+                                               }}, 
                           {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
                           {name:'endDate'  , filter: 'date', filterParam: $filter('localize')('d MMMM y')},
                           {name:'rank.shortName'},
@@ -79,17 +84,17 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                                                     TournamentSrvc.getRecordersHashes(item.id).then(
                                                         function(data){
                                                             $scope.confirmDialog = {
-	                                                            tournament: item,
-                                                            	recorders: data.recorders,
-                                                            	getLink: function(rec){
-	                                                            	var url = '#/recorder/' + rec.hash + '/tournament/' + this.tournament.id + '/registration';
-	                                                            	if (this.defaultType)
-	                                                            		url += '/type/' + this.defaultType;
-	                                                            	if (this.defaultLang)
-	                                                            		url += '/lang/' + this.defaultLang; 
-	                                                            	
-	                                                            	return url;
-	                                                            }
+                                                                tournament: item,
+                                                                recorders: data.recorders,
+                                                                getLink: function(rec){
+                                                                    var url = '#/recorder/' + rec.hash + '/tournament/' + this.tournament.id + '/registration';
+                                                                    if (this.defaultType)
+                                                                        url += '/type/' + this.defaultType;
+                                                                    if (this.defaultLang)
+                                                                        url += '/lang/' + this.defaultLang; 
+                                                                    
+                                                                    return url;
+                                                                }
                                                             }
 
                                                             $('#ConfirmDialog').modal('show');
@@ -109,27 +114,34 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
         $scope.page.tournamentTable.forciblyUpdate = 0;
         $scope.page.tournamentTable.refresh();
         
- 	 	$scope.$watch('menu.admin', function(){
-        	$scope.page.tournamentTable.columns[7].hidden = !$scope.menu.admin;   
+        $scope.$watch('menu.admin', function(){
+            $scope.page.tournamentTable.columns[7].hidden = !$scope.menu.admin;   
         });
         
         // 
-    	// Competition table
-    	//
+        // Competition table
+        //
         $scope.page.competitionTable.columns = [
+                          {name: '#', sqlName: '%EXACT(idExternal)', isSorted: true , isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, filter: 'date', captionStyle: {width: '30px'}},
                           {name: 'Дата'             , sqlName: 'StartDate'               , isSorted: true , isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, filter: 'date', captionStyle: { width: '130px'}},
-                          {name: 'Время'            , sqlName: 'StartTime'               , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false},
                           {name: 'Название'         , sqlName: 'Name->Value'             , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false},
                           {name: 'Программа'        , sqlName: 'Discipline->Name->Value' , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false},
                           {name: 'Возрастная группа', sqlName: 'AgeCategory'             , isSorted: false, isSortable: false, isDown: true ,  isSearched: false ,  isSearchable: false},
                           {name: 'Класс'            , sqlName: ''                        , isSorted: false, isSortable: false, isDown: true ,  isSearched: false ,  isSearchable: false},
-                          {name: 'Цена, р.'             , sqlName: 'Price'                   , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'right', width: '50px'}},
+                          {name: 'Цена, р.'             , sqlName: 'Price'                   , isSorted: false, isSortable: true , isDown: true ,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'right', width: '100px'}},
                           {name: 'Участники'        , sqlName: 'ParticipantsCount'       , isSorted: false, isSortable: false, isDown: true ,  isSearched: false ,  isSearchable: false, captionStyle: {textAlign: 'center', width: '100px'}}];
+        
+        var getCssClassFuncForClosedCompetitions = function(item){
+            return item.isClosed == 1 ? 'competitionIsClosed' : '';
+        };
          
         $scope.page.competitionTable.properties = [
-        				  {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
-                          {name:'startTime'},
-                          {name:'name'},
+                          {name:'idExternal', getCssClass: getCssClassFuncForClosedCompetitions},
+                          {name:'startDate', filter: 'date', filterParam: $filter('localize')('d MMMM y')},
+                          {name:'fullName', 
+                            calculate: function(item){
+                                item.fullName = item.name + (item.isClosed == 1 ? (' (' + $filter('localize')('Регистрация закрыта') + ')') : '');
+                            }},   
                           {name:'discipline.name'},
                           {name:'ageCategory.name'},
                           {name:'dancerClassesString', calculate: function(item){
@@ -174,7 +186,7 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
     $scope.page.tournamentTable.loadItems = function(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText){
         TournamentSrvc.getAllForGrid(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText, {rankId: $scope.pageStore.tournaments.gridTournaments.filterRankId, statusId: $scope.pageStore.tournaments.gridTournaments.filterStatusId}).then(
             function(data){
-	            data = data.children;
+                data = data.children;
                 $scope.page.tournamentTable.pageTotal = Math.ceil(data.itemsTotal / pageSize);
                 $scope.page.tournamentTable.itemsTotal = data.itemsTotal;
                 $scope.page.tournamentTable.items = data.items;
@@ -194,12 +206,12 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                     selected.rowClass = 'success';
                     $scope.page.tournamentTable.selectedItems = [selected]; 
                     $scope.page.tournamentTable.onSelect(selected);
-                	console.log('tournament found');
+                    console.log('tournament found');
                 }
-				else{
-					console.log('tournament not found');
-               		
-				}
+                else{
+                    console.log('tournament not found');
+                    
+                }
             },
             function(data){
                 $scope.page.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
@@ -243,7 +255,7 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
 
         $scope.page.competitionTable.refresh();
         $scope.page.competitionTable.loadDates(item.id);
-		//$scope.pageStore.tournaments.gridCompetitions = {filterDate: ''};
+        //$scope.pageStore.tournaments.gridCompetitions = {filterDate: ''};
         $scope.pageStore.tournaments.gridTournaments.selectedId = item.id;        
     };
 
@@ -283,24 +295,24 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
     // 
     $scope.page.competitionTable.loadItems = function(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText){
         if ($scope.page.tournamentTable.selectedItems.length == 0)
-        	return;
+            return;
         
         var convertParams = {
-	        loadParticipantsCount: true
-	    };
-	    
+            loadParticipantsCount: true
+        };
+        
         if (!$scope.pageStore.tournaments.gridCompetitions.tableShortView){
-	        convertParams.loadTournament = true;
-	        convertParams.loadDiscipline = true;
-	        convertParams.loadAgeCategory = true;
-	        convertParams.loadType = true;
-	        convertParams.loadDancerClasses = true;
-	        convertParams.tournamentParams = {};
+            convertParams.loadTournament = true;
+            convertParams.loadDiscipline = true;
+            convertParams.loadAgeCategory = true;
+            convertParams.loadType = true;
+            convertParams.loadDancerClasses = true;
+            convertParams.tournamentParams = {};
         }
        
-        CompetitionSrvc.getAllForGrid(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText, {date: $scope.pageStore.tournaments.gridCompetitions.filterDate, tournamentId: $scope.page.tournamentTable.selectedItems[0].id, convertParams: convertParams}).then(
+        CompetitionSrvc.getAllForGrid(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText, {date: $scope.pageStore.tournaments.gridCompetitions.filterDate, tournamentId: $scope.page.tournamentTable.selectedItems[0].id, convertParams: convertParams, showClosed: true}).then(
             function(data){
-	            data = data.children;
+                data = data.children;
                 $scope.page.competitionTable.pageTotal = Math.ceil(data.itemsTotal / pageSize);
                 $scope.page.competitionTable.itemsTotal = data.itemsTotal;
                 $scope.page.competitionTable.items = data.items;
@@ -329,7 +341,7 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
 
 
     $scope.page.competitionTable.setHiddenCoulumns = function(value){
-        var indexes = [1,3,4,5];
+        var indexes = [3,4,5];
         for(var n=0; n < indexes.length; n++){
             $scope.page.competitionTable.columns[indexes[n]].hidden = value;     
         }
@@ -358,9 +370,9 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
         $scope.page.competitionTable.forciblyUpdate++; 
     };
 
-	$scope.page.competitionTable.import = function(){
-		$location.path("/tournament/" + $scope.page.tournamentTable.selectedItems[0].id + "/importcompetitions"); 
-	};
+    $scope.page.competitionTable.import = function(){
+        $location.path("/tournament/" + $scope.page.tournamentTable.selectedItems[0].id + "/importcompetitions"); 
+    };
 
     $scope.page.competitionTable.add = function(){
         $location.path("/tournament/" + $scope.page.tournamentTable.selectedItems[0].id + "/competition"); 

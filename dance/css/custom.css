@@ -472,3 +472,8 @@ a.disabled {
     background-color: rgb(255, 142, 142)!important;
     color: black!important;
 }
+
+.competitionIsClosed{
+    text-decoration:line-through!important;
+    color: grey!important;
+}
