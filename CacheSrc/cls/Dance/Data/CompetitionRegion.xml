@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Data.CompetitionRegion">
+<Super>%Persistent</Super>
+<TimeCreated>63849,77704.249723</TimeCreated>
+
+<Property name="Name">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="500"/>
+</Property>
+
+<Property name="CodeNumbers">
+<Type>%String</Type>
+<Collection>list</Collection>
+<Parameter name="CollectionDisplayDelimiter" value="&quot;,&quot;"/>
+</Property>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Convert to proxyObject (for JSON)</Description>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.id = ..%Id()
+    set proxy.name = ..Name
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="ImportData">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ..%KillExtent()
+    do ..Import("1", "Республика Адыгея")
+    do ..Import("2, 102", "Республика Башкортостан")
+    do ..Import("3", "Республика Бурятия")
+    do ..Import("4", "Республика Алтай (Горный Алтай)")
+    do ..Import("5", "Республика Дагестан")
+    do ..Import("6", "Республика Ингушетия")
+    do ..Import("7", "Кабардино-Балкарская Республика")
+    do ..Import("8", "Республика Калмыкия")
+    do ..Import("9", "Республика Карачаево-Черкессия")
+    do ..Import("10", "Республика Карелия")
+    do ..Import("11", "Республика Коми")
+    do ..Import("12", "Республика Марий Эл")
+    do ..Import("13, 113", "Республика Мордовия")
+    do ..Import("14", "Республика Саха (Якутия)")
+    do ..Import("15", "Республика Северная Осетия — Алания")
+    do ..Import("16, 116", "Республика Татарстан")
+    do ..Import("17", "Республика Тыва")
+    do ..Import("18", "Удмуртская Республика")
+    do ..Import("19", "Республика Хакасия")
+    do ..Import("21, 121", "Чувашская Республика")
+    do ..Import("22", "Алтайский край")
+    do ..Import("23, 93, 123", "Краснодарский край")
+    do ..Import("24, 84, 88, 124", "Красноярский край")
+    do ..Import("25, 125", "Приморский край")
+    do ..Import("26", "Ставропольский край")
+    do ..Import("27", "Хабаровский край")
+    do ..Import("28", "Амурская область")
+    do ..Import("29", "Архангельская область")
+    do ..Import("30", "Астраханская область")
+    do ..Import("31", "Белгородская область")
+    do ..Import("32", "Брянская область")
+    do ..Import("33", "Владимирская область")
+    do ..Import("34, 134", "Волгоградская область")
+    do ..Import("35", "Вологодская область")
+    do ..Import("36", "Воронежская область")
+    do ..Import("37", "Ивановская область")
+    do ..Import("38, 85", "Иркутская область")
+    do ..Import("39, 91", "Калининградская область")
+    do ..Import("40", "Калужская область")
+    do ..Import("41", "Камчатский край")
+    do ..Import("42", "Кемеровская область")
+    do ..Import("43", "Кировская область")
+    do ..Import("44", "Костромская область")
+    do ..Import("45", "Курганская область")
+    do ..Import("46", "Курская область")
+    do ..Import("47", "Ленинградская область")
+    do ..Import("48", "Липецкая область")
+    do ..Import("49", "Магаданская область")
+    do ..Import("50, 90, 150, 190", "Московская область")
+    do ..Import("51", "Мурманская область")
+    do ..Import("52, 152", "Нижегородская область")
+    do ..Import("53", "Новгородская область")
+    do ..Import("54", "Новосибирская область")
+    do ..Import("55", "Омская область")
+    do ..Import("56", "Оренбургская область")
+    do ..Import("57", "Орловская область")
+    do ..Import("58", "Пензенская область")
+    do ..Import("59, 81, 159", "Пермский край")
+    do ..Import("60", "Псковская область")
+    do ..Import("61, 161", "Ростовская область")
+    do ..Import("62", "Рязанская область")
+    do ..Import("63, 163", "Самарская область")
+    do ..Import("64, 164", "Саратовская область")
+    do ..Import("65", "Сахалинская область")
+    do ..Import("66, 96", "Свердловская область")
+    do ..Import("67", "Смоленская область")
+    do ..Import("68", "Тамбовская область")
+    do ..Import("69", "Тверская область")
+    do ..Import("70", "Томская область")
+    do ..Import("71", "Тульская область")
+    do ..Import("72", "Тюменская область")
+    do ..Import("73, 173", "Ульяновская область")
+    do ..Import("74, 174", "Челябинская область")
+    do ..Import("75, 80", "Забайкальский край")
+    do ..Import("76", "Ярославская область")
+    do ..Import("77, 97, 99, 177, 197, 199, 777", "г. Москва")
+    do ..Import("78, 98, 178", "г. Санкт-Петербург")
+    do ..Import("79", "Еврейская автономная область")
+    do ..Import("82", "Республика Крым")
+    do ..Import("83", "Ненецкий автономный округ")
+    do ..Import("86, 186", "Ханты-Мансийский автономный округ — Югра")
+    do ..Import("87", "Чукотский автономный округ")
+    do ..Import("89", "Ямало-Ненецкий автономный округ")
+    do ..Import("92", "г. Севастополь")
+    //do ..Import("94", "Территории, находящиеся за пределами РФ и обслуживаемые Департаментом режимных объектов МВД России")
+    do ..Import("95", "Чеченская республика")
+    q $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>codes,name</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set region = ..%New()
+    set region.Name = name
+    
+    set list = $LISTFROMSTRING(codes, ",")
+    for i=1:1:$LL(list){
+        set code = $REPLACE($LIST(list, i), " ", "")
+        d region.CodeNumbers.Insert(code)
+    }
+    
+    q region.%Save()
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.CompetitionRegionD</DataLocation>
+<DefaultData>CompetitionRegionDefaultData</DefaultData>
+<IdLocation>^Dance.Data.CompetitionRegionD</IdLocation>
+<IndexLocation>^Dance.Data.CompetitionRegionI</IndexLocation>
+<StreamLocation>^Dance.Data.CompetitionRegionS</StreamLocation>
+<Data name="CompetitionRegionDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>CodeNumbers</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

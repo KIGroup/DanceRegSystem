@@ -17,11 +17,14 @@ servicesModule.factory('OtherSrvc', function(RESTSrvc) {
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.admin + '/checkAdmin/' + isLogin});
         },
         setUnknownKey: function(key){
-	        console.log('unknownkey = '+key);
-	        return RESTSrvc.getPromise({method: 'POST', url: AppSettings.user + '/unknownkey', data: {key: key}});
-	    },
+            console.log('unknownkey = '+key);
+            return RESTSrvc.getPromise({method: 'POST', url: AppSettings.user + '/unknownkey', data: {key: key}});
+        },
         getCurrencies: function(){
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.admin + '/currency'});
-        }		
+        },
+        getCompetitionRegions: function(){
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/competition/region'});
+        }       
     }
 });

@@ -117,7 +117,7 @@ Public REST URLs</Description>
 
 <!-- GET ALL, Dancer class -->
 <Route Method="GET" Url="/dancerClass" Call="Dance.Web.JsonUser:GetDancerClasses"/>
-	
+    
 <!-- GET ALL, Age category -->
 <Route Method="GET" Url="/ageCategory" Call="Dance.Web.JsonUser:GetAgeCategories"/>
 
@@ -125,15 +125,21 @@ Public REST URLs</Description>
 
 
 <Route Method="GET" Url="/person/stats" Call="Dance.Web.JsonUser:GetPersonStatistics"/>
-	
-	
-<!--  -->
+    
+    
+<!-- Count of participant competitions -->
 <Route Method="GET" Url="/count/participant/competition" Call="Dance.Web.JsonUser:GetCountParticipantCompetitions"/>
-	
-	
-	
+    
+    
+<!-- Report. All participants -->   
 <Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/participant" Call="Dance.Web.ReportTournamentParticipants:GetFileByAccessCode"/>
-<Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/payer" Call="Dance.Web.ReportTournamentPayers:GetFileByAccessCode"/>	
+
+<!-- Report. All participants -->
+<Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/payer" Call="Dance.Web.ReportTournamentPayers:GetFileByAccessCode"/>    
+
+<!-- Get all competition regions -->
+<Route Method="GET" Url="/competition/region" Call="Dance.Web.JsonUser:GetCompetitionRegions"/>    
+
 </Routes>
 ]]></Data>
 </XData>

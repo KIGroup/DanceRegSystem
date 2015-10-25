@@ -102,6 +102,11 @@ Competition in the tournament, has participants</Description>
 <Required>1</Required>
 </Property>
 
+<Property name="Regions">
+<Type>CompetitionRegion</Type>
+<Collection>array</Collection>
+</Property>
+
 <Index name="TournamentIdx">
 <Properties>Tournament</Properties>
 </Index>
@@ -168,6 +173,9 @@ Competition in the tournament, has participants</Description>
         set proxy.isWDSF = $$$YES
     }
     
+    set proxy.regions = ##class(%ListOfObjects).%New()
+    do proxy.regions.Insert(##class(CompetitionRegion).%OpenId(1).ConvertToProxyObject())
+    
     set proxy.isInternational = ..IsInternational = $$$YES
     
     // DancerClasses array
@@ -182,9 +190,31 @@ Competition in the tournament, has participants</Description>
         }
     }
     
-    //if (params.loadParticipantsCount){
-        set proxy.participantsCount = ..ParticipantsCount
+    // DancerClasses array
+    set proxy.dancerClasses = ##class(%ListOfObjects).%New()
+    
+    if (params.loadDancerClasses){
+        set dcKey = ""
+        for i=1:1:..DancerClasses.Count(){
+            set dcKey = ..DancerClasses.Next(dcKey)
+            set dc = ..DancerClasses.GetAt(dcKey)
+            do proxy.dancerClasses.Insert(dc.ConvertToProxyObject())
+        }
+    }
+    
+    // Regions array
+    set proxy.regions = ##class(%ListOfObjects).%New()
+    
+    //if (params.loadDancerClasses){
+        set key = ""
+        for i=1:1:..Regions.Count(){
+            set key = ..Regions.Next(key)
+            set reg = ..Regions.GetAt(key)
+            do proxy.regions.Insert(reg.ConvertToProxyObject())
+        }
     //}
+    
+    set proxy.participantsCount = ..ParticipantsCount
     
     set proxy.freeSlotsCount = 10000
     //if (params.loadPaymentsCount){
@@ -266,6 +296,13 @@ Create or update competition</Description>
         if $$$ISERR(st) return ##class(Dance.Utils.Msg).GetErrorStatus("error_DancerClassNotFound"," | "_st)
         
         do cmp.DancerClasses.SetAt(dancerClasses, dancerClasses.%Id())
+    }
+    
+    // Regions
+    do cmp.Regions.Clear()
+    for i=1:1:data.regions.Count(){
+        set region = ##class(Dance.Data.CompetitionRegion).%OpenId(data.regions.GetAt(i).id,,.st)
+        do cmp.Regions.SetAt(region, region.%Id())
     }
         
     set st = cmp.%Save()
@@ -412,6 +449,11 @@ Participants count in the competition</Description>
 <Attribute>DancerClasses</Attribute>
 <Structure>subnode</Structure>
 <Subscript>"DancerClasses"</Subscript>
+</Data>
+<Data name="Regions">
+<Attribute>Regions</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"Regions"</Subscript>
 </Data>
 </Storage>
 

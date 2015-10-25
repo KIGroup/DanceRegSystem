@@ -7,7 +7,7 @@ Competition: create or update data
 
 controllersModule.controller('CompetitionCtrl', function($scope, $window, $routeParams, UtilsSrvc, TournamentSrvc, CompetitionSrvc, AgeCategorySrvc, DancerClassSrvc, DisciplineSrvc, OtherSrvc){
     $scope.menu.shortMenu = false;
-    
+
     $scope.page = {};
     $scope.page.tournament = {rank: {}, 
                               status: {}, 
@@ -16,7 +16,7 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
 
 
     $scope.page.init = function(){
-	    $scope.page.clear();
+        $scope.page.clear();
         $scope.page.loadTournament($routeParams.tournamentId);
         
         if ($routeParams.competitionId){
@@ -34,7 +34,7 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
 
     /// Clear form fields
     $scope.page.clear = function(){
-	   var now = new Date();
+       var now = new Date();
        $scope.page.competition = {idInternal: "I" + now.getTime().toString().substring(5,20),
                                   idExternal: "E" + now.getTime().toString().substring(5,20),
                                   startTime: '12:00', 
@@ -46,16 +46,16 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
 
     /// Load Tournament by ID
     $scope.page.loadTournament = function(id){
-    	var filter = '?' +
-	    	'loadName=1&' +
-	    	'loadLocation=1&' +
-	    	'loadOrganizer=1&' +
-	    	'loadRank=1&' +
-	    	'loadStatus=1&' +
-	    	'loadParticipantsCount=1&' +
-	    	'loadParticipantsUniqueCount=1&' +
-	    	'loadCompetitionsCount=1';
-	    	
+        var filter = '?' +
+            'loadName=1&' +
+            'loadLocation=1&' +
+            'loadOrganizer=1&' +
+            'loadRank=1&' +
+            'loadStatus=1&' +
+            'loadParticipantsCount=1&' +
+            'loadParticipantsUniqueCount=1&' +
+            'loadCompetitionsCount=1';
+            
         TournamentSrvc.getById(id, filter).then(
             function(data){
                 $scope.page.tournament = data;
@@ -67,15 +67,15 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
 
     /// Load Competition by ID
     $scope.page.loadCompetition = function(competitionId){
-	    var filter = '?' +
-	    	'loadDiscipline=1&' +
-	    	'loadAgeCategory=1&' +
-	    	'loadDancerClasses=1&' +
-	    	'loadType=1&' +
-	    	'loadWDSF=1&' +
-	    	'loadTournament=1&' +
-	    	'loadTournamentLocation=1';
-	    	
+        var filter = '?' +
+            'loadDiscipline=1&' +
+            'loadAgeCategory=1&' +
+            'loadDancerClasses=1&' +
+            'loadType=1&' +
+            'loadWDSF=1&' +
+            'loadTournament=1&' +
+            'loadTournamentLocation=1';
+            
         CompetitionSrvc.getById(competitionId, filter).then(
             function(data){
                 $scope.page.competition = data;
@@ -115,34 +115,34 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
  
     /// Save Competition or update data
     $scope.page.saveCompetition = function(){
-	    $scope.page.competition.startDate = UtilsSrvc.getValidDate($scope.page.competition.startDate);
-	    
-   		if ($scope.page.competition.startDate == "")
-   			return;
-   		
-   		if ($scope.page.competition.dancerClasses){
-	   		var oneExistsSelected = false;
-	   		for (var i=0; i < $scope.page.competition.dancerClasses.length; i++){
-	   			if ($scope.page.competition.dancerClasses[i].selected == 1){
-	   				oneExistsSelected = true;
-	   				break;
-	   			}
-	   		}
-	   		
-	   		if (!oneExistsSelected){
-	   			$scope.page.alert = UtilsSrvc.getAlert('Внимание!', 'Выберите хотя бы один класс танцора.', 'info', true);
-	   			return;
-	   		}
-	   	}
-   		
-   			 
-   		CompetitionSrvc.save($scope.page.tournament.id, $scope.page.competition).then(
+        $scope.page.competition.startDate = UtilsSrvc.getValidDate($scope.page.competition.startDate);
+        
+        if ($scope.page.competition.startDate == "")
+            return;
+        
+        if ($scope.page.competition.dancerClasses){
+            var oneExistsSelected = false;
+            for (var i=0; i < $scope.page.competition.dancerClasses.length; i++){
+                if ($scope.page.competition.dancerClasses[i].selected == 1){
+                    oneExistsSelected = true;
+                    break;
+                }
+            }
+            
+            if (!oneExistsSelected){
+                $scope.page.alert = UtilsSrvc.getAlert('Внимание!', 'Выберите хотя бы один класс танцора.', 'info', true);
+                return;
+            }
+        }
+        
+             
+        CompetitionSrvc.save($scope.page.tournament.id, $scope.page.competition).then(
             function(data){
-	            if ($scope.page.competition.id){
+                if ($scope.page.competition.id){
                     $scope.page.alert = UtilsSrvc.getAlert('Готово!', 'Изменения сохранены.', 'success', true);
                 }
                 else{
-	                $scope.page.clear();
+                    $scope.page.clear();
                     $scope.page.loadDancerClasses();
                     $scope.page.alert = UtilsSrvc.getAlert('Готово!', 'Группа создана.', 'success', true);   
                 }

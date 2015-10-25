@@ -1757,5 +1757,14 @@ Feedback from users </Description>
     quit st
 ]]></Implementation>
 </Method>
+
+<Method name="GetCompetitionRegions">
+<Description>
+Get all competition regions</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT id as id, name as name FROM Dance_Data.CompetitionRegion")
+]]></Implementation>
+</Method>
 </Class>
 </Export>

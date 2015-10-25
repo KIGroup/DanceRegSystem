@@ -44,6 +44,7 @@
     <script language="javascript"  src="js/localization/tmhDynamicLocale.js"></script>
 
     <script language="javascript" src="lib/ui-bootstrap-tpls-0.5.0.js"></script>
+    <script language="javascript" src="lib/underscore-min.js"></script>
     
       
     <script language="javascript">
@@ -167,9 +168,9 @@
           });  
    </script>
 
-    <!-- Все JS исходники в одном файле -->
+    <!-- Все JS исходники в одном файле 
    <script language="javascript"  src="js/combine.js"></script>  
-<!--
+-->
    
     <script language="javascript" src="js/controllers/MainCtrl.js"></script>
     
@@ -219,12 +220,12 @@
     <script language="javascript" src="js/directives/competitionform.js"></script>
     <script language="javascript" src="js/directives/danceplatUDSRPay.js"></script>
     <script language="javascript" src="js/directives/danceplatOtherPay.js"></script>
+    <script language="javascript" src="js/directives/dropdownMultiselect.js"></script>
 
     <script language="javascript" src="js/localization/dict.js"></script>
     <script language="javascript" src="js/localization/filter.js"></script>
     
     <script language="javascript" src="js/filters/cacheDate.js"></script>
-    -->
 
   </body>
   

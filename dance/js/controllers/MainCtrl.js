@@ -6,6 +6,7 @@
 ===========================================================================================*/
 
 controllersModule.controller('MainCtrl', function($scope, $cookies, $filter, $window, OtherSrvc, UtilsSrvc, tmhDynamicLocale){
+
     if ($cookies.lang)
         tmhDynamicLocale.set($cookies.lang);
     else

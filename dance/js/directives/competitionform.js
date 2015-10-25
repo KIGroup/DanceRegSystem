@@ -11,9 +11,11 @@ directivesModule.directive('competitionform', function(){
             competition: '=',
             tournament: '='       
         },
-        controller: function($scope, DisciplineSrvc, AgeCategorySrvc, CompetitionSrvc, UtilsSrvc){
+        controller: function($scope, DisciplineSrvc, AgeCategorySrvc, CompetitionSrvc, OtherSrvc, UtilsSrvc){
             $scope.competitionsWDSF = [];
 
+            $scope.selectedRegionsIds = [];
+     
             /// Load Disciplines
             $scope.loadDisciplines = function(){
                 DisciplineSrvc.getAll().then(
@@ -33,6 +35,16 @@ directivesModule.directive('competitionform', function(){
                     function(data, status, headers, config){
                     });
             };
+            
+            /// Load competition regions
+            $scope.loadCompetitionRegion = function(){
+                OtherSrvc.getCompetitionRegions().then(
+                    function(data){
+                        $scope.regions = data.children;
+                    },
+                    function(data, status, headers, config){
+                    });
+            };
            
             /// Load types
             $scope.loadTypes = function(){
@@ -43,7 +55,7 @@ directivesModule.directive('competitionform', function(){
                     function(data, status, headers, config){
                     });
             };
-			  
+              
             $scope.loadCompetitionsWDSFByFilter = function(){
                 $scope.competition.startDate = UtilsSrvc.getValidDate($scope.competition.startDate);
                 if ($scope.competition.startDate=="")
@@ -75,6 +87,7 @@ directivesModule.directive('competitionform', function(){
             $scope.loadDisciplines();
             $scope.loadAgeCategories();
             $scope.loadTypes();
-	   	}
+            $scope.loadCompetitionRegion();
+        }
     }
 });
