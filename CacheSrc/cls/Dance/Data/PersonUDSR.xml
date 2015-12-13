@@ -44,6 +44,10 @@ Date of birth</Description>
 <Parameter name="MAXLEN" value="2000"/>
 </Property>
 
+<Property name="NumberWDSF">
+<Type>%String</Type>
+</Property>
+
 <Index name="NumberUDSRIdx">
 <Properties>Number</Properties>
 <Unique>1</Unique>
@@ -157,6 +161,11 @@ Date of birth</Description>
             }
         }   
         
+        //20 Номер WDSF
+        if ($LIST(propList, 20) '= ""){
+            set person.NumberWDSF = $LIST(propList, 20)
+        }
+        
         set person.Country = ##class(Dance.Data.Country).WDSFNameIdxOpen("Russian Federation")
             
         set person.Updated = $ZDT($ZTS,3)
@@ -252,6 +261,9 @@ Date of birth</Description>
 </Value>
 <Value name="8">
 <Value>RegionNumber</Value>
+</Value>
+<Value name="9">
+<Value>NumberWDSF</Value>
 </Value>
 </Data>
 </Storage>
