@@ -37,6 +37,7 @@ directives/tournamentform.js
 directives/competitionform.js
 directives/danceplatUDSRPay.js
 directives/danceplatOtherPay.js
+directives/dropdownMultiselect.js
 localization/dict.js
 localization/filter.js
 filters/cacheDate.js

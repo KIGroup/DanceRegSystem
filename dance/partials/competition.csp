@@ -48,7 +48,7 @@
 							<competitionform competition="page.competition" tournament="page.tournament"/>
 						    <div class="control-group">
 						        <div class="controls">
-						            <button type="submit" class="btn btn-success btn-small" ng-bind="page.btnSubmitCaption|localize" ng-disabled="form_competition.$pristine"></button>
+						            <button type="submit" class="btn btn-success btn-small" ng-bind="page.btnSubmitCaption|localize"></button>
 						            <button type="button" class="btn btn-small" ng-click="page.cancel()" ng-bind="'Отмена'|localize"></button>
 						        </div>
 						    </div>    		    		    

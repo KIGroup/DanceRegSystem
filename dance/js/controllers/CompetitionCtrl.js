@@ -65,6 +65,27 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
             });
     };
 
+    /// Load competition regions
+    $scope.loadCompetitionRegions = function(){
+        OtherSrvc.getCompetitionRegions().then(
+            function(data){
+                var regions = data.children;
+                
+                for(var i=0; i < $scope.page.competition.regions.length; i++){
+                    for(var j=0; j < regions.length; j++){
+                        if ($scope.page.competition.regions[i].id == regions[j].id){
+                            regions[j].selected = true;
+                            break;
+                        }
+                    }
+                }
+
+                $scope.page.competition.regions = regions;
+            },
+            function(data, status, headers, config){
+            });
+    };
+            
     /// Load Competition by ID
     $scope.page.loadCompetition = function(competitionId){
         var filter = '?' +
@@ -83,6 +104,7 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
                 $scope.page.competition.isClosed = $scope.page.competition.isClosed == 1;
                 $scope.page.competition.isWDSF = $scope.page.competition.isWDSF == 1;
                 $scope.page.loadDancerClasses();
+                $scope.loadCompetitionRegions();
             },
             function(data, status, headers, config){
                 $scope.page.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);

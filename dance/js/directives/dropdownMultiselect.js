@@ -5,97 +5,77 @@ directivesModule.directive('dropdownMultiselect', function(){
    return {
        restrict: 'E',
        scope:{         
-            model: '=',
-            pre_selected: '=preSelected',
-            options: '='
+            sourceItems: '='
        },
        template: "<div class='btn-group' data-ng-class='{open: open}'>"+
         "<button type='button' class='btn btn-small'>{{caption}}</button>"+
                 "<button type='button' class='btn btn-small dropdown-toggle' data-ng-click='open=!open;openDropdown()'><span class='caret'></span></button>"+
                 "<ul class='dropdown-menu' aria-labelledby='dropdownMenu' style='height: 200px; overflow-y: auto;'>" + 
-                    "<li><a data-ng-click='selectAll()'><i class='fa fa-check'></i>  Check All</a></li>" +
-                    "<li><a data-ng-click='deselectAll();'><i class='fa fa-times'></i>  Uncheck All</a></li>" +                    
+                    "<li style='display: inline-flex;'><a data-ng-click='selectAll()'><i class='fa fa-check'></i> Выбрать все</a>"+
+                        "<a data-ng-click='deselectAll();'><i class='fa fa-times'></i> Отмена</a>" +
+                   "</li>" +
                     "<li class='divider'></li>" +
-                    "<li data-ng-repeat='option in options'> <a data-ng-click='setSelectedItem()'>{{option.name}}<span data-ng-class='isChecked(option.id)'></span></a></li>" +                                        
+                    '<li data-ng-repeat="option in sourceItems"> <a data-ng-click="setSelectedItem()">{{option.name}}<span data-ng-class="isChecked(option)"></span></a></li>' +                                        
                 "</ul>" +
             "</div>" ,
        controller: function($scope){
            $scope.caption = '---';
-           $scope.openDropdown = function(){        
-                if ($scope.pre_selected){
-                    for(var i=0; i<$scope.pre_selected.length; i++){                        
-                        //$scope.model.push($scope.pre_selected[i].id);
-                        //$scope.selected_items.push($scope.pre_selected[i].id);
-                    }            
-                }
-                $scope.updateCaption();                            
-            };
            
             $scope.selectAll = function () {
-                $scope.model = _.pluck($scope.options, 'id');
+                 for(var i=0; i < $scope.sourceItems.length; i++)
+                    $scope.sourceItems[i].selected = true;
+                    
                 $scope.updateCaption();
             };  
                       
             $scope.deselectAll = function() {
-                $scope.model=[];
+                for(var i=0; i < $scope.sourceItems.length; i++)
+                    $scope.sourceItems[i].selected = false;
+                    
                 $scope.updateCaption();
             };
             
             $scope.setSelectedItem = function(){
-                var id = this.option.id;
-                
-                if (_.contains($scope.model, id)) {
-                    $scope.model = _.without($scope.model, id);
-                } else {
-                    $scope.model.push(id);
-                }
-                
+                this.option.selected = !this.option.selected;
                 $scope.updateCaption();
-                return false;
+                return true;
             };
 
-            $scope.isChecked = function (id) {                 
-                if (_.contains($scope.model, id)) {
-                    return 'fa fa-check pull-right';
-                }
-                return false;
-            };     
-            
             $scope.updateCaption = function(){
-                if (!$scope.model || $scope.model.length == 0){
+                var first = null;
+                var totalSelectedCount = 0;
+                
+                if (!$scope.sourceItems)
+                    return 
+                    
+                for(var i=$scope.sourceItems.length-1; i >= 0; i--)
+                    if ($scope.sourceItems[i].selected == true){
+                        first = $scope.sourceItems[i];
+                        totalSelectedCount++;
+                    }
+                
+                if (!first){
                     $scope.caption = '---';    
                 }
-                else if ($scope.model.length == 1){
-                    $scope.caption = $scope.getOptionNameById($scope.model[0]);
+                else if (totalSelectedCount == 1){
+                    $scope.caption = first.name;
                 }
-                else if ($scope.model.length > 1){
-                    $scope.caption = $scope.getOptionNameById($scope.model[0]) + ', + (' + ($scope.model.length - 1) + ')';
+                else if (totalSelectedCount > 1){
+                    $scope.caption = first.name + ', + (' + (totalSelectedCount - 1) + ')';
                 }       
             };
             
-            $scope.getOptionNameById = function(id){
-                if ($scope.options){
-                    for(var i=0; i < $scope.options.length; i++){
-                        if ($scope.options[i].id == id)
-                            return $scope.options[i].name;
-                    }
+            $scope.isChecked = function (option) {                 
+                if (option.selected) {
+                    return 'fa fa-check pull-right';
                 }
-                
-                return '---';
-            };      
+                return false;
+            };
             
-            
-            $scope.$watch('options', function(){
+            $scope.$watch('sourceItems', function(){
                 $scope.updateCaption();
             }, true);
-            
-            $scope.$watch('pre_selected', function(){
-                if ($scope.pre_selected && $scope.model && $scope.model.length == 0){
-                    for(var i=0; i<$scope.pre_selected.length; i++){                        
-                        $scope.model.push($scope.pre_selected[i].id);
-                    }            
-                }
-            }, true);            
+                    
        }
    } 
 });

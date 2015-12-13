@@ -664,10 +664,10 @@ Get all tournament competitions for grid</Description>
         }
         
         if (params.other.type = "UDSR"){
-            set whereCondition = whereCondition_" AND cmpT.WDSF IS NULL  "
+            set whereCondition = whereCondition_" AND cmpT.WDSF IS NULL "
         }
         elseif (params.other.type = "WDSF"){
-            set whereCondition = whereCondition_" AND (cmpT.WDSF IS NOT NULL OR cmpT.IsInternational = 1) "
+            set whereCondition = whereCondition_" AND cmpT.WDSF IS NOT NULL "
         }
         elseif (params.other.type = "OTHER"){
             set whereCondition = whereCondition_" AND cmpT.WDSF IS NULL AND cmpT.IsInternational=1 "
@@ -868,6 +868,19 @@ Available participants competitions for grid</Description>
             continue
         }
         
+        // Если группа ограничена регионом, то сверяем регион, если пара не подходит, то пропускаем группу
+        if (cmp.Regions.Count() > 0){
+            set cmpId = cmp.%Id() 
+            SET SQLCODE = ""
+            &sql(SELECT TOP 1 ID
+                 FROM Dance_Data.Competition_Regions
+                 WHERE Competition = :cmpId AND :couple.Man.RegionNumber %INLIST Regions->CodeNumbers)
+            if (SQLCODE = 100){
+                continue
+            }
+        }
+        
+        
         // Если группа WDSF и есть у СТСР пары версия WDSF
         if $ISOBJECT(cmp.WDSF){
              if $ISOBJECT(coupleWDSF){
@@ -1002,6 +1015,18 @@ Available participants competitions for grid</Description>
                         // Если Стандарт и группа НЕ доступна для класса партнера, то НЕ добавляем в рез. список
                         if (cmp.Discipline.Code = "Ст") && (##class(Dance.Data.Competition).IsAvailableForDancerClass(cmp.%Id(), man.STClass.%Id()) = $$$NO){
                             continue            
+                        }
+                    }
+                    
+                    // Если группа ограничена регионом, то сверяем регион, если пара не подходит, то пропускаем группу
+                    if (cmp.Regions.Count() > 0){
+                        set cmpId = cmp.%Id() 
+                        SET SQLCODE = ""
+                        &sql(SELECT TOP 1 ID
+                             FROM Dance_Data.Competition_Regions
+                             WHERE Competition = :cmpId AND :coupleUDSR.Man.RegionNumber %INLIST Regions->CodeNumbers)
+                        if (SQLCODE = 100){
+                            continue
                         }
                     }
                 }
@@ -1763,7 +1788,7 @@ Feedback from users </Description>
 Get all competition regions</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT id as id, name as name FROM Dance_Data.CompetitionRegion")
+<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT id as id, name || ' [' || LIST(CodeNumbers) ||  ']' as name FROM Dance_Data.CompetitionRegion GROUP BY ID")
 ]]></Implementation>
 </Method>
 </Class>

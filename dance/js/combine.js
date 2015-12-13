@@ -1,4 +1,4 @@
-// Combine date time is 21.10.2015 21:56:10
+// Combine date time is 25.10.2015 20:57:36
 
 
 // ===============================================================================================================================
@@ -12,6 +12,7 @@
 ===========================================================================================*/
 
 controllersModule.controller('MainCtrl', function($scope, $cookies, $filter, $window, OtherSrvc, UtilsSrvc, tmhDynamicLocale){
+
     if ($cookies.lang)
         tmhDynamicLocale.set($cookies.lang);
     else
@@ -2687,7 +2688,7 @@ Competition: create or update data
 
 controllersModule.controller('CompetitionCtrl', function($scope, $window, $routeParams, UtilsSrvc, TournamentSrvc, CompetitionSrvc, AgeCategorySrvc, DancerClassSrvc, DisciplineSrvc, OtherSrvc){
     $scope.menu.shortMenu = false;
-    
+
     $scope.page = {};
     $scope.page.tournament = {rank: {}, 
                               status: {}, 
@@ -2696,7 +2697,7 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
 
 
     $scope.page.init = function(){
-	    $scope.page.clear();
+        $scope.page.clear();
         $scope.page.loadTournament($routeParams.tournamentId);
         
         if ($routeParams.competitionId){
@@ -2714,7 +2715,7 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
 
     /// Clear form fields
     $scope.page.clear = function(){
-	   var now = new Date();
+       var now = new Date();
        $scope.page.competition = {idInternal: "I" + now.getTime().toString().substring(5,20),
                                   idExternal: "E" + now.getTime().toString().substring(5,20),
                                   startTime: '12:00', 
@@ -2726,16 +2727,16 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
 
     /// Load Tournament by ID
     $scope.page.loadTournament = function(id){
-    	var filter = '?' +
-	    	'loadName=1&' +
-	    	'loadLocation=1&' +
-	    	'loadOrganizer=1&' +
-	    	'loadRank=1&' +
-	    	'loadStatus=1&' +
-	    	'loadParticipantsCount=1&' +
-	    	'loadParticipantsUniqueCount=1&' +
-	    	'loadCompetitionsCount=1';
-	    	
+        var filter = '?' +
+            'loadName=1&' +
+            'loadLocation=1&' +
+            'loadOrganizer=1&' +
+            'loadRank=1&' +
+            'loadStatus=1&' +
+            'loadParticipantsCount=1&' +
+            'loadParticipantsUniqueCount=1&' +
+            'loadCompetitionsCount=1';
+            
         TournamentSrvc.getById(id, filter).then(
             function(data){
                 $scope.page.tournament = data;
@@ -2745,17 +2746,38 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
             });
     };
 
+    /// Load competition regions
+    $scope.loadCompetitionRegions = function(){
+        OtherSrvc.getCompetitionRegions().then(
+            function(data){
+                var regions = data.children;
+                
+                for(var i=0; i < $scope.page.competition.regions.length; i++){
+                    for(var j=0; j < regions.length; j++){
+                        if ($scope.page.competition.regions[i].id == regions[j].id){
+                            regions[j].selected = true;
+                            break;
+                        }
+                    }
+                }
+
+                $scope.page.competition.regions = regions;
+            },
+            function(data, status, headers, config){
+            });
+    };
+            
     /// Load Competition by ID
     $scope.page.loadCompetition = function(competitionId){
-	    var filter = '?' +
-	    	'loadDiscipline=1&' +
-	    	'loadAgeCategory=1&' +
-	    	'loadDancerClasses=1&' +
-	    	'loadType=1&' +
-	    	'loadWDSF=1&' +
-	    	'loadTournament=1&' +
-	    	'loadTournamentLocation=1';
-	    	
+        var filter = '?' +
+            'loadDiscipline=1&' +
+            'loadAgeCategory=1&' +
+            'loadDancerClasses=1&' +
+            'loadType=1&' +
+            'loadWDSF=1&' +
+            'loadTournament=1&' +
+            'loadTournamentLocation=1';
+            
         CompetitionSrvc.getById(competitionId, filter).then(
             function(data){
                 $scope.page.competition = data;
@@ -2763,6 +2785,7 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
                 $scope.page.competition.isClosed = $scope.page.competition.isClosed == 1;
                 $scope.page.competition.isWDSF = $scope.page.competition.isWDSF == 1;
                 $scope.page.loadDancerClasses();
+                $scope.loadCompetitionRegions();
             },
             function(data, status, headers, config){
                 $scope.page.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
@@ -2795,34 +2818,34 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
  
     /// Save Competition or update data
     $scope.page.saveCompetition = function(){
-	    $scope.page.competition.startDate = UtilsSrvc.getValidDate($scope.page.competition.startDate);
-	    
-   		if ($scope.page.competition.startDate == "")
-   			return;
-   		
-   		if ($scope.page.competition.dancerClasses){
-	   		var oneExistsSelected = false;
-	   		for (var i=0; i < $scope.page.competition.dancerClasses.length; i++){
-	   			if ($scope.page.competition.dancerClasses[i].selected == 1){
-	   				oneExistsSelected = true;
-	   				break;
-	   			}
-	   		}
-	   		
-	   		if (!oneExistsSelected){
-	   			$scope.page.alert = UtilsSrvc.getAlert('Внимание!', 'Выберите хотя бы один класс танцора.', 'info', true);
-	   			return;
-	   		}
-	   	}
-   		
-   			 
-   		CompetitionSrvc.save($scope.page.tournament.id, $scope.page.competition).then(
+        $scope.page.competition.startDate = UtilsSrvc.getValidDate($scope.page.competition.startDate);
+        
+        if ($scope.page.competition.startDate == "")
+            return;
+        
+        if ($scope.page.competition.dancerClasses){
+            var oneExistsSelected = false;
+            for (var i=0; i < $scope.page.competition.dancerClasses.length; i++){
+                if ($scope.page.competition.dancerClasses[i].selected == 1){
+                    oneExistsSelected = true;
+                    break;
+                }
+            }
+            
+            if (!oneExistsSelected){
+                $scope.page.alert = UtilsSrvc.getAlert('Внимание!', 'Выберите хотя бы один класс танцора.', 'info', true);
+                return;
+            }
+        }
+        
+             
+        CompetitionSrvc.save($scope.page.tournament.id, $scope.page.competition).then(
             function(data){
-	            if ($scope.page.competition.id){
+                if ($scope.page.competition.id){
                     $scope.page.alert = UtilsSrvc.getAlert('Готово!', 'Изменения сохранены.', 'success', true);
                 }
                 else{
-	                $scope.page.clear();
+                    $scope.page.clear();
                     $scope.page.loadDancerClasses();
                     $scope.page.alert = UtilsSrvc.getAlert('Готово!', 'Группа создана.', 'success', true);   
                 }
@@ -3896,12 +3919,15 @@ servicesModule.factory('OtherSrvc', function(RESTSrvc) {
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.admin + '/checkAdmin/' + isLogin});
         },
         setUnknownKey: function(key){
-	        console.log('unknownkey = '+key);
-	        return RESTSrvc.getPromise({method: 'POST', url: AppSettings.user + '/unknownkey', data: {key: key}});
-	    },
+            console.log('unknownkey = '+key);
+            return RESTSrvc.getPromise({method: 'POST', url: AppSettings.user + '/unknownkey', data: {key: key}});
+        },
         getCurrencies: function(){
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.admin + '/currency'});
-        }		
+        },
+        getCompetitionRegions: function(){
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/competition/region'});
+        }       
     }
 });
 
@@ -4559,9 +4585,10 @@ directivesModule.directive('competitionform', function(){
             competition: '=',
             tournament: '='       
         },
-        controller: function($scope, DisciplineSrvc, AgeCategorySrvc, CompetitionSrvc, UtilsSrvc){
+        controller: function($scope, DisciplineSrvc, AgeCategorySrvc, CompetitionSrvc, OtherSrvc, UtilsSrvc){
             $scope.competitionsWDSF = [];
 
+     
             /// Load Disciplines
             $scope.loadDisciplines = function(){
                 DisciplineSrvc.getAll().then(
@@ -4591,7 +4618,7 @@ directivesModule.directive('competitionform', function(){
                     function(data, status, headers, config){
                     });
             };
-			  
+              
             $scope.loadCompetitionsWDSFByFilter = function(){
                 $scope.competition.startDate = UtilsSrvc.getValidDate($scope.competition.startDate);
                 if ($scope.competition.startDate=="")
@@ -4623,7 +4650,7 @@ directivesModule.directive('competitionform', function(){
             $scope.loadDisciplines();
             $scope.loadAgeCategories();
             $scope.loadTypes();
-	   	}
+        }
     }
 });
 
@@ -4701,7 +4728,92 @@ directivesModule.directive('danceplatOtherPay', function(){
 });
 
 // ===============================================================================================================================
-// File: 40. localization/dict.js
+// File: 40. directives/dropdownMultiselect.js
+// ===============================================================================================================================
+'use strict';
+//sdddddddd
+
+directivesModule.directive('dropdownMultiselect', function(){
+   return {
+       restrict: 'E',
+       scope:{         
+            sourceItems: '='
+       },
+       template: "<div class='btn-group' data-ng-class='{open: open}'>"+
+        "<button type='button' class='btn btn-small'>{{caption}}</button>"+
+                "<button type='button' class='btn btn-small dropdown-toggle' data-ng-click='open=!open;openDropdown()'><span class='caret'></span></button>"+
+                "<ul class='dropdown-menu' aria-labelledby='dropdownMenu' style='height: 200px; overflow-y: auto;'>" + 
+                    "<li style='display: inline-flex;'><a data-ng-click='selectAll()'><i class='fa fa-check'></i> Выбрать все</a>"+
+                        "<a data-ng-click='deselectAll();'><i class='fa fa-times'></i> Отмена</a>" +
+                   "</li>" +
+                    "<li class='divider'></li>" +
+                    '<li data-ng-repeat="option in sourceItems"> <a data-ng-click="setSelectedItem()">{{option.name}}<span data-ng-class="isChecked(option)"></span></a></li>' +                                        
+                "</ul>" +
+            "</div>" ,
+       controller: function($scope){
+           $scope.caption = '---';
+           
+            $scope.selectAll = function () {
+                 for(var i=0; i < $scope.sourceItems.length; i++)
+                    $scope.sourceItems[i].selected = true;
+                    
+                $scope.updateCaption();
+            };  
+                      
+            $scope.deselectAll = function() {
+                for(var i=0; i < $scope.sourceItems.length; i++)
+                    $scope.sourceItems[i].selected = false;
+                    
+                $scope.updateCaption();
+            };
+            
+            $scope.setSelectedItem = function(){
+                this.option.selected = !this.option.selected;
+                $scope.updateCaption();
+                return true;
+            };
+
+            $scope.updateCaption = function(){
+                var first = null;
+                var totalSelectedCount = 0;
+                
+                if (!$scope.sourceItems)
+                    return 
+                    
+                for(var i=$scope.sourceItems.length-1; i >= 0; i--)
+                    if ($scope.sourceItems[i].selected == true){
+                        first = $scope.sourceItems[i];
+                        totalSelectedCount++;
+                    }
+                
+                if (!first){
+                    $scope.caption = '---';    
+                }
+                else if (totalSelectedCount == 1){
+                    $scope.caption = first.name;
+                }
+                else if (totalSelectedCount > 1){
+                    $scope.caption = first.name + ', + (' + (totalSelectedCount - 1) + ')';
+                }       
+            };
+            
+            $scope.isChecked = function (option) {                 
+                if (option.selected) {
+                    return 'fa fa-check pull-right';
+                }
+                return false;
+            };
+            
+            $scope.$watch('sourceItems', function(){
+                $scope.updateCaption();
+            }, true);
+                    
+       }
+   } 
+});
+
+// ===============================================================================================================================
+// File: 41. localization/dict.js
 // ===============================================================================================================================
 //--
 
@@ -5661,7 +5773,7 @@ localizationModule.constant('DanceDictionary', {
 });
 
 // ===============================================================================================================================
-// File: 41. localization/filter.js
+// File: 42. localization/filter.js
 // ===============================================================================================================================
 'use strict';
 //
@@ -5686,7 +5798,7 @@ servicesModule.config(['$httpProvider', function ($httpProvider) {
 */
 
 // ===============================================================================================================================
-// File: 42. filters/cacheDate.js
+// File: 43. filters/cacheDate.js
 // ===============================================================================================================================
 //d
 

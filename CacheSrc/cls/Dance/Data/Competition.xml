@@ -173,9 +173,6 @@ Competition in the tournament, has participants</Description>
         set proxy.isWDSF = $$$YES
     }
     
-    set proxy.regions = ##class(%ListOfObjects).%New()
-    do proxy.regions.Insert(##class(CompetitionRegion).%OpenId(1).ConvertToProxyObject())
-    
     set proxy.isInternational = ..IsInternational = $$$YES
     
     // DancerClasses array
@@ -205,14 +202,14 @@ Competition in the tournament, has participants</Description>
     // Regions array
     set proxy.regions = ##class(%ListOfObjects).%New()
     
-    //if (params.loadDancerClasses){
+    if (params.loadDancerClasses){
         set key = ""
         for i=1:1:..Regions.Count(){
             set key = ..Regions.Next(key)
             set reg = ..Regions.GetAt(key)
             do proxy.regions.Insert(reg.ConvertToProxyObject())
         }
-    //}
+    }
     
     set proxy.participantsCount = ..ParticipantsCount
     
@@ -300,9 +297,13 @@ Create or update competition</Description>
     
     // Regions
     do cmp.Regions.Clear()
-    for i=1:1:data.regions.Count(){
-        set region = ##class(Dance.Data.CompetitionRegion).%OpenId(data.regions.GetAt(i).id,,.st)
-        do cmp.Regions.SetAt(region, region.%Id())
+    if (data.regions){
+        for i=1:1:data.regions.Count(){
+            continue:(data.regions.GetAt(i).selected '= $$$YES)
+            
+            set region = ##class(Dance.Data.CompetitionRegion).%OpenId(data.regions.GetAt(i).id,,.st)
+            do cmp.Regions.SetAt(region, region.%Id())
+        }
     }
         
     set st = cmp.%Save()

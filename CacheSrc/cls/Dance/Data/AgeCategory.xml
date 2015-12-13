@@ -352,47 +352,5 @@ Create or update age category</Description>
 	quit list
 ]]></Implementation>
 </Method>
-
-<Method name="TestPrt">
-<ClassMethod>1</ClassMethod>
-<Implementation><![CDATA[
-	try{
-		set count = 0
-		&sql(DECLARE Prt2Cur CURSOR FOR 
-		 	SELECT ID, FullName, Couple
-		 	FROM Dance_Data.ParticipantCoupleUDSR
-		 	WHERE Competition->Tournament = 6)	
-		
-		&sql(OPEN Prt2Cur)
-		for  
-		{	
-			&sql(FETCH Prt2Cur INTO :id, :fullName, :coupleId) 
-			quit:(SQLCODE '= 0)
-		
-			set count = count + 1
-		
-		
-			set prt = ##class(ParticipantCoupleUDSR).%OpenId(id)
-		
-			set couple = ##class(Dance.Data.CoupleUDSR).%OpenId(coupleId).ConvertToProxyObject()
-			set maleAge = $P($ZD($NOW(),3), "-", 1) - $P(couple.man.dob, "-", 1)
-			set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P(couple.woman.dob, "-", 1)
-
-			set prtCatList = ..GetAllAvailableList(maleAge, femaleAge)
-		
-			if ($LISTFIND(prtCatList, prt.Competition.AgeCategory.%Id()) = 0){
-				w !,!,count_" -> "_fullName_"("_maleAge_", "_femaleAge_"). List="_$LISTTOSTRING(prtCatList)
-				w !,"Age category = "_prt.Competition.AgeCategory.Code
-			}
-		
-		}
-	
-		&sql(CLOSE Prt2Cur)
-	}
-	catch(ex){
-		w !, $System.Status.GetErrorText(ex.AsStatus())
-	}
-]]></Implementation>
-</Method>
 </Class>
 </Export>

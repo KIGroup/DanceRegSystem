@@ -79,11 +79,11 @@
             </div>
         </div>
     </div>
-    <div class="control-group">
+    <div class="control-group" ng-show="competition.regions">
         <div class="row-fluid">
             <label class="control-label" ng-bind="('Регион (доступ к регистрации)'|localize)"></label>
             <div class="controls">
-                <dropdown-multiselect pre-selected="competition.regions" model="selectedRegionsIds" options="regions"></dropdown-multiselect>
+                <dropdown-multiselect source-items="competition.regions"></dropdown-multiselect>
             </div>
         </div>
     </div>

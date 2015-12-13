@@ -96,88 +96,124 @@ Imported competitions from other system</Description>
 <FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
 <Implementation><![CDATA[
-	set proxy = ##class(%ZEN.proxyObject).%New()
-	set proxy.info = ##class(%ZEN.proxyObject).%New()
-	set proxy.info.errorMessages = ##class(%ListOfDataTypes).%New()
-	
-	try{
-		set proxy.id = ..%Id()
-		set proxy.tournamentIdExternal = ..TournamentIdExternal
-		set proxy.idInternal = ..IdInternal
-		set proxy.idExternal = ..IdExternal
-		set proxy.startDate = ..StartDate
-		set proxy.minAge = ..MinAge
-		set proxy.maxAge = ..MaxAge
-		set proxy.limit = ..Limit
-		set proxy.price = ..Price
-		set proxy.name = ..Name
-						
-		set realDicipline = ##class(Dance.Data.Discipline).CodeIdxOpen(..DisciplineCode,,.sc)
-		if ($$$ISOK(sc)){
-			set proxy.discipline = realDicipline.ConvertToProxyObject()
-		}
-		else{
-			do proxy.info.errorMessages.Insert("Дисциплина не найдена! Код = "_..DisciplineCode)	
-		}
-			
-		set realAge = ##class(Dance.Data.AgeCategory).CodeIdxOpen(..AgeCategoryCode,,.sc)
-		if ($$$ISOK(sc)){
-			set proxy.ageCategory = realAge.ConvertToProxyObject()
-		}
-		else{
-			do proxy.info.errorMessages.Insert("Возрастная группа не найдена! Код = "_..AgeCategoryCode)
-		}
-			
-		if (..IsSoloType = $$$YES){
-			set typeCode = "Solo"
-		}
-		else{
-			set typeCode = "Couples"
-		}
-			
-		set type = ##class(Dance.Data.CompetitionType).CodeIdxOpen(typeCode,,.sc)
-		if ($$$ISOK(sc)){
-			set proxy.type = type.ConvertToProxyObject()
-		}
-		else{
-			do proxy.info.errorMessages.Insert("Тип не найден! Соло = "_..IsSoloType)
-		}
-		
-		set proxy.dancerClasses = ##class(Dance.Data.DancerClass).GetAll().children
-		set dancerClassesList = $LISTFROMSTRING(..DancerClassCodes, ",")
-		for i=1:1:$LL(dancerClassesList){
-			set class = $LIST(dancerClassesList, i)
-			if (class = "") continue
-				
-			if (##class(Dance.Data.DancerClass).CodeIdxExists(class) = $$$YES){
-				for cc=1:1:proxy.dancerClasses.Count(){
-					if (class = proxy.dancerClasses.GetAt(cc).code){
-						set proxy.dancerClasses.GetAt(cc).selected = $$$YES
-						quit
-					}
-				}
-			}
-			elseif (class = "0"){
-				for cc=1:1:proxy.dancerClasses.Count(){
-					if (proxy.dancerClasses.GetAt(cc).code = 7){
-						continue
-					}
-					set proxy.dancerClasses.GetAt(cc).selected = $$$YES
-				}
-			}
-			else{
-				do proxy.info.errorMessages.Insert("Класс не найден! Код = "_class)	
-			}		
-		}
+    set defaultDancerClasses("Взрослые") = "6,3,2,4,5,9,8"
+    set defaultDancerClasses("Молодежь") = "6,3,2,4,5,9"
+    set defaultDancerClasses("Д-1") = "6,3"
+    set defaultDancerClasses("Д-2") = "6,3,2"
+    set defaultDancerClasses("Ю-1") = "6,3,2,4"
+    set defaultDancerClasses("Ю-2") = "6,3,2,4,5"
+            
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.info = ##class(%ZEN.proxyObject).%New()
+    set proxy.info.errorMessages = ##class(%ListOfDataTypes).%New()
+    
+    try{
+        set proxy.id = ..%Id()
+        set proxy.tournamentIdExternal = ..TournamentIdExternal
+        set proxy.idInternal = ..IdInternal
+        set proxy.idExternal = ..IdExternal
+        set proxy.startDate = ..StartDate
+        set proxy.minAge = ..MinAge
+        set proxy.maxAge = ..MaxAge
+        set proxy.limit = ..Limit
+        set proxy.price = ..Price
+        set proxy.name = ..Name
+                        
+        set realDicipline = ##class(Dance.Data.Discipline).CodeIdxOpen(..DisciplineCode,,.sc)
+        if ($$$ISOK(sc)){
+            set proxy.discipline = realDicipline.ConvertToProxyObject()
+        }
+        else{
+            do proxy.info.errorMessages.Insert("Дисциплина не найдена! Код = "_..DisciplineCode)    
+        }
+            
+        set realAge = ##class(Dance.Data.AgeCategory).CodeIdxOpen(..AgeCategoryCode,,.sc)
+        if ($$$ISOK(sc)){
+            set proxy.ageCategory = realAge.ConvertToProxyObject()
+        }
+        else{
+            do proxy.info.errorMessages.Insert("Возрастная группа не найдена! Код = "_..AgeCategoryCode)
+        }
+            
+        if (..IsSoloType = $$$YES){
+            set typeCode = "Solo"
+        }
+        else{
+            set typeCode = "Couples"
+        }
+            
+        set type = ##class(Dance.Data.CompetitionType).CodeIdxOpen(typeCode,,.sc)
+        if ($$$ISOK(sc)){
+            set proxy.type = type.ConvertToProxyObject()
+        }
+        else{
+            do proxy.info.errorMessages.Insert("Тип не найден! Соло = "_..IsSoloType)
+        }
+        
+        set proxy.dancerClasses = ##class(Dance.Data.DancerClass).GetAll().children
+        set dancerClassesList = $LISTFROMSTRING(..DancerClassCodes, ",")
+        for i=1:1:$LL(dancerClassesList){
+            set class = $LIST(dancerClassesList, i)
+            if (class = "") continue
+                
+            if (##class(Dance.Data.DancerClass).CodeIdxExists(class) = $$$YES){
+                for cc=1:1:proxy.dancerClasses.Count(){
+                    if (class = proxy.dancerClasses.GetAt(cc).code){
+                        set proxy.dancerClasses.GetAt(cc).selected = $$$YES
+                        quit
+                    }
+                }
+            }
+            elseif (class = "0"){
+                // 0 - All classes. 7 - H class
+                for cc=1:1:proxy.dancerClasses.Count(){
+                    if (proxy.dancerClasses.GetAt(cc).code = 7){
+                        continue
+                    }
+                    
+                    set proxy.dancerClasses.GetAt(cc).selected = $$$YES
+                }
+            }
+            else{
+                do proxy.info.errorMessages.Insert("Класс не найден! Код = "_class) 
+            }       
+        }
 
-		set proxy.info.isExisted = ##class(Dance.Data.Competition).IdInternalIdxExists(..IdInternal)
-		set proxy.info.isErrored = (proxy.info.errorMessages.Count() '= 0)
-	}
-	catch(ex){
-		set proxy.errorText = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-	}
-	
-	quit proxy
+        /*
+           Проверка сформированного списка классов доступных для танцора по умолчанию, тк с  данцплата может прилететь д***мо, поэто нужны доп. проверки
+        */
+        set defaultDancerClasses("Взрослые") = "6,3,2,4,5,9,8"
+        set defaultDancerClasses("Молодежь") = "6,3,2,4,5,9"
+        set defaultDancerClasses("Д-1") = "6,3"
+        set defaultDancerClasses("Д-2") = "6,3,2"
+        set defaultDancerClasses("Ю-1") = "6,3,2,4"
+        set defaultDancerClasses("Ю-2") = "6,3,2,4,5"
+        // Объединение A v B
+        set defaultDancerClasses("Молодежь+Ю-2") = "6,3,2,4,5,9"
+        set defaultDancerClasses("Ю-1+Д-2") = "6,3,2,4"
+        set defaultDancerClasses("Д-2+Д-1") = "6,3,2"
+        set defaultDancerClasses("Ю-2+Ю-1") = "6,3,2,4,5"
+        set defaultDancerClasses("Взрослые+Молодежь") = "6,3,2,4,5,9,8"
+        
+    
+        set defaultClasses = $GET(defaultDancerClasses(realAge.Code))
+        if (defaultClasses '= "") {
+            for i=1:1:proxy.dancerClasses.Count(){
+                // Если класс выбран, но он не включен в список допустимых для воз.группы, то "развыбираем" его
+                if (proxy.dancerClasses.GetAt(i).selected) && ($FIND(defaultClasses, proxy.dancerClasses.GetAt(i).code) = 0){
+                     set proxy.dancerClasses.GetAt(i).selected = $$$NO
+                }
+            }
+        }
+        
+        set proxy.info.isExisted = ##class(Dance.Data.Competition).IdInternalIdxExists(..IdInternal)
+        set proxy.info.isErrored = (proxy.info.errorMessages.Count() '= 0)
+    }
+    catch(ex){
+        set proxy.errorText = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+    }
+    
+    quit proxy
 ]]></Implementation>
 </Method>
 
@@ -188,28 +224,28 @@ Create or update item</Description>
 <FormalSpec>newObj:Dance.Data.Import.CompetitionDanceplat</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	set newObj.Name = $REPLACE($REPLACE(newObj.Name, $c(10), ""), "&quot;", """")
-	
-	if (..IdInternalIdxExists(newObj.IdInternal) = 0){
-		quit newObj.%Save()
-	}
+    set newObj.Name = $REPLACE($REPLACE(newObj.Name, $c(10), ""), "&quot;", """")
+    
+    if (..IdInternalIdxExists(newObj.IdInternal) = 0){
+        quit newObj.%Save()
+    }
 
-	set oldObj = ..IdInternalIdxOpen(newObj.IdInternal)
-	set oldObj.IdExternal = newObj.IdExternal
-	set oldObj.Name = newObj.Name
-	set oldObj.AgeCategoryCode = newObj.AgeCategoryCode
-	set oldObj.DancerClassCodes = newObj.DancerClassCodes
-	set oldObj.StartDate = newObj.StartDate
-	set oldObj.DisciplineCode = newObj.DisciplineCode
-	set oldObj.IsSoloType = newObj.IsSoloType
-	set oldObj.Limit = newObj.Limit
-	set oldObj.MaxAge = newObj.MaxAge
-	set oldObj.MinAge = newObj.MinAge
-	set oldObj.Price = newObj.Price
-	set oldObj.Rank = newObj.Rank
-	set oldObj.TournamentIdExternal = newObj.TournamentIdExternal
-	
-	quit oldObj.%Save()
+    set oldObj = ..IdInternalIdxOpen(newObj.IdInternal)
+    set oldObj.IdExternal = newObj.IdExternal
+    set oldObj.Name = newObj.Name
+    set oldObj.AgeCategoryCode = newObj.AgeCategoryCode
+    set oldObj.DancerClassCodes = newObj.DancerClassCodes
+    set oldObj.StartDate = newObj.StartDate
+    set oldObj.DisciplineCode = newObj.DisciplineCode
+    set oldObj.IsSoloType = newObj.IsSoloType
+    set oldObj.Limit = newObj.Limit
+    set oldObj.MaxAge = newObj.MaxAge
+    set oldObj.MinAge = newObj.MinAge
+    set oldObj.Price = newObj.Price
+    set oldObj.Rank = newObj.Rank
+    set oldObj.TournamentIdExternal = newObj.TournamentIdExternal
+    
+    quit oldObj.%Save()
 ]]></Implementation>
 </Method>
 
