@@ -9,6 +9,7 @@
 <Implementation><![CDATA[
     set st = ##class(Dance.Utils.TaskTickets).Import()
     do ##class(Dance.Data.Tournament).UpdateAllTournaments()
+    do ##class(Dance.Data.Participant).UpdateAllParticipantsFullName()
     
     quit st
 ]]></Implementation>

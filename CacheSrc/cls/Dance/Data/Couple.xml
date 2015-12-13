@@ -51,6 +51,22 @@ Couples</Description>
 ]]></Implementation>
 </Method>
 
+<Method name="Create">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[manId:%String,womanId:%String,&status]]></FormalSpec>
+<ReturnType>Couple</ReturnType>
+<Implementation><![CDATA[
+	if ..CommonIdxExists(manId, womanId) quit ..CommonIdxOpen(manId, womanId)
+	
+	set obj = ..%New()
+	set obj.Man = ##class(Dance.Data.Person).%OpenId(manId)
+	set obj.Woman = ##class(Dance.Data.Person).%OpenId(womanId)
+	set status = obj.%Save()
+	
+	quit obj
+]]></Implementation>
+</Method>
+
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^Dance.Data.CoupleD</DataLocation>
@@ -71,21 +87,5 @@ Couples</Description>
 </Value>
 </Data>
 </Storage>
-
-<Method name="Create">
-<ClassMethod>1</ClassMethod>
-<FormalSpec><![CDATA[manId:%String,womanId:%String,&status]]></FormalSpec>
-<ReturnType>Couple</ReturnType>
-<Implementation><![CDATA[
-	if ..CommonIdxExists(manId, womanId) quit ..CommonIdxOpen(manId, womanId)
-	
-	set obj = ..%New()
-	set obj.Man = ##class(Dance.Data.Person).%OpenId(manId)
-	set obj.Woman = ##class(Dance.Data.Person).%OpenId(womanId)
-	set status = obj.%Save()
-	
-	quit obj
-]]></Implementation>
-</Method>
 </Class>
 </Export>

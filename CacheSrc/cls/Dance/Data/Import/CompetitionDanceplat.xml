@@ -195,7 +195,6 @@ Imported competitions from other system</Description>
         set defaultDancerClasses("Ю-2+Ю-1") = "6,3,2,4,5"
         set defaultDancerClasses("Взрослые+Молодежь") = "6,3,2,4,5,9,8"
         
-    
         set defaultClasses = $GET(defaultDancerClasses(realAge.Code))
         if (defaultClasses '= "") {
             for i=1:1:proxy.dancerClasses.Count(){

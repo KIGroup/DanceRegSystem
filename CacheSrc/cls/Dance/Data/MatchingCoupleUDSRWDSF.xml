@@ -166,7 +166,7 @@ do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
 		&sql(DECLARE MtCur CURSOR FOR 
 			 SELECT UDSR, WDSF
 		 	 FROM Dance_Data.MatchingCoupleUDSRWDSF
-		 	 WHERE UDSR->Man->LastName->Value <> WDSF->Man->LastName->Value)	
+		 	 WHERE UDSR->Man->LastName->Value <> WDSF->Man->LastName->Value OR UDSR->Woman->LastName->Value <> WDSF->Woman->LastName->Value)	
 		&sql(OPEN MtCur)
 		for  
 		{	
@@ -194,27 +194,6 @@ do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
 ]]></Implementation>
 </Method>
 
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Data.MatchingCouF955D</DataLocation>
-<DefaultData>MatchingCoupleUDSRWDSFDefaultData</DefaultData>
-<IdLocation>^Dance.Data.MatchingCouF955D</IdLocation>
-<IndexLocation>^Dance.Data.MatchingCouF955I</IndexLocation>
-<StreamLocation>^Dance.Data.MatchingCouF955S</StreamLocation>
-<ExtentSize>100000</ExtentSize>
-<Data name="MatchingCoupleUDSRWDSFDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>UDSR</Value>
-</Value>
-<Value name="3">
-<Value>WDSF</Value>
-</Value>
-</Data>
-</Storage>
-
 <Method name="GetWDSFCoupleIDByUDSR">
 <ClassMethod>1</ClassMethod>
 <FormalSpec>coupleUDSRId:%String</FormalSpec>
@@ -236,5 +215,26 @@ do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
 	quit coupleId
 ]]></Implementation>
 </Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.MatchingCouF955D</DataLocation>
+<DefaultData>MatchingCoupleUDSRWDSFDefaultData</DefaultData>
+<IdLocation>^Dance.Data.MatchingCouF955D</IdLocation>
+<IndexLocation>^Dance.Data.MatchingCouF955I</IndexLocation>
+<StreamLocation>^Dance.Data.MatchingCouF955S</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="MatchingCoupleUDSRWDSFDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>UDSR</Value>
+</Value>
+<Value name="3">
+<Value>WDSF</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 </Export>

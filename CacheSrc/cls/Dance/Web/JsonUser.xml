@@ -1108,13 +1108,15 @@ Get WDSF competitions by filter</Description>
     set st = $$$OK
     
     try{
-        set date = $ZDH(date, 15)       
+        set dateYear = $P(date, "-", 1)
+        set dateMonth = +$P(date, "-", 2)
+               
         set list = ##class(%ListOfObjects).%New()
         
         &sql(DECLARE CmpWDSFCur1 CURSOR FOR
              SELECT %NOLOCK cmpWDSF.ID
              FROM Dance_Data.CompetitionWDSF as cmpWDSF
-             WHERE cmpWDSF.StartDate = :date AND cmpWDSF.Country = :countryId 
+             WHERE cmpWDSF.Country = :countryId AND DATEPART(YEAR, cmpWDSF.StartDate) = :dateYear AND DATEPART(MONTH, cmpWDSF.StartDate) = :dateMonth 
              ORDER BY cmpWDSF.ID)
         
         &sql(OPEN CmpWDSFCur1)
@@ -1733,17 +1735,17 @@ Feedback from users </Description>
                 set match = $CASE($CLASSNAME(couple), "Dance.Data.CoupleWDSF" : ##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(couple.%Id()), "Dance.Data.CoupleUDSR" : ##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxOpen(couple.%Id()))       
                 set udsrCplId = match.UDSR.%Id()
                 set wdsfCplId = match.WDSF.%Id()
-                set udsrCount = 0
-                set wdsfCount = 0
-                &sql(SELECT %NOLOCK COUNT(ID) INTO :udsrCount 
-                     FROM Dance_Data.ParticipantCoupleUDSR 
-                     WHERE Couple = :udsrCplId AND Tournament = :trnId AND IsActive = 1)
-                
-                &sql(SELECT COUNT(ID) INTO :wdsfCount 
-                     FROM Dance_Data.ParticipantCoupleWDSF 
-                     WHERE Couple = :wdsfCplId AND Tournament = :trnId AND IsActive = 1)
                      
-                set proxy.count = udsrCount + wdsfCount
+                &sql(SELECT %NOLOCK COUNT(DISTINCT Competition) INTO :proxy.count 
+                     FROM (
+                     SELECT %NOLOCK Competition
+                     FROM Dance_Data.ParticipantCoupleUDSR 
+                     WHERE Couple = :udsrCplId AND Tournament = :trnId AND IsActive = 1
+                     UNION 
+                     SELECT Competition
+                     FROM Dance_Data.ParticipantCoupleWDSF 
+                     WHERE Couple = :wdsfCplId AND Tournament = :trnId AND IsActive = 1))
+                     
             }
             else{
                 if ($CLASSNAME(couple) = "Dance.Data.CoupleUDSR") {

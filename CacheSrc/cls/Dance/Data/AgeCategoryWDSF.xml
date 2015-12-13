@@ -151,6 +151,7 @@ w ##class(Dance.Data.AgeCategoryWDSF).Import()</Description>
 			set group = groups.GetAt(i)
 			set age = ..NameIdxOpen(group.name)
 			
+			do age.AllowedToDance.Clear()
 			if (age.AllowedToDance.FindObjectId(age.%Id()) = "") {
 				do age.AllowedToDance.Insert(age)
 			}

@@ -56,48 +56,6 @@ Age categories, Young, Adult etc. </Description>
 <Required>1</Required>
 </Property>
 
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Data.AgeCategoryD</DataLocation>
-<DefaultData>AgeCategoryDefaultData</DefaultData>
-<IdLocation>^Dance.Data.AgeCategoryD</IdLocation>
-<IndexLocation>^Dance.Data.AgeCategoryI</IndexLocation>
-<StreamLocation>^Dance.Data.AgeCategoryS</StreamLocation>
-<ExtentSize>100000</ExtentSize>
-<Data name="AgeCategoryDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>Name</Value>
-</Value>
-<Value name="3">
-<Value>MaxAge</Value>
-</Value>
-<Value name="4">
-<Value>MinAge</Value>
-</Value>
-<Value name="5">
-<Value>Code</Value>
-</Value>
-<Value name="6">
-<Value>YoungestPartnerMaxAge</Value>
-</Value>
-<Value name="7">
-<Value>YoungestPartnerMinAge</Value>
-</Value>
-<Value name="8">
-<Value>OldestPartnerMaxAge</Value>
-</Value>
-<Value name="9">
-<Value>OldestPartnerMinAge</Value>
-</Value>
-<Value name="10">
-<Value>SpecialLogic</Value>
-</Value>
-</Data>
-</Storage>
-
 <Index name="CodeIdx">
 <Properties>Code</Properties>
 <Unique>1</Unique>
@@ -352,5 +310,89 @@ Create or update age category</Description>
 	quit list
 ]]></Implementation>
 </Method>
+
+<Method name="TestPrt">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	try{
+		set count = 0
+		&sql(DECLARE Prt2Cur CURSOR FOR 
+		 	SELECT ID, FullName, Couple
+		 	FROM Dance_Data.ParticipantCoupleUDSR
+		 	WHERE Competition->Tournament = 6)	
+		
+		&sql(OPEN Prt2Cur)
+		for  
+		{	
+			&sql(FETCH Prt2Cur INTO :id, :fullName, :coupleId) 
+			quit:(SQLCODE '= 0)
+		
+			set count = count + 1
+		
+		
+			set prt = ##class(ParticipantCoupleUDSR).%OpenId(id)
+		
+			set couple = ##class(Dance.Data.CoupleUDSR).%OpenId(coupleId).ConvertToProxyObject()
+			set maleAge = $P($ZD($NOW(),3), "-", 1) - $P(couple.man.dob, "-", 1)
+			set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P(couple.woman.dob, "-", 1)
+
+			set prtCatList = ..GetAllAvailableList(maleAge, femaleAge)
+		
+			if ($LISTFIND(prtCatList, prt.Competition.AgeCategory.%Id()) = 0){
+				w !,!,count_" -> "_fullName_"("_maleAge_", "_femaleAge_"). List="_$LISTTOSTRING(prtCatList)
+				w !,"Age category = "_prt.Competition.AgeCategory.Code
+			}
+		
+		}
+	
+		&sql(CLOSE Prt2Cur)
+	}
+	catch(ex){
+		w !, $System.Status.GetErrorText(ex.AsStatus())
+	}
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.AgeCategoryD</DataLocation>
+<DefaultData>AgeCategoryDefaultData</DefaultData>
+<IdLocation>^Dance.Data.AgeCategoryD</IdLocation>
+<IndexLocation>^Dance.Data.AgeCategoryI</IndexLocation>
+<StreamLocation>^Dance.Data.AgeCategoryS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="AgeCategoryDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>MaxAge</Value>
+</Value>
+<Value name="4">
+<Value>MinAge</Value>
+</Value>
+<Value name="5">
+<Value>Code</Value>
+</Value>
+<Value name="6">
+<Value>YoungestPartnerMaxAge</Value>
+</Value>
+<Value name="7">
+<Value>YoungestPartnerMinAge</Value>
+</Value>
+<Value name="8">
+<Value>OldestPartnerMaxAge</Value>
+</Value>
+<Value name="9">
+<Value>OldestPartnerMinAge</Value>
+</Value>
+<Value name="10">
+<Value>SpecialLogic</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 </Export>
