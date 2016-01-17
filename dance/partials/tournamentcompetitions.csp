@@ -1,7 +1,11 @@
 <div class="row-fluid">
+    <a href="http://www.intersystems.com/ru/library/software-downloads/" title="InterSystems site" target="_blank" style="height:80px; position: absolute; right: 22px;">
+        <img src="img/logoPoweredByIntersystems.png"  style="height:80px;"/>
+    </a>
     <pre ng-bind="page.tournament.fullName" style="text-align: center; font-weight: bold; font-size: 1.3em !important;">
     </pre>
     <pre ng-hide="page.tournament.id" style="text-align: center;"><i class="fa fa-spinner fa-spin fa-lg" style="color: rgb(204, 204, 204);"></i></pre>
+    
 </div>
 <div ng-show="page.tournament && page.tournament.addInfoUrl!=''" style="text-align: center; color: darkred; padding-top: 12px;" title="{{'Перейдите по ссылке для получения подробной информации'|localize}}">
     <a class="trnAdditionInfoUrl" ng-href="{{page.tournament.addInfoUrl}}" target="_blank">{{('ВАЖНОЕ ОБЪЯВЛЕНИЕ'|localize)}}</a>

@@ -1,4 +1,7 @@
 <div class="row-fluid">
+    <a href="http://www.intersystems.com/ru/library/software-downloads/" title="InterSystems site" target="_blank" style="height:80px; position: absolute; right: 22px;">
+        <img src="img/logoPoweredByIntersystems.png"  style="height:80px;"/>
+    </a>
     <pre ng-bind="page.tournament.fullName" style="text-align: center; font-weight: bold; font-size: 1.3em !important;">
     </pre>
     <pre ng-hide="page.tournament.id" style="text-align: center;"><i class="fa fa-spinner fa-spin fa-lg" style="color: rgb(204, 204, 204);"></i></pre>
@@ -7,7 +10,7 @@
     <a class="trnAdditionInfoUrl" ng-href="{{page.tournament.addInfoUrl}}" target="_blank">{{('ВАЖНОЕ ОБЪЯВЛЕНИЕ'|localize)}}</a>
 </div>
 <br>
-<div class="row-fluid" style="text-align: center;">
+<div class="row-fluid" style="text-align: center;" >
     <a ng-href="{{page.tournament.infoUrl}}" target="_blank" class="trnMenu" title="{{'Информация о турнире'|localize}}" ng-bind="'Информация »'|localize"></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <a ng-href="" ng-class="recorderHash ? 'trnMenu' : 'disabled'" title="{{'Регистрация участников на турнир'|localize}}" ng-bind="'Регистрация »'|localize" ng-click="locationSrvc.goTo(':recorderHash/tournament/' + page.tournament.id + '/registration', recorderHash)"></a>
@@ -28,7 +31,7 @@
     <span ng-show="menu.admin">{{'Экспорт' + ':'}} <a ng-href="" class="trnMenu" ng-bind="'все участники'" ng-click="exportParticipants()"></a>, <a ng-href="" class="trnMenu" ng-bind="'только оплатившие'" ng-click="exportPayers()"></a>.</span>
 </div>
 
-<div class="row-fluid">
+<div class="row-fluid" ng-show="page.tournament.status.code != 'Completed'">
     <stcgrid
         style="width: initial;"
         grid="pageStore.participants.grid"

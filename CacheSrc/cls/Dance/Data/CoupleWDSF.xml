@@ -34,23 +34,25 @@
         
     if (##class(MatchingCoupleUDSRWDSF).WDSFIdxExists(..%Id())){
         set coupleUDSR = ##class(MatchingCoupleUDSRWDSF).WDSFIdxOpen(..%Id()).UDSR
-        set proxy.idUDSR = coupleUDSR.%Id()
-        set proxy.man.idUDSR = coupleUDSR.Man.%Id()
-        set proxy.man.numberUDSR = coupleUDSR.Man.Number
-        set proxy.woman.idUDSR = coupleUDSR.Woman.%Id()
-        set proxy.woman.numberUDSR = coupleUDSR.Woman.Number
-        
-        if $ISOBJECT(coupleUDSR.Man.LAClass){
-            set proxy.man.laClass = coupleUDSR.Man.LAClass.ConvertToProxyObject()
-        }
-        if $ISOBJECT(coupleUDSR.Man.STClass){
-            set proxy.man.stClass = coupleUDSR.Man.STClass.ConvertToProxyObject()
-        }
-        if $ISOBJECT(coupleUDSR.Woman.LAClass){
-            set proxy.woman.laClass = coupleUDSR.Woman.LAClass.ConvertToProxyObject()
-        }
-        if $ISOBJECT(coupleUDSR.Woman.STClass){
-            set proxy.woman.stClass = coupleUDSR.Woman.STClass.ConvertToProxyObject()
+        if (coupleUDSR.Man.IsActive){
+            set proxy.idUDSR = coupleUDSR.%Id()
+            set proxy.man.idUDSR = coupleUDSR.Man.%Id()
+            set proxy.man.numberUDSR = coupleUDSR.Man.Number
+            set proxy.woman.idUDSR = coupleUDSR.Woman.%Id()
+            set proxy.woman.numberUDSR = coupleUDSR.Woman.Number
+            
+            if $ISOBJECT(coupleUDSR.Man.LAClass){
+                set proxy.man.laClass = coupleUDSR.Man.LAClass.ConvertToProxyObject()
+            }
+            if $ISOBJECT(coupleUDSR.Man.STClass){
+                set proxy.man.stClass = coupleUDSR.Man.STClass.ConvertToProxyObject()
+            }
+            if $ISOBJECT(coupleUDSR.Woman.LAClass){
+                set proxy.woman.laClass = coupleUDSR.Woman.LAClass.ConvertToProxyObject()
+            }
+            if $ISOBJECT(coupleUDSR.Woman.STClass){
+                set proxy.woman.stClass = coupleUDSR.Woman.STClass.ConvertToProxyObject()
+            }
         }
     }
     

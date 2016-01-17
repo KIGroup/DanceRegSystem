@@ -126,7 +126,7 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
                     $scope.type = $scope.couple ? $scope.couple.type : $scope.athlete.type;
                     
                     try{
-                        if ($scope.type == "WDSF" && $scope.couple && $scope.couple.idUDSR) {
+                        if ($scope.type == "WDSF" && $scope.couple && $scope.couple.idUDSR && $scope.couple.man.isActive == 1) {
                             CoupleSrvc.getById($scope.couple.idUDSR).then(
                                 function(data){
                                     console.log('UDSR Couple is loaded');

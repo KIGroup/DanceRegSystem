@@ -41,6 +41,11 @@ Last name</Description>
 <Required>1</Required>
 </Property>
 
+<Property name="IsActive">
+<Type>%Boolean</Type>
+<InitialExpression>"1"</InitialExpression>
+</Property>
+
 <Method name="ConvertToProxyObject">
 <FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
@@ -52,6 +57,7 @@ Last name</Description>
 	set proxy.firstName = ..FirstName.Value
 	set proxy.gender = ..Gender	
 	set proxy.updated = ..Updated
+	set proxy.isActive = ..IsActive
 	set proxy.otherInfo = ##class(%ZEN.proxyObject).%New()
 	set proxy.otherInfo.country = ..Country.ConvertToProxyObject()
 		
@@ -157,6 +163,9 @@ Last name</Description>
 </Value>
 <Value name="8">
 <Value>Updated</Value>
+</Value>
+<Value name="9">
+<Value>IsActive</Value>
 </Value>
 </Data>
 </Storage>

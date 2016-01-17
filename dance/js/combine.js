@@ -1,4 +1,4 @@
-// Combine date time is 25.10.2015 20:57:36
+// Combine date time is 16.12.2015 23:50:28
 
 
 // ===============================================================================================================================
@@ -2485,7 +2485,7 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
                     $scope.type = $scope.couple ? $scope.couple.type : $scope.athlete.type;
                     
                     try{
-                        if ($scope.type == "WDSF" && $scope.couple && $scope.couple.idUDSR) {
+                        if ($scope.type == "WDSF" && $scope.couple && $scope.couple.idUDSR && $scope.couple.man.isActive == 1) {
                             CoupleSrvc.getById($scope.couple.idUDSR).then(
                                 function(data){
                                     console.log('UDSR Couple is loaded');
