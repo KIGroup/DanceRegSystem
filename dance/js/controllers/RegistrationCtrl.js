@@ -273,7 +273,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         for (var i=0; i < $scope.competitionTable.selectedItems.length; i++){
             if (type == 'UDSR' && !$scope.competitionTable.selectedItems[i].wdsf)
                 idArray.push($scope.competitionTable.selectedItems[i].id);
-            else if (type == 'WDSF')
+            else if (type == 'WDSF' && $scope.competitionTable.selectedItems[i].wdsf)
                 idArray.push($scope.competitionTable.selectedItems[i].id);
             else if (type == 'OTHER')
                 idArray.push($scope.competitionTable.selectedItems[i].id);

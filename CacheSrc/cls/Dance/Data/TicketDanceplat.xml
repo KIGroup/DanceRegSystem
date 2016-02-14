@@ -185,18 +185,35 @@
                 set coupleWDSF = ..GetCoupleWDSFFromImportedTicket(ticketImport)
                 if $ISOBJECT(coupleWDSF){
                     w:(isTrace) !,"---Find couple WDSF."
+                    
                     set coupleWDSF = coupleWDSF.ConvertToProxyObject()
                     set coupleWDSF.man.dob = ..GetCorrectDOB(ticketImport.MaleDOBOrAge)
                     set coupleWDSF.woman.dob = ..GetCorrectDOB(ticketImport.FemaleDOBOrAge)
                     set coupleWDSF.otherInfo.city = ticketImport.City
                     set coupleWDSF.otherInfo.club = ticketImport.Club  
                     set participant = ##class(Dance.Data.ParticipantCoupleWDSF).Create(##class(Recorder).GetSystemRecorder(), competition, coupleWDSF, .st)
+                    
+                    // Find the double
+                    set participantOther = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)
+                    if $ISOBJECT(participantOther){
+                        w:(isTrace) !,"---- Find couple other (double)."
+                        set participantOther.IsActive = $$$NO
+                        $$$THROWONERROR(st, participantOther.%Save())
+                        
+                        set participant.Created = participantOther.Created
+                        $$$THROWONERROR(st, participant.%Save())
+                    }
+                    
                 }
                 else{
                     w:(isTrace) !,"---Create prt couple Other."
         
-                    // Create participantCoupleOther
-                    set participant = ..CreateParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)                                     
+                    set participant = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)
+                    
+                    if $ISOBJECT(participant) = $$$NO {
+                        // Create participantCoupleOther
+                        set participant = ..CreateParticipantOtherByImportedTicket(ticketImport, competition, $$$NO, .st)
+                    }                                     
                 }
                 
                 $$$THROWONERROR(st, st)
@@ -210,6 +227,13 @@
                 if $ISOBJECT(athleteWDSF){
                     w:(isTrace) !,"---Find person WDSF."
                     
+                    set participantOther = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)
+                    if $ISOBJECT(participantOther){
+                        w:(isTrace) !,"---- Find single other (double)."
+                        set participantOther.IsActive = $$$NO
+                        $$$THROWONERROR(st, participantOther.%Save())
+                    }
+                    
                     set athleteWDSF = athleteWDSF.ConvertToProxyObject()
                     set athleteWDSF.dob = ..GetCorrectDOB($SELECT(ticketImport.MaleLastName = "" : ticketImport.FemaleDOBOrAge, $$$YES : ticketImport.MaleDOBOrAge))
                     set athleteWDSF.otherInfo.city = ticketImport.City
@@ -220,8 +244,12 @@
                 else{
                     w:(isTrace) !,"---Create prt single Other."
         
-                    // Create participantSingleOther
-                    set participant = ..CreateParticipantOtherFromImportedTicket(ticketImport, competition, $$$YES, .st)
+                    set participant = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$YES, .st)
+                    
+                    if $ISOBJECT(participant) = $$$NO {
+                        // Create participantSingleOther
+                        set participant = ..CreateParticipantOtherByImportedTicket(ticketImport, competition, $$$YES, .st)
+                    } 
                 }
                 
                 $$$THROWONERROR(st, st)
@@ -354,7 +382,57 @@
 ]]></Implementation>
 </Method>
 
-<Method name="CreateParticipantOtherFromImportedTicket">
+<Method name="GetParticipantOtherFromImportedTicket">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[ticketImport:Dance.Data.Import.TicketDanceplat,competition:Competition,isSolo:%Boolean,&st:%Status]]></FormalSpec>
+<ReturnType>Participant</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    set data = ##class(%ZEN.proxyObject).%New()
+    set data.competitionId = competition.%Id()
+    set data.otherInfo = ##class(%ZEN.proxyObject).%New()
+    set data.otherInfo.club = ticketImport.Club
+    set data.otherInfo.city = ticketImport.City
+    set data.otherInfo.mainTrainer = $P(ticketImport.Trainers, ",", 1)
+    set data.otherInfo.otherTrainers = $P(ticketImport.Trainers, ",", 2, *)
+    
+    set prtClass = ""
+    if (isSolo){
+        if (ticketImport.FemaleLastName = ""){
+            set data.lastName = ticketImport.MaleLastName
+            set data.firstName = ticketImport.MaleFirstName
+            set data.dob = ..GetCorrectDOB(ticketImport.MaleDOBOrAge)
+        }
+        else{
+            set data.lastName = ticketImport.FemaleLastName
+            set data.firstName = ticketImport.FemaleFirstName
+            set data.dob = ..GetCorrectDOB(ticketImport.FemaleDOBOrAge)
+        }
+        
+        set prtClass = "Dance.Data.ParticipantSingleOther"
+    }
+    else{
+        set data.man = ##class(%ZEN.proxyObject).%New()
+        set data.man.lastName = ticketImport.MaleLastName
+        set data.man.firstName = ticketImport.MaleFirstName
+        set data.man.dob = ..GetCorrectDOB(ticketImport.MaleDOBOrAge)
+        
+        set data.woman = ##class(%ZEN.proxyObject).%New()
+        set data.woman.lastName = ticketImport.FemaleLastName
+        set data.woman.firstName = ticketImport.FemaleFirstName
+        set data.woman.dob = ..GetCorrectDOB(ticketImport.FemaleDOBOrAge)
+        
+        set prtClass = "Dance.Data.ParticipantCoupleOther"
+    }
+    
+    // Find existed participant
+    set prt = $CLASSMETHOD(prtClass, "GetByFilter", data)
+    quit prt
+]]></Implementation>
+</Method>
+
+<Method name="CreateParticipantOtherByImportedTicket">
 <ClassMethod>1</ClassMethod>
 <FormalSpec><![CDATA[ticketImport:Dance.Data.Import.TicketDanceplat,competition:Competition,isSolo:%Boolean,&st:%Status]]></FormalSpec>
 <ReturnType>Participant</ReturnType>
@@ -402,10 +480,6 @@
         set prtClass = "Dance.Data.ParticipantCoupleOther"
     }
     
-    // Find for ticket competition in DB
-    set prt = $CLASSMETHOD(prtClass, "GetByFilter", data)
-    quit:$ISOBJECT(prt) prt
-    
     // Create
     set countryNameWDSF = "--Unknown--"
     &sql(SELECT TOP 1 CountryWDSFName INTO :countryNameWDSF 
@@ -446,205 +520,17 @@
 ]]></Implementation>
 </Method>
 
-<Method name="TestFakeTickets">
+<Method name="Test">
 <Description>
-do ##class(Dance.Data.TicketDanceplat).TestFakeTickets()</Description>
+do ##class(Dance.Data.TicketDanceplat).Test()</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-    do ##class(Dance.Data.Import.TicketDanceplat).%KillExtent()
-    do ##class(Dance.Data.Ticket).%DeleteExtent()
-    do ##class(Dance.Data.Participant).%DeleteExtent()
-    do ##class(Dance.Data.Couple).%DeleteExtent()
-    do ##class(Dance.Data.PersonWDSF).%DeleteExtent()
-    
-    set tickets = ##class(%ListOfObjects).%New()
-    
-    set cmpId = 0
-    &sql(SELECT ID INTO :id FROM Dance_Data.Competition)
-    set competition = ##class(Competition).%OpenId(id)
-    
-    // 1.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = "Cor"
-    set ticket.MaleLastName = "Zeeman"
-    set ticket.MaleNumber = ""
-    set ticket.FemaleDOBOrAge = ""
-    set ticket.FemaleFirstName = "Hannie"
-    set ticket.FemaleLastName = "Zeeman"
-    set ticket.FemaleNumber = ""
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "New York"
-    set ticket.Club = "Metropolis"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "101"
-    set ticket.OrderIdInternal = "101-1"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-01-01"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = "Paulo, Sergio"
-    set ticket.TStatus = "pay"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-    // 2.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = "1990-10-12"
-    set ticket.MaleFirstName = "Илья"
-    set ticket.MaleLastName = "Подолько"
-    set ticket.MaleNumber = ""
-    set ticket.FemaleDOBOrAge = "20"
-    set ticket.FemaleFirstName = "Марина"
-    set ticket.FemaleLastName = "Савельева"
-    set ticket.FemaleNumber = ""
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "Санкт-Петербург"
-    set ticket.Club = "Кукушка"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "102"
-    set ticket.OrderIdInternal = "102-2"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-02-02"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = "Осипов, Самойлов"
-    set ticket.TStatus = "cancel"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-    
-    // 3.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = ""
-    set ticket.MaleLastName = ""
-    set ticket.MaleNumber = ""
-    set ticket.FemaleDOBOrAge = ""
-    set ticket.FemaleFirstName = "Andrea"
-    set ticket.FemaleLastName = "Trestikova"
-    set ticket.FemaleNumber = ""
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "London"
-    set ticket.Club = "Bulevar"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "103"
-    set ticket.OrderIdInternal = "103-3"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-12-02"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = ""
-    set ticket.TStatus = "pay"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-    
-    // 4.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = "Максим"
-    set ticket.MaleLastName = "Полев"
-    set ticket.MaleNumber = ""
-    set ticket.FemaleDOBOrAge = ""
-    set ticket.FemaleFirstName = "Максим"
-    set ticket.FemaleLastName = "Полев"
-    set ticket.FemaleNumber = ""
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "Воронеж"
-    set ticket.Club = "Воробей"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "104"
-    set ticket.OrderIdInternal = "104-4"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-12-12"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = ""
-    set ticket.TStatus = "cancel"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-    
-    // 5.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = "Юрий"
-    set ticket.MaleLastName = "Махмутянов"
-    set ticket.MaleNumber = "2864"
-    set ticket.FemaleDOBOrAge = ""
-    set ticket.FemaleFirstName = "Юрий"
-    set ticket.FemaleLastName = "Махмутянов"
-    set ticket.FemaleNumber = "2864"
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "Красноярск"
-    set ticket.Club = "Птичка"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "105"
-    set ticket.OrderIdInternal = "105-5"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2015-12-02"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = "Наташка"
-    set ticket.TStatus = "cancel"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-
-    // 6.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = "Динара"
-    set ticket.MaleLastName = "Хизбуллина"
-    set ticket.MaleNumber = "75367"
-    set ticket.FemaleDOBOrAge = "20"
-    set ticket.FemaleFirstName = "Юрий"
-    set ticket.FemaleLastName = "Махмутянов"
-    set ticket.FemaleNumber = "2864"
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "Красноярск"
-    set ticket.Club = "Птичка"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "106"
-    set ticket.OrderIdInternal = "106-6"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-12-02"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = "Жора"
-    set ticket.TStatus = "pay"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-        
-    for i=1:1:tickets.Count(){
-        do ..SaveOneFromImportTable(tickets.GetAt(i), competition)
-    }
+    TSTART
+    set ticketImport = ##class(Dance.Data.Import.TicketDanceplat).%OpenId(11553)
+    set competition = ##class(Dance.Data.Competition).IdInternalIdxOpen(ticketImport.GroupIdInternal)
+    w !,..SaveOneFromImportTable(ticketImport, competition)
+    TCOMMIT
 ]]></Implementation>
 </Method>
 
