@@ -67,12 +67,17 @@ Protected REST URLs</Description>
 <Route Method="GET" Url="/recorder/tournament/:id" Call="Dance.Web.JsonAdmin:GetRecordersHashesForTournament"/>
 
 
-
+<!-- Report file - all tournament participants -->
 <Route Method="GET" Url="/report/:lang/tournament/:trnId/participant" Call="Dance.Web.ReportTournamentParticipants:GetFile"/>
+
+<!-- Report file - all tournament payers -->
 <Route Method="GET" Url="/report/:lang/tournament/:trnId/payer" Call="Dance.Web.ReportTournamentPayers:GetFile"/>
 
 <!-- All currencies -->
 <Route Method="GET" Url="/currency" Call="Dance.Web.JsonAdmin:GetCurrencies"/>
+
+<!-- All payment systems -->
+<Route Method="GET" Url="/paymentsystem" Call="Dance.Web.JsonAdmin:GetPaymentSystems"/>
 </Routes>
 ]]></Data>
 </XData>

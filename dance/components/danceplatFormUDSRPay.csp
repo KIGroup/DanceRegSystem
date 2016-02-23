@@ -1,7 +1,0 @@
-<form method="POST" action="http://www.danceplat.ru/ftsrpay.php">
-	<input ng-hide="hideAll" value="{{trnId}}" name="trnID"/>
-	<input ng-hide="hideAll" value="{{manNumberUdsr}}" name="cplMalePartnerID"/>
-	<input ng-hide="hideAll" value="{{womanNumberUdsr}}" name="cplFemalePartnerID"/>
-	<input ng-hide="hideAll" ng-repeat="cmpId in competitionIdList" value="{{cmpId}}" name="nmnID[]"/>
-	<button class="btn btn-small" type="submit" ng-disabled="competitionIdList.length==0"><i class="fa fa-shopping-cart"></i>&nbsp;&nbsp;{{btnName}}</button>
-</form>

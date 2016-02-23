@@ -1,4 +1,4 @@
-<form method="POST" action="http://www.danceplat.ru/ftsrpay.php">
+<form method="POST" action="">
 	<input ng-hide="hideAll" value="{{trnId}}" name="trnID"/>
 	<input ng-hide="hideAll" value="{{manNumberUdsr}}" name="cplMalePartnerID"/>
 	<input ng-hide="hideAll" value="{{womanNumberUdsr}}" name="cplFemalePartnerID"/>

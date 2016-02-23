@@ -793,7 +793,7 @@ Available participants competitions for grid</Description>
     if (isCouple = $$$YES){
         set sql = sql_" AND Type->Code = 'Couples' "
     }
-    elseif $ISOBJECT(params.other.athlete){
+    else{
         set sql = sql_" AND Type->Code = 'Solo' "
     }
     
@@ -829,16 +829,20 @@ Available participants competitions for grid</Description>
     #dim athlete As Dance.Data.PersonUDSR = ""
     #dim couple As Dance.Data.CoupleUDSR = ""
     #dim coupleWDSF As Dance.Data.CoupleWDSF = ""
+    set manRegionNumber = ""
     
     if ($CLASSNAME(prtData) = ##class(Dance.Data.PersonUDSR).%ClassName(1)){
         set athlete = prtData
         set man = prtData
         set woman = prtData
+        set manRegionNumber = prtData.RegionNumber
     }
     elseif ($CLASSNAME(prtData) = ##class(Dance.Data.CoupleUDSR).%ClassName(1)){
         set couple = prtData
         set man = couple.Man
         set woman = couple.Woman
+        
+        set manRegionNumber = couple.Man.RegionNumber
         
         // Если есть WDSF версия, то открываем её
         if (##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxExists(couple.%Id()) = $$$YES){
@@ -858,28 +862,30 @@ Available participants competitions for grid</Description>
     for i=1:1:sourceList.Count(){
         #dim cmp As Dance.Data.Competition = sourceList.GetAt(i)
         
-        // Если СТСР пара уже записалась в эту группу, то исключаем эту группу
-        if (##class(Dance.Data.Participant).IsParticipationExists(couple.%Id(), couple.%ClassName(1), cmp.%Id()) = $$$YES){
-            continue
-        }
-        
-        // Если WDSF версия пары уже записалась в эту группу, то исключаем эту группу
-        if $ISOBJECT(coupleWDSF) && (##class(Dance.Data.Participant).IsParticipationExists(coupleWDSF.%Id(), coupleWDSF.%ClassName(1), cmp.%Id()) = $$$YES){
-            continue
-        }
-        
-        // Если группа ограничена регионом, то сверяем регион, если пара не подходит, то пропускаем группу
+        // Если группа ограничена регионом, то сверяем регион, если пара|сольник не подходит, то пропускаем группу
         if (cmp.Regions.Count() > 0){
             set cmpId = cmp.%Id() 
             SET SQLCODE = ""
             &sql(SELECT TOP 1 ID
                  FROM Dance_Data.Competition_Regions
-                 WHERE Competition = :cmpId AND :couple.Man.RegionNumber %INLIST Regions->CodeNumbers)
+                 WHERE Competition = :cmpId AND :manRegionNumber %INLIST Regions->CodeNumbers)
+            
             if (SQLCODE = 100){
                 continue
             }
         }
         
+        // Если СТСР пара|сольник уже записалась в эту группу, то исключаем эту группу
+        if (##class(Dance.Data.Participant).IsParticipationExists(prtData.%Id(), prtData.%ClassName(1), cmp.%Id()) = $$$YES){
+            continue
+        }
+            
+        if ($ISOBJECT(couple)){   
+            // Если WDSF версия пары уже записалась в эту группу, то исключаем эту группу
+            if $ISOBJECT(coupleWDSF) && (##class(Dance.Data.Participant).IsParticipationExists(coupleWDSF.%Id(), coupleWDSF.%ClassName(1), cmp.%Id()) = $$$YES){
+                continue
+            }
+        }
         
         // Если группа WDSF и есть у СТСР пары версия WDSF
         if $ISOBJECT(cmp.WDSF){
@@ -1054,7 +1060,7 @@ Available participants competitions for grid</Description>
     
     if $ISOBJECT(params.athlete){
         set athleteData = params.athlete
-        set (man, woman) = params.athlete.man
+        set (man, woman) = params.athlete
         set prtObjKey = params.athlete.key
         set prtObjClassName = ##class(Dance.Data.ParticipantSingleOther).%ClassName(1)
     }
@@ -1196,7 +1202,7 @@ Get all participants of the tournament for grid</Description>
         set convertParams.loadPrtObjCompetitionsCount = $$$YES
         set convertParams.loadPrtObjPaymentsCount = $$$YES
         
-        set result = ..GetProxyObjectsForGrid("SELECT %NOLOCK ID FROM Dance_Data.Participant", "Dance.Data.Participant", params, convertParams, whereCondition, "GROUP BY FullName->Value")
+        set result = ..GetProxyObjectsForGrid("SELECT %NOLOCK MAX(ID) FROM Dance_Data.Participant", "Dance.Data.Participant", params, convertParams, whereCondition, "GROUP BY FullName->Value")
         do result.%ToJSON()
     }
     catch ex {
@@ -1311,7 +1317,8 @@ Get all participants of the competition for grid</Description>
             
              set sql = "SELECT ID "_ 
                       "FROM ( "_sql_" )"_
-                      "GROUP BY Competition"
+                      "GROUP BY Competition "_
+                      "ORDER BY Competition->StartDate, Competition->IdInternal"
             }
             elseif (##class(Dance.Data.CoupleWDSF).%ExistsId(cplId)) && (##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxExists(cplId)){
                 set sql = "SELECT %NOLOCK ID, Competition FROM Dance_Data.ParticipantCoupleUDSR WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(cplId).UDSR.%Id()_"' AND IsActive=1 "_
@@ -1320,7 +1327,8 @@ Get all participants of the competition for grid</Description>
              
               set sql = "SELECT ID "_ 
                       "FROM ( "_sql_" )"_
-                      "GROUP BY Competition"                       
+                      "GROUP BY Competition "_
+                      "ORDER BY Competition->StartDate, Competition->IdInternal"                     
             }
             
            

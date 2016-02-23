@@ -16,7 +16,7 @@ directivesModule.directive('tournamentform', function(){
 			$scope.currencies = [];
             $scope.countries = [];
 
-            /// Load all Tournament Statuses for combobox
+            // Load all Tournament Statuses for combobox
             $scope.loadTournamentStatuses = function(){
                 TournamentStatusSrvc.getAll().then(
                     function(data){
@@ -26,7 +26,7 @@ directivesModule.directive('tournamentform', function(){
                     });
             };
 			
-			/// Load all currencies
+			// Load all currencies
             $scope.loadCurrencies = function(){
                 OtherSrvc.getCurrencies().then(
                     function(data){
@@ -35,8 +35,18 @@ directivesModule.directive('tournamentform', function(){
                     function(data, status, headers, config){
                     });
             };
+			
+			// Load all payment systems
+            $scope.loadPaymentSystems = function(){
+                OtherSrvc.getPaymentSystems().then(
+                    function(data){
+                        $scope.paymentSystems = data.children;
+                    },
+                    function(data, status, headers, config){
+                    });
+            };
 
-            /// Load all Tournament Ranks for combobox
+            // Load all Tournament Ranks for combobox
             $scope.loadTournamentRanks = function(){
                 TournamentRankSrvc.getAll().then(
                     function(data){
@@ -46,7 +56,7 @@ directivesModule.directive('tournamentform', function(){
                     });
             };
 
-            /// Load WDSF Countries
+            // Load WDSF Countries
             $scope.loadCountries = function(){
                 OtherSrvc.getCountries().then(
                     function(data){
@@ -60,6 +70,7 @@ directivesModule.directive('tournamentform', function(){
             $scope.loadTournamentRanks();
 			$scope.loadCurrencies();
             $scope.loadCountries();
+			$scope.loadPaymentSystems();
 	   	}
     }
 });

@@ -1,4 +1,4 @@
-// Combine date time is 04.02.2016 0:08:10
+// Combine date time is 23.02.2016 10:36:07
 
 
 // ===============================================================================================================================
@@ -2630,7 +2630,16 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
 
 
     $scope.goToPaymentSystem = function(formId){
-        $window.document.forms[formId].submit(); 
+		var url = '';
+		if (formId.indexOf("UDSR") >= 0){
+			url = $scope.tournament.paymentSystem.udsrUrl;
+		}
+		else{
+			url = $scope.tournament.paymentSystem.wdsfUrl;
+		}
+		
+        $window.document.forms[formId].action = url;
+		$window.document.forms[formId].submit(); 
     };
 
     /// Load WDSF Countries
@@ -3927,7 +3936,10 @@ servicesModule.factory('OtherSrvc', function(RESTSrvc) {
         },
         getCompetitionRegions: function(){
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/competition/region'});
-        }       
+        },
+		getPaymentSystems: function(){
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.admin + '/paymentsystem'});
+        },		
     }
 });
 
@@ -4521,7 +4533,7 @@ directivesModule.directive('tournamentform', function(){
 			$scope.currencies = [];
             $scope.countries = [];
 
-            /// Load all Tournament Statuses for combobox
+            // Load all Tournament Statuses for combobox
             $scope.loadTournamentStatuses = function(){
                 TournamentStatusSrvc.getAll().then(
                     function(data){
@@ -4531,7 +4543,7 @@ directivesModule.directive('tournamentform', function(){
                     });
             };
 			
-			/// Load all currencies
+			// Load all currencies
             $scope.loadCurrencies = function(){
                 OtherSrvc.getCurrencies().then(
                     function(data){
@@ -4540,8 +4552,18 @@ directivesModule.directive('tournamentform', function(){
                     function(data, status, headers, config){
                     });
             };
+			
+			// Load all payment systems
+            $scope.loadPaymentSystems = function(){
+                OtherSrvc.getPaymentSystems().then(
+                    function(data){
+                        $scope.paymentSystems = data.children;
+                    },
+                    function(data, status, headers, config){
+                    });
+            };
 
-            /// Load all Tournament Ranks for combobox
+            // Load all Tournament Ranks for combobox
             $scope.loadTournamentRanks = function(){
                 TournamentRankSrvc.getAll().then(
                     function(data){
@@ -4551,7 +4573,7 @@ directivesModule.directive('tournamentform', function(){
                     });
             };
 
-            /// Load WDSF Countries
+            // Load WDSF Countries
             $scope.loadCountries = function(){
                 OtherSrvc.getCountries().then(
                     function(data){
@@ -4565,6 +4587,7 @@ directivesModule.directive('tournamentform', function(){
             $scope.loadTournamentRanks();
 			$scope.loadCurrencies();
             $scope.loadCountries();
+			$scope.loadPaymentSystems();
 	   	}
     }
 });
@@ -4658,7 +4681,7 @@ directivesModule.directive('competitionform', function(){
 // File: 38. directives/danceplatUDSRPay.js
 // ===============================================================================================================================
 'use strict';
-//df
+//d
 
 directivesModule.directive('danceplatUdsrPay', function(){
     return {
@@ -4667,7 +4690,7 @@ directivesModule.directive('danceplatUdsrPay', function(){
         templateUrl: 'components/danceplatUDSRPay.csp',
         
         scope: {
-            trnId: '=',
+			trnId: '=',
             manNumberUdsr: '=',
             womanNumberUdsr: '=',
             competitions: '=',
@@ -4684,7 +4707,7 @@ directivesModule.directive('danceplatUdsrPay', function(){
 // File: 39. directives/danceplatOtherPay.js
 // ===============================================================================================================================
 'use strict';
-//
+//-
 
 directivesModule.directive('danceplatOtherPay', function(){
     return {
@@ -4693,14 +4716,6 @@ directivesModule.directive('danceplatOtherPay', function(){
         templateUrl: 'components/danceplatOtherPay.csp',
         
         scope: {
-            /* 
-            trnId: '=',
-            manNumberUdsr: '=',
-            womanNumberUdsr: '=',
-            competitionIdList: '=',
-            hideAll: '=',
-            btnName: '=' 
-            */
             trnId: '=',
 
             maleAge: '=',

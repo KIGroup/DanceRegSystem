@@ -250,6 +250,12 @@ Tournaments</Description>
 <Type>Currency</Type>
 </Property>
 
+<Property name="PaymentSystem">
+<Description>
+Платежная система в турнире</Description>
+<Type>Dance.Data.PaymentSystem</Type>
+</Property>
+
 <Index name="IdInternalIdx">
 <Properties>IdInternal</Properties>
 <Unique>1</Unique>
@@ -346,6 +352,10 @@ Tournaments</Description>
     set proxy.tabWDSFAllowed = ..TabWDSFAllowed
     set proxy.tabOtherAllowed = ..TabOtherAllowed
     
+    if ($ISOBJECT(..PaymentSystem)){
+        set proxy.paymentSystem = ..PaymentSystem.ConvertToProxyObject()
+    }
+    
     quit proxy
 ]]></Implementation>
 </Method>
@@ -409,6 +419,8 @@ Create or Update object</Description>
     set trn.TabUDSRAllowed = data.tabUDSRAllowed = $$$YES
     set trn.TabWDSFAllowed = data.tabWDSFAllowed = $$$YES
     set trn.TabOtherAllowed = data.tabOtherAllowed = $$$YES
+    
+    set trn.PaymentSystem = ##class(Dance.Data.PaymentSystem).%OpenId(data.paymentSystem.id)
                 
     set st = trn.%Save()
             
@@ -815,6 +827,9 @@ Check update privilege</Description>
 </Value>
 <Value name="34">
 <Value>Currency</Value>
+</Value>
+<Value name="35">
+<Value>PaymentSystem</Value>
 </Value>
 </Data>
 </Storage>

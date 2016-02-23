@@ -1,5 +1,5 @@
 'use strict';
-//df
+//d
 
 directivesModule.directive('danceplatUdsrPay', function(){
     return {
@@ -8,7 +8,7 @@ directivesModule.directive('danceplatUdsrPay', function(){
         templateUrl: 'components/danceplatUDSRPay.csp',
         
         scope: {
-            trnId: '=',
+			trnId: '=',
             manNumberUdsr: '=',
             womanNumberUdsr: '=',
             competitions: '=',

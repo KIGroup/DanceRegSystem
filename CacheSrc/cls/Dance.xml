@@ -56,48 +56,6 @@ Age categories, Young, Adult etc. </Description>
 <Required>1</Required>
 </Property>
 
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Data.AgeCategoryD</DataLocation>
-<DefaultData>AgeCategoryDefaultData</DefaultData>
-<IdLocation>^Dance.Data.AgeCategoryD</IdLocation>
-<IndexLocation>^Dance.Data.AgeCategoryI</IndexLocation>
-<StreamLocation>^Dance.Data.AgeCategoryS</StreamLocation>
-<ExtentSize>100000</ExtentSize>
-<Data name="AgeCategoryDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>Name</Value>
-</Value>
-<Value name="3">
-<Value>MaxAge</Value>
-</Value>
-<Value name="4">
-<Value>MinAge</Value>
-</Value>
-<Value name="5">
-<Value>Code</Value>
-</Value>
-<Value name="6">
-<Value>YoungestPartnerMaxAge</Value>
-</Value>
-<Value name="7">
-<Value>YoungestPartnerMinAge</Value>
-</Value>
-<Value name="8">
-<Value>OldestPartnerMaxAge</Value>
-</Value>
-<Value name="9">
-<Value>OldestPartnerMinAge</Value>
-</Value>
-<Value name="10">
-<Value>SpecialLogic</Value>
-</Value>
-</Data>
-</Storage>
-
 <Index name="CodeIdx">
 <Properties>Code</Properties>
 <Unique>1</Unique>
@@ -394,6 +352,48 @@ Create or update age category</Description>
 	}
 ]]></Implementation>
 </Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.AgeCategoryD</DataLocation>
+<DefaultData>AgeCategoryDefaultData</DefaultData>
+<IdLocation>^Dance.Data.AgeCategoryD</IdLocation>
+<IndexLocation>^Dance.Data.AgeCategoryI</IndexLocation>
+<StreamLocation>^Dance.Data.AgeCategoryS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="AgeCategoryDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>MaxAge</Value>
+</Value>
+<Value name="4">
+<Value>MinAge</Value>
+</Value>
+<Value name="5">
+<Value>Code</Value>
+</Value>
+<Value name="6">
+<Value>YoungestPartnerMaxAge</Value>
+</Value>
+<Value name="7">
+<Value>YoungestPartnerMinAge</Value>
+</Value>
+<Value name="8">
+<Value>OldestPartnerMaxAge</Value>
+</Value>
+<Value name="9">
+<Value>OldestPartnerMinAge</Value>
+</Value>
+<Value name="10">
+<Value>SpecialLogic</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 
 
@@ -725,6 +725,11 @@ Competition in the tournament, has participants</Description>
 <Required>1</Required>
 </Property>
 
+<Property name="Regions">
+<Type>CompetitionRegion</Type>
+<Collection>array</Collection>
+</Property>
+
 <Index name="TournamentIdx">
 <Properties>Tournament</Properties>
 </Index>
@@ -805,9 +810,31 @@ Competition in the tournament, has participants</Description>
         }
     }
     
-    //if (params.loadParticipantsCount){
-        set proxy.participantsCount = ..ParticipantsCount
-    //}
+    // DancerClasses array
+    set proxy.dancerClasses = ##class(%ListOfObjects).%New()
+    
+    if (params.loadDancerClasses){
+        set dcKey = ""
+        for i=1:1:..DancerClasses.Count(){
+            set dcKey = ..DancerClasses.Next(dcKey)
+            set dc = ..DancerClasses.GetAt(dcKey)
+            do proxy.dancerClasses.Insert(dc.ConvertToProxyObject())
+        }
+    }
+    
+    // Regions array
+    set proxy.regions = ##class(%ListOfObjects).%New()
+    
+    if (params.loadDancerClasses){
+        set key = ""
+        for i=1:1:..Regions.Count(){
+            set key = ..Regions.Next(key)
+            set reg = ..Regions.GetAt(key)
+            do proxy.regions.Insert(reg.ConvertToProxyObject())
+        }
+    }
+    
+    set proxy.participantsCount = ..ParticipantsCount
     
     set proxy.freeSlotsCount = 10000
     //if (params.loadPaymentsCount){
@@ -889,6 +916,17 @@ Create or update competition</Description>
         if $$$ISERR(st) return ##class(Dance.Utils.Msg).GetErrorStatus("error_DancerClassNotFound"," | "_st)
         
         do cmp.DancerClasses.SetAt(dancerClasses, dancerClasses.%Id())
+    }
+    
+    // Regions
+    do cmp.Regions.Clear()
+    if (data.regions){
+        for i=1:1:data.regions.Count(){
+            continue:(data.regions.GetAt(i).selected '= $$$YES)
+            
+            set region = ##class(Dance.Data.CompetitionRegion).%OpenId(data.regions.GetAt(i).id,,.st)
+            do cmp.Regions.SetAt(region, region.%Id())
+        }
     }
         
     set st = cmp.%Save()
@@ -1036,6 +1074,11 @@ Participants count in the competition</Description>
 <Structure>subnode</Structure>
 <Subscript>"DancerClasses"</Subscript>
 </Data>
+<Data name="Regions">
+<Attribute>Regions</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"Regions"</Subscript>
+</Data>
 </Storage>
 
 <Method name="GetPaymentsCount">
@@ -1145,6 +1188,169 @@ Payments</Description>
     quit $$$NO
 ]]></Implementation>
 </Method>
+</Class>
+
+
+<Class name="Dance.Data.CompetitionRegion">
+<Super>%Persistent</Super>
+<TimeCreated>63849,77704.249723</TimeCreated>
+
+<Property name="Name">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="500"/>
+</Property>
+
+<Property name="CodeNumbers">
+<Type>%String</Type>
+<Collection>list</Collection>
+<Parameter name="CollectionDisplayDelimiter" value="&quot;,&quot;"/>
+</Property>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Convert to proxyObject (for JSON)</Description>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.id = ..%Id()
+    set proxy.name = ..Name
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Method name="ImportData">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ..%KillExtent()
+    do ..Import("1", "Республика Адыгея")
+    do ..Import("2, 102", "Республика Башкортостан")
+    do ..Import("3", "Республика Бурятия")
+    do ..Import("4", "Республика Алтай (Горный Алтай)")
+    do ..Import("5", "Республика Дагестан")
+    do ..Import("6", "Республика Ингушетия")
+    do ..Import("7", "Кабардино-Балкарская Республика")
+    do ..Import("8", "Республика Калмыкия")
+    do ..Import("9", "Республика Карачаево-Черкессия")
+    do ..Import("10", "Республика Карелия")
+    do ..Import("11", "Республика Коми")
+    do ..Import("12", "Республика Марий Эл")
+    do ..Import("13, 113", "Республика Мордовия")
+    do ..Import("14", "Республика Саха (Якутия)")
+    do ..Import("15", "Республика Северная Осетия — Алания")
+    do ..Import("16, 116", "Республика Татарстан")
+    do ..Import("17", "Республика Тыва")
+    do ..Import("18", "Удмуртская Республика")
+    do ..Import("19", "Республика Хакасия")
+    do ..Import("21, 121", "Чувашская Республика")
+    do ..Import("22", "Алтайский край")
+    do ..Import("23, 93, 123", "Краснодарский край")
+    do ..Import("24, 84, 88, 124", "Красноярский край")
+    do ..Import("25, 125", "Приморский край")
+    do ..Import("26", "Ставропольский край")
+    do ..Import("27", "Хабаровский край")
+    do ..Import("28", "Амурская область")
+    do ..Import("29", "Архангельская область")
+    do ..Import("30", "Астраханская область")
+    do ..Import("31", "Белгородская область")
+    do ..Import("32", "Брянская область")
+    do ..Import("33", "Владимирская область")
+    do ..Import("34, 134", "Волгоградская область")
+    do ..Import("35", "Вологодская область")
+    do ..Import("36", "Воронежская область")
+    do ..Import("37", "Ивановская область")
+    do ..Import("38, 85", "Иркутская область")
+    do ..Import("39, 91", "Калининградская область")
+    do ..Import("40", "Калужская область")
+    do ..Import("41", "Камчатский край")
+    do ..Import("42", "Кемеровская область")
+    do ..Import("43", "Кировская область")
+    do ..Import("44", "Костромская область")
+    do ..Import("45", "Курганская область")
+    do ..Import("46", "Курская область")
+    do ..Import("47", "Ленинградская область")
+    do ..Import("48", "Липецкая область")
+    do ..Import("49", "Магаданская область")
+    do ..Import("50, 90, 150, 190", "Московская область")
+    do ..Import("51", "Мурманская область")
+    do ..Import("52, 152", "Нижегородская область")
+    do ..Import("53", "Новгородская область")
+    do ..Import("54", "Новосибирская область")
+    do ..Import("55", "Омская область")
+    do ..Import("56", "Оренбургская область")
+    do ..Import("57", "Орловская область")
+    do ..Import("58", "Пензенская область")
+    do ..Import("59, 81, 159", "Пермский край")
+    do ..Import("60", "Псковская область")
+    do ..Import("61, 161", "Ростовская область")
+    do ..Import("62", "Рязанская область")
+    do ..Import("63, 163", "Самарская область")
+    do ..Import("64, 164", "Саратовская область")
+    do ..Import("65", "Сахалинская область")
+    do ..Import("66, 96", "Свердловская область")
+    do ..Import("67", "Смоленская область")
+    do ..Import("68", "Тамбовская область")
+    do ..Import("69", "Тверская область")
+    do ..Import("70", "Томская область")
+    do ..Import("71", "Тульская область")
+    do ..Import("72", "Тюменская область")
+    do ..Import("73, 173", "Ульяновская область")
+    do ..Import("74, 174", "Челябинская область")
+    do ..Import("75, 80", "Забайкальский край")
+    do ..Import("76", "Ярославская область")
+    do ..Import("77, 97, 99, 177, 197, 199, 777", "г. Москва")
+    do ..Import("78, 98, 178", "г. Санкт-Петербург")
+    do ..Import("79", "Еврейская автономная область")
+    do ..Import("82", "Республика Крым")
+    do ..Import("83", "Ненецкий автономный округ")
+    do ..Import("86, 186", "Ханты-Мансийский автономный округ — Югра")
+    do ..Import("87", "Чукотский автономный округ")
+    do ..Import("89", "Ямало-Ненецкий автономный округ")
+    do ..Import("92", "г. Севастополь")
+    //do ..Import("94", "Территории, находящиеся за пределами РФ и обслуживаемые Департаментом режимных объектов МВД России")
+    do ..Import("95", "Чеченская республика")
+    q $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="Import">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>codes,name</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set region = ..%New()
+    set region.Name = name
+    
+    set list = $LISTFROMSTRING(codes, ",")
+    for i=1:1:$LL(list){
+        set code = $REPLACE($LIST(list, i), " ", "")
+        d region.CodeNumbers.Insert(code)
+    }
+    
+    q region.%Save()
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.CompetitionRegionD</DataLocation>
+<DefaultData>CompetitionRegionDefaultData</DefaultData>
+<IdLocation>^Dance.Data.CompetitionRegionD</IdLocation>
+<IndexLocation>^Dance.Data.CompetitionRegionI</IndexLocation>
+<StreamLocation>^Dance.Data.CompetitionRegionS</StreamLocation>
+<Data name="CompetitionRegionDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>CodeNumbers</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 
 
@@ -1569,6 +1775,22 @@ Couples</Description>
 ]]></Implementation>
 </Method>
 
+<Method name="Create">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[manId:%String,womanId:%String,&status]]></FormalSpec>
+<ReturnType>Couple</ReturnType>
+<Implementation><![CDATA[
+	if ..CommonIdxExists(manId, womanId) quit ..CommonIdxOpen(manId, womanId)
+	
+	set obj = ..%New()
+	set obj.Man = ##class(Dance.Data.Person).%OpenId(manId)
+	set obj.Woman = ##class(Dance.Data.Person).%OpenId(womanId)
+	set status = obj.%Save()
+	
+	quit obj
+]]></Implementation>
+</Method>
+
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^Dance.Data.CoupleD</DataLocation>
@@ -1589,22 +1811,6 @@ Couples</Description>
 </Value>
 </Data>
 </Storage>
-
-<Method name="Create">
-<ClassMethod>1</ClassMethod>
-<FormalSpec><![CDATA[manId:%String,womanId:%String,&status]]></FormalSpec>
-<ReturnType>Couple</ReturnType>
-<Implementation><![CDATA[
-	if ..CommonIdxExists(manId, womanId) quit ..CommonIdxOpen(manId, womanId)
-	
-	set obj = ..%New()
-	set obj.Man = ##class(Dance.Data.Person).%OpenId(manId)
-	set obj.Woman = ##class(Dance.Data.Person).%OpenId(womanId)
-	set status = obj.%Save()
-	
-	quit obj
-]]></Implementation>
-</Method>
 </Class>
 
 
@@ -1752,23 +1958,25 @@ Couples</Description>
         
     if (##class(MatchingCoupleUDSRWDSF).WDSFIdxExists(..%Id())){
         set coupleUDSR = ##class(MatchingCoupleUDSRWDSF).WDSFIdxOpen(..%Id()).UDSR
-        set proxy.idUDSR = coupleUDSR.%Id()
-        set proxy.man.idUDSR = coupleUDSR.Man.%Id()
-        set proxy.man.numberUDSR = coupleUDSR.Man.Number
-        set proxy.woman.idUDSR = coupleUDSR.Woman.%Id()
-        set proxy.woman.numberUDSR = coupleUDSR.Woman.Number
-        
-        if $ISOBJECT(coupleUDSR.Man.LAClass){
-            set proxy.man.laClass = coupleUDSR.Man.LAClass.ConvertToProxyObject()
-        }
-        if $ISOBJECT(coupleUDSR.Man.STClass){
-            set proxy.man.stClass = coupleUDSR.Man.STClass.ConvertToProxyObject()
-        }
-        if $ISOBJECT(coupleUDSR.Woman.LAClass){
-            set proxy.woman.laClass = coupleUDSR.Woman.LAClass.ConvertToProxyObject()
-        }
-        if $ISOBJECT(coupleUDSR.Woman.STClass){
-            set proxy.woman.stClass = coupleUDSR.Woman.STClass.ConvertToProxyObject()
+        if (coupleUDSR.Man.IsActive){
+            set proxy.idUDSR = coupleUDSR.%Id()
+            set proxy.man.idUDSR = coupleUDSR.Man.%Id()
+            set proxy.man.numberUDSR = coupleUDSR.Man.Number
+            set proxy.woman.idUDSR = coupleUDSR.Woman.%Id()
+            set proxy.woman.numberUDSR = coupleUDSR.Woman.Number
+            
+            if $ISOBJECT(coupleUDSR.Man.LAClass){
+                set proxy.man.laClass = coupleUDSR.Man.LAClass.ConvertToProxyObject()
+            }
+            if $ISOBJECT(coupleUDSR.Man.STClass){
+                set proxy.man.stClass = coupleUDSR.Man.STClass.ConvertToProxyObject()
+            }
+            if $ISOBJECT(coupleUDSR.Woman.LAClass){
+                set proxy.woman.laClass = coupleUDSR.Woman.LAClass.ConvertToProxyObject()
+            }
+            if $ISOBJECT(coupleUDSR.Woman.STClass){
+                set proxy.woman.stClass = coupleUDSR.Woman.STClass.ConvertToProxyObject()
+            }
         }
     }
     
@@ -2330,88 +2538,124 @@ Imported competitions from other system</Description>
 <FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
 <Implementation><![CDATA[
-	set proxy = ##class(%ZEN.proxyObject).%New()
-	set proxy.info = ##class(%ZEN.proxyObject).%New()
-	set proxy.info.errorMessages = ##class(%ListOfDataTypes).%New()
-	
-	try{
-		set proxy.id = ..%Id()
-		set proxy.tournamentIdExternal = ..TournamentIdExternal
-		set proxy.idInternal = ..IdInternal
-		set proxy.idExternal = ..IdExternal
-		set proxy.startDate = ..StartDate
-		set proxy.minAge = ..MinAge
-		set proxy.maxAge = ..MaxAge
-		set proxy.limit = ..Limit
-		set proxy.price = ..Price
-		set proxy.name = ..Name
-						
-		set realDicipline = ##class(Dance.Data.Discipline).CodeIdxOpen(..DisciplineCode,,.sc)
-		if ($$$ISOK(sc)){
-			set proxy.discipline = realDicipline.ConvertToProxyObject()
-		}
-		else{
-			do proxy.info.errorMessages.Insert("Дисциплина не найдена! Код = "_..DisciplineCode)	
-		}
-			
-		set realAge = ##class(Dance.Data.AgeCategory).CodeIdxOpen(..AgeCategoryCode,,.sc)
-		if ($$$ISOK(sc)){
-			set proxy.ageCategory = realAge.ConvertToProxyObject()
-		}
-		else{
-			do proxy.info.errorMessages.Insert("Возрастная группа не найдена! Код = "_..AgeCategoryCode)
-		}
-			
-		if (..IsSoloType = $$$YES){
-			set typeCode = "Solo"
-		}
-		else{
-			set typeCode = "Couples"
-		}
-			
-		set type = ##class(Dance.Data.CompetitionType).CodeIdxOpen(typeCode,,.sc)
-		if ($$$ISOK(sc)){
-			set proxy.type = type.ConvertToProxyObject()
-		}
-		else{
-			do proxy.info.errorMessages.Insert("Тип не найден! Соло = "_..IsSoloType)
-		}
-		
-		set proxy.dancerClasses = ##class(Dance.Data.DancerClass).GetAll().children
-		set dancerClassesList = $LISTFROMSTRING(..DancerClassCodes, ",")
-		for i=1:1:$LL(dancerClassesList){
-			set class = $LIST(dancerClassesList, i)
-			if (class = "") continue
-				
-			if (##class(Dance.Data.DancerClass).CodeIdxExists(class) = $$$YES){
-				for cc=1:1:proxy.dancerClasses.Count(){
-					if (class = proxy.dancerClasses.GetAt(cc).code){
-						set proxy.dancerClasses.GetAt(cc).selected = $$$YES
-						quit
-					}
-				}
-			}
-			elseif (class = "0"){
-				for cc=1:1:proxy.dancerClasses.Count(){
-					if (proxy.dancerClasses.GetAt(cc).code = 7){
-						continue
-					}
-					set proxy.dancerClasses.GetAt(cc).selected = $$$YES
-				}
-			}
-			else{
-				do proxy.info.errorMessages.Insert("Класс не найден! Код = "_class)	
-			}		
-		}
+    set defaultDancerClasses("Взрослые") = "6,3,2,4,5,9,8"
+    set defaultDancerClasses("Молодежь") = "6,3,2,4,5,9"
+    set defaultDancerClasses("Д-1") = "6,3"
+    set defaultDancerClasses("Д-2") = "6,3,2"
+    set defaultDancerClasses("Ю-1") = "6,3,2,4"
+    set defaultDancerClasses("Ю-2") = "6,3,2,4,5"
+            
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.info = ##class(%ZEN.proxyObject).%New()
+    set proxy.info.errorMessages = ##class(%ListOfDataTypes).%New()
+    
+    try{
+        set proxy.id = ..%Id()
+        set proxy.tournamentIdExternal = ..TournamentIdExternal
+        set proxy.idInternal = ..IdInternal
+        set proxy.idExternal = ..IdExternal
+        set proxy.startDate = ..StartDate
+        set proxy.minAge = ..MinAge
+        set proxy.maxAge = ..MaxAge
+        set proxy.limit = ..Limit
+        set proxy.price = ..Price
+        set proxy.name = ..Name
+                        
+        set realDicipline = ##class(Dance.Data.Discipline).CodeIdxOpen(..DisciplineCode,,.sc)
+        if ($$$ISOK(sc)){
+            set proxy.discipline = realDicipline.ConvertToProxyObject()
+        }
+        else{
+            do proxy.info.errorMessages.Insert("Дисциплина не найдена! Код = "_..DisciplineCode)    
+        }
+            
+        set realAge = ##class(Dance.Data.AgeCategory).CodeIdxOpen(..AgeCategoryCode,,.sc)
+        if ($$$ISOK(sc)){
+            set proxy.ageCategory = realAge.ConvertToProxyObject()
+        }
+        else{
+            do proxy.info.errorMessages.Insert("Возрастная группа не найдена! Код = "_..AgeCategoryCode)
+        }
+            
+        if (..IsSoloType = $$$YES){
+            set typeCode = "Solo"
+        }
+        else{
+            set typeCode = "Couples"
+        }
+            
+        set type = ##class(Dance.Data.CompetitionType).CodeIdxOpen(typeCode,,.sc)
+        if ($$$ISOK(sc)){
+            set proxy.type = type.ConvertToProxyObject()
+        }
+        else{
+            do proxy.info.errorMessages.Insert("Тип не найден! Соло = "_..IsSoloType)
+        }
+        
+        set proxy.dancerClasses = ##class(Dance.Data.DancerClass).GetAll().children
+        set dancerClassesList = $LISTFROMSTRING(..DancerClassCodes, ",")
+        for i=1:1:$LL(dancerClassesList){
+            set class = $LIST(dancerClassesList, i)
+            if (class = "") continue
+                
+            if (##class(Dance.Data.DancerClass).CodeIdxExists(class) = $$$YES){
+                for cc=1:1:proxy.dancerClasses.Count(){
+                    if (class = proxy.dancerClasses.GetAt(cc).code){
+                        set proxy.dancerClasses.GetAt(cc).selected = $$$YES
+                        quit
+                    }
+                }
+            }
+            elseif (class = "0"){
+                // 0 - All classes. 7 - H class
+                for cc=1:1:proxy.dancerClasses.Count(){
+                    if (proxy.dancerClasses.GetAt(cc).code = 7){
+                        continue
+                    }
+                    
+                    set proxy.dancerClasses.GetAt(cc).selected = $$$YES
+                }
+            }
+            else{
+                do proxy.info.errorMessages.Insert("Класс не найден! Код = "_class) 
+            }       
+        }
 
-		set proxy.info.isExisted = ##class(Dance.Data.Competition).IdInternalIdxExists(..IdInternal)
-		set proxy.info.isErrored = (proxy.info.errorMessages.Count() '= 0)
-	}
-	catch(ex){
-		set proxy.errorText = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-	}
-	
-	quit proxy
+        /*
+           Проверка сформированного списка классов доступных для танцора по умолчанию, тк с  данцплата может прилететь д***мо, поэто нужны доп. проверки
+        */
+        set defaultDancerClasses("Взрослые") = "6,3,2,4,5,9,8"
+        set defaultDancerClasses("Молодежь") = "6,3,2,4,5,9"
+        set defaultDancerClasses("Д-1") = "6,3"
+        set defaultDancerClasses("Д-2") = "6,3,2"
+        set defaultDancerClasses("Ю-1") = "6,3,2,4"
+        set defaultDancerClasses("Ю-2") = "6,3,2,4,5"
+        // Объединение A v B
+        set defaultDancerClasses("Молодежь+Ю-2") = "6,3,2,4,5,9"
+        set defaultDancerClasses("Ю-1+Д-2") = "6,3,2,4"
+        set defaultDancerClasses("Д-2+Д-1") = "6,3,2"
+        set defaultDancerClasses("Ю-2+Ю-1") = "6,3,2,4,5"
+        set defaultDancerClasses("Взрослые+Молодежь") = "6,3,2,4,5,9,8"
+        
+    
+        set defaultClasses = $GET(defaultDancerClasses(realAge.Code))
+        if (defaultClasses '= "") {
+            for i=1:1:proxy.dancerClasses.Count(){
+                // Если класс выбран, но он не включен в список допустимых для воз.группы, то "развыбираем" его
+                if (proxy.dancerClasses.GetAt(i).selected) && ($FIND(defaultClasses, proxy.dancerClasses.GetAt(i).code) = 0){
+                     set proxy.dancerClasses.GetAt(i).selected = $$$NO
+                }
+            }
+        }
+        
+        set proxy.info.isExisted = ##class(Dance.Data.Competition).IdInternalIdxExists(..IdInternal)
+        set proxy.info.isErrored = (proxy.info.errorMessages.Count() '= 0)
+    }
+    catch(ex){
+        set proxy.errorText = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+    }
+    
+    quit proxy
 ]]></Implementation>
 </Method>
 
@@ -2422,28 +2666,28 @@ Create or update item</Description>
 <FormalSpec>newObj:Dance.Data.Import.CompetitionDanceplat</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	set newObj.Name = $REPLACE($REPLACE(newObj.Name, $c(10), ""), "&quot;", """")
-	
-	if (..IdInternalIdxExists(newObj.IdInternal) = 0){
-		quit newObj.%Save()
-	}
+    set newObj.Name = $REPLACE($REPLACE(newObj.Name, $c(10), ""), "&quot;", """")
+    
+    if (..IdInternalIdxExists(newObj.IdInternal) = 0){
+        quit newObj.%Save()
+    }
 
-	set oldObj = ..IdInternalIdxOpen(newObj.IdInternal)
-	set oldObj.IdExternal = newObj.IdExternal
-	set oldObj.Name = newObj.Name
-	set oldObj.AgeCategoryCode = newObj.AgeCategoryCode
-	set oldObj.DancerClassCodes = newObj.DancerClassCodes
-	set oldObj.StartDate = newObj.StartDate
-	set oldObj.DisciplineCode = newObj.DisciplineCode
-	set oldObj.IsSoloType = newObj.IsSoloType
-	set oldObj.Limit = newObj.Limit
-	set oldObj.MaxAge = newObj.MaxAge
-	set oldObj.MinAge = newObj.MinAge
-	set oldObj.Price = newObj.Price
-	set oldObj.Rank = newObj.Rank
-	set oldObj.TournamentIdExternal = newObj.TournamentIdExternal
-	
-	quit oldObj.%Save()
+    set oldObj = ..IdInternalIdxOpen(newObj.IdInternal)
+    set oldObj.IdExternal = newObj.IdExternal
+    set oldObj.Name = newObj.Name
+    set oldObj.AgeCategoryCode = newObj.AgeCategoryCode
+    set oldObj.DancerClassCodes = newObj.DancerClassCodes
+    set oldObj.StartDate = newObj.StartDate
+    set oldObj.DisciplineCode = newObj.DisciplineCode
+    set oldObj.IsSoloType = newObj.IsSoloType
+    set oldObj.Limit = newObj.Limit
+    set oldObj.MaxAge = newObj.MaxAge
+    set oldObj.MinAge = newObj.MinAge
+    set oldObj.Price = newObj.Price
+    set oldObj.Rank = newObj.Rank
+    set oldObj.TournamentIdExternal = newObj.TournamentIdExternal
+    
+    quit oldObj.%Save()
 ]]></Implementation>
 </Method>
 
@@ -3583,47 +3827,62 @@ Translation dictionary</Description>
 <FormalSpec><![CDATA[coupleUDSR:CoupleUDSR,&st:%Status]]></FormalSpec>
 <ReturnType>MatchingCoupleUDSRWDSF</ReturnType>
 <Implementation><![CDATA[
-	set match = $$$NULLOREF
-	
-	if (..UDSRIdxExists(coupleUDSR.%Id())){
-		quit ..UDSRIdxOpen(coupleUDSR.%Id(),,.st)		
-	}
-	
-	try
-	{
-		TSTART
-		
-		// Searching in controller DB
-		set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCoupleByName(
-			coupleUDSR.Man.LastName.GetValueByLang("en")_","_coupleUDSR.Man.FirstName.GetValueByLang("en"), 
-			coupleUDSR.Woman.LastName.GetValueByLang("en")_","_coupleUDSR.Woman.FirstName.GetValueByLang("en"), 
-			.st)
-		
-		$$$THROWONERROR(st, st)
-		
-		#dim coupleWDSF As CoupleWDSF = ##class(CoupleWDSF).GetByNumbers(wdsfData.man.id, wdsfData.woman.id, .st)
-		
-		$$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
-		$$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
-		$$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
-		$$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
-		
-		set match = ..%New()
-		set match.UDSR = coupleUDSR
-		set match.WDSF = coupleWDSF
-		set st = match.%Save()
-	
-		TCOMMIT
-	}
-	catch(ex){
-		TROLLBACK
-		set st = ex.AsStatus()
-		do ##class(Dance.Utils.Journal).Create("Log", "MatchingCoupleUDSRWDSF CreateByUDSR", "st="_$SYSTEM.Status.GetErrorText(st))
-	}
-	
-	do ..FixLocalization()
-	
-	quit match
+    set match = $$$NULLOREF
+    
+    if (..UDSRIdxExists(coupleUDSR.%Id())){
+        quit ..UDSRIdxOpen(coupleUDSR.%Id(),,.st)       
+    }
+    
+    try
+    {
+        TSTART
+        
+        #dim coupleWDSF As CoupleWDSF = ""
+        
+        if (coupleUDSR.Man.NumberWDSF '= "") && (coupleUDSR.Woman.NumberWDSF '= "") && (coupleUDSR.Man.NumberWDSF '= "0") && (coupleUDSR.Woman.NumberWDSF '= "0"){
+            set coupleWDSF = ##class(CoupleWDSF).GetByNumbers(coupleUDSR.Man.NumberWDSF, coupleUDSR.Woman.NumberWDSF, .st)
+            if (coupleWDSF.Man.LastName.GetValueByLang("en") '= coupleUDSR.Man.LastName.GetValueByLang("en")) && (coupleWDSF.Woman.LastName.GetValueByLang("en") '= coupleUDSR.Woman.LastName.GetValueByLang("en")){
+                $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("MatchUdsrWdsf.CreateByUDSR wrong couple lastname."))
+            }
+        }
+        else{
+            // Searching in controller DB by name
+            set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCoupleByName(
+            coupleUDSR.Man.LastName.GetValueByLang("en")_","_coupleUDSR.Man.FirstName.GetValueByLang("en"), 
+            coupleUDSR.Woman.LastName.GetValueByLang("en")_","_coupleUDSR.Woman.FirstName.GetValueByLang("en"), 
+            .st)
+        
+            $$$THROWONERROR(st, st)
+        
+            set coupleWDSF = ##class(CoupleWDSF).GetByNumbers(wdsfData.man.id, wdsfData.woman.id, .st)
+        }
+        
+        $$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
+        $$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
+        $$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
+        $$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
+        
+        $$$THROWONERROR(st, coupleUDSR.Man.LastName.SetValueByLang(coupleWDSF.Man.LastName.GetValueByLang("en"), "en"))
+        $$$THROWONERROR(st, coupleUDSR.Man.FirstName.SetValueByLang(coupleWDSF.Man.FirstName.GetValueByLang("en"), "en"))
+        $$$THROWONERROR(st, coupleUDSR.Woman.LastName.SetValueByLang(coupleWDSF.Woman.LastName.GetValueByLang("en"), "en"))
+        $$$THROWONERROR(st, coupleUDSR.Woman.FirstName.SetValueByLang(coupleWDSF.Woman.FirstName.GetValueByLang("en"), "en"))
+        
+        set match = ..%New()
+        set match.UDSR = coupleUDSR
+        set match.WDSF = coupleWDSF
+        set st = match.%Save()
+    
+        TCOMMIT
+    }
+    catch(ex){
+        TROLLBACK
+        set st = ex.AsStatus()
+        do ##class(Dance.Utils.Journal).Create("Log", "MatchingCoupleUDSRWDSF CreateByUDSR", "st="_$SYSTEM.Status.GetErrorText(st))
+    }
+    
+    do ..FixLocalization()
+    
+    quit match
 ]]></Implementation>
 </Method>
 
@@ -3632,74 +3891,81 @@ Translation dictionary</Description>
 <FormalSpec><![CDATA[coupleWDSF:CoupleWDSF,&st:%Status]]></FormalSpec>
 <ReturnType>MatchingCoupleUDSRWDSF</ReturnType>
 <Implementation><![CDATA[
-	set match = $$$NULLOREF
-	
-	if (..WDSFIdxExists(coupleWDSF.%Id())){
-		quit ..WDSFIdxOpen(coupleWDSF.%Id(),,.st)		
-	}
-	
-	try
-	{
-		TSTART
-		
-		set manLastName = coupleWDSF.Man.LastName.GetValueByLang("en")
-		set manFirstName = coupleWDSF.Man.FirstName.GetValueByLang("en")
-		set womanLastName = coupleWDSF.Woman.LastName.GetValueByLang("en")
-		set womanFirstName = coupleWDSF.Woman.FirstName.GetValueByLang("en")
-		set udsrManNumber = ""
-		set udsrWomanNumber = ""
-		
-		&sql(DECLARE ManCur CURSOR FOR 
-			 SELECT person.Number
-		 	 FROM Dance_Data.PersonUDSR as person 
-		 	 INNER JOIN 
-		 		  Dance_Data_Localization.LTextValue as ltvalLN ON ltvalLN.LText = person.LastName 
-		 	 INNER JOIN 
-		 		  Dance_Data_Localization.LTextValue as ltvalFN ON ltvalFN.LText = person.FirstName
-		 	 WHERE %UPPER(ltvalLN.Value) = %UPPER(TRIM(BOTH ' ' FROM :manLastName)) 
-		 	   	   AND 
-		 	   	   %UPPER(ltvalFN.Value) = %UPPER(TRIM(BOTH ' ' FROM :manFirstName)))	
-		&sql(OPEN ManCur)
-		for  
-		{	
-			&sql(FETCH ManCur INTO :udsrManNumber) 
-			quit:(SQLCODE '= 0)
-			
-			set womanUDSR = ##class(PersonUDSR).NumberUDSRIdxOpen($GET(^Dance.Data.ManPartnersUDSR(udsrManNumber)))
-			if $ISOBJECT(womanUDSR) && (womanUDSR.LastName.GetValueByLang("en") = womanLastName) && (womanUDSR.FirstName.GetValueByLang("en") = womanFirstName){
-				set udsrWomanNumber = womanUDSR.Number
-				quit
-			}
-		}
-		&sql(CLOSE ManCur)
-	
-	
-		set coupleUDSR = ##class(CoupleUDSR).GetByNumbers(udsrManNumber, udsrWomanNumber)
-		if '$ISOBJECT(coupleUDSR){
-			$$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_CoupleUDSRNotFoundByCoupleWDSFFullName"))
-		}
-		
-		$$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
-		$$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
-		$$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
-		$$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
-		
-		set match = ..%New()
-		set match.UDSR = coupleUDSR
-		set match.WDSF = coupleWDSF
-		set st = match.%Save()
-	
-		TCOMMIT
-	}
-	catch(ex){
-		TROLLBACK 1
-		set st = ex.AsStatus()
-		do ##class(Dance.Utils.Journal).Create("Log", "MatchingCoupleUDSRWDSF CreateByWDSF", "st="_$SYSTEM.Status.GetErrorText(st))
-	}
-	
-	do ..FixLocalization()
-	
-	quit match
+    set match = $$$NULLOREF
+    
+    if (..WDSFIdxExists(coupleWDSF.%Id())){
+        quit ..WDSFIdxOpen(coupleWDSF.%Id(),,.st)       
+    }
+    
+    try
+    {
+        TSTART
+        
+        set manLastName = coupleWDSF.Man.LastName.GetValueByLang("en")
+        set manFirstName = coupleWDSF.Man.FirstName.GetValueByLang("en")
+        set womanLastName = coupleWDSF.Woman.LastName.GetValueByLang("en")
+        set womanFirstName = coupleWDSF.Woman.FirstName.GetValueByLang("en")
+        set udsrManNumber = ""
+        set udsrWomanNumber = ""
+        
+        // Поиск по номеру вдсф
+        &sql(SELECT Number INTO :udsrManNumber FROM Dance_Data.PersonUDSR WHERE NumberWDSF = :coupleWDSF.Man.Number)
+        &sql(SELECT Number INTO :udsrWomanNumber FROM Dance_Data.PersonUDSR WHERE NumberWDSF = :coupleWDSF.Woman.Number)
+
+        if (udsrManNumber = "") || (udsrWomanNumber = ""){
+            
+            // Поиск по имени
+            &sql(DECLARE ManCur CURSOR FOR 
+                 SELECT person.Number
+                 FROM Dance_Data.PersonUDSR as person 
+                 INNER JOIN 
+                      Dance_Data_Localization.LTextValue as ltvalLN ON ltvalLN.LText = person.LastName 
+                 INNER JOIN 
+                      Dance_Data_Localization.LTextValue as ltvalFN ON ltvalFN.LText = person.FirstName
+                 WHERE %UPPER(ltvalLN.Value) = %UPPER(TRIM(BOTH ' ' FROM :manLastName)) 
+                       AND 
+                       %UPPER(ltvalFN.Value) = %UPPER(TRIM(BOTH ' ' FROM :manFirstName)))   
+            &sql(OPEN ManCur)
+            for  
+            {   
+                &sql(FETCH ManCur INTO :udsrManNumber) 
+                quit:(SQLCODE '= 0)
+                
+                set womanUDSR = ##class(PersonUDSR).NumberUDSRIdxOpen($GET(^Dance.Data.ManPartnersUDSR(udsrManNumber)))
+                if $ISOBJECT(womanUDSR) && (womanUDSR.LastName.GetValueByLang("en") = womanLastName) && (womanUDSR.FirstName.GetValueByLang("en") = womanFirstName){
+                    set udsrWomanNumber = womanUDSR.Number
+                    quit
+                }
+            }
+            &sql(CLOSE ManCur)
+        }
+        
+        set coupleUDSR = ##class(CoupleUDSR).GetByNumbers(udsrManNumber, udsrWomanNumber)
+        if '$ISOBJECT(coupleUDSR){
+            $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_CoupleUDSRNotFoundByCoupleWDSFFullName"))
+        }
+        
+        $$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
+        $$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
+        $$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
+        $$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
+        
+        set match = ..%New()
+        set match.UDSR = coupleUDSR
+        set match.WDSF = coupleWDSF
+        set st = match.%Save()
+    
+        TCOMMIT
+    }
+    catch(ex){
+        TROLLBACK 1
+        set st = ex.AsStatus()
+        do ##class(Dance.Utils.Journal).Create("Log", "MatchingCoupleUDSRWDSF CreateByWDSF", "st="_$SYSTEM.Status.GetErrorText(st))
+    }
+    
+    do ..FixLocalization()
+    
+    quit match
 ]]></Implementation>
 </Method>
 
@@ -3708,38 +3974,60 @@ Translation dictionary</Description>
 do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
 <ClassMethod>1</ClassMethod>
 <Implementation><![CDATA[
-	try
-	{
-		TSTART
-		
-		&sql(DECLARE MtCur CURSOR FOR 
-			 SELECT UDSR, WDSF
-		 	 FROM Dance_Data.MatchingCoupleUDSRWDSF
-		 	 WHERE UDSR->Man->LastName->Value <> WDSF->Man->LastName->Value)	
-		&sql(OPEN MtCur)
-		for  
-		{	
-			&sql(FETCH MtCur INTO :udsrId, :wdsfId) 
-			quit:(SQLCODE '= 0)
-			
-			do ##class(Dance.Utils.Journal).Create("Log", "Matching. FixLocalization", "Poblem match. UDSR="_udsrId_"; WDSF="_wdsfId)
-			
-			set coupleUDSR = ##class(Dance.Data.CoupleUDSR).%OpenId(udsrId)
-			set coupleWDSF = ##class(Dance.Data.CoupleWDSF).%OpenId(wdsfId)
+    try
+    {
+        TSTART
+        
+        &sql(DECLARE MtCur CURSOR FOR 
+             SELECT UDSR, WDSF
+             FROM Dance_Data.MatchingCoupleUDSRWDSF
+             WHERE UDSR->Man->LastName->Value <> WDSF->Man->LastName->Value OR UDSR->Woman->LastName->Value <> WDSF->Woman->LastName->Value)    
+        &sql(OPEN MtCur)
+        for  
+        {   
+            &sql(FETCH MtCur INTO :udsrId, :wdsfId) 
+            quit:(SQLCODE '= 0)
+            
+            do ##class(Dance.Utils.Journal).Create("Log", "Matching. FixLocalization", "Poblem match. UDSR="_udsrId_"; WDSF="_wdsfId)
+            
+            set coupleUDSR = ##class(Dance.Data.CoupleUDSR).%OpenId(udsrId)
+            set coupleWDSF = ##class(Dance.Data.CoupleWDSF).%OpenId(wdsfId)
 
-			$$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
-			$$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
-			$$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
-			$$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
-		}
-		&sql(CLOSE MtCur)
-		
-		TCOMMIT
-	}
-	catch(ex){
-		TROLLBACK 1
-		do ##class(Dance.Utils.Journal).Create("Log", "Matching. FixLocalization", $SYSTEM.Status.GetErrorText(ex.AsStatus()))
-	}
+            $$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
+            $$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
+            $$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
+            $$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
+        }
+        &sql(CLOSE MtCur)
+        
+        TCOMMIT
+    }
+    catch(ex){
+        TROLLBACK 1
+        do ##class(Dance.Utils.Journal).Create("Log", "Matching. FixLocalization", $SYSTEM.Status.GetErrorText(ex.AsStatus()))
+    }
+]]></Implementation>
+</Method>
+
+<Method name="GetWDSFCoupleIDByUDSR">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>coupleUDSRId:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set coupleId = ""
+    &sql(SELECT WDSF INTO :coupleId FROM Dance_Data.MatchingCoupleUDSRWDSF WHERE UDSR = :coupleUDSRId)
+    quit coupleId
+]]></Implementation>
+</Method>
+
+<Method name="GetUDSRCoupleIDByWDSF">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>coupleWDSFId:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set coupleId = ""
+    &sql(SELECT UDSR INTO :coupleId FROM Dance_Data.MatchingCoupleUDSRWDSF WHERE WDSF = :coupleWDSFId)
+    quit coupleId
 ]]></Implementation>
 </Method>
 
@@ -3763,28 +4051,6 @@ do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
 </Value>
 </Data>
 </Storage>
-
-<Method name="GetWDSFCoupleIDByUDSR">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>coupleUDSRId:%String</FormalSpec>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[
-	set coupleId = ""
-	&sql(SELECT WDSF INTO :coupleId FROM Dance_Data.MatchingCoupleUDSRWDSF WHERE UDSR = :coupleUDSRId)
-	quit coupleId
-]]></Implementation>
-</Method>
-
-<Method name="GetUDSRCoupleIDByWDSF">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>coupleWDSFId:%String</FormalSpec>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[
-	set coupleId = ""
-	&sql(SELECT UDSR INTO :coupleId FROM Dance_Data.MatchingCoupleUDSRWDSF WHERE WDSF = :coupleWDSFId)
-	quit coupleId
-]]></Implementation>
-</Method>
 </Class>
 
 
@@ -4000,7 +4266,7 @@ do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
         &sql(DECLARE PrtFullNameCur CURSOR FOR
              SELECT %NOLOCK ID 
              FROM Dance_Data.Participant
-             WHERE Tournament->IsActive = 1 AND Competition->IsActive = 1 AND IsActive = 1)
+             WHERE Tournament->IsActive = 1 AND Competition->IsActive = 1 AND IsActive = 1 AND (Tournament->TStatus->Code IN ('Registration', 'RegistrationClosed')))
         
         &sql(OPEN PrtFullNameCur)
         for{
@@ -4222,63 +4488,6 @@ ClassName@ID - объекта участника</Description>
 ]]></Implementation>
 </Method>
 
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Data.ParticipantD</DataLocation>
-<DefaultData>ParticipantDefaultData</DefaultData>
-<IdLocation>^Dance.Data.ParticipantD</IdLocation>
-<IndexLocation>^Dance.Data.ParticipantI</IndexLocation>
-<StreamLocation>^Dance.Data.ParticipantS</StreamLocation>
-<ExtentSize>100000</ExtentSize>
-<Data name="ParticipantDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>Created</Value>
-</Value>
-<Value name="3">
-<Value>Recorder</Value>
-</Value>
-<Value name="4">
-<Value>Tournament</Value>
-</Value>
-<Value name="5">
-<Value>Competition</Value>
-</Value>
-<Value name="6">
-<Value>FullName</Value>
-</Value>
-<Value name="7">
-<Value>Country</Value>
-</Value>
-<Value name="8">
-<Value>City</Value>
-</Value>
-<Value name="9">
-<Value>Club</Value>
-</Value>
-<Value name="10">
-<Value>MainTrainer</Value>
-</Value>
-<Value name="11">
-<Value>OtherTrainers</Value>
-</Value>
-<Value name="12">
-<Value>IsActive</Value>
-</Value>
-<Value name="13">
-<Value>PrtObjKey</Value>
-</Value>
-<Value name="14">
-<Value>PrtObjPaymentsCount</Value>
-</Value>
-<Value name="15">
-<Value>PrtObjCompetitionsCount</Value>
-</Value>
-</Data>
-</Storage>
-
 <Method name="UpdatePrtKey">
 <Description>
 do ##class(Dance.Data.Participant).UpdatePrtKey()</Description>
@@ -4420,6 +4629,63 @@ do ##class(Dance.Data.Participant).UpdatePrtKey()</Description>
     quit $$$NO
 ]]></Implementation>
 </Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.ParticipantD</DataLocation>
+<DefaultData>ParticipantDefaultData</DefaultData>
+<IdLocation>^Dance.Data.ParticipantD</IdLocation>
+<IndexLocation>^Dance.Data.ParticipantI</IndexLocation>
+<StreamLocation>^Dance.Data.ParticipantS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="ParticipantDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Created</Value>
+</Value>
+<Value name="3">
+<Value>Recorder</Value>
+</Value>
+<Value name="4">
+<Value>Tournament</Value>
+</Value>
+<Value name="5">
+<Value>Competition</Value>
+</Value>
+<Value name="6">
+<Value>FullName</Value>
+</Value>
+<Value name="7">
+<Value>Country</Value>
+</Value>
+<Value name="8">
+<Value>City</Value>
+</Value>
+<Value name="9">
+<Value>Club</Value>
+</Value>
+<Value name="10">
+<Value>MainTrainer</Value>
+</Value>
+<Value name="11">
+<Value>OtherTrainers</Value>
+</Value>
+<Value name="12">
+<Value>IsActive</Value>
+</Value>
+<Value name="13">
+<Value>PrtObjKey</Value>
+</Value>
+<Value name="14">
+<Value>PrtObjPaymentsCount</Value>
+</Value>
+<Value name="15">
+<Value>PrtObjCompetitionsCount</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 
 
@@ -5338,6 +5604,88 @@ WDSF спортсмен</Description>
 </Class>
 
 
+<Class name="Dance.Data.PaymentSystem">
+<Description>
+Платежная система</Description>
+<Super>%Persistent</Super>
+<TimeCreated>63970,82411.858763</TimeCreated>
+
+<Property name="Code">
+<Description>
+Ширф</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="Name">
+<Description>
+Имя платежной система</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="500"/>
+</Property>
+
+<Property name="UDSRUrl">
+<Description>
+Адрес для отправки информации о платежа СТСР пар</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="500"/>
+</Property>
+
+<Property name="WDSFUrl">
+<Description>
+Адрес для отправки информации о платежа WDSF пар и прочих</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="500"/>
+</Property>
+
+<Index name="CodeIndex">
+<Properties>Code</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ConvertToProxyObject">
+<Description>
+Convert to proxyObject (for JSON)</Description>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.id = ..%Id()
+    set proxy.name = ..Name
+    set proxy.code = ..Code
+    set proxy.udsrUrl = ..UDSRUrl
+    set proxy.wdsfUrl = ..WDSFUrl
+    
+    quit proxy
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.PaymentSystemD</DataLocation>
+<DefaultData>PaymentSystemDefaultData</DefaultData>
+<IdLocation>^Dance.Data.PaymentSystemD</IdLocation>
+<IndexLocation>^Dance.Data.PaymentSystemI</IndexLocation>
+<StreamLocation>^Dance.Data.PaymentSystemS</StreamLocation>
+<Data name="PaymentSystemDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Code</Value>
+</Value>
+<Value name="3">
+<Value>Name</Value>
+</Value>
+<Value name="4">
+<Value>UDSRUrl</Value>
+</Value>
+<Value name="5">
+<Value>WDSFUrl</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
 <Class name="Dance.Data.Person">
 <Super>%Persistent</Super>
 <TimeCreated>63274,63498.354989</TimeCreated>
@@ -5379,6 +5727,11 @@ Last name</Description>
 <Required>1</Required>
 </Property>
 
+<Property name="IsActive">
+<Type>%Boolean</Type>
+<InitialExpression>"1"</InitialExpression>
+</Property>
+
 <Method name="ConvertToProxyObject">
 <FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
@@ -5390,6 +5743,7 @@ Last name</Description>
 	set proxy.firstName = ..FirstName.Value
 	set proxy.gender = ..Gender	
 	set proxy.updated = ..Updated
+	set proxy.isActive = ..IsActive
 	set proxy.otherInfo = ##class(%ZEN.proxyObject).%New()
 	set proxy.otherInfo.country = ..Country.ConvertToProxyObject()
 		
@@ -5496,6 +5850,9 @@ Last name</Description>
 <Value name="8">
 <Value>Updated</Value>
 </Value>
+<Value name="9">
+<Value>IsActive</Value>
+</Value>
 </Data>
 </Storage>
 </Class>
@@ -5543,6 +5900,10 @@ Date of birth</Description>
 <Property name="OtherTrainers">
 <Type>%Text</Type>
 <Parameter name="MAXLEN" value="2000"/>
+</Property>
+
+<Property name="NumberWDSF">
+<Type>%String</Type>
 </Property>
 
 <Index name="NumberUDSRIdx">
@@ -5658,6 +6019,11 @@ Date of birth</Description>
             }
         }   
         
+        //20 Номер WDSF
+        if ($LIST(propList, 20) '= ""){
+            set person.NumberWDSF = $LIST(propList, 20)
+        }
+        
         set person.Country = ##class(Dance.Data.Country).WDSFNameIdxOpen("Russian Federation")
             
         set person.Updated = $ZDT($ZTS,3)
@@ -5753,6 +6119,9 @@ Date of birth</Description>
 </Value>
 <Value name="8">
 <Value>RegionNumber</Value>
+</Value>
+<Value name="9">
+<Value>NumberWDSF</Value>
 </Value>
 </Data>
 </Storage>
@@ -6064,6 +6433,43 @@ Tickets of the participants</Description>
 <Type>Tournament</Type>
 </Property>
 
+<Index name="PrtObjKeyIdx">
+<Properties>PrtObjKey</Properties>
+</Index>
+
+<Index name="TStatusIdx">
+<Properties>TStatus</Properties>
+</Index>
+
+<Index name="TournamentIdx">
+<Properties>Tournament</Properties>
+</Index>
+
+<Index name="ParticipantIdx">
+<Properties>Participant</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Index name="CommonIdx">
+<Properties>PrtObjKey,TStatus,Tournament</Properties>
+</Index>
+
+<Method name="GetPrtObjPaymentsCountInTournament">
+<Description>
+Количестов оплаченных билетов в турнире объекта-участника (КЛАСС@ID)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>prtObjKey:%String,trnId:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+	set count = 0
+	&sql(SELECT COUNT(ID) INTO :count
+		 FROM Dance_Data.Ticket 
+		 WHERE PrtObjKey = :prtObjKey AND TStatus = 1 AND Tournament = :trnId AND Participant->IsActive = 1)
+	
+	quit count
+]]></Implementation>
+</Method>
+
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^Dance.Data.TicketD</DataLocation>
@@ -6105,43 +6511,6 @@ Tickets of the participants</Description>
 </Value>
 </Data>
 </Storage>
-
-<Index name="PrtObjKeyIdx">
-<Properties>PrtObjKey</Properties>
-</Index>
-
-<Index name="TStatusIdx">
-<Properties>TStatus</Properties>
-</Index>
-
-<Index name="TournamentIdx">
-<Properties>Tournament</Properties>
-</Index>
-
-<Index name="ParticipantIdx">
-<Properties>Participant</Properties>
-<Unique>1</Unique>
-</Index>
-
-<Index name="CommonIdx">
-<Properties>PrtObjKey,TStatus,Tournament</Properties>
-</Index>
-
-<Method name="GetPrtObjPaymentsCountInTournament">
-<Description>
-Количестов оплаченных билетов в турнире объекта-участника (КЛАСС@ID)</Description>
-<ClassMethod>1</ClassMethod>
-<FormalSpec>prtObjKey:%String,trnId:%String</FormalSpec>
-<ReturnType>%Integer</ReturnType>
-<Implementation><![CDATA[
-	set count = 0
-	&sql(SELECT COUNT(ID) INTO :count
-		 FROM Dance_Data.Ticket 
-		 WHERE PrtObjKey = :prtObjKey AND TStatus = 1 AND Tournament = :trnId AND Participant->IsActive = 1)
-	
-	quit count
-]]></Implementation>
-</Method>
 </Class>
 
 
@@ -6330,18 +6699,35 @@ Tickets of the participants</Description>
                 set coupleWDSF = ..GetCoupleWDSFFromImportedTicket(ticketImport)
                 if $ISOBJECT(coupleWDSF){
                     w:(isTrace) !,"---Find couple WDSF."
+                    
                     set coupleWDSF = coupleWDSF.ConvertToProxyObject()
                     set coupleWDSF.man.dob = ..GetCorrectDOB(ticketImport.MaleDOBOrAge)
                     set coupleWDSF.woman.dob = ..GetCorrectDOB(ticketImport.FemaleDOBOrAge)
                     set coupleWDSF.otherInfo.city = ticketImport.City
                     set coupleWDSF.otherInfo.club = ticketImport.Club  
                     set participant = ##class(Dance.Data.ParticipantCoupleWDSF).Create(##class(Recorder).GetSystemRecorder(), competition, coupleWDSF, .st)
+                    
+                    // Find the double
+                    set participantOther = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)
+                    if $ISOBJECT(participantOther){
+                        w:(isTrace) !,"---- Find couple other (double)."
+                        set participantOther.IsActive = $$$NO
+                        $$$THROWONERROR(st, participantOther.%Save())
+                        
+                        set participant.Created = participantOther.Created
+                        $$$THROWONERROR(st, participant.%Save())
+                    }
+                    
                 }
                 else{
                     w:(isTrace) !,"---Create prt couple Other."
         
-                    // Create participantCoupleOther
-                    set participant = ..CreateParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)                                     
+                    set participant = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)
+                    
+                    if $ISOBJECT(participant) = $$$NO {
+                        // Create participantCoupleOther
+                        set participant = ..CreateParticipantOtherByImportedTicket(ticketImport, competition, $$$NO, .st)
+                    }                                     
                 }
                 
                 $$$THROWONERROR(st, st)
@@ -6355,6 +6741,13 @@ Tickets of the participants</Description>
                 if $ISOBJECT(athleteWDSF){
                     w:(isTrace) !,"---Find person WDSF."
                     
+                    set participantOther = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)
+                    if $ISOBJECT(participantOther){
+                        w:(isTrace) !,"---- Find single other (double)."
+                        set participantOther.IsActive = $$$NO
+                        $$$THROWONERROR(st, participantOther.%Save())
+                    }
+                    
                     set athleteWDSF = athleteWDSF.ConvertToProxyObject()
                     set athleteWDSF.dob = ..GetCorrectDOB($SELECT(ticketImport.MaleLastName = "" : ticketImport.FemaleDOBOrAge, $$$YES : ticketImport.MaleDOBOrAge))
                     set athleteWDSF.otherInfo.city = ticketImport.City
@@ -6365,8 +6758,12 @@ Tickets of the participants</Description>
                 else{
                     w:(isTrace) !,"---Create prt single Other."
         
-                    // Create participantSingleOther
-                    set participant = ..CreateParticipantOtherFromImportedTicket(ticketImport, competition, $$$YES, .st)
+                    set participant = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$YES, .st)
+                    
+                    if $ISOBJECT(participant) = $$$NO {
+                        // Create participantSingleOther
+                        set participant = ..CreateParticipantOtherByImportedTicket(ticketImport, competition, $$$YES, .st)
+                    } 
                 }
                 
                 $$$THROWONERROR(st, st)
@@ -6499,7 +6896,57 @@ Tickets of the participants</Description>
 ]]></Implementation>
 </Method>
 
-<Method name="CreateParticipantOtherFromImportedTicket">
+<Method name="GetParticipantOtherFromImportedTicket">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[ticketImport:Dance.Data.Import.TicketDanceplat,competition:Competition,isSolo:%Boolean,&st:%Status]]></FormalSpec>
+<ReturnType>Participant</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    set data = ##class(%ZEN.proxyObject).%New()
+    set data.competitionId = competition.%Id()
+    set data.otherInfo = ##class(%ZEN.proxyObject).%New()
+    set data.otherInfo.club = ticketImport.Club
+    set data.otherInfo.city = ticketImport.City
+    set data.otherInfo.mainTrainer = $P(ticketImport.Trainers, ",", 1)
+    set data.otherInfo.otherTrainers = $P(ticketImport.Trainers, ",", 2, *)
+    
+    set prtClass = ""
+    if (isSolo){
+        if (ticketImport.FemaleLastName = ""){
+            set data.lastName = ticketImport.MaleLastName
+            set data.firstName = ticketImport.MaleFirstName
+            set data.dob = ..GetCorrectDOB(ticketImport.MaleDOBOrAge)
+        }
+        else{
+            set data.lastName = ticketImport.FemaleLastName
+            set data.firstName = ticketImport.FemaleFirstName
+            set data.dob = ..GetCorrectDOB(ticketImport.FemaleDOBOrAge)
+        }
+        
+        set prtClass = "Dance.Data.ParticipantSingleOther"
+    }
+    else{
+        set data.man = ##class(%ZEN.proxyObject).%New()
+        set data.man.lastName = ticketImport.MaleLastName
+        set data.man.firstName = ticketImport.MaleFirstName
+        set data.man.dob = ..GetCorrectDOB(ticketImport.MaleDOBOrAge)
+        
+        set data.woman = ##class(%ZEN.proxyObject).%New()
+        set data.woman.lastName = ticketImport.FemaleLastName
+        set data.woman.firstName = ticketImport.FemaleFirstName
+        set data.woman.dob = ..GetCorrectDOB(ticketImport.FemaleDOBOrAge)
+        
+        set prtClass = "Dance.Data.ParticipantCoupleOther"
+    }
+    
+    // Find existed participant
+    set prt = $CLASSMETHOD(prtClass, "GetByFilter", data)
+    quit prt
+]]></Implementation>
+</Method>
+
+<Method name="CreateParticipantOtherByImportedTicket">
 <ClassMethod>1</ClassMethod>
 <FormalSpec><![CDATA[ticketImport:Dance.Data.Import.TicketDanceplat,competition:Competition,isSolo:%Boolean,&st:%Status]]></FormalSpec>
 <ReturnType>Participant</ReturnType>
@@ -6547,10 +6994,6 @@ Tickets of the participants</Description>
         set prtClass = "Dance.Data.ParticipantCoupleOther"
     }
     
-    // Find for ticket competition in DB
-    set prt = $CLASSMETHOD(prtClass, "GetByFilter", data)
-    quit:$ISOBJECT(prt) prt
-    
     // Create
     set countryNameWDSF = "--Unknown--"
     &sql(SELECT TOP 1 CountryWDSFName INTO :countryNameWDSF 
@@ -6591,205 +7034,17 @@ Tickets of the participants</Description>
 ]]></Implementation>
 </Method>
 
-<Method name="TestFakeTickets">
+<Method name="Test">
 <Description>
-do ##class(Dance.Data.TicketDanceplat).TestFakeTickets()</Description>
+do ##class(Dance.Data.TicketDanceplat).Test()</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-    do ##class(Dance.Data.Import.TicketDanceplat).%KillExtent()
-    do ##class(Dance.Data.Ticket).%DeleteExtent()
-    do ##class(Dance.Data.Participant).%DeleteExtent()
-    do ##class(Dance.Data.Couple).%DeleteExtent()
-    do ##class(Dance.Data.PersonWDSF).%DeleteExtent()
-    
-    set tickets = ##class(%ListOfObjects).%New()
-    
-    set cmpId = 0
-    &sql(SELECT ID INTO :id FROM Dance_Data.Competition)
-    set competition = ##class(Competition).%OpenId(id)
-    
-    // 1.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = "Cor"
-    set ticket.MaleLastName = "Zeeman"
-    set ticket.MaleNumber = ""
-    set ticket.FemaleDOBOrAge = ""
-    set ticket.FemaleFirstName = "Hannie"
-    set ticket.FemaleLastName = "Zeeman"
-    set ticket.FemaleNumber = ""
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "New York"
-    set ticket.Club = "Metropolis"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "101"
-    set ticket.OrderIdInternal = "101-1"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-01-01"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = "Paulo, Sergio"
-    set ticket.TStatus = "pay"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-    // 2.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = "1990-10-12"
-    set ticket.MaleFirstName = "Илья"
-    set ticket.MaleLastName = "Подолько"
-    set ticket.MaleNumber = ""
-    set ticket.FemaleDOBOrAge = "20"
-    set ticket.FemaleFirstName = "Марина"
-    set ticket.FemaleLastName = "Савельева"
-    set ticket.FemaleNumber = ""
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "Санкт-Петербург"
-    set ticket.Club = "Кукушка"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "102"
-    set ticket.OrderIdInternal = "102-2"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-02-02"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = "Осипов, Самойлов"
-    set ticket.TStatus = "cancel"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-    
-    // 3.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = ""
-    set ticket.MaleLastName = ""
-    set ticket.MaleNumber = ""
-    set ticket.FemaleDOBOrAge = ""
-    set ticket.FemaleFirstName = "Andrea"
-    set ticket.FemaleLastName = "Trestikova"
-    set ticket.FemaleNumber = ""
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "London"
-    set ticket.Club = "Bulevar"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "103"
-    set ticket.OrderIdInternal = "103-3"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-12-02"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = ""
-    set ticket.TStatus = "pay"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-    
-    // 4.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = "Максим"
-    set ticket.MaleLastName = "Полев"
-    set ticket.MaleNumber = ""
-    set ticket.FemaleDOBOrAge = ""
-    set ticket.FemaleFirstName = "Максим"
-    set ticket.FemaleLastName = "Полев"
-    set ticket.FemaleNumber = ""
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "Воронеж"
-    set ticket.Club = "Воробей"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "104"
-    set ticket.OrderIdInternal = "104-4"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-12-12"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = ""
-    set ticket.TStatus = "cancel"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-    
-    // 5.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = "Юрий"
-    set ticket.MaleLastName = "Махмутянов"
-    set ticket.MaleNumber = "2864"
-    set ticket.FemaleDOBOrAge = ""
-    set ticket.FemaleFirstName = "Юрий"
-    set ticket.FemaleLastName = "Махмутянов"
-    set ticket.FemaleNumber = "2864"
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "Красноярск"
-    set ticket.Club = "Птичка"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "105"
-    set ticket.OrderIdInternal = "105-5"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2015-12-02"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = "Наташка"
-    set ticket.TStatus = "cancel"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-    
-
-    // 6.
-    set ticket = ##class(Dance.Data.Import.TicketDanceplat).%New()
-    set ticket.MaleDOBOrAge = ""
-    set ticket.MaleFirstName = "Динара"
-    set ticket.MaleLastName = "Хизбуллина"
-    set ticket.MaleNumber = "75367"
-    set ticket.FemaleDOBOrAge = "20"
-    set ticket.FemaleFirstName = "Юрий"
-    set ticket.FemaleLastName = "Махмутянов"
-    set ticket.FemaleNumber = "2864"
-    //-------
-    set ticket.Amount = 1000
-    set ticket.City = "Красноярск"
-    set ticket.Club = "Птичка"
-    set ticket.CodeOne = "CodeOne"
-    set ticket.CodeTwo = "CodeTwo"
-    set ticket.Description = "Description"
-    set ticket.GroupIdInternal = competition.IdInternal
-    set ticket.IdInternal = "106"
-    set ticket.OrderIdInternal = "106-6"
-    set ticket.PaymentCreated = $ZDT($ZTS, 3)
-    set ticket.TDay = "2014-12-02"
-    set ticket.TournamentIdExternal = competition.Tournament.IdExternal
-    set ticket.Trainers = "Жора"
-    set ticket.TStatus = "pay"
-    set st = ticket.%Save()
-    w:$$$ISERR(st) "Ticket="_ticket.MaleLastName_" "_$SYSTEM.Status.GetErrorText(st)
-    do tickets.Insert(ticket)
-        
-    for i=1:1:tickets.Count(){
-        do ..SaveOneFromImportTable(tickets.GetAt(i), competition)
-    }
+    TSTART
+    set ticketImport = ##class(Dance.Data.Import.TicketDanceplat).%OpenId(11553)
+    set competition = ##class(Dance.Data.Competition).IdInternalIdxOpen(ticketImport.GroupIdInternal)
+    w !,..SaveOneFromImportTable(ticketImport, competition)
+    TCOMMIT
 ]]></Implementation>
 </Method>
 
@@ -7151,124 +7406,16 @@ Tournaments</Description>
 <Type>Currency</Type>
 </Property>
 
+<Property name="PaymentSystem">
+<Description>
+Платежная система в турнире</Description>
+<Type>Dance.Data.PaymentSystem</Type>
+</Property>
+
 <Index name="IdInternalIdx">
 <Properties>IdInternal</Properties>
 <Unique>1</Unique>
 </Index>
-
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Data.TournamentD</DataLocation>
-<DefaultData>TournamentDefaultData</DefaultData>
-<IdLocation>^Dance.Data.TournamentD</IdLocation>
-<IndexLocation>^Dance.Data.TournamentI</IndexLocation>
-<StreamLocation>^Dance.Data.TournamentS</StreamLocation>
-<ExtentSize>100000</ExtentSize>
-<Data name="TournamentDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>Title</Value>
-</Value>
-<Value name="3">
-<Value>StartDate</Value>
-</Value>
-<Value name="4">
-<Value>EndDate</Value>
-</Value>
-<Value name="5">
-<Value>OrganizerSite</Value>
-</Value>
-<Value name="6">
-<Value>TClass</Value>
-</Value>
-<Value name="7">
-<Value>Name</Value>
-</Value>
-<Value name="8">
-<Value>TRank</Value>
-</Value>
-<Value name="9">
-<Value>TStatus</Value>
-</Value>
-<Value name="10">
-<Value>OrganizerInfo</Value>
-</Value>
-<Value name="11">
-<Value>Country</Value>
-</Value>
-<Value name="12">
-<Value>City</Value>
-</Value>
-<Value name="13">
-<Value>TournirId</Value>
-</Value>
-<Value name="14">
-<Value>TournirIdExt</Value>
-</Value>
-<Value name="15">
-<Value>IdInternal</Value>
-</Value>
-<Value name="16">
-<Value>Hash</Value>
-</Value>
-<Value name="17">
-<Value>IdExternal</Value>
-</Value>
-<Value name="18">
-<Value>IsRemoved</Value>
-</Value>
-<Value name="19">
-<Value>IsActive</Value>
-</Value>
-<Value name="20">
-<Value>FullName</Value>
-</Value>
-<Value name="21">
-<Value>TabUDSRAllowed</Value>
-</Value>
-<Value name="22">
-<Value>TabWDSFAllowed</Value>
-</Value>
-<Value name="23">
-<Value>TabOtherAllowed</Value>
-</Value>
-<Value name="24">
-<Value>AccessCode</Value>
-</Value>
-<Value name="25">
-<Value>AnnouncementUrl</Value>
-</Value>
-<Value name="26">
-<Value>InfoUrl</Value>
-</Value>
-<Value name="27">
-<Value>AdditionInfoUrl</Value>
-</Value>
-<Value name="28">
-<Value>ParticipantsCount</Value>
-</Value>
-<Value name="29">
-<Value>ParticipantsUniqueCount</Value>
-</Value>
-<Value name="30">
-<Value>PaymentsCount</Value>
-</Value>
-<Value name="31">
-<Value>PaymentsUniqueCount</Value>
-</Value>
-<Value name="32">
-<Value>IsContainsSolo</Value>
-</Value>
-<Value name="33">
-<Value>IsContainsLimit</Value>
-</Value>
-<Value name="34">
-<Value>Currency</Value>
-</Value>
-</Data>
-</Storage>
 
 <Index name="IdExternalIdx">
 <Properties>IdExternal</Properties>
@@ -7361,6 +7508,10 @@ Tournaments</Description>
     set proxy.tabWDSFAllowed = ..TabWDSFAllowed
     set proxy.tabOtherAllowed = ..TabOtherAllowed
     
+    if ($ISOBJECT(..PaymentSystem)){
+        set proxy.paymentSystem = ..PaymentSystem.ConvertToProxyObject()
+    }
+    
     quit proxy
 ]]></Implementation>
 </Method>
@@ -7424,6 +7575,8 @@ Create or Update object</Description>
     set trn.TabUDSRAllowed = data.tabUDSRAllowed = $$$YES
     set trn.TabWDSFAllowed = data.tabWDSFAllowed = $$$YES
     set trn.TabOtherAllowed = data.tabOtherAllowed = $$$YES
+    
+    set trn.PaymentSystem = ##class(Dance.Data.PaymentSystem).%OpenId(data.paymentSystem.id)
                 
     set st = trn.%Save()
             
@@ -7704,6 +7857,8 @@ Check update privilege</Description>
         $$$THROWONERROR(status, ##class(Competition).UpdateAllByTournament(trnId))
         $$$THROWONERROR(status, ##class(Participant).UpdateAllByTournament(trnId))
     
+        do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()
+        
         TCOMMIT
     }
     catch(ex){
@@ -7717,6 +7872,123 @@ Check update privilege</Description>
     quit status
 ]]></Implementation>
 </Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.TournamentD</DataLocation>
+<DefaultData>TournamentDefaultData</DefaultData>
+<IdLocation>^Dance.Data.TournamentD</IdLocation>
+<IndexLocation>^Dance.Data.TournamentI</IndexLocation>
+<StreamLocation>^Dance.Data.TournamentS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="TournamentDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Title</Value>
+</Value>
+<Value name="3">
+<Value>StartDate</Value>
+</Value>
+<Value name="4">
+<Value>EndDate</Value>
+</Value>
+<Value name="5">
+<Value>OrganizerSite</Value>
+</Value>
+<Value name="6">
+<Value>TClass</Value>
+</Value>
+<Value name="7">
+<Value>Name</Value>
+</Value>
+<Value name="8">
+<Value>TRank</Value>
+</Value>
+<Value name="9">
+<Value>TStatus</Value>
+</Value>
+<Value name="10">
+<Value>OrganizerInfo</Value>
+</Value>
+<Value name="11">
+<Value>Country</Value>
+</Value>
+<Value name="12">
+<Value>City</Value>
+</Value>
+<Value name="13">
+<Value>TournirId</Value>
+</Value>
+<Value name="14">
+<Value>TournirIdExt</Value>
+</Value>
+<Value name="15">
+<Value>IdInternal</Value>
+</Value>
+<Value name="16">
+<Value>Hash</Value>
+</Value>
+<Value name="17">
+<Value>IdExternal</Value>
+</Value>
+<Value name="18">
+<Value>IsRemoved</Value>
+</Value>
+<Value name="19">
+<Value>IsActive</Value>
+</Value>
+<Value name="20">
+<Value>FullName</Value>
+</Value>
+<Value name="21">
+<Value>TabUDSRAllowed</Value>
+</Value>
+<Value name="22">
+<Value>TabWDSFAllowed</Value>
+</Value>
+<Value name="23">
+<Value>TabOtherAllowed</Value>
+</Value>
+<Value name="24">
+<Value>AccessCode</Value>
+</Value>
+<Value name="25">
+<Value>AnnouncementUrl</Value>
+</Value>
+<Value name="26">
+<Value>InfoUrl</Value>
+</Value>
+<Value name="27">
+<Value>AdditionInfoUrl</Value>
+</Value>
+<Value name="28">
+<Value>ParticipantsCount</Value>
+</Value>
+<Value name="29">
+<Value>ParticipantsUniqueCount</Value>
+</Value>
+<Value name="30">
+<Value>PaymentsCount</Value>
+</Value>
+<Value name="31">
+<Value>PaymentsUniqueCount</Value>
+</Value>
+<Value name="32">
+<Value>IsContainsSolo</Value>
+</Value>
+<Value name="33">
+<Value>IsContainsLimit</Value>
+</Value>
+<Value name="34">
+<Value>Currency</Value>
+</Value>
+<Value name="35">
+<Value>PaymentSystem</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 
 
@@ -9913,6 +10185,34 @@ w ##class(Dance.Utils.Init.Discipline).CopyValueFromEngToAnother("it")</Descript
 		do out.Write($$$EOL)
 	}
 	quit out.%Save()
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="Dance.Utils.Init.PaymentSystem">
+<Abstract>1</Abstract>
+<TimeCreated>63970,83805.51937</TimeCreated>
+
+<Method name="Init">
+<Description>
+do ##class(Dance.Utils.Init.PaymentSystem).Init()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set obj = ##class(Dance.Data.PaymentSystem).%New()
+    set obj.Name = "DancePlat №1 (СТСР: ftsrpay1, WDSF/Другие: ftsrpay2)"
+    set obj.Code = "DancePlat №1"
+    set obj.UDSRUrl = "http://www.danceplat.ru/ftsrpay.php"
+    set obj.WDSFUrl = "http://www.danceplat.ru/ftsrpay2.php"
+    w !, obj.%Save()
+    
+    set obj = ##class(Dance.Data.PaymentSystem).%New()
+    set obj.Name = "DancePlat №2 (СТСР/WDSF/Другие: ftsrpay3)"
+    set obj.Code = "DancePlat №2"
+    set obj.UDSRUrl = "http://www.danceplat.ru/ftsrpay3.php"
+    set obj.WDSFUrl = "http://www.danceplat.ru/ftsrpay3.php"
+    w !, obj.%Save()
 ]]></Implementation>
 </Method>
 </Class>
@@ -15780,12 +16080,17 @@ Protected REST URLs</Description>
 <Route Method="GET" Url="/recorder/tournament/:id" Call="Dance.Web.JsonAdmin:GetRecordersHashesForTournament"/>
 
 
-
+<!-- Report file - all tournament participants -->
 <Route Method="GET" Url="/report/:lang/tournament/:trnId/participant" Call="Dance.Web.ReportTournamentParticipants:GetFile"/>
+
+<!-- Report file - all tournament payers -->
 <Route Method="GET" Url="/report/:lang/tournament/:trnId/payer" Call="Dance.Web.ReportTournamentPayers:GetFile"/>
 
 <!-- All currencies -->
 <Route Method="GET" Url="/currency" Call="Dance.Web.JsonAdmin:GetCurrencies"/>
+
+<!-- All payment systems -->
+<Route Method="GET" Url="/paymentsystem" Call="Dance.Web.JsonAdmin:GetPaymentSystems"/>
 </Routes>
 ]]></Data>
 </XData>
@@ -15942,7 +16247,7 @@ Public REST URLs</Description>
 
 <!-- GET ALL, Dancer class -->
 <Route Method="GET" Url="/dancerClass" Call="Dance.Web.JsonUser:GetDancerClasses"/>
-	
+    
 <!-- GET ALL, Age category -->
 <Route Method="GET" Url="/ageCategory" Call="Dance.Web.JsonUser:GetAgeCategories"/>
 
@@ -15950,15 +16255,21 @@ Public REST URLs</Description>
 
 
 <Route Method="GET" Url="/person/stats" Call="Dance.Web.JsonUser:GetPersonStatistics"/>
-	
-	
-<!--  -->
+    
+    
+<!-- Count of participant competitions -->
 <Route Method="GET" Url="/count/participant/competition" Call="Dance.Web.JsonUser:GetCountParticipantCompetitions"/>
-	
-	
-	
+    
+    
+<!-- Report. All participants -->   
 <Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/participant" Call="Dance.Web.ReportTournamentParticipants:GetFileByAccessCode"/>
-<Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/payer" Call="Dance.Web.ReportTournamentPayers:GetFileByAccessCode"/>	
+
+<!-- Report. All participants -->
+<Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/payer" Call="Dance.Web.ReportTournamentPayers:GetFileByAccessCode"/>    
+
+<!-- Get all competition regions -->
+<Route Method="GET" Url="/competition/region" Call="Dance.Web.JsonUser:GetCompetitionRegions"/>    
+
 </Routes>
 ]]></Data>
 </XData>
@@ -16445,6 +16756,16 @@ Method="GET" Url="/currency"</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT ID As id, Name->Value As name, Code as code FROM Dance_Data.Currency")
+]]></Implementation>
+</Method>
+
+<Method name="GetPaymentSystems">
+<Description>
+All payment systems
+Method="GET" Url="/paymentsystem"</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT ID As id, Name As name, Code as code, UDSRUrl as udsrUrl, WDSFUrl As wdsfUrl FROM Dance_Data.PaymentSystem")
 ]]></Implementation>
 </Method>
 </Class>
@@ -17260,10 +17581,10 @@ Get all tournament competitions for grid</Description>
         }
         
         if (params.other.type = "UDSR"){
-            set whereCondition = whereCondition_" AND cmpT.WDSF IS NULL  "
+            set whereCondition = whereCondition_" AND cmpT.WDSF IS NULL "
         }
         elseif (params.other.type = "WDSF"){
-            set whereCondition = whereCondition_" AND (cmpT.WDSF IS NOT NULL OR cmpT.IsInternational = 1) "
+            set whereCondition = whereCondition_" AND cmpT.WDSF IS NOT NULL "
         }
         elseif (params.other.type = "OTHER"){
             set whereCondition = whereCondition_" AND cmpT.WDSF IS NULL AND cmpT.IsInternational=1 "
@@ -17389,7 +17710,7 @@ Available participants competitions for grid</Description>
     if (isCouple = $$$YES){
         set sql = sql_" AND Type->Code = 'Couples' "
     }
-    elseif $ISOBJECT(params.other.athlete){
+    else{
         set sql = sql_" AND Type->Code = 'Solo' "
     }
     
@@ -17425,16 +17746,20 @@ Available participants competitions for grid</Description>
     #dim athlete As Dance.Data.PersonUDSR = ""
     #dim couple As Dance.Data.CoupleUDSR = ""
     #dim coupleWDSF As Dance.Data.CoupleWDSF = ""
+    set manRegionNumber = ""
     
     if ($CLASSNAME(prtData) = ##class(Dance.Data.PersonUDSR).%ClassName(1)){
         set athlete = prtData
         set man = prtData
         set woman = prtData
+        set manRegionNumber = prtData.RegionNumber
     }
     elseif ($CLASSNAME(prtData) = ##class(Dance.Data.CoupleUDSR).%ClassName(1)){
         set couple = prtData
         set man = couple.Man
         set woman = couple.Woman
+        
+        set manRegionNumber = couple.Man.RegionNumber
         
         // Если есть WDSF версия, то открываем её
         if (##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxExists(couple.%Id()) = $$$YES){
@@ -17454,14 +17779,29 @@ Available participants competitions for grid</Description>
     for i=1:1:sourceList.Count(){
         #dim cmp As Dance.Data.Competition = sourceList.GetAt(i)
         
-        // Если СТСР пара уже записалась в эту группу, то исключаем эту группу
-        if (##class(Dance.Data.Participant).IsParticipationExists(couple.%Id(), couple.%ClassName(1), cmp.%Id()) = $$$YES){
-            continue
+        // Если группа ограничена регионом, то сверяем регион, если пара|сольник не подходит, то пропускаем группу
+        if (cmp.Regions.Count() > 0){
+            set cmpId = cmp.%Id() 
+            SET SQLCODE = ""
+            &sql(SELECT TOP 1 ID
+                 FROM Dance_Data.Competition_Regions
+                 WHERE Competition = :cmpId AND :manRegionNumber %INLIST Regions->CodeNumbers)
+            
+            if (SQLCODE = 100){
+                continue
+            }
         }
         
-        // Если WDSF версия пары уже записалась в эту группу, то исключаем эту группу
-        if $ISOBJECT(coupleWDSF) && (##class(Dance.Data.Participant).IsParticipationExists(coupleWDSF.%Id(), coupleWDSF.%ClassName(1), cmp.%Id()) = $$$YES){
+        // Если СТСР пара|сольник уже записалась в эту группу, то исключаем эту группу
+        if (##class(Dance.Data.Participant).IsParticipationExists(prtData.%Id(), prtData.%ClassName(1), cmp.%Id()) = $$$YES){
             continue
+        }
+            
+        if ($ISOBJECT(couple)){   
+            // Если WDSF версия пары уже записалась в эту группу, то исключаем эту группу
+            if $ISOBJECT(coupleWDSF) && (##class(Dance.Data.Participant).IsParticipationExists(coupleWDSF.%Id(), coupleWDSF.%ClassName(1), cmp.%Id()) = $$$YES){
+                continue
+            }
         }
         
         // Если группа WDSF и есть у СТСР пары версия WDSF
@@ -17600,6 +17940,18 @@ Available participants competitions for grid</Description>
                             continue            
                         }
                     }
+                    
+                    // Если группа ограничена регионом, то сверяем регион, если пара не подходит, то пропускаем группу
+                    if (cmp.Regions.Count() > 0){
+                        set cmpId = cmp.%Id() 
+                        SET SQLCODE = ""
+                        &sql(SELECT TOP 1 ID
+                             FROM Dance_Data.Competition_Regions
+                             WHERE Competition = :cmpId AND :coupleUDSR.Man.RegionNumber %INLIST Regions->CodeNumbers)
+                        if (SQLCODE = 100){
+                            continue
+                        }
+                    }
                 }
             }
         }
@@ -17625,7 +17977,7 @@ Available participants competitions for grid</Description>
     
     if $ISOBJECT(params.athlete){
         set athleteData = params.athlete
-        set (man, woman) = params.athlete.man
+        set (man, woman) = params.athlete
         set prtObjKey = params.athlete.key
         set prtObjClassName = ##class(Dance.Data.ParticipantSingleOther).%ClassName(1)
     }
@@ -17679,13 +18031,15 @@ Get WDSF competitions by filter</Description>
     set st = $$$OK
     
     try{
-        set date = $ZDH(date, 15)       
+        set dateYear = $P(date, "-", 1)
+        set dateMonth = +$P(date, "-", 2)
+               
         set list = ##class(%ListOfObjects).%New()
         
         &sql(DECLARE CmpWDSFCur1 CURSOR FOR
              SELECT %NOLOCK cmpWDSF.ID
              FROM Dance_Data.CompetitionWDSF as cmpWDSF
-             WHERE cmpWDSF.StartDate = :date AND cmpWDSF.Country = :countryId 
+             WHERE cmpWDSF.Country = :countryId AND DATEPART(YEAR, cmpWDSF.StartDate) = :dateYear AND DATEPART(MONTH, cmpWDSF.StartDate) = :dateMonth 
              ORDER BY cmpWDSF.ID)
         
         &sql(OPEN CmpWDSFCur1)
@@ -17765,7 +18119,7 @@ Get all participants of the tournament for grid</Description>
         set convertParams.loadPrtObjCompetitionsCount = $$$YES
         set convertParams.loadPrtObjPaymentsCount = $$$YES
         
-        set result = ..GetProxyObjectsForGrid("SELECT %NOLOCK ID FROM Dance_Data.Participant", "Dance.Data.Participant", params, convertParams, whereCondition, "GROUP BY FullName->Value")
+        set result = ..GetProxyObjectsForGrid("SELECT %NOLOCK MAX(ID) FROM Dance_Data.Participant", "Dance.Data.Participant", params, convertParams, whereCondition, "GROUP BY FullName->Value")
         do result.%ToJSON()
     }
     catch ex {
@@ -17880,7 +18234,8 @@ Get all participants of the competition for grid</Description>
             
              set sql = "SELECT ID "_ 
                       "FROM ( "_sql_" )"_
-                      "GROUP BY Competition"
+                      "GROUP BY Competition "_
+                      "ORDER BY Competition->StartDate, Competition->IdInternal"
             }
             elseif (##class(Dance.Data.CoupleWDSF).%ExistsId(cplId)) && (##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxExists(cplId)){
                 set sql = "SELECT %NOLOCK ID, Competition FROM Dance_Data.ParticipantCoupleUDSR WHERE Tournament = '"_..ParseParameter(trnId)_"' AND Couple = '"_##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(cplId).UDSR.%Id()_"' AND IsActive=1 "_
@@ -17889,7 +18244,8 @@ Get all participants of the competition for grid</Description>
              
               set sql = "SELECT ID "_ 
                       "FROM ( "_sql_" )"_
-                      "GROUP BY Competition"                       
+                      "GROUP BY Competition "_
+                      "ORDER BY Competition->StartDate, Competition->IdInternal"                     
             }
             
            
@@ -18304,17 +18660,17 @@ Feedback from users </Description>
                 set match = $CASE($CLASSNAME(couple), "Dance.Data.CoupleWDSF" : ##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(couple.%Id()), "Dance.Data.CoupleUDSR" : ##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxOpen(couple.%Id()))       
                 set udsrCplId = match.UDSR.%Id()
                 set wdsfCplId = match.WDSF.%Id()
-                set udsrCount = 0
-                set wdsfCount = 0
-                &sql(SELECT %NOLOCK COUNT(ID) INTO :udsrCount 
-                     FROM Dance_Data.ParticipantCoupleUDSR 
-                     WHERE Couple = :udsrCplId AND Tournament = :trnId AND IsActive = 1)
-                
-                &sql(SELECT COUNT(ID) INTO :wdsfCount 
-                     FROM Dance_Data.ParticipantCoupleWDSF 
-                     WHERE Couple = :wdsfCplId AND Tournament = :trnId AND IsActive = 1)
                      
-                set proxy.count = udsrCount + wdsfCount
+                &sql(SELECT %NOLOCK COUNT(DISTINCT Competition) INTO :proxy.count 
+                     FROM (
+                     SELECT %NOLOCK Competition
+                     FROM Dance_Data.ParticipantCoupleUDSR 
+                     WHERE Couple = :udsrCplId AND Tournament = :trnId AND IsActive = 1
+                     UNION 
+                     SELECT Competition
+                     FROM Dance_Data.ParticipantCoupleWDSF 
+                     WHERE Couple = :wdsfCplId AND Tournament = :trnId AND IsActive = 1))
+                     
             }
             else{
                 if ($CLASSNAME(couple) = "Dance.Data.CoupleUDSR") {
@@ -18351,6 +18707,15 @@ Feedback from users </Description>
     do proxy.%ToJSON()
     
     quit st
+]]></Implementation>
+</Method>
+
+<Method name="GetCompetitionRegions">
+<Description>
+Get all competition regions</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT id as id, name || ' [' || LIST(CodeNumbers) ||  ']' as name FROM Dance_Data.CompetitionRegion GROUP BY ID")
 ]]></Implementation>
 </Method>
 </Class>

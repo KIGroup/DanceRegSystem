@@ -1,5 +1,5 @@
 'use strict';
-//
+//-
 
 directivesModule.directive('danceplatOtherPay', function(){
     return {
@@ -8,14 +8,6 @@ directivesModule.directive('danceplatOtherPay', function(){
         templateUrl: 'components/danceplatOtherPay.csp',
         
         scope: {
-            /* 
-            trnId: '=',
-            manNumberUdsr: '=',
-            womanNumberUdsr: '=',
-            competitionIdList: '=',
-            hideAll: '=',
-            btnName: '=' 
-            */
             trnId: '=',
 
             maleAge: '=',

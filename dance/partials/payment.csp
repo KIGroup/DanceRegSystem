@@ -83,7 +83,7 @@
     <div class="span4">
         <div>
             <danceplat-udsr-pay 
-                id="coupleDancePlatUDSRPayment"
+				id="coupleDancePlatUDSRPayment"
 
                 ng-show="couple && type=='UDSR'"
 
@@ -96,7 +96,7 @@
         </div>
         <div>
             <danceplat-udsr-pay 
-                id="athleteDancePlatUDSRPayment"
+				id="athleteDancePlatUDSRPayment"
                 
                 ng-show="athlete && type=='UDSR'"
 
@@ -109,7 +109,7 @@
         </div>
         <div>
             <danceplat-other-pay 
-                id="coupleDancePlatOTHERPayment"
+			    id="coupleDancePlatOTHERPayment"
                 
                 ng-show="couple && type!='UDSR'"
 
@@ -134,7 +134,7 @@
         </div>
         <div>
             <danceplat-other-pay 
-                id="athleteDancePlatOTHERPayment"
+			    id="athleteDancePlatOTHERPayment"
                 
                 ng-show="athlete && type!='UDSR'"
 

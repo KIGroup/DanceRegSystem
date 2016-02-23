@@ -271,7 +271,16 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
 
 
     $scope.goToPaymentSystem = function(formId){
-        $window.document.forms[formId].submit(); 
+		var url = '';
+		if (formId.indexOf("UDSR") >= 0){
+			url = $scope.tournament.paymentSystem.udsrUrl;
+		}
+		else{
+			url = $scope.tournament.paymentSystem.wdsfUrl;
+		}
+		
+        $window.document.forms[formId].action = url;
+		$window.document.forms[formId].submit(); 
     };
 
     /// Load WDSF Countries

@@ -25,6 +25,9 @@ servicesModule.factory('OtherSrvc', function(RESTSrvc) {
         },
         getCompetitionRegions: function(){
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/competition/region'});
-        }       
+        },
+		getPaymentSystems: function(){
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.admin + '/paymentsystem'});
+        },		
     }
 });

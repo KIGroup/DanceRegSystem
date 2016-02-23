@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Utils.Init.PaymentSystem">
+<Abstract>1</Abstract>
+<TimeCreated>63970,83805.51937</TimeCreated>
+
+<Method name="Init">
+<Description>
+do ##class(Dance.Utils.Init.PaymentSystem).Init()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set obj = ##class(Dance.Data.PaymentSystem).%New()
+    set obj.Name = "DancePlat №1 (СТСР: ftsrpay1, WDSF/Другие: ftsrpay2)"
+    set obj.Code = "DancePlat №1"
+    set obj.UDSRUrl = "http://www.danceplat.ru/ftsrpay.php"
+    set obj.WDSFUrl = "http://www.danceplat.ru/ftsrpay2.php"
+    w !, obj.%Save()
+    
+    set obj = ##class(Dance.Data.PaymentSystem).%New()
+    set obj.Name = "DancePlat №2 (СТСР/WDSF/Другие: ftsrpay3)"
+    set obj.Code = "DancePlat №2"
+    set obj.UDSRUrl = "http://www.danceplat.ru/ftsrpay3.php"
+    set obj.WDSFUrl = "http://www.danceplat.ru/ftsrpay3.php"
+    w !, obj.%Save()
+]]></Implementation>
+</Method>
+</Class>
+</Export>
