@@ -48,11 +48,19 @@
         
         if (coupleUDSR.Man.NumberWDSF '= "") && (coupleUDSR.Woman.NumberWDSF '= "") && (coupleUDSR.Man.NumberWDSF '= "0") && (coupleUDSR.Woman.NumberWDSF '= "0"){
             set coupleWDSF = ##class(CoupleWDSF).GetByNumbers(coupleUDSR.Man.NumberWDSF, coupleUDSR.Woman.NumberWDSF, .st)
-            if (coupleWDSF.Man.LastName.GetValueByLang("en") '= coupleUDSR.Man.LastName.GetValueByLang("en")) && (coupleWDSF.Woman.LastName.GetValueByLang("en") '= coupleUDSR.Woman.LastName.GetValueByLang("en")){
-                $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("MatchUdsrWdsf.CreateByUDSR wrong couple lastname."))
+            
+            if $$$ISOK(st){
+                if (coupleWDSF.Man.LastName.GetValueByLang("en") '= coupleUDSR.Man.LastName.GetValueByLang("en")) && (coupleWDSF.Woman.LastName.GetValueByLang("en") '= coupleUDSR.Woman.LastName.GetValueByLang("en")){
+                    $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("MatchUdsrWdsf.CreateByUDSR wrong couple lastname."))
+                }
+            }
+            else{
+                w !,$SYSTEM.Status.GetErrorText(st)
             }
         }
-        else{
+        
+        if $ISOBJECT(coupleWDSF) = $$$NO
+        {
             // Searching in controller DB by name
             set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCoupleByName(
             coupleUDSR.Man.LastName.GetValueByLang("en")_","_coupleUDSR.Man.FirstName.GetValueByLang("en"), 
@@ -61,24 +69,26 @@
         
             $$$THROWONERROR(st, st)
         
-            set coupleWDSF = ##class(CoupleWDSF).GetByNumbers(wdsfData.man.id, wdsfData.woman.id, .st)
+            set coupleWDSF = ##class(CoupleWDSF).GetByNumbers(wdsfData.man.id, wdsfData.woman.id, .stGetWdsf)
         }
         
-        $$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
-        $$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
-        $$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
-        $$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
+        if $ISOBJECT(coupleWDSF){
+            $$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
+            $$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
+            $$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
+            $$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
+            
+            $$$THROWONERROR(st, coupleUDSR.Man.LastName.SetValueByLang(coupleWDSF.Man.LastName.GetValueByLang("en"), "en"))
+            $$$THROWONERROR(st, coupleUDSR.Man.FirstName.SetValueByLang(coupleWDSF.Man.FirstName.GetValueByLang("en"), "en"))
+            $$$THROWONERROR(st, coupleUDSR.Woman.LastName.SetValueByLang(coupleWDSF.Woman.LastName.GetValueByLang("en"), "en"))
+            $$$THROWONERROR(st, coupleUDSR.Woman.FirstName.SetValueByLang(coupleWDSF.Woman.FirstName.GetValueByLang("en"), "en"))
+            
+            set match = ..%New()
+            set match.UDSR = coupleUDSR
+            set match.WDSF = coupleWDSF
+            set st = match.%Save()
+        }
         
-        $$$THROWONERROR(st, coupleUDSR.Man.LastName.SetValueByLang(coupleWDSF.Man.LastName.GetValueByLang("en"), "en"))
-        $$$THROWONERROR(st, coupleUDSR.Man.FirstName.SetValueByLang(coupleWDSF.Man.FirstName.GetValueByLang("en"), "en"))
-        $$$THROWONERROR(st, coupleUDSR.Woman.LastName.SetValueByLang(coupleWDSF.Woman.LastName.GetValueByLang("en"), "en"))
-        $$$THROWONERROR(st, coupleUDSR.Woman.FirstName.SetValueByLang(coupleWDSF.Woman.FirstName.GetValueByLang("en"), "en"))
-        
-        set match = ..%New()
-        set match.UDSR = coupleUDSR
-        set match.WDSF = coupleWDSF
-        set st = match.%Save()
-    
         TCOMMIT
     }
     catch(ex){

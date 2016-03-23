@@ -13,8 +13,10 @@ Registration                                                                    
 
 Registration UDSR participants in the tournament</Description>
 <ClassMethod>1</ClassMethod>
+<FormalSpec>data=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+    set isHTTP = data = ""
     set st = $$$OK
     
     set currentTournamentId = ""
@@ -23,12 +25,15 @@ Registration UDSR participants in the tournament</Description>
     set proxy = ##class(%ZEN.proxyObject).%New()
     
     try{
-        set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")
-        do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationUDSR", content)
+        if (isHTTP){
+            set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")
+            $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
+            
+            do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationUDSR", content)
+        }
         
         TSTART
-
-        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
+        
         
         set prt = ##class(%ZEN.proxyObject).%New()
         set prtClass = ""
@@ -105,7 +110,11 @@ Registration UDSR participants in the tournament</Description>
     }
     catch ex {
         TROLLBACK 
-        set %response.Status = 400
+        
+        if (isHTTP){
+            set %response.Status = 400
+        }
+        
         set proxy.status = 0
         set proxy.message = ##class(Dance.Utils.Msg).GetMsg("error_FatalError")_" "_$SYSTEM.Status.GetErrorText(ex.AsStatus())      
     }
@@ -122,8 +131,11 @@ Registration UDSR participants in the tournament</Description>
 <Description>
 Registration WDSF participants in the tournament</Description>
 <ClassMethod>1</ClassMethod>
+<FormalSpec>data=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+    set isHTTP = data = ""
+    
     set st = $$$OK
     set proxy = ##class(%ZEN.proxyObject).%New()
     set proxy.status = $$$OK
@@ -133,13 +145,15 @@ Registration WDSF participants in the tournament</Description>
     set regResults = ##class(%ListOfObjects).%New()
     
     try{
-        set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")
-        do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationWDSF", content)
-        
+        if (isHTTP) {
+            set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")        
+            $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
+            
+            do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationWDSF", content)
+        }
+
         TSTART
 
-        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
-    
         set prt = ##class(%ZEN.proxyObject).%New()
         
         // Data for sending to controller

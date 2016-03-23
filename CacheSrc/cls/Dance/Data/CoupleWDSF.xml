@@ -71,7 +71,12 @@
 <Implementation><![CDATA[
     set st = $$$OK
     #dim obj As CoupleWDSF = ""
-    
+ 
+    if (manNumber = "") || (womanNumber = ""){
+        set st = $system.Status.Error(5001, "Empty WDSF numbers")
+        quit obj
+    }
+       
     set (coupleId, SQLCODE) = ""
     &sql(SELECT ID INTO :coupleId FROM Dance_Data.CoupleWDSF WHERE Man->Number = :manNumber AND Woman->Number = :womanNumber)
     if (SQLCODE = 0){
@@ -118,9 +123,6 @@
     catch(ex){
         do ##class(Dance.Utils.Email).Send("ilsondll@gmail.com", $SYSTEM.Status.GetErrorText(ex.AsStatus()_"; "_manNumber_";"_womanNumber))
     }
-    
-    
-    
     
     set obj.WDSFId = wdsfData.id
     set obj.Man = ##class(PersonWDSF).SaveFromWDSF(wdsfData.man, .st)   

@@ -548,6 +548,7 @@ w ##class(Dance.Data.AgeCategoryWDSF).Import()</Description>
 			set group = groups.GetAt(i)
 			set age = ..NameIdxOpen(group.name)
 			
+			do age.AllowedToDance.Clear()
 			if (age.AllowedToDance.FindObjectId(age.%Id()) = "") {
 				do age.AllowedToDance.Insert(age)
 			}
@@ -974,112 +975,20 @@ Participants count in the competition</Description>
 <Implementation><![CDATA[
     set count = 0
     
-    &sql(SELECT COUNT(ID) As TotalCount INTO :count
-         FROM Dance_Data.Participant 
-         WHERE Competition = :competitionId AND IsActive = 1)
+    &sql(
+    SELECT COUNT (FN)  As TotalCount INTO :count
+	FROM
+	(
+		SELECT FullName->Value As FN
+        FROM Dance_Data.Participant 
+        WHERE Competition = :competitionId AND IsActive = 1
+    	GROUP BY FullName->Value
+    )
+    )
     
     quit count
 ]]></Implementation>
 </Method>
-
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Data.CompetitionD</DataLocation>
-<DefaultData>CompetitionDefaultData</DefaultData>
-<IdLocation>^Dance.Data.CompetitionD</IdLocation>
-<IndexLocation>^Dance.Data.CompetitionI</IndexLocation>
-<StreamLocation>^Dance.Data.CompetitionS</StreamLocation>
-<ExtentSize>100000</ExtentSize>
-<Data name="AgeCategories">
-<Attribute>AgeCategories</Attribute>
-<Structure>subnode</Structure>
-<Subscript>"AgeCategories"</Subscript>
-</Data>
-<Data name="CompetitionDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>Tournament</Value>
-</Value>
-<Value name="3">
-<Value>StartDate</Value>
-</Value>
-<Value name="4">
-<Value>StartTime</Value>
-</Value>
-<Value name="5">
-<Value>Name</Value>
-</Value>
-<Value name="6">
-<Value>Discipline</Value>
-</Value>
-<Value name="7">
-<Value>Price</Value>
-</Value>
-<Value name="8">
-<Value>Currency</Value>
-</Value>
-<Value name="9">
-<Value>AgeCategory</Value>
-</Value>
-<Value name="10">
-<Value>TournamentUDSRID</Value>
-</Value>
-<Value name="11">
-<Value>GroupUDSRID</Value>
-</Value>
-<Value name="12">
-<Value>GroupUDSRIDExt</Value>
-</Value>
-<Value name="13">
-<Value>Limit</Value>
-</Value>
-<Value name="14">
-<Value>Solo</Value>
-</Value>
-<Value name="15">
-<Value>Type</Value>
-</Value>
-<Value name="16">
-<Value>IsInternational</Value>
-</Value>
-<Value name="17">
-<Value>IdInternal</Value>
-</Value>
-<Value name="18">
-<Value>IdExternal</Value>
-</Value>
-<Value name="19">
-<Value>IsActive</Value>
-</Value>
-<Value name="20">
-<Value>IdWDSF</Value>
-</Value>
-<Value name="21">
-<Value>WDSF</Value>
-</Value>
-<Value name="22">
-<Value>IsClosed</Value>
-</Value>
-<Value name="23">
-<Value>ParticipantsCount</Value>
-</Value>
-<Value name="24">
-<Value>PaymentsCount</Value>
-</Value>
-</Data>
-<Data name="DancerClasses">
-<Attribute>DancerClasses</Attribute>
-<Structure>subnode</Structure>
-<Subscript>"DancerClasses"</Subscript>
-</Data>
-<Data name="Regions">
-<Attribute>Regions</Attribute>
-<Structure>subnode</Structure>
-<Subscript>"Regions"</Subscript>
-</Data>
-</Storage>
 
 <Method name="GetPaymentsCount">
 <Description>
@@ -1188,6 +1097,105 @@ Payments</Description>
     quit $$$NO
 ]]></Implementation>
 </Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Dance.Data.CompetitionD</DataLocation>
+<DefaultData>CompetitionDefaultData</DefaultData>
+<IdLocation>^Dance.Data.CompetitionD</IdLocation>
+<IndexLocation>^Dance.Data.CompetitionI</IndexLocation>
+<StreamLocation>^Dance.Data.CompetitionS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="AgeCategories">
+<Attribute>AgeCategories</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"AgeCategories"</Subscript>
+</Data>
+<Data name="CompetitionDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Tournament</Value>
+</Value>
+<Value name="3">
+<Value>StartDate</Value>
+</Value>
+<Value name="4">
+<Value>StartTime</Value>
+</Value>
+<Value name="5">
+<Value>Name</Value>
+</Value>
+<Value name="6">
+<Value>Discipline</Value>
+</Value>
+<Value name="7">
+<Value>Price</Value>
+</Value>
+<Value name="8">
+<Value>Currency</Value>
+</Value>
+<Value name="9">
+<Value>AgeCategory</Value>
+</Value>
+<Value name="10">
+<Value>TournamentUDSRID</Value>
+</Value>
+<Value name="11">
+<Value>GroupUDSRID</Value>
+</Value>
+<Value name="12">
+<Value>GroupUDSRIDExt</Value>
+</Value>
+<Value name="13">
+<Value>Limit</Value>
+</Value>
+<Value name="14">
+<Value>Solo</Value>
+</Value>
+<Value name="15">
+<Value>Type</Value>
+</Value>
+<Value name="16">
+<Value>IsInternational</Value>
+</Value>
+<Value name="17">
+<Value>IdInternal</Value>
+</Value>
+<Value name="18">
+<Value>IdExternal</Value>
+</Value>
+<Value name="19">
+<Value>IsActive</Value>
+</Value>
+<Value name="20">
+<Value>IdWDSF</Value>
+</Value>
+<Value name="21">
+<Value>WDSF</Value>
+</Value>
+<Value name="22">
+<Value>IsClosed</Value>
+</Value>
+<Value name="23">
+<Value>ParticipantsCount</Value>
+</Value>
+<Value name="24">
+<Value>PaymentsCount</Value>
+</Value>
+</Data>
+<Data name="DancerClasses">
+<Attribute>DancerClasses</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"DancerClasses"</Subscript>
+</Data>
+<Data name="Regions">
+<Attribute>Regions</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"Regions"</Subscript>
+</Data>
+</Storage>
 </Class>
 
 
@@ -1995,7 +2003,12 @@ Couples</Description>
 <Implementation><![CDATA[
     set st = $$$OK
     #dim obj As CoupleWDSF = ""
-    
+ 
+    if (manNumber = "") || (womanNumber = ""){
+        set st = $system.Status.Error(5001, "Empty WDSF numbers")
+        quit obj
+    }
+       
     set (coupleId, SQLCODE) = ""
     &sql(SELECT ID INTO :coupleId FROM Dance_Data.CoupleWDSF WHERE Man->Number = :manNumber AND Woman->Number = :womanNumber)
     if (SQLCODE = 0){
@@ -2042,9 +2055,6 @@ Couples</Description>
     catch(ex){
         do ##class(Dance.Utils.Email).Send("ilsondll@gmail.com", $SYSTEM.Status.GetErrorText(ex.AsStatus()_"; "_manNumber_";"_womanNumber))
     }
-    
-    
-    
     
     set obj.WDSFId = wdsfData.id
     set obj.Man = ##class(PersonWDSF).SaveFromWDSF(wdsfData.man, .st)   
@@ -2637,7 +2647,6 @@ Imported competitions from other system</Description>
         set defaultDancerClasses("Ю-2+Ю-1") = "6,3,2,4,5"
         set defaultDancerClasses("Взрослые+Молодежь") = "6,3,2,4,5,9,8"
         
-    
         set defaultClasses = $GET(defaultDancerClasses(realAge.Code))
         if (defaultClasses '= "") {
             for i=1:1:proxy.dancerClasses.Count(){
@@ -3841,11 +3850,19 @@ Translation dictionary</Description>
         
         if (coupleUDSR.Man.NumberWDSF '= "") && (coupleUDSR.Woman.NumberWDSF '= "") && (coupleUDSR.Man.NumberWDSF '= "0") && (coupleUDSR.Woman.NumberWDSF '= "0"){
             set coupleWDSF = ##class(CoupleWDSF).GetByNumbers(coupleUDSR.Man.NumberWDSF, coupleUDSR.Woman.NumberWDSF, .st)
-            if (coupleWDSF.Man.LastName.GetValueByLang("en") '= coupleUDSR.Man.LastName.GetValueByLang("en")) && (coupleWDSF.Woman.LastName.GetValueByLang("en") '= coupleUDSR.Woman.LastName.GetValueByLang("en")){
-                $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("MatchUdsrWdsf.CreateByUDSR wrong couple lastname."))
+            
+            if $$$ISOK(st){
+                if (coupleWDSF.Man.LastName.GetValueByLang("en") '= coupleUDSR.Man.LastName.GetValueByLang("en")) && (coupleWDSF.Woman.LastName.GetValueByLang("en") '= coupleUDSR.Woman.LastName.GetValueByLang("en")){
+                    $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("MatchUdsrWdsf.CreateByUDSR wrong couple lastname."))
+                }
+            }
+            else{
+                w !,$SYSTEM.Status.GetErrorText(st)
             }
         }
-        else{
+        
+        if $ISOBJECT(coupleWDSF) = $$$NO
+        {
             // Searching in controller DB by name
             set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCoupleByName(
             coupleUDSR.Man.LastName.GetValueByLang("en")_","_coupleUDSR.Man.FirstName.GetValueByLang("en"), 
@@ -3854,24 +3871,26 @@ Translation dictionary</Description>
         
             $$$THROWONERROR(st, st)
         
-            set coupleWDSF = ##class(CoupleWDSF).GetByNumbers(wdsfData.man.id, wdsfData.woman.id, .st)
+            set coupleWDSF = ##class(CoupleWDSF).GetByNumbers(wdsfData.man.id, wdsfData.woman.id, .stGetWdsf)
         }
         
-        $$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
-        $$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
-        $$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
-        $$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
+        if $ISOBJECT(coupleWDSF){
+            $$$THROWONERROR(st, coupleWDSF.Man.LastName.SetValueByLang(coupleUDSR.Man.LastName.GetValueByLang("ru"), "ru"))
+            $$$THROWONERROR(st, coupleWDSF.Man.FirstName.SetValueByLang(coupleUDSR.Man.FirstName.GetValueByLang("ru"), "ru"))
+            $$$THROWONERROR(st, coupleWDSF.Woman.LastName.SetValueByLang(coupleUDSR.Woman.LastName.GetValueByLang("ru"), "ru"))
+            $$$THROWONERROR(st, coupleWDSF.Woman.FirstName.SetValueByLang(coupleUDSR.Woman.FirstName.GetValueByLang("ru"), "ru"))
+            
+            $$$THROWONERROR(st, coupleUDSR.Man.LastName.SetValueByLang(coupleWDSF.Man.LastName.GetValueByLang("en"), "en"))
+            $$$THROWONERROR(st, coupleUDSR.Man.FirstName.SetValueByLang(coupleWDSF.Man.FirstName.GetValueByLang("en"), "en"))
+            $$$THROWONERROR(st, coupleUDSR.Woman.LastName.SetValueByLang(coupleWDSF.Woman.LastName.GetValueByLang("en"), "en"))
+            $$$THROWONERROR(st, coupleUDSR.Woman.FirstName.SetValueByLang(coupleWDSF.Woman.FirstName.GetValueByLang("en"), "en"))
+            
+            set match = ..%New()
+            set match.UDSR = coupleUDSR
+            set match.WDSF = coupleWDSF
+            set st = match.%Save()
+        }
         
-        $$$THROWONERROR(st, coupleUDSR.Man.LastName.SetValueByLang(coupleWDSF.Man.LastName.GetValueByLang("en"), "en"))
-        $$$THROWONERROR(st, coupleUDSR.Man.FirstName.SetValueByLang(coupleWDSF.Man.FirstName.GetValueByLang("en"), "en"))
-        $$$THROWONERROR(st, coupleUDSR.Woman.LastName.SetValueByLang(coupleWDSF.Woman.LastName.GetValueByLang("en"), "en"))
-        $$$THROWONERROR(st, coupleUDSR.Woman.FirstName.SetValueByLang(coupleWDSF.Woman.FirstName.GetValueByLang("en"), "en"))
-        
-        set match = ..%New()
-        set match.UDSR = coupleUDSR
-        set match.WDSF = coupleWDSF
-        set st = match.%Save()
-    
         TCOMMIT
     }
     catch(ex){
@@ -8176,6 +8195,167 @@ Valid values are:PreRegistration, Registering, RegistrationClosed, Processing, C
 </Class>
 
 
+<Class name="Dance.Utils.ImportRUSDSU">
+<Description>
+Импорт регистраций</Description>
+<Abstract>1</Abstract>
+<TimeCreated>64000,41228.823048</TimeCreated>
+
+<Method name="ImportFromFile">
+<Description>
+do ##class(Dance.Utils.ImportRUSDSU).ImportFromFile("g:\Downloads\couples.csv")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>fileName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    
+    try{
+        TSTART 
+        w !,"TLEVEL=",$TLEVEL
+        
+        set stream = ##class(%Stream.FileCharacter).%New()
+        set st = stream.LinkToFile(fileName)
+        
+        set countRow = 0
+        set registrationsTotalCount = 0
+        while 'stream.AtEnd {
+            set countRow = countRow + 1
+            
+            //if (countRow = 11) quit 
+            
+            set line = stream.ReadLine()
+            set listOfProperties = $LISTFROMSTRING(line, ";")
+            
+            set manNumber = $LIST(listOfProperties, 2)
+            set womanNumber = $LIST(listOfProperties, 8)
+            set competitions = $LISTFROMSTRING($LIST(listOfProperties, 14)) 
+            
+            
+            set registrationsTotalCount = registrationsTotalCount + $LL(competitions)
+            w !,!, "Строка №"_countRow
+            $$$THROWONERROR(st, ..ImportCoupleRegistrations(manNumber, womanNumber, competitions))
+        }
+        
+        w !,"RegistrationsTotalCount="_registrationsTotalCount
+        w !,"TLEVEL=",$TLEVEL
+        TCOMMIT 
+    }
+    catch(ex){
+        TROLLBACK
+        set st = ex.AsStatus()
+        w !,$SYSTEM.Status.GetErrorText(st)
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="ImportCoupleRegistrations">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>manNumber:%String,womanNumber:%String,competitions:%List</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set st = $$$OK
+    try{
+        w !,"Пара ",manNumber," ",womanNumber_", competitions count = "_$LL(competitions)
+        
+        set coupleWDSF = ""
+        set coupleUDSR = ##class(Dance.Data.CoupleUDSR).GetByNumbers(manNumber, womanNumber, .st)
+        $$$THROWONERROR(st, st)
+        
+        set match = ##class(Dance.Data.MatchingCoupleUDSRWDSF).CreateByUDSR(coupleUDSR, .stWDSF)
+        $$$THROWONERROR(stWDSF, stWDSF)
+        
+        if $ISOBJECT(match){
+            w !, "Найдено совпадение ВДСФ"
+            set coupleWDSF = match.WDSF
+        }
+        else{
+            w !, "НЕ найдено совпадение ВДСФ. ВДСФ номера "_coupleUDSR.Man.NumberWDSF," ",coupleUDSR.Woman.NumberWDSF
+        }
+        
+        
+        set recorderHash = "kj0QTbIiDanJ3MsTQbG+XQEQLEQL"
+        
+        set proxyUDSRData = ##class(%ZEN.proxyObject).%New()
+        set proxyUDSRData.recorderHash = recorderHash
+        set proxyUDSRData.competitions = ##class(%ListOfDataTypes).%New()
+        
+        set proxyWDSFData = ##class(%ZEN.proxyObject).%New()
+        set proxyWDSFData.recorderHash = recorderHash
+        set proxyWDSFData.competitions = ##class(%ListOfDataTypes).%New()
+        
+        for i=1:1:$LL(competitions){
+            set cmpId = ""
+            set cmpIdExternal = $LIST(competitions, i)
+            
+            &sql(SELECT ID INTO :cmpId 
+                 FROM Dance_Data.Competition
+                 WHERE Tournament = 36 AND IdExternal = :cmpIdExternal)
+                 
+            set cmpObj = ##class(Dance.Data.Competition).%OpenId(cmpId)
+            
+            if $ISOBJECT(cmpObj.WDSF){
+               do proxyWDSFData.competitions.Insert(cmpObj.%Id())
+            }
+            else{
+               do proxyUDSRData.competitions.Insert(cmpObj.%Id())
+            }
+        }
+        
+        if $ISOBJECT(coupleUDSR){
+            w !,"Регистрация СТСР Версии"
+            //set proxyUDSRData.couple = coupleUDSR.ConvertToProxyObject()
+            //do ##class(Dance.Web.JsonUser).RegistrationUDSR(proxyUDSRData)
+        }
+        
+        if $ISOBJECT(coupleWDSF){
+            w !,"Регистрация WDSF Версии"
+            set proxyWDSFData.couple = coupleWDSF.ConvertToProxyObject()
+            do ##class(Dance.Web.JsonUser).RegistrationWDSF(proxyWDSFData)
+        }
+    }
+    catch(ex){
+        set st = ex.AsStatus()
+    }
+    
+    quit st
+]]></Implementation>
+</Method>
+
+<Method name="IsExistInTournament">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>trnId:%String,coupleUDSR:Dance.Data.CoupleUDSR,coupleWDSF:Dance.Data.CoupleWDSF</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set listOfUdsrCompetitions = ""
+    set listOfWDSFCompetitions = ""
+    set coupleUDSRID = coupleUDSR.%Id()
+    
+    &sql(SELECT LIST(Competition) INTO :listOfUdsrCompetitions 
+         FROM Dance_Data.ParticipantCoupleUDSR 
+         WHERE Competition->Tournament = :trnId AND Couple = :coupleUDSRID)
+         
+    if (listOfUdsrCompetitions '= ""){
+        w !,"Найдены регистрации в СТСР "_listOfUdsrCompetitions
+    }
+    
+    if (coupleWDSF){
+        set coupleWDSFID = coupleWDSF.%Id()
+        &sql(SELECT LIST(Competition) INTO :listOfWDSFCompetitions 
+             FROM Dance_Data.ParticipantCoupleWDSF 
+             WHERE Competition->Tournament = :trnId AND Couple = :coupleWDSFID)
+             
+        if (listOfWDSFCompetitions '= ""){
+            w !,"Найдены регистрации в WDSF "_listOfWDSFCompetitions
+        }
+    }
+]]></Implementation>
+</Method>
+</Class>
+
+
 <Class name="Dance.Utils.Init.AgeCategory">
 <Super>BaseInit</Super>
 <TimeCreated>63290,2843.723685</TimeCreated>
@@ -12064,6 +12244,7 @@ do ##class(Dance.Utils.TaskSyncWDSFController).SyncCompetitions()</Description>
 <Implementation><![CDATA[
     set st = ##class(Dance.Utils.TaskTickets).Import()
     do ##class(Dance.Data.Tournament).UpdateAllTournaments()
+    do ##class(Dance.Data.Participant).UpdateAllParticipantsFullName()
     
     quit st
 ]]></Implementation>
@@ -16930,8 +17111,10 @@ Registration                                                                    
 
 Registration UDSR participants in the tournament</Description>
 <ClassMethod>1</ClassMethod>
+<FormalSpec>data=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+    set isHTTP = data = ""
     set st = $$$OK
     
     set currentTournamentId = ""
@@ -16940,12 +17123,15 @@ Registration UDSR participants in the tournament</Description>
     set proxy = ##class(%ZEN.proxyObject).%New()
     
     try{
-        set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")
-        do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationUDSR", content)
+        if (isHTTP){
+            set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")
+            $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
+            
+            do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationUDSR", content)
+        }
         
         TSTART
-
-        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
+        
         
         set prt = ##class(%ZEN.proxyObject).%New()
         set prtClass = ""
@@ -17022,7 +17208,11 @@ Registration UDSR participants in the tournament</Description>
     }
     catch ex {
         TROLLBACK 
-        set %response.Status = 400
+        
+        if (isHTTP){
+            set %response.Status = 400
+        }
+        
         set proxy.status = 0
         set proxy.message = ##class(Dance.Utils.Msg).GetMsg("error_FatalError")_" "_$SYSTEM.Status.GetErrorText(ex.AsStatus())      
     }
@@ -17039,8 +17229,11 @@ Registration UDSR participants in the tournament</Description>
 <Description>
 Registration WDSF participants in the tournament</Description>
 <ClassMethod>1</ClassMethod>
+<FormalSpec>data=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+    set isHTTP = data = ""
+    
     set st = $$$OK
     set proxy = ##class(%ZEN.proxyObject).%New()
     set proxy.status = $$$OK
@@ -17050,13 +17243,15 @@ Registration WDSF participants in the tournament</Description>
     set regResults = ##class(%ListOfObjects).%New()
     
     try{
-        set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")
-        do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationWDSF", content)
-        
+        if (isHTTP) {
+            set content = $ZCVT(%request.Content.Read(10000000), "I", "UTF8")        
+            $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
+            
+            do ##class(Dance.Utils.Journal).Create("Log", "JsonUser.RegistrationWDSF", content)
+        }
+
         TSTART
 
-        $$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.data, 1))
-    
         set prt = ##class(%ZEN.proxyObject).%New()
         
         // Data for sending to controller
