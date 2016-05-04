@@ -1966,6 +1966,7 @@ Couples</Description>
         
     if (##class(MatchingCoupleUDSRWDSF).WDSFIdxExists(..%Id())){
         set coupleUDSR = ##class(MatchingCoupleUDSRWDSF).WDSFIdxOpen(..%Id()).UDSR
+        
         if (coupleUDSR.Man.IsActive){
             set proxy.idUDSR = coupleUDSR.%Id()
             set proxy.man.idUDSR = coupleUDSR.Man.%Id()
@@ -2003,12 +2004,12 @@ Couples</Description>
 <Implementation><![CDATA[
     set st = $$$OK
     #dim obj As CoupleWDSF = ""
- 
+    
     if (manNumber = "") || (womanNumber = ""){
         set st = $system.Status.Error(5001, "Empty WDSF numbers")
         quit obj
     }
-       
+    
     set (coupleId, SQLCODE) = ""
     &sql(SELECT ID INTO :coupleId FROM Dance_Data.CoupleWDSF WHERE Man->Number = :manNumber AND Woman->Number = :womanNumber)
     if (SQLCODE = 0){
@@ -2055,6 +2056,9 @@ Couples</Description>
     catch(ex){
         do ##class(Dance.Utils.Email).Send("ilsondll@gmail.com", $SYSTEM.Status.GetErrorText(ex.AsStatus()_"; "_manNumber_";"_womanNumber))
     }
+    
+    
+    
     
     set obj.WDSFId = wdsfData.id
     set obj.Man = ##class(PersonWDSF).SaveFromWDSF(wdsfData.man, .st)   
@@ -2576,7 +2580,7 @@ Imported competitions from other system</Description>
             set proxy.discipline = realDicipline.ConvertToProxyObject()
         }
         else{
-            do proxy.info.errorMessages.Insert("Дисциплина не найдена! Код = "_..DisciplineCode)    
+            do proxy.info.errorMessages.Insert("Дисциплина не найдена! Код = ["_..DisciplineCode_"]")    
         }
             
         set realAge = ##class(Dance.Data.AgeCategory).CodeIdxOpen(..AgeCategoryCode,,.sc)
@@ -2584,7 +2588,7 @@ Imported competitions from other system</Description>
             set proxy.ageCategory = realAge.ConvertToProxyObject()
         }
         else{
-            do proxy.info.errorMessages.Insert("Возрастная группа не найдена! Код = "_..AgeCategoryCode)
+            do proxy.info.errorMessages.Insert("Возрастная группа не найдена! Код = ["_..AgeCategoryCode_"]")
         }
             
         if (..IsSoloType = $$$YES){
@@ -2599,7 +2603,7 @@ Imported competitions from other system</Description>
             set proxy.type = type.ConvertToProxyObject()
         }
         else{
-            do proxy.info.errorMessages.Insert("Тип не найден! Соло = "_..IsSoloType)
+            do proxy.info.errorMessages.Insert("Тип не найден! Соло = ["_..IsSoloType_"]")
         }
         
         set proxy.dancerClasses = ##class(Dance.Data.DancerClass).GetAll().children
@@ -2627,7 +2631,7 @@ Imported competitions from other system</Description>
                 }
             }
             else{
-                do proxy.info.errorMessages.Insert("Класс не найден! Код = "_class) 
+                do proxy.info.errorMessages.Insert("Класс не найден! Код = ["_class_"]") 
             }       
         }
 
@@ -5755,24 +5759,24 @@ Last name</Description>
 <FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
 <Implementation><![CDATA[
-	set proxy = ##class(%ZEN.proxyObject).%New()
-	set proxy.id = ..%Id()
-	set proxy.number = ..Number
-	set proxy.lastName = ..LastName.Value
-	set proxy.firstName = ..FirstName.Value
-	set proxy.gender = ..Gender	
-	set proxy.updated = ..Updated
-	set proxy.isActive = ..IsActive
-	set proxy.otherInfo = ##class(%ZEN.proxyObject).%New()
-	set proxy.otherInfo.country = ..Country.ConvertToProxyObject()
-		
-	quit proxy
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.id = ..%Id()
+    set proxy.number = ..Number
+    set proxy.lastName = ..LastName.Value
+    set proxy.firstName = ..FirstName.Value
+    set proxy.gender = ..Gender 
+    set proxy.updated = ..Updated
+    set proxy.isActive = ..IsActive
+    set proxy.otherInfo = ##class(%ZEN.proxyObject).%New()
+    set proxy.otherInfo.country = ..Country.ConvertToProxyObject()
+        
+    quit proxy
 ]]></Implementation>
 </Method>
 
 <Method name="GetFullName">
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit ..LastName.Value_" "_..FirstName.Value
+<Implementation><![CDATA[    quit ..LastName.Value_" "_..FirstName.Value
 ]]></Implementation>
 </Method>
 
@@ -5781,58 +5785,58 @@ Last name</Description>
 <FormalSpec><![CDATA[personId:%String,cmpId:%String,&st]]></FormalSpec>
 <ReturnType>%ListOfObjects</ReturnType>
 <Implementation><![CDATA[
-	set st = $$$OK
-	set cmpList = ##class(%ListOfObjects).%New()
-	
-	set cmp = ##class(Competition).%OpenId(cmpId,,.st)
-	set cmpTournamentId = cmp.Tournament.%Id()
-	
-	
-	set params = ##class(%ZEN.proxyObject).%New()
-	set params.loadTournament = $$$YES
-	set params.tournamentParams = ##class(%ZEN.proxyObject).%New()
-	set params.tournamentParams.loadLocation = $$$YES
-	set params.loadDiscipline = $$$YES
-	set params.loadAgeCategory = $$$YES 
-	set params.loadType = $$$YES
-	set params.loadWDSF = $$$YES
-	set params.loadDancerClasses = $$$YES
-	
-	
-	&sql(DECLARE CrsCmpConflict CURSOR FOR
-			SELECT ID INTO :cmpConflictId
-		 	FROM Dance_Data.Competition
-		 	WHERE Tournament->TStatus->Code <> 'Canceled' 
-		 	   AND Tournament->TStatus->Code <> 'Completed'
-		 	   AND Tournament <> :cmpTournamentId 
-		 	   AND StartDate = :cmp.StartDate
-		 	   AND ID IN (SELECT prtCoupleUDSR.Competition 
-		 	   			  FROM Dance_Data.ParticipantCoupleUDSR as prtCoupleUDSR 
-		 	   			  WHERE prtCoupleUDSR.Competition->StartDate = :cmp.StartDate AND (prtCoupleUDSR.Couple->Man = :personId OR prtCoupleUDSR.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
-		 	   			  UNION
-		 	   			  SELECT prtCoupleWDSF.Competition 
-		 	   			  FROM Dance_Data.ParticipantCoupleWDSF as prtCoupleWDSF 
-		 	   			  WHERE prtCoupleWDSF.Competition->StartDate = :cmp.StartDate AND (prtCoupleWDSF.Couple->Man = :personId OR prtCoupleWDSF.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
-		 	   			  UNION
-		 	   			  SELECT prtSingleUDSR.Competition 
-		 	   			  FROM Dance_Data.ParticipantSingleUDSR as prtSingleUDSR 
-		 	   			  WHERE prtSingleUDSR.Competition->StartDate = :cmp.StartDate AND prtSingleUDSR.Athlete = :personId  AND TicketStatus = 'Piad'
-		 	   			  UNION
-		 	   			  SELECT prtSingleWDSF.Competition 
-		 	   			  FROM Dance_Data.ParticipantSingleWDSF as prtSingleWDSF 
-		 	   			  WHERE prtSingleWDSF.Competition->StartDate = :cmp.StartDate AND prtSingleWDSF.Athlete = :personId AND TicketStatus = 'Piad'))
-		
-	&sql(OPEN CrsCmpConflict)
-	for{
-		&sql(FETCH CrsCmpConflict INTO :cmpConflictId) 
-		quit:(SQLCODE '= 0)
-		
-		do cmpList.Insert(##class(Competition).%OpenId(cmpConflictId).ConvertToProxyObject(params))
-	}
-		
-	&sql(CLOSE CrsCmpConflict)
-	
-	quit cmpList
+    set st = $$$OK
+    set cmpList = ##class(%ListOfObjects).%New()
+    
+    set cmp = ##class(Competition).%OpenId(cmpId,,.st)
+    set cmpTournamentId = cmp.Tournament.%Id()
+    
+    
+    set params = ##class(%ZEN.proxyObject).%New()
+    set params.loadTournament = $$$YES
+    set params.tournamentParams = ##class(%ZEN.proxyObject).%New()
+    set params.tournamentParams.loadLocation = $$$YES
+    set params.loadDiscipline = $$$YES
+    set params.loadAgeCategory = $$$YES 
+    set params.loadType = $$$YES
+    set params.loadWDSF = $$$YES
+    set params.loadDancerClasses = $$$YES
+    
+    
+    &sql(DECLARE CrsCmpConflict CURSOR FOR
+            SELECT ID INTO :cmpConflictId
+            FROM Dance_Data.Competition
+            WHERE Tournament->TStatus->Code <> 'Canceled' 
+               AND Tournament->TStatus->Code <> 'Completed'
+               AND Tournament <> :cmpTournamentId 
+               AND StartDate = :cmp.StartDate
+               AND ID IN (SELECT prtCoupleUDSR.Competition 
+                          FROM Dance_Data.ParticipantCoupleUDSR as prtCoupleUDSR 
+                          WHERE prtCoupleUDSR.Competition->StartDate = :cmp.StartDate AND (prtCoupleUDSR.Couple->Man = :personId OR prtCoupleUDSR.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
+                          UNION
+                          SELECT prtCoupleWDSF.Competition 
+                          FROM Dance_Data.ParticipantCoupleWDSF as prtCoupleWDSF 
+                          WHERE prtCoupleWDSF.Competition->StartDate = :cmp.StartDate AND (prtCoupleWDSF.Couple->Man = :personId OR prtCoupleWDSF.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
+                          UNION
+                          SELECT prtSingleUDSR.Competition 
+                          FROM Dance_Data.ParticipantSingleUDSR as prtSingleUDSR 
+                          WHERE prtSingleUDSR.Competition->StartDate = :cmp.StartDate AND prtSingleUDSR.Athlete = :personId  AND TicketStatus = 'Piad'
+                          UNION
+                          SELECT prtSingleWDSF.Competition 
+                          FROM Dance_Data.ParticipantSingleWDSF as prtSingleWDSF 
+                          WHERE prtSingleWDSF.Competition->StartDate = :cmp.StartDate AND prtSingleWDSF.Athlete = :personId AND TicketStatus = 'Piad'))
+        
+    &sql(OPEN CrsCmpConflict)
+    for{
+        &sql(FETCH CrsCmpConflict INTO :cmpConflictId) 
+        quit:(SQLCODE '= 0)
+        
+        do cmpList.Insert(##class(Competition).%OpenId(cmpConflictId).ConvertToProxyObject(params))
+    }
+        
+    &sql(CLOSE CrsCmpConflict)
+    
+    quit cmpList
 ]]></Implementation>
 </Method>
 
@@ -6739,12 +6743,12 @@ Tickets of the participants</Description>
                     
                 }
                 else{
-                    w:(isTrace) !,"---Create prt couple Other."
+                    w:(isTrace) !,"---Find existed prt couple Other."
         
                     set participant = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)
                     
                     if $ISOBJECT(participant) = $$$NO {
-                        // Create participantCoupleOther
+                        w:(isTrace) !,"---Create prt couple Other."
                         set participant = ..CreateParticipantOtherByImportedTicket(ticketImport, competition, $$$NO, .st)
                     }                                     
                 }
@@ -8190,167 +8194,6 @@ Valid values are:PreRegistration, Registering, RegistrationClosed, Processing, C
   	}
   	
 	quit status
-]]></Implementation>
-</Method>
-</Class>
-
-
-<Class name="Dance.Utils.ImportRUSDSU">
-<Description>
-Импорт регистраций</Description>
-<Abstract>1</Abstract>
-<TimeCreated>64000,41228.823048</TimeCreated>
-
-<Method name="ImportFromFile">
-<Description>
-do ##class(Dance.Utils.ImportRUSDSU).ImportFromFile("g:\Downloads\couples.csv")</Description>
-<ClassMethod>1</ClassMethod>
-<FormalSpec>fileName:%String</FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-    set st = $$$OK
-    
-    try{
-        TSTART 
-        w !,"TLEVEL=",$TLEVEL
-        
-        set stream = ##class(%Stream.FileCharacter).%New()
-        set st = stream.LinkToFile(fileName)
-        
-        set countRow = 0
-        set registrationsTotalCount = 0
-        while 'stream.AtEnd {
-            set countRow = countRow + 1
-            
-            //if (countRow = 11) quit 
-            
-            set line = stream.ReadLine()
-            set listOfProperties = $LISTFROMSTRING(line, ";")
-            
-            set manNumber = $LIST(listOfProperties, 2)
-            set womanNumber = $LIST(listOfProperties, 8)
-            set competitions = $LISTFROMSTRING($LIST(listOfProperties, 14)) 
-            
-            
-            set registrationsTotalCount = registrationsTotalCount + $LL(competitions)
-            w !,!, "Строка №"_countRow
-            $$$THROWONERROR(st, ..ImportCoupleRegistrations(manNumber, womanNumber, competitions))
-        }
-        
-        w !,"RegistrationsTotalCount="_registrationsTotalCount
-        w !,"TLEVEL=",$TLEVEL
-        TCOMMIT 
-    }
-    catch(ex){
-        TROLLBACK
-        set st = ex.AsStatus()
-        w !,$SYSTEM.Status.GetErrorText(st)
-    }
-    
-    quit st
-]]></Implementation>
-</Method>
-
-<Method name="ImportCoupleRegistrations">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>manNumber:%String,womanNumber:%String,competitions:%List</FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-    set st = $$$OK
-    try{
-        w !,"Пара ",manNumber," ",womanNumber_", competitions count = "_$LL(competitions)
-        
-        set coupleWDSF = ""
-        set coupleUDSR = ##class(Dance.Data.CoupleUDSR).GetByNumbers(manNumber, womanNumber, .st)
-        $$$THROWONERROR(st, st)
-        
-        set match = ##class(Dance.Data.MatchingCoupleUDSRWDSF).CreateByUDSR(coupleUDSR, .stWDSF)
-        $$$THROWONERROR(stWDSF, stWDSF)
-        
-        if $ISOBJECT(match){
-            w !, "Найдено совпадение ВДСФ"
-            set coupleWDSF = match.WDSF
-        }
-        else{
-            w !, "НЕ найдено совпадение ВДСФ. ВДСФ номера "_coupleUDSR.Man.NumberWDSF," ",coupleUDSR.Woman.NumberWDSF
-        }
-        
-        
-        set recorderHash = "kj0QTbIiDanJ3MsTQbG+XQEQLEQL"
-        
-        set proxyUDSRData = ##class(%ZEN.proxyObject).%New()
-        set proxyUDSRData.recorderHash = recorderHash
-        set proxyUDSRData.competitions = ##class(%ListOfDataTypes).%New()
-        
-        set proxyWDSFData = ##class(%ZEN.proxyObject).%New()
-        set proxyWDSFData.recorderHash = recorderHash
-        set proxyWDSFData.competitions = ##class(%ListOfDataTypes).%New()
-        
-        for i=1:1:$LL(competitions){
-            set cmpId = ""
-            set cmpIdExternal = $LIST(competitions, i)
-            
-            &sql(SELECT ID INTO :cmpId 
-                 FROM Dance_Data.Competition
-                 WHERE Tournament = 36 AND IdExternal = :cmpIdExternal)
-                 
-            set cmpObj = ##class(Dance.Data.Competition).%OpenId(cmpId)
-            
-            if $ISOBJECT(cmpObj.WDSF){
-               do proxyWDSFData.competitions.Insert(cmpObj.%Id())
-            }
-            else{
-               do proxyUDSRData.competitions.Insert(cmpObj.%Id())
-            }
-        }
-        
-        if $ISOBJECT(coupleUDSR){
-            w !,"Регистрация СТСР Версии"
-            //set proxyUDSRData.couple = coupleUDSR.ConvertToProxyObject()
-            //do ##class(Dance.Web.JsonUser).RegistrationUDSR(proxyUDSRData)
-        }
-        
-        if $ISOBJECT(coupleWDSF){
-            w !,"Регистрация WDSF Версии"
-            set proxyWDSFData.couple = coupleWDSF.ConvertToProxyObject()
-            do ##class(Dance.Web.JsonUser).RegistrationWDSF(proxyWDSFData)
-        }
-    }
-    catch(ex){
-        set st = ex.AsStatus()
-    }
-    
-    quit st
-]]></Implementation>
-</Method>
-
-<Method name="IsExistInTournament">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>trnId:%String,coupleUDSR:Dance.Data.CoupleUDSR,coupleWDSF:Dance.Data.CoupleWDSF</FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-    set listOfUdsrCompetitions = ""
-    set listOfWDSFCompetitions = ""
-    set coupleUDSRID = coupleUDSR.%Id()
-    
-    &sql(SELECT LIST(Competition) INTO :listOfUdsrCompetitions 
-         FROM Dance_Data.ParticipantCoupleUDSR 
-         WHERE Competition->Tournament = :trnId AND Couple = :coupleUDSRID)
-         
-    if (listOfUdsrCompetitions '= ""){
-        w !,"Найдены регистрации в СТСР "_listOfUdsrCompetitions
-    }
-    
-    if (coupleWDSF){
-        set coupleWDSFID = coupleWDSF.%Id()
-        &sql(SELECT LIST(Competition) INTO :listOfWDSFCompetitions 
-             FROM Dance_Data.ParticipantCoupleWDSF 
-             WHERE Competition->Tournament = :trnId AND Couple = :coupleWDSFID)
-             
-        if (listOfWDSFCompetitions '= ""){
-            w !,"Найдены регистрации в WDSF "_listOfWDSFCompetitions
-        }
-    }
 ]]></Implementation>
 </Method>
 </Class>
@@ -12026,158 +11869,6 @@ w ##class(Dance.Utils.Service).CreateAgeGroups()</Description>
 </Class>
 
 
-<Class name="Dance.Utils.SourceControl">
-<Super>%Studio.SourceControl.File</Super>
-<TimeCreated>63838,26918.061869</TimeCreated>
-
-<Parameter name="ExpMode">
-<Description>
-1 - export in classname.cls.xml (compatible with cache-tort-git), 
-0 - export in classname.xml   </Description>
-<Default>0</Default>
-</Parameter>
-
-<Parameter name="Folder">
-<Default>c:\InterSystems\Cache20151\CSP\dancesport_loc\CacheSrc</Default>
-</Parameter>
-
-<Method name="SetUp">
-<Description>
-setup control version for namespace and export all classes  do ##class(Dance.Utils.SourceControl).SetUp()</Description>
-<ClassMethod>1</ClassMethod>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-    /// ^Sources = tempdir path
-/// ^Sources(ext,"*") -- subfolder for item type
-
-    kill ^Sources
-    set ^Sources=..#Folder_"/"
-    set ^Sources("CLS","*")="cls/"
-    set ^Sources("DFI","*")="dfi/"
-    
-    set SourceControl=..%New("")
-    set sc=$$$OK
-    
-    &sql(declare SU1 cursor for
-        select ID into :class 
-        from %Dictionary.ClassDefinition where (NOT (ID %STARTSWITH '%')) AND NOT (ID %STARTSWITH 'Util.SourceControl') AND NOT (ID %STARTSWITH 'Ens') AND NOT (ID %STARTSWITH 'CSPX') AND NOT (ID %STARTSWITH 'INFORMATION.SCHEMA') )
-    &sql(open SU1)
-    for {
-        &sql(fetch SU1)
-        quit:SQLCODE
-        set sc=SourceControl.OnAfterSave(class_".CLS")
-        quit:'sc
-    }
-    
-        &sql(declare SU2 cursor for
-        select documentname into :name 
-        from %DeepSee_UserLibrary.FolderItem)
-    &sql(open SU2)
-    for {
-        &sql(fetch SU2)
-        quit:SQLCODE
-        set sc=SourceControl.OnAfterSave(name)
-        quit:'sc
-    }
-
-    
-    quit sc
-]]></Implementation>
-</Method>
-
-<Method name="OnAfterSave">
-<FormalSpec>InternalName:%String,Object:%RegisteredObject</FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-    Set filename=..ExternalName(InternalName)
-    #; File not mapped so nothing to do
-    If filename="" Quit $$$OK
-    Set name=$Piece(InternalName,".",1,$Length(InternalName,".")-1)
-    #; CSP files are already files so not additional work needed
-    If name["/" Quit $$$OK
-    Set ext=$ZConvert($Piece(InternalName,".",$Length(InternalName,".")),"U")
-    #; Do not export the default projects
-    If ext="PRJ",$zconvert($extract(name,1,$length("default_")),"l")="default_" Quit $$$OK
-    #; By convention items starting with Z,z,%z,%Z are not exported
-    If (ext="PRJ")||($extract($translate(name,"Z%","z"))="z") Quit $$$OK
-    #; If time already matches nothing to do
-    If ##class(%RoutineMgr).TS(InternalName)=$get(^Sources(0,"ItemTimeStamp",InternalName)) Quit $$$OK
-
-    If ##class(%File).Exists(filename),##class(%File).ReadOnly(filename) Write !,"File ",filename," is read only, not exporting" Quit $$$OK
-    Do ##class(%File).CreateDirectoryChain(##class(%File).GetDirectory(filename))
-    Set sc=$$Export^%occXMLExport(filename,"-d /diffexport",InternalName)
-    If $$$ISOK(sc) {
-        Write !,"Exported '",InternalName,"' to file '",filename,"'"
-        Set ^Sources(0,"FileTimeStamp",InternalName)=$zu(140,2,filename,1)
-        Set ^Sources(0,"ItemTimeStamp",InternalName)=##class(%RoutineMgr).TS(InternalName)
-    } Else {
-        Do DecomposeStatus^%apiOBJ(sc,,"d")
-        Quit sc
-    }
-    Quit $$$OK
-]]></Implementation>
-</Method>
-
-<Method name="ExtName">
-<Description>
-Return filename of this item</Description>
-<ClassMethod>1</ClassMethod>
-<FormalSpec>InternalName:%String</FormalSpec>
-<Private>1</Private>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[
-    /// if file is dfi, make folder-name.type.dfi to folder.name-type.dfi
-    if $zconvert($piece(InternalName,".",*),"U")="DFI" {
-        /// if pivot name has folder convert folders - to dots
-        s folderAndName=$Tr($p(InternalName,"."),"-",".")
-        s InternalName=folderAndName_"-"_$p(InternalName,".",2)_".DFI"
-                }
-    
-    Set name=..Name(InternalName)
-    // if cache-tort-git mode then introduce type in the file name
-    if ..#ExpMode set $p(name,".",*)=($zconvert($piece(InternalName,".",*),"l")_"."_$p(name,".",*))
-    Quit $select(name="":"",1:^Sources_$translate(name,"\","/"))
-]]></Implementation>
-</Method>
-
-<Method name="OnBeforeLoad">
-<FormalSpec>InternalName:%String,display:%Boolean=1</FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-    Set filename=..ExternalName(InternalName)
-    #; File not mapped so nothing to do
-    If filename="" Quit $$$OK
-    #; CSP files are already files so not work needed
-    If InternalName["/" Quit $$$OK
-    #; If no file then skip the import
-    If '##class(%File).Exists(filename) Write:display !,"File ",filename," not found, skipping import" Quit $$$OK
-    #; If time already matches then no work to do
-    If ##class(%File).GetFileDateModified(filename,1)=$get(^Sources(0,"FileTimeStamp",InternalName)),##class(%RoutineMgr).TS(InternalName)=$get(^Sources(0,"ItemTimeStamp",InternalName)) Quit $$$OK
-    Set name=$Piece(InternalName,".",1,$Length(InternalName,".")-1)
-    Set ext=$ZConvert($Piece(InternalName,".",$Length(InternalName,".")),"U")
-    Set sc=$$Import^%occSAX(filename,"fv-d-l")
-    If $$$ISOK(sc) {
-        Write !,"Imported '",InternalName,"' from file '",filename,"'"
-        Set ^Sources(0,"FileTimeStamp",InternalName)=##class(%File).GetFileDateModified(filename,1)
-        Set ^Sources(0,"ItemTimeStamp",InternalName)=##class(%RoutineMgr).TS(InternalName)
-    } Else {
-        Do DecomposeStatus^%apiOBJ(sc,.errors,"d")
-    }
-    Quit sc
-]]></Implementation>
-</Method>
-
-<Method name="ExportPackage">
-<Description>
-Export to one big file without timediff do ##class(Dance.Utils.SourceControl).ExportPackage()</Description>
-<ClassMethod>1</ClassMethod>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[    set st = $system.OBJ.ExportPackage("Dance", ^Sources_"cls/Dance.xml", "/displaylog=0/diffexport=1")
-]]></Implementation>
-</Method>
-</Class>
-
-
 <Class name="Dance.Utils.TaskSyncWDSFController">
 <Super>%SYS.Task.Definition</Super>
 <TimeCreated>63443,63491.788522</TimeCreated>
@@ -12205,7 +11896,7 @@ do ##class(Dance.Utils.TaskSyncWDSFController).SyncCompetitions()</Description>
 		// wdsf date format: YYYY-MM-DD
 		set prevSyncSinceDate = $GET(^Settings("Dance", "LastSyncWDSFCompetitions"), $ZD($H-1, 3))
 		if (nowSyncSinceDate = ""){
-			set nowSyncSinceDate = $ZD($ZDH(prevSyncSinceDate, 15) + 1, 3)
+			set nowSyncSinceDate = $ZD($ZDH(prevSyncSinceDate, 15) - 7, 3)
 		}
 		
 		set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCompetitions($ZD($H - 365, 3), $ZD($H + 365, 3), nowSyncSinceDate, .st)
@@ -16293,7 +15984,7 @@ Protected REST URLs</Description>
 <Description>
 Dispatch a REST request according to URL and Method</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>pUrl:%String,pMethod:%String,pForwarded:%Boolean=0</FormalSpec>
+<FormalSpec>pUrl:%String,pMethod:%String</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     set lang = $CASE(%request.CgiEnvs("HTTP_ACCEPT_LANGUAGE"), 
@@ -16305,7 +15996,102 @@ Dispatch a REST request according to URL and Method</Description>
     do ##class(%MessageDictionary).SetSessionLanguage(lang)
     set %session.Language = lang
     
-    quit ##super(pUrl, pMethod, pForwarded)
+    #dim tSC As %Status = $$$OK
+    #dim e As %Exception.AbstractException
+    
+    #dim tMatcher As %Regex.Matcher
+    
+    #dim tArgs,tClass,tMatchUrl,tMapEntry,tRegEx,tTarget,tAccess As %String
+    #dim tI,tIndex As %Integer
+    #dim tResourceMatched As %Boolean
+    #dim tMethodMatched As %Boolean
+    
+    Try {
+        #; Check that the effective user ( could be unknown user ) can access this resource
+        Set tAccess=$SYSTEM.Security.Check($Piece($zu(90,21,$namespace),"^",4))
+        If tAccess'["READ,WRITE"
+        {
+            #; Don't want the session token
+            Set %response.OutputSessionToken=0
+            
+            #; Set the Http Status
+            Set %response.Status="401 Unauthorized"
+        
+            #; Write out the header
+            Do %response.WriteHTTPHeader()
+            
+            #; Done
+            Quit
+        }
+        
+        Set (tResourceMatched,tMethodMatched)=0
+        
+        #; Walk the dispatch map in collation order of defintion
+        For tIndex=1:1 {
+            
+            #; Get the next map entry
+            Set tMapEntry=..DispatchMap(tIndex) If tMapEntry="" Quit
+             
+            #; Pick out the RegEx
+            Set tRegEx=$List(tMapEntry,1)
+            
+            #; Create a matcher
+            Set tMatcher=##class(%Regex.Matcher).%New(tRegEx)
+        
+            #; Extract the match url from the application name
+            Set tMatchUrl="/"_$Extract(pUrl,$Length(%request.Application)+1,*)
+            
+            #; Test each regular expression in turn, extracting the arguments,
+            #; dispatching to the named method  
+            If tMatcher.Match(tMatchUrl) {
+                
+                #; We have matched the resource
+                Set tResourceMatched=1
+                
+                #; Now check method name
+                If pMethod'=$List(tMapEntry,2) Continue
+                
+                Set tTarget=$List(tMapEntry,3)
+                
+                #; We have matched a method
+                Set tMethodMatched=1
+                
+                #; Got a match, marshall the arguments
+                If tMatcher.GroupCount {
+                    For tI=1:1:tMatcher.GroupCount Set tArgs(tI)=tMatcher.Group(tI)
+                    Set tArgs=tI
+                } else {
+                    Set tArgs=0
+                }
+                
+                #; Check for optional ClassName prefix
+                Set tClass=$classname()
+                If tTarget[":" Set tClass=$Piece(tTarget,":"),tTarget=$Piece(tTarget,":",2)
+                
+                #; Dispatch
+                Set tSC=$zobjclassmethod(tClass,tTarget,tArgs...)
+                If $$$ISERR(tSC) Do ..Http500(##class(%Exception.StatusException).CreateFromStatus(tSC))
+                
+                #; Don't want multiple matches
+                Quit
+            }
+        }
+        
+        #; Didn't have a match for the resource, report not found
+        If tResourceMatched=0 Set tSC=..Http404() Quit
+        
+        #; Had a match for resource but method not matched
+        If tMethodMatched=0 Set tSC=..Http405() Quit
+            
+    } Catch (e) {
+        
+        #; Issue a '500'
+        Do ..Http500(e)
+    }
+    
+    If ..#UseSession=0 Set %session.EndSession=1
+  
+    Quit tSC
 ]]></Implementation>
 </Method>
 </Class>

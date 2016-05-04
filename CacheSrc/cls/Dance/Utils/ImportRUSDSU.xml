@@ -111,8 +111,8 @@ do ##class(Dance.Utils.ImportRUSDSU).ImportFromFile("g:\Downloads\couples.csv")<
         
         if $ISOBJECT(coupleUDSR){
             w !,"Регистрация СТСР Версии"
-            //set proxyUDSRData.couple = coupleUDSR.ConvertToProxyObject()
-            //do ##class(Dance.Web.JsonUser).RegistrationUDSR(proxyUDSRData)
+            set proxyUDSRData.couple = coupleUDSR.ConvertToProxyObject()
+            do ##class(Dance.Web.JsonUser).RegistrationUDSR(proxyUDSRData)
         }
         
         if $ISOBJECT(coupleWDSF){
@@ -156,6 +156,62 @@ do ##class(Dance.Utils.ImportRUSDSU).ImportFromFile("g:\Downloads\couples.csv")<
             w !,"Найдены регистрации в WDSF "_listOfWDSFCompetitions
         }
     }
+]]></Implementation>
+</Method>
+
+<Method name="FixOtherInfo">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    SET st = $$$OK
+    
+    try{
+        TSTART
+        
+        &sql(DECLARE TCur CURSOR FOR 
+             SELECT 
+                ID
+             FROM Dance_Data.ParticipantCoupleWDSF
+             WHERE Club IS NULL AND Couple IN (SELECT 
+                                                    WDSF
+                                               FROM Dance_Data.MatchingCoupleUDSRWDSF))   
+        
+        &sql(OPEN TCur)
+        for  
+        {    
+            &sql(FETCH TCur INTO :id) 
+            quit:(SQLCODE '= 0) 
+            
+            w !, "prtId = "_id
+            set prt = ##class(Dance.Data.ParticipantCoupleWDSF).%OpenId(id)
+            #dim coupleUdsr As Dance.Data.CoupleUDSR = ##class(Dance.Data.MatchingCoupleUDSRWDSF).WDSFIdxOpen(prt.Couple.%Id()).UDSR
+            set prt.ManDOB = coupleUdsr.Man.DOB
+            set prt.WomanDOB = coupleUdsr.Woman.DOB
+            set prt.Club = coupleUdsr.Man.Club
+            set prt.City = coupleUdsr.Man.City
+            if (prt.MainTrainer = ""){
+                set prt.MainTrainer = coupleUdsr.Man.MainTrainer
+            }
+            
+            if (prt.OtherTrainers = ""){
+                set prt.OtherTrainers = coupleUdsr.Man.OtherTrainers
+            }
+            
+            $$$THROWONERROR(st, prt.%Save())
+        }
+        
+        &sql(CLOSE TCur)
+        
+        TCOMMIT
+    }
+    catch(ex){
+        TROLLBACK
+        
+        set st = ex.AsStatus()
+        w !,$SYSTEM.Status.GetErrorText(st)
+    }
+    
+    quit st
 ]]></Implementation>
 </Method>
 </Class>

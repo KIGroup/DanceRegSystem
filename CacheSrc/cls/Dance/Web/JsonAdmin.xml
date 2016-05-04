@@ -386,7 +386,7 @@ All payment systems
 Method="GET" Url="/paymentsystem"</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT ID As id, Name As name, Code as code, UDSRUrl as udsrUrl, WDSFUrl As wdsfUrl FROM Dance_Data.PaymentSystem")
+<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT ID As id, Name As name, Code as code, UDSRUrl as udsrUrl, WDSFUrl As wdsfUrl FROM Dance_Data.PaymentSystem Order BY Name")
 ]]></Implementation>
 </Method>
 </Class>

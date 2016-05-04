@@ -46,12 +46,18 @@ servicesModule.factory('UtilsSrvc', function($dialog, $filter) {
             };
             return indexes;
         },
-        getValidDate: function(str){
-            var date = new Date(str);
-            if (isNaN(date))
-                return "";
-                
-            return $filter('date')(date, 'yyyy-MM-dd');
+        getValidDate: function(value){
+			var validDate = '';
+			
+			if (value instanceof Date){
+				validDate = $filter('date')(value, 'y-MM-dd')
+			}
+			else if (isNaN(new Date(value)) == false && value.length <= 10){
+				validDate = value;
+			}
+			
+			console.log(value, validDate);
+			return validDate;
         },
         getPropertyValue: function (item, propertyStr, defaultValue){
             var value;

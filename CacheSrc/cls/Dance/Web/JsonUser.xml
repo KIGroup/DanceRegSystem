@@ -933,6 +933,15 @@ Available participants competitions for grid</Description>
                     continue            
                 }
             }
+            
+            // Для этих дисциплин своя логика, если ни один не подошел, то пропускаем группу
+            if ($FIND("10т,8т,6т,5т,4т,3т", cmp.Discipline.Code) > 0){
+                if $ISOBJECT(man.STClass) && $ISOBJECT(man.LAClass){
+                    if (##class(Dance.Data.Competition).IsAvailableForDancerClass(cmp.%Id(), man.STClass.%Id()) = $$$NO) && (##class(Dance.Data.Competition).IsAvailableForDancerClass(cmp.%Id(), man.LAClass.%Id()) = $$$NO){
+                        continue
+                    }
+                }
+            }
         }
         
         do resultList.Insert(cmp)

@@ -28,7 +28,7 @@
 <stcalert data="registrationAlert" style="margin: 10px 0 20px 0;"/>
 
 <p ng-hide="recorderHash">[ <font COLOR="RED"><b>!</b></font> ] <span  style="color:rgb(163, 0, 0);" ng-bind="'Код доступа не найден, переход на страницу для регистрации невозможен.'|localize"></span></p>
-<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите необходимые группы для передачи данных в платежную систему.'|localize}}</p>
+<p ng-hide="tournament.paymentSystem.code=='Disabled'">[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите необходимые группы для передачи данных в платежную систему.'|localize}}</p>
 
 <!-- Competitions -->
 <div class="row-fluid" style="padding-top: 10px;">
@@ -74,8 +74,16 @@
 </div>          
 
 
-<button type="button" class="btn btn-small" ng-click="openConfirmDlg()" ng-disabled="competitionTable.selectedItems.length==0 || tournament.status.code != 'Registration'"><i class="fa fa-shopping-cart"></i>&nbsp;&nbsp;{{'Оплатить на danceplat.ru'|localize}}</button>
-<span style="padding-left: 20px;" ng-bind="('Выбрано'|localize) + ' ' + competitionTable.selectedItems.length + ' ' + ('групп из'|localize) + ' ' + competitionTable.itemsTotal"></span>
+<button type="button" 
+        class="btn btn-small" 
+        ng-click="openConfirmDlg()" 
+        ng-disabled="competitionTable.selectedItems.length==0 || tournament.status.code != 'Registration' || tournament.paymentSystem.code=='Disabled'">
+            <i class="fa fa-shopping-cart"></i>&nbsp;&nbsp;<span ng-hide="tournament.paymentSystem.code=='Disabled'">{{'Оплатить на danceplat.ru'|localize}}</span><span ng-show="tournament.paymentSystem.code=='Disabled'">{{'Оплата отключена'|localize}}</span>
+</button>
+<span style="padding-left: 20px;"
+      ng-hide="tournament.paymentSystem.code=='Disabled'" 
+      ng-bind="('Выбрано'|localize) + ' ' + competitionTable.selectedItems.length + ' ' + ('групп из'|localize) + ' ' + competitionTable.itemsTotal">
+</span>
 &nbsp;&nbsp;&nbsp;
 <a ng-show="type=='Other' && recorderHash && tournament.status.code=='Registration'" href="" ng-click="doRegAgain()" class="cellLink" ng-bind="('Зарегистрировать ещё группы'|localize) + ' »'"></a>
 
@@ -83,7 +91,7 @@
     <div class="span4">
         <div>
             <danceplat-udsr-pay 
-				id="coupleDancePlatUDSRPayment"
+                id="coupleDancePlatUDSRPayment"
 
                 ng-show="couple && type=='UDSR'"
 
@@ -96,7 +104,7 @@
         </div>
         <div>
             <danceplat-udsr-pay 
-				id="athleteDancePlatUDSRPayment"
+                id="athleteDancePlatUDSRPayment"
                 
                 ng-show="athlete && type=='UDSR'"
 
@@ -109,7 +117,7 @@
         </div>
         <div>
             <danceplat-other-pay 
-			    id="coupleDancePlatOTHERPayment"
+                id="coupleDancePlatOTHERPayment"
                 
                 ng-show="couple && type!='UDSR'"
 
@@ -134,7 +142,7 @@
         </div>
         <div>
             <danceplat-other-pay 
-			    id="athleteDancePlatOTHERPayment"
+                id="athleteDancePlatOTHERPayment"
                 
                 ng-show="athlete && type!='UDSR'"
 

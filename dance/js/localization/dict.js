@@ -304,7 +304,8 @@ localizationModule.constant('DanceDictionary', {
         'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
         'на момент регистрации.' : 'at the time of registration.',
         'Выберите номинации' : 'Select competitions',
-        'Класс ST, LA' : 'ST, LA class'
+        'Класс ST, LA' : 'ST, LA class',
+        'Оплата отключена' : 'Payment is disabled'
 
 
 
@@ -314,6 +315,7 @@ localizationModule.constant('DanceDictionary', {
   toRussian: {
   },
   toDeutsch: {
+        'Оплата отключена' : 'Die Zahlung ist deaktiviert',
         'Зарегистрировать ещё группы': 'Registrieren Mehr Gruppe',
         'Регистрация выполнена.': 'Die Registrierung ist abgeschlossen.',
         'Регистрация не выполнена.': 'Registrierung fehlgeschlagen.',
@@ -611,6 +613,7 @@ localizationModule.constant('DanceDictionary', {
 
   },
   toItalian: {
+    'Оплата отключена' : 'Il pagamento è disattivato',
     'Зарегистрировать ещё группы': 'Registrati altro gruppo',
     'Регистрация выполнена.': 'La registrazione è completa.',
     'Регистрация не выполнена.': 'Registrazione fallita.',
