@@ -246,7 +246,8 @@ Create or update competition</Description>
     "AgeCategoryId="_data.ageCategory.id_";"_
     "TypeId="_data.type.id_";"_
     "StartDate="_data.startDate_";"_
-    "Price="_data.price)
+    "Price="_data.price_";"_
+    "IsWDSF="_data.isWDSF)
     
     
     if (data.id = ""){
@@ -353,12 +354,12 @@ Participants count in the competition</Description>
     
     &sql(
     SELECT COUNT (FN)  As TotalCount INTO :count
-	FROM
-	(
-		SELECT FullName->Value As FN
+    FROM
+    (
+        SELECT FullName->Value As FN
         FROM Dance_Data.Participant 
         WHERE Competition = :competitionId AND IsActive = 1
-    	GROUP BY FullName->Value
+        GROUP BY FullName->Value
     )
     )
     

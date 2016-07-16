@@ -159,6 +159,21 @@
                     set prtClassName = "Dance.Data.ParticipantCoupleWDSF"
                     $$$THROWONERROR(st, st)
                 }
+                else{
+                    // На тот случай когда ВДСФ пара зарегалась, а админ такой взял и снял флаг-группу WDSF и на билет начинают создаваться СТСР пары
+                    if (##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxExists(prtObject.%Id())){
+                        set wdsfCoupleId = ##class(Dance.Data.MatchingCoupleUDSRWDSF).UDSRIdxOpen(prtObject.%Id(),,.st).WDSF.%Id()
+                        set competitionId = competition.%Id()
+                        set existedWDSFPrtId = ""
+                        &sql(SELECT ID INTO :existedWDSFPrtId
+                             FROM Dance_Data.ParticipantCoupleWDSF
+                             WHERE Couple = :wdsfCoupleId AND Competition = :competitionId)
+                        
+                        if (SQLCODE '= 100){
+                            $$$ThrowStatus($SYSTEM.Status.Error(5001, "Существует регистрация ИД="_existedWDSFPrtId_" WDSF пары ИД="_wdsfCoupleId_" в группе ИД="_competitionId))
+                        }     
+                    }
+                }
             }
             elseif $ISOBJECT(manUDSR){
                 w:(isTrace) !,"--Find man UDSR."
@@ -173,7 +188,7 @@
                 set prtObject = womanUDSR
             }
             
-            // Create participant   
+            w:(isTrace) !,"Create participant "_prtClassName
             set participant = $CLASSMETHOD(prtClassName, "Create", ##class(Dance.Data.Recorder).GetSystemRecorder(), competition, prtObject.ConvertToProxyObject(), .st)
             $$$THROWONERROR(st, st)
         }
@@ -527,7 +542,7 @@ do ##class(Dance.Data.TicketDanceplat).Test()</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     TSTART
-    set ticketImport = ##class(Dance.Data.Import.TicketDanceplat).%OpenId(11553)
+    set ticketImport = ##class(Dance.Data.Import.TicketDanceplat).%OpenId(15940)
     set competition = ##class(Dance.Data.Competition).IdInternalIdxOpen(ticketImport.GroupIdInternal)
     w !,..SaveOneFromImportTable(ticketImport, competition)
     TCOMMIT
