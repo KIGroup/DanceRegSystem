@@ -21,7 +21,7 @@
 <Implementation><![CDATA[
     set link = "http://"_$GET(^Settings("Dance", "ServerAddress"), "localhost")_":"_$GET(^Settings("Dance","ServerPort"), 57772)_$GET(^Settings("Dance","WebAppUser"))_
     "/report/ru/tournament/"_trnId_"/code/"_..GetAccessHashForTournament(##class(Dance.Data.Tournament).%OpenId(trnId))_"/participant"
-    
+     
     quit link
 ]]></Implementation>
 </Method>
@@ -67,8 +67,8 @@
         #dim otherCouples As %ListOfObjects = ..GetReportDataCoupleOther(trnId)
         #dim otherSingles As %ListOfObjects = ..GetReportDataSingleOther(trnId)
         
-        set rowFormat = "%Created;%ManNumber;%ManLastName;%ManFirstName;%ManStClass;%ManLaClass;%ManDob;%WomanNumber;%WomanLastName;%WomanFirstName;%WomanStClass;%WomanLaClass;%WomanDob;%Competitions;%Club;%City;%Region;%Trainer1LastName;%Trainer1FirstName;%Trainer2LastName;%Trainer2FirstName"
-        w "Дата регистрации;Книжка партнера;Фамилия партнера;Имя партнера;Класс партнера СТ;Класс партнера ЛА;Дата рождения партнера;Книжка партнерши;Фамилия партнерши;Имя партнерши;Класс партнерши СТ;Класс партнерши ЛА;Дата рождения партнерши;Группы;Клуб;Город;Регион;Тренер1 Фамилия;Тренер1 Имя;Тренер2 Фамилия;Тренер2 Имя",!
+        set rowFormat = "%Created;%ManNumber;%ManLastName;%ManFirstName;%ManStClass;%ManLaClass;%ManDob;%WomanNumber;%WomanLastName;%WomanFirstName;%WomanStClass;%WomanLaClass;%WomanDob;%Competitions;%Club;%City;%Region;%Trainer1LastName;%Trainer1FirstName;%Trainer2LastName;%Trainer2FirstName;%Category"
+        w "Дата регистрации;Книжка партнера;Фамилия партнера;Имя партнера;Класс партнера СТ;Класс партнера ЛА;Дата рождения партнера;Книжка партнерши;Фамилия партнерши;Имя партнерши;Класс партнерши СТ;Класс партнерши ЛА;Дата рождения партнерши;Группы;Клуб;Город;Регион;Тренер1 Фамилия;Тренер1 Имя;Тренер2 Фамилия;Тренер2 Имя;Категория(Pro/Am) партнер/партнерша",!
         
         do ..WriteToDeviceFromAnyCoupleList(udsrCouples, rowFormat)
         do ..WriteToDeviceFromAnyAthleteList(udsrSingles, rowFormat)
@@ -130,6 +130,13 @@
         set row = $REPLACE(row, "%Trainer2LastName", $P($P(couple.otherInfo.otherTrainers, ",", 1), " ", *-1))
         set row = $REPLACE(row, "%Trainer2FirstName",$P($P(couple.otherInfo.otherTrainers, ",", 1), " ", *))
         set row = $REPLACE(row, "%Created", "["_couple.otherInfo.created_"]")
+        
+        if (couple.man.category '= ""){
+        	set row = $REPLACE(row, "%Category", couple.man.category_"/"_couple.woman.category)
+        }
+        else{
+	        set row = $REPLACE(row, "%Category", "")
+        }
         
         w row,!         
     }

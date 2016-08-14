@@ -346,6 +346,34 @@
 ]]></Data>
 </XData>
 
+<Method name="CreateNew">
+<Description>
+w ##class(Dance.Utils.Init.TournamentRank).CreateNew()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set st = $$$OK
+	
+	try{
+		TSTART
+		
+		set rank = ##class(Dance.Data.TournamentRank).%New()
+		set rank.Code = "Pro-Am"
+		set rank.Name = ##class(Dance.Data.Localization.LText).Create("Pro-Am")
+		set rank.ShortName = ##class(Dance.Data.Localization.LText).Create("Pro-Am")
+		$$$TOE(st, rank.%Save())
+		
+		TCOMMIT
+	}
+	catch(ex){
+		TROLLBACK
+		set st = ex.AsStatus()
+	}
+	
+	quit st
+]]></Implementation>
+</Method>
+
 <Method name="CopyValueFromEngToAnother">
 <Description>
 w ##class(Dance.Utils.Init.TournamentRank).CopyValueFromEngToAnother("it")</Description>

@@ -5,7 +5,7 @@
 
 ===========================================================================================*/
 
-controllersModule.controller('TournamentsCtrl', function($scope, $location, $filter, UtilsSrvc, TournamentSrvc, CompetitionSrvc, TournamentRankSrvc, TournamentStatusSrvc){
+controllersModule.controller('TournamentsCtrl', function($scope, $location, $filter, UtilsSrvc, TournamentSrvc, CompetitionSrvc, TournamentRankSrvc, TournamentStatusSrvc, ReportSrvc){
     $scope.menu.selectMenu($scope.menu.pages.tournaments);
 
     $scope.page = {};
@@ -417,6 +417,10 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
     $scope.page.competitionTable.changeDateFilter = function(date){
         $scope.pageStore.tournaments.gridCompetitions.filterDate = date;
         $scope.page.competitionTable.refresh();
+    };  
+
+    $scope.page.competitionTable.export = function(){
+        ReportSrvc.tournamentCompetitions($scope.page.tournamentTable.selectedItems[0].id);
     };  
 
 

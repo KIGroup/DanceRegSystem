@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.Web.ReportTournamentCompetitions">
+<Abstract>1</Abstract>
+<TimeCreated>64144,5160.744906</TimeCreated>
+
+<Parameter name="ContentType">
+<Default>plain/text</Default>
+</Parameter>
+
+<Parameter name="CharSet">
+<Default>windows-1251</Default>
+</Parameter>
+
+<Method name="GetFile">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>lang:%String,trnId:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set trn = ##class(Dance.Data.Tournament).%OpenId(trnId)
+    
+    do ##class(%MessageDictionary).SetSessionLanguage(lang)
+    
+    set %session.Language = lang
+    
+    set %response.ContentType = ..#ContentType
+    set %response.CharSet = ..#CharSet
+    
+    set status = $$$OK
+    
+    try{
+        set fileName = trn.Name.Value_" (группы)[от "_$ZD($ZTS, 3)_"].csv"
+		
+        if ($FIND(%request.UserAgent, "Firefox") '= 0) {
+            set fileName = $REPLACE(fileName, " ", "_")
+        }       
+        
+        do %response.SetHeader("Content-Disposition","attachment;filename="_fileName)
+        
+        w "№;Дата;Наименование;Дисциплина;Возрастная группа;Тип;Ограничение уч.;Цена;Доступна регионам;Доступна классам;WDSF(Да/Нет);Международная(Да/Нет);Закрыта(Да/Нет)"
+        &sql(DECLARE CurCmp CURSOR FOR 
+             SELECT IdExternal,
+             		{fn CONVERT(StartDate, SQL_VARCHAR)}, 
+             	    Name->Value, 
+             	    Discipline->Name->Value, 
+             	    AgeCategory->Name->Value, 
+             	    Type->Name->Value, 
+             	    CASE IsInternational WHEN 1 THEN '+' ELSE '-' END, 
+             	    CASE IsClosed WHEN 1 THEN '+' ELSE '-' END, 
+             	    Limit, 
+             	    Price,
+             	    (SELECT LIST(Regions->Name)
+					 FROM Dance_Data.Competition_Regions
+					 WHERE Competition = MainPart.ID) As Regions,
+					(SELECT LIST(DancerClasses->Name)
+					 FROM Dance_Data.Competition_DancerClasses
+					 WHERE Competition = MainPart.ID) As DancerClasses,
+					IFNULL(WDSF->ID, '-', '+') As IsWDSF
+			 FROM Dance_Data.Competition As MainPart
+			 WHERE Tournament = :trnId
+			 ORDER BY IdExternal)   
+        
+	    &sql(OPEN CurCmp)
+	    for  
+	    {   
+	        &sql(FETCH CurCmp INTO :idExternal,
+	        					   :startDate,
+	        					   :name,
+							       :disciplineName,
+							       :ageCategoryName,
+								   :typeName,
+								   :isInternational,
+								   :isClosed,
+								   :limit,
+								   :price,
+								   :regions,
+								   :dancerClasses,
+								   :isWDSF) 
+	        quit:(SQLCODE '= 0)
+	        
+	        w !,idExternal,";",startDate,";",name,";",disciplineName,";",ageCategoryName,";",typeName,";",limit,";",price,";",regions,";",dancerClasses,";",isWDSF,";",isInternational,";",isClosed
+	    }
+	    
+	    &sql(CLOSE CurCmp)
+    
+    }
+    catch ex{
+        set status = ex.AsStatus()  
+    }
+    
+    q status
+]]></Implementation>
+</Method>
+</Class>
+</Export>

@@ -41,10 +41,10 @@ servicesModule.factory('CompetitionSrvc', function(RESTSrvc) {
         }, 
         getDates: function(tournamentId){
 	        return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/tournament/'+tournamentId+'/competition/date'});
-	    },
-	    getWDSFByFilter: function(countryId, date){
-	        return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/competitionwdsf/country/'+countryId+'/date/' + date});
-	    },
+        },
+        getWDSFByFilter: function(countryId, date){
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/competitionwdsf/country/'+countryId+'/date/' + date});
+        },
         save: function(tournamentId, data){
             return RESTSrvc.getPromise({method: 'POST', url: AppSettings.admin + '/tournament/'+tournamentId+'/competition', data: data});
         },

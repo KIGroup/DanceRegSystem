@@ -37,11 +37,15 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     };
     
     $scope.tabOTHER = {
-        couple: {},
+        couple: {man:{}, woman: {}, otherInfo: {country: {id: 176}}},
         athlete: null,
         genders: [
             {name: $filter('localize')('Мужской'), code: 'Male'}, 
             {name: $filter('localize')('Женский'), code: 'Female'}
+        ],
+        categories: [
+            {name: 'Professional', code: 'Pro'}, 
+            {name: 'Amateur', code: 'Am'}
         ],
         formCouple: {
             btnBackVisible: false,
@@ -53,11 +57,6 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         }  
     };
 
-    if($scope.pageStore.registrationData){
-        if ($scope.pageStore.registrationData.type == "Other")
-            $scope.tabOTHER.couple = $scope.pageStore.registrationData.couple;
-    }
-    
     
     $scope.competitionTable = {};
 
@@ -284,7 +283,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
 
     /// Load Tournament by ID   
     $scope.loadTournament = function(id){
-        TournamentSrvc.getById(id, "?loadFullName=1&loadStatus=1&loadUrls=1").then(
+        TournamentSrvc.getById(id, "?loadFullName=1&loadStatus=1&loadUrls=1&loadRank=1").then(
             function(data){
                 $scope.tournament = data;
                  
@@ -308,7 +307,14 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 $scope.tabUDSR.visible = data.tabUDSRAllowed == 1;
                 $scope.tabWDSF.visible = data.tabWDSFAllowed == 1;
                 $scope.tabOTHER.visible = data.tabOtherAllowed == 1;
-              
+                
+                if ($scope.tournament.rank.code == 'Pro-Am'){
+                    $scope.tabOTHER.heading = $filter('localize')('Регистрация Pro-Am');
+                }
+                else{
+                    $scope.tabOTHER.heading = $filter('localize')('Регистрация других участников');   
+                }
+
                 
                 if ($routeParams.typeCode){
                     if ($routeParams.typeCode == 'udsr'){
@@ -343,6 +349,14 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                     $scope.competitionTable.columns[idxColPrice[0]].name = colName;
                 }
                 
+                // Заход на страницу для дополнительной регистраци
+                if($scope.pageStore.registrationData){
+                    if ($scope.pageStore.registrationData.type == "Other"){
+                        $scope.tabOTHER.couple = $scope.pageStore.registrationData.couple;
+                        $scope.tabOTHER.formCouple.next();
+                        $scope.pageStore.registrationData = null;
+                    }
+                }
             },
             function(data, status, headers, config){
                 $scope.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
@@ -423,7 +437,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         $scope.form_otherCoupleData.$setPristine();
         $scope.tabOTHER.formCouple.btnRegistrationVisible = false;
         $scope.tabOTHER.formSingle.btnRegistrationVisible = false;
-        $scope.tabOTHER.couple = {};
+        $scope.tabOTHER.couple = {man:{}, woman: {}, otherInfo: {country: {id: 176}}}; // 176 - Russia
         $scope.tabOTHER.athlete = null;
         $scope.tabOTHER.formSingle.btnBackVisible = false;
         $scope.tabOTHER.formSingle.btnNextVisible = true;
@@ -892,6 +906,31 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     };
 
 
+    $scope.tabOTHER.onChangeCategory = function(partnerGender){
+        var manCategory = $scope.tabOTHER.couple.man.category;
+        var womanCategory = $scope.tabOTHER.couple.woman.category;
+
+        if (partnerGender == "male"){
+            if (manCategory == "Pro"){
+                womanCategory = "Am";
+            }
+            else if (manCategory == "Am"){
+                womanCategory = "Pro";
+            }
+        }
+        else if (partnerGender == "female"){
+            if (womanCategory == "Pro"){
+                manCategory = "Am";
+            }
+            else if (womanCategory == "Am"){
+                manCategory = "Pro";
+            }
+        }
+
+        $scope.tabOTHER.couple.man.category = manCategory;
+        $scope.tabOTHER.couple.woman.category = womanCategory;
+    };
+
     // ===========================================================================================================================================
     // Confirm Dialog                                                                                                               Confirm Dialog
     // ===========================================================================================================================================
@@ -988,8 +1027,9 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     $scope.init();  
     $scope.loadTournament($routeParams.tournamentId);
     $scope.loadCountries();
-        
-   $scope.$on('$destroy', function() {
+
+
+    $scope.$on('$destroy', function() {
         // Make sure that the interval is destroyed too
         $interval.cancel(intervalForTable);
     });

@@ -357,7 +357,7 @@
         <!-- ================================================================================================================================== -->
         <!-- OTHER                                                      OTHER                                                             OTHER -->
         <!-- ================================================================================================================================== -->
-        <tab heading="{{'Регистрация других участников'|localize}}" ng-show="tabOTHER.visible" active="tabOTHER.active" disabled="tabOTHER.disabled" select="tabOTHER.select()" title="{{tabOTHER.isabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация других участников'|localize)}}">
+        <tab heading="{{tabOTHER.heading}}" ng-show="tabOTHER.visible" active="tabOTHER.active" disabled="tabOTHER.disabled" select="tabOTHER.select()" title="{{tabOTHER.isabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация других участников'|localize)}}">
             <!-- =================== -->
             <!-- Couple data (OTHER) -->
             <!-- =================== -->
@@ -391,6 +391,13 @@
                                     </div>
                                 </div>
                                 <div class="span5">
+                                    <div class="control-group" ng-show="tournament.rank.code == 'Pro-Am'">
+                                        <label class="control-label">{{('Категория (Pro-Am)'|localize)}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.manCategory.$error.required ? 'red' : 'green')}">*</i></label>
+                                        <div class="controls">
+                                            <select name="manCategory" class="span12 pull-right" ng-model="tabOTHER.couple.man.category" ng-options="category.code as category.name for category in tabOTHER.categories" ng-change="tabOTHER.onChangeCategory('male')" ng-disabled="tabOTHER.formCouple.disabled" ng-required="tournament.rank.code == 'Pro-Am'">
+                                            </select>           
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="control-group" style="margin-top: 25px;" ng-hide="resultTableVisible">
@@ -439,6 +446,13 @@
                                     </div>
                                 </div>
                                 <div class="span5">
+                                    <div class="control-group" ng-show="tournament.rank.code == 'Pro-Am'">
+                                        <label class="control-label">{{('Категория (Pro-Am)'|localize)}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.womanCategory.$error.required ? 'red' : 'green')}">*</i></label>
+                                        <div class="controls">
+                                            <select name="womanCategory" class="span12 pull-right" ng-model="tabOTHER.couple.woman.category" ng-options="category.code as category.name for category in tabOTHER.categories" ng-change="tabOTHER.onChangeCategory('female')" ng-disabled="tabOTHER.formCouple.disabled" ng-required="tournament.rank.code == 'Pro-Am'">
+                                            </select>           
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
             
@@ -453,7 +467,7 @@
                             <div class="row-fluid">
                                 <div class="span7">
                                     <div class="control-group">
-                                        <label class="control-label">{{('Страна'|localize) + ' (WDSF)'}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.country.$error.required ? 'red' : 'green')}">*</i></label>
+                                        <label class="control-label">{{('Страна'|localize)}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.country.$error.required ? 'red' : 'green')}">*</i></label>
                                         <div class="controls">
                                             <select name="country" class="span12 pull-right" ng-model="tabOTHER.couple.otherInfo.country.id" ng-options="country.id as country.name for country in countries" ng-disabled="tabOTHER.formCouple.disabled" required>
                                             </select>           
@@ -470,15 +484,15 @@
                                 </div>
                             </div>      
                             <div class="control-group">
-                                <label class="control-label">{{'Клуб'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.club.$error.required ? 'red' : 'green')}">*</i></label>
+                                <label class="control-label">{{'Клуб'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.club.$error.required ? 'red' : 'green')}" ng-show="tournament.rank.code != 'Pro-Am'">*</i></label>
                                 <div class="controls">
-                                    <input name="club" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.club" ng-disabled="tabOTHER.formCouple.disabled" required></input>
+                                    <input name="club" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.club" ng-disabled="tabOTHER.formCouple.disabled" ng-required="tournament.rank.code != 'Pro-Am'"></input>
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label">{{'Тренер #1. Фамилия, Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.mainTrainer.$error.required ? 'red' : 'green')}">*</i></label>
+                                <label class="control-label">{{'Тренер #1. Фамилия, Имя'|localize}}<i class="requiredStar" ng-style="{color: (form_otherCoupleData.mainTrainer.$error.required ? 'red' : 'green')}" ng-show="tournament.rank.code != 'Pro-Am'">*</i></label>
                                 <div class="controls">
-                                    <input name="mainTrainer" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.mainTrainer" ng-disabled="tabOTHER.formCouple.disabled" required></input>
+                                    <input name="mainTrainer" class="span12" type="text" ng-model="tabOTHER.couple.otherInfo.mainTrainer" ng-disabled="tabOTHER.formCouple.disabled" ng-required="tournament.rank.code != 'Pro-Am'"></input>
                                 </div>
                             </div>
                             <div class="control-group">

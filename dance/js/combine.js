@@ -1,4 +1,4 @@
-// Combine date time is 23.02.2016 10:36:07
+// Combine date time is 14.08.2016 15:56:55
 
 
 // ===============================================================================================================================
@@ -225,7 +225,7 @@ controllersModule.controller('TournamentCtrl', function($scope, $window, $routeP
 
 ===========================================================================================*/
 
-controllersModule.controller('TournamentsCtrl', function($scope, $location, $filter, UtilsSrvc, TournamentSrvc, CompetitionSrvc, TournamentRankSrvc, TournamentStatusSrvc){
+controllersModule.controller('TournamentsCtrl', function($scope, $location, $filter, UtilsSrvc, TournamentSrvc, CompetitionSrvc, TournamentRankSrvc, TournamentStatusSrvc, ReportSrvc){
     $scope.menu.selectMenu($scope.menu.pages.tournaments);
 
     $scope.page = {};
@@ -637,6 +637,10 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
     $scope.page.competitionTable.changeDateFilter = function(date){
         $scope.pageStore.tournaments.gridCompetitions.filterDate = date;
         $scope.page.competitionTable.refresh();
+    };  
+
+    $scope.page.competitionTable.export = function(){
+        ReportSrvc.tournamentCompetitions($scope.page.tournamentTable.selectedItems[0].id);
     };  
 
 
@@ -1396,11 +1400,15 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     };
     
     $scope.tabOTHER = {
-        couple: {},
+        couple: {man:{}, woman: {}, otherInfo: {country: {id: 176}}},
         athlete: null,
         genders: [
             {name: $filter('localize')('Мужской'), code: 'Male'}, 
             {name: $filter('localize')('Женский'), code: 'Female'}
+        ],
+        categories: [
+            {name: 'Professional', code: 'Pro'}, 
+            {name: 'Amateur', code: 'Am'}
         ],
         formCouple: {
             btnBackVisible: false,
@@ -1412,11 +1420,6 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         }  
     };
 
-    if($scope.pageStore.registrationData){
-        if ($scope.pageStore.registrationData.type == "Other")
-            $scope.tabOTHER.couple = $scope.pageStore.registrationData.couple;
-    }
-    
     
     $scope.competitionTable = {};
 
@@ -1643,7 +1646,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
 
     /// Load Tournament by ID   
     $scope.loadTournament = function(id){
-        TournamentSrvc.getById(id, "?loadFullName=1&loadStatus=1&loadUrls=1").then(
+        TournamentSrvc.getById(id, "?loadFullName=1&loadStatus=1&loadUrls=1&loadRank=1").then(
             function(data){
                 $scope.tournament = data;
                  
@@ -1667,7 +1670,14 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 $scope.tabUDSR.visible = data.tabUDSRAllowed == 1;
                 $scope.tabWDSF.visible = data.tabWDSFAllowed == 1;
                 $scope.tabOTHER.visible = data.tabOtherAllowed == 1;
-              
+                
+                if ($scope.tournament.rank.code == 'Pro-Am'){
+                    $scope.tabOTHER.heading = $filter('localize')('Регистрация Pro-Am');
+                }
+                else{
+                    $scope.tabOTHER.heading = $filter('localize')('Регистрация других участников');   
+                }
+
                 
                 if ($routeParams.typeCode){
                     if ($routeParams.typeCode == 'udsr'){
@@ -1702,6 +1712,14 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                     $scope.competitionTable.columns[idxColPrice[0]].name = colName;
                 }
                 
+                // Заход на страницу для дополнительной регистраци
+                if($scope.pageStore.registrationData){
+                    if ($scope.pageStore.registrationData.type == "Other"){
+                        $scope.tabOTHER.couple = $scope.pageStore.registrationData.couple;
+                        $scope.tabOTHER.formCouple.next();
+                        $scope.pageStore.registrationData = null;
+                    }
+                }
             },
             function(data, status, headers, config){
                 $scope.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
@@ -1782,7 +1800,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         $scope.form_otherCoupleData.$setPristine();
         $scope.tabOTHER.formCouple.btnRegistrationVisible = false;
         $scope.tabOTHER.formSingle.btnRegistrationVisible = false;
-        $scope.tabOTHER.couple = {};
+        $scope.tabOTHER.couple = {man:{}, woman: {}, otherInfo: {country: {id: 176}}}; // 176 - Russia
         $scope.tabOTHER.athlete = null;
         $scope.tabOTHER.formSingle.btnBackVisible = false;
         $scope.tabOTHER.formSingle.btnNextVisible = true;
@@ -2251,6 +2269,31 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     };
 
 
+    $scope.tabOTHER.onChangeCategory = function(partnerGender){
+        var manCategory = $scope.tabOTHER.couple.man.category;
+        var womanCategory = $scope.tabOTHER.couple.woman.category;
+
+        if (partnerGender == "male"){
+            if (manCategory == "Pro"){
+                womanCategory = "Am";
+            }
+            else if (manCategory == "Am"){
+                womanCategory = "Pro";
+            }
+        }
+        else if (partnerGender == "female"){
+            if (womanCategory == "Pro"){
+                manCategory = "Am";
+            }
+            else if (womanCategory == "Am"){
+                manCategory = "Pro";
+            }
+        }
+
+        $scope.tabOTHER.couple.man.category = manCategory;
+        $scope.tabOTHER.couple.woman.category = womanCategory;
+    };
+
     // ===========================================================================================================================================
     // Confirm Dialog                                                                                                               Confirm Dialog
     // ===========================================================================================================================================
@@ -2347,8 +2390,9 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     $scope.init();  
     $scope.loadTournament($routeParams.tournamentId);
     $scope.loadCountries();
-        
-   $scope.$on('$destroy', function() {
+
+
+    $scope.$on('$destroy', function() {
         // Make sure that the interval is destroyed too
         $interval.cancel(intervalForTable);
     });
@@ -3670,10 +3714,10 @@ servicesModule.factory('CompetitionSrvc', function(RESTSrvc) {
         }, 
         getDates: function(tournamentId){
 	        return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/tournament/'+tournamentId+'/competition/date'});
-	    },
-	    getWDSFByFilter: function(countryId, date){
-	        return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/competitionwdsf/country/'+countryId+'/date/' + date});
-	    },
+        },
+        getWDSFByFilter: function(countryId, date){
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/competitionwdsf/country/'+countryId+'/date/' + date});
+        },
         save: function(tournamentId, data){
             return RESTSrvc.getPromise({method: 'POST', url: AppSettings.admin + '/tournament/'+tournamentId+'/competition', data: data});
         },
@@ -4075,7 +4119,11 @@ servicesModule.factory('ReportSrvc', function($cookies, $window) {
     	tournamentPayers: function(trnId){
     		var lang = $cookies.lang ? $cookies.lang.substring(0,2) : 'ru';
             $window.open(AppSettings.admin + '/report/' + lang + '/tournament/' + trnId  + '/payer','_blank');
-    	}
+    	},
+        tournamentCompetitions: function(trnId){
+            var lang = $cookies.lang ? $cookies.lang.substring(0,2) : 'ru';
+            $window.open(AppSettings.user + '/report/' + lang + '/tournament/' + trnId  + '/competition','_blank');
+        },
     }
 });
   
@@ -4131,12 +4179,18 @@ servicesModule.factory('UtilsSrvc', function($dialog, $filter) {
             };
             return indexes;
         },
-        getValidDate: function(str){
-            var date = new Date(str);
-            if (isNaN(date))
-                return "";
-                
-            return $filter('date')(date, 'yyyy-MM-dd');
+        getValidDate: function(value){
+			var validDate = '';
+			
+			if (value instanceof Date){
+				validDate = $filter('date')(value, 'y-MM-dd')
+			}
+			else if (isNaN(new Date(value)) == false && value.length <= 10){
+				validDate = value;
+			}
+			
+			console.log(value, validDate);
+			return validDate;
         },
         getPropertyValue: function (item, propertyStr, defaultValue){
             var value;
@@ -5136,7 +5190,8 @@ localizationModule.constant('DanceDictionary', {
         'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
         'на момент регистрации.' : 'at the time of registration.',
         'Выберите номинации' : 'Select competitions',
-        'Класс ST, LA' : 'ST, LA class'
+        'Класс ST, LA' : 'ST, LA class',
+        'Оплата отключена' : 'Payment is disabled'
 
 
 
@@ -5146,6 +5201,7 @@ localizationModule.constant('DanceDictionary', {
   toRussian: {
   },
   toDeutsch: {
+        'Оплата отключена' : 'Die Zahlung ist deaktiviert',
         'Зарегистрировать ещё группы': 'Registrieren Mehr Gruppe',
         'Регистрация выполнена.': 'Die Registrierung ist abgeschlossen.',
         'Регистрация не выполнена.': 'Registrierung fehlgeschlagen.',
@@ -5443,6 +5499,7 @@ localizationModule.constant('DanceDictionary', {
 
   },
   toItalian: {
+    'Оплата отключена' : 'Il pagamento è disattivato',
     'Зарегистрировать ещё группы': 'Registrati altro gruppo',
     'Регистрация выполнена.': 'La registrazione è completa.',
     'Регистрация не выполнена.': 'Registrazione fallita.',

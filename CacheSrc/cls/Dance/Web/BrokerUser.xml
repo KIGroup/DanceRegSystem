@@ -137,6 +137,9 @@ Public REST URLs</Description>
 <!-- Report. All participants -->
 <Route Method="GET" Url="/report/:lang/tournament/:trnId/code/:code/payer" Call="Dance.Web.ReportTournamentPayers:GetFileByAccessCode"/>    
 
+<!-- Report. All participants -->
+<Route Method="GET" Url="/report/:lang/tournament/:trnId/competition" Call="Dance.Web.ReportTournamentCompetitions:GetFile"/> 
+
 <!-- Get all competition regions -->
 <Route Method="GET" Url="/competition/region" Call="Dance.Web.JsonUser:GetCompetitionRegions"/>    
 

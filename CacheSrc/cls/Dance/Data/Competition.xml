@@ -83,6 +83,7 @@ Competition in the tournament, has participants</Description>
 
 <Property name="ParticipantsCount">
 <Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
 </Property>
 
 <Property name="PaymentsCountCalc">
@@ -94,6 +95,7 @@ Competition in the tournament, has participants</Description>
 
 <Property name="PaymentsCount">
 <Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
 </Property>
 
 <Property name="IsActive">

@@ -189,7 +189,9 @@
             }
             
             w:(isTrace) !,"Create participant "_prtClassName
-            set participant = $CLASSMETHOD(prtClassName, "Create", ##class(Dance.Data.Recorder).GetSystemRecorder(), competition, prtObject.ConvertToProxyObject(), .st)
+            set prtObjectProxy = prtObject.ConvertToProxyObject()
+            set prtObjectProxy.withoutCheckClubs = 1   
+            set participant = $CLASSMETHOD(prtClassName, "Create", ##class(Dance.Data.Recorder).GetSystemRecorder(), competition, prtObjectProxy, .st)
             $$$THROWONERROR(st, st)
         }
         else {

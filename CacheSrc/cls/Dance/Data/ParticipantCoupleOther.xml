@@ -30,6 +30,13 @@
 <Parameter name="MAXLEN" value="1000"/>
 </Property>
 
+<Property name="ManCategory">
+<Description>
+Категория партнера</Description>
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",Pro,Am"/>
+</Property>
+
 <Property name="ManDOB">
 <Description>
 ДР партнера</Description>
@@ -62,6 +69,13 @@
 <Parameter name="FORMAT" value="3"/>
 </Property>
 
+<Property name="WomanCategory">
+<Description>
+Категория партнерши</Description>
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",Pro,Am"/>
+</Property>
+
 <Index name="CoupleKeyIdx">
 <Properties>CoupleKey</Properties>
 </Index>
@@ -80,12 +94,14 @@
     set proxy.couple.man.lastName = ..ManLastName
     set proxy.couple.man.firstName = ..ManFirstName
     set proxy.couple.man.dob = $ZD(..ManDOB, 3)
+    set proxy.couple.man.category = ..ManCategory
     
     set proxy.couple.woman = ##class(%ZEN.proxyObject).%New()
     set proxy.couple.woman.gender = "Female"
     set proxy.couple.woman.lastName = ..WomanLastName
     set proxy.couple.woman.firstName = ..WomanFirstName
     set proxy.couple.woman.dob = $ZD(..WomanDOB, 3)
+    set proxy.couple.woman.category = ..WomanCategory
     
     set proxy.couple.otherInfo = ##class(%ZEN.proxyObject).%New()
     set proxy.couple.otherInfo.country = ..Country.ConvertToProxyObject()
@@ -123,10 +139,12 @@
     set obj.ManLastName = couple.man.lastName
     set obj.ManFirstName = couple.man.firstName
     set obj.ManDOB = $ZDH(couple.man.dob, 3)
+    set obj.ManCategory = couple.man.category
     
     set obj.WomanLastName = couple.woman.lastName
     set obj.WomanFirstName = couple.woman.firstName
     set obj.WomanDOB = $ZDH(couple.woman.dob, 3)
+    set obj.WomanCategory = couple.woman.category
     
     set obj.CoupleKey = couple.key  
     
@@ -217,6 +235,12 @@
 </Value>
 <Value name="7">
 <Value>WomanDOB</Value>
+</Value>
+<Value name="8">
+<Value>ManCategory</Value>
+</Value>
+<Value name="9">
+<Value>WomanCategory</Value>
 </Value>
 </Data>
 </Storage>

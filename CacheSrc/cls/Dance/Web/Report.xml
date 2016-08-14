@@ -216,56 +216,6 @@
 ]]></Implementation>
 </Method>
 
-<UDLText name="T">
-<Content><![CDATA[
-/* old
-ClassMethod GetReportDataCoupleUDSR(trnId As %String) As %ListOfObjects
-{
-	set list = ##class(%ListOfObjects).%New()
-	
-	&sql(DECLARE PrtUDSRCur CURSOR FOR 
-	 	 SELECT DISTINCT Couple
-	 	 FROM Dance_Data.ParticipantCoupleUDSR
-	 	 WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND IsActive = 1
-	 	 ORDER BY FullName)	
-	
-	&sql(OPEN PrtUDSRCur)
-	for  
-	{	
-		&sql(FETCH PrtUDSRCur INTO :coupleId) 
-		quit:(SQLCODE '= 0)
-		
-		set proxy = ##class(%ZEN.proxyObject).%New()
-		set proxy.couple = ##class(Dance.Data.CoupleUDSR).%OpenId(coupleId).ConvertToProxyObject()
-		set proxy.competitions = ""
-		
-		&sql(DECLARE CmpCplUDSRCur CURSOR FOR 
-	 	 	 SELECT Competition->IdExternal
-	 	 	 FROM Dance_Data.ParticipantCoupleUDSR
-	 	 	 WHERE Competition->Tournament = :trnId AND Competition->IsActive = 1 AND Couple = :coupleId 
-	 	 	 ORDER BY Competition->StartDate)	
-		&sql(OPEN CmpCplUDSRCur)
-		for  
-		{	
-			&sql(FETCH CmpCplUDSRCur INTO :cmpId) 
-			quit:(SQLCODE '= 0)
-			
-			set proxy.competitions = proxy.competitions_","_cmpId
-		}
-		&sql(CLOSE CmpCplUDSRCur)
-		
-		set proxy.competitions = $E(proxy.competitions, 2, *)
-		do list.Insert(proxy)
-	}
-	
-	&sql(CLOSE PrtUDSRCur)
-	
-	quit list
-}
-*/
-]]></Content>
-</UDLText>
-
 <Method name="GetReportDataCoupleWDSF">
 <ClassMethod>1</ClassMethod>
 <FormalSpec>trnId:%String</FormalSpec>

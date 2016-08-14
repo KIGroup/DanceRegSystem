@@ -135,12 +135,14 @@ Tournaments</Description>
 <Description>
 Количество участников в турнире</Description>
 <Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
 </Property>
 
 <Property name="ParticipantsUniqueCount">
 <Description>
 Количестов уникальных участников в турнире</Description>
 <Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
 </Property>
 
 <Property name="PaymentsCountCalc">
@@ -165,12 +167,14 @@ Tournaments</Description>
 <Description>
 Количество платежей</Description>
 <Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
 </Property>
 
 <Property name="PaymentsUniqueCount">
 <Description>
 Количестов платежей от уникальнх участников</Description>
 <Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
 </Property>
 
 <Property name="Competitions">
