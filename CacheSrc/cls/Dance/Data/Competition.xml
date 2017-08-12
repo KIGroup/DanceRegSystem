@@ -125,12 +125,20 @@ Competition in the tournament, has participants</Description>
 
 <Property name="IsInternational">
 <Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
 </Property>
 
 <Property name="IsClosed">
 <Type>%Boolean</Type>
 <InitialExpression>0</InitialExpression>
 <Required>1</Required>
+</Property>
+
+<Property name="UDSRMaxNumber">
+<Description>
+Максимальный допустимый номер СТСР</Description>
+<Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
 </Property>
 
 <Index name="IsActiveIndex">
@@ -152,6 +160,8 @@ Competition in the tournament, has participants</Description>
     set proxy.startTime = $e(##class(%Library.Time).LogicalToDisplay(..StartTime), 1, 5)
     set proxy.price = ..Price
     set proxy.limit = ..Limit
+    set proxy.udsrMaxNumber = ..UDSRMaxNumber
+    set proxy.udsrMaxNumberChecked = ..UDSRMaxNumber > 0
        
     
     if (params.loadTournament){
@@ -181,6 +191,11 @@ Competition in the tournament, has participants</Description>
     set proxy.dancerClasses = ##class(%ListOfObjects).%New()
     
     if (params.loadDancerClasses){
+	    set totalClassCount = 0
+		// 7 - "H" - not valid
+	    &sql(SELECT COUNT(ID) INTO :totalClassCount FROM Dance_Data.DancerClass WHERE Code <> '7')
+	    set proxy.isForAllDancerClasses = (..DancerClasses.Count() = totalClassCount) || (..DancerClasses.Count() > totalClassCount)
+	    
         set dcKey = ""
         for i=1:1:..DancerClasses.Count(){
             set dcKey = ..DancerClasses.Next(dcKey)
@@ -270,7 +285,6 @@ Create or update competition</Description>
         set cmp.WDSF = $$$NULLOREF
     }
     
-    set cmp.IsInternational = data.isInternational
     set cmp.IsClosed = data.isClosed = 1
         
     set cmp.Discipline = ##class(Dance.Data.Discipline).%OpenId(data.discipline.id)
@@ -286,6 +300,19 @@ Create or update competition</Description>
       
     set cmp.IdInternal = data.idInternal
     set cmp.IdExternal = data.idExternal
+    if (data.udsrMaxNumberChecked = 1){
+    	set cmp.UDSRMaxNumber = 1000
+    }
+    else{
+	    set cmp.UDSRMaxNumber = 0
+    }
+    
+    if (cmp.Discipline.Code = "SD") || (cmp.Discipline.Code = "MD"){
+    	set cmp.IsInternational = 1
+    }
+    else{
+    	set cmp.IsInternational = data.isInternational = 1
+    }
         
     // DancerClasses array
     do cmp.DancerClasses.Clear()
@@ -562,6 +589,9 @@ Payments</Description>
 </Value>
 <Value name="24">
 <Value>PaymentsCount</Value>
+</Value>
+<Value name="25">
+<Value>UDSRMaxNumber</Value>
 </Value>
 </Data>
 <Data name="DancerClasses">

@@ -146,6 +146,12 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                           {name:'ageCategory.name'},
                           {name:'dancerClassesString', calculate: function(item){
                                                             item.dancerClassesString = '';
+
+                                                            if (item.isForAllDancerClasses){
+                                                                item.dancerClassesString = $filter('localize')('Все классы');
+                                                                return;
+                                                            }
+
                                                             for(var i=0; i < item.dancerClasses.length; i++){
                                                                 item.dancerClassesString = item.dancerClassesString + ', ' + item.dancerClasses[i].name;
                                                             }

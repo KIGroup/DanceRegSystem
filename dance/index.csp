@@ -55,7 +55,7 @@
     
   </head>
 
-  <body id="bodyDiv">
+  <body id="bodyDiv" style="min-width=1200px;">
     <div id="divLoader" style="text-align: center;">
         <i class="fa fa-spinner fa-spin fa-2x" style="position: absolute; top: 70px; color: rgb(204, 204, 204);"></i>
     </div>

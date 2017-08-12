@@ -84,6 +84,8 @@ controllersModule.controller('ImportCompetitionsCtrl', function($scope, $window,
                 $scope.page.competitionTable.itemsExistedTotal = 0;
                 
                 for(var i=0; i < data.items.length; i++){
+                    data.items[i].isInternational = data.items[i].isInternational == 1;
+                    
                     if (data.items[i].info && data.items[i].info.isExisted){
                         data.items[i].rowClass = "existsItem";
                         $scope.page.competitionTable.itemsExistedTotal++;

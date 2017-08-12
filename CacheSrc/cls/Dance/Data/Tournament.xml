@@ -248,6 +248,12 @@ Tournaments</Description>
 <Required>1</Required>
 </Property>
 
+<Property name="RegOtherTabCaption">
+<Description>
+Заголовок вкладки для регистрации всяких прочих пар</Description>
+<Type>Dance.Data.Localization.LText</Type>
+</Property>
+
 <Property name="Currency">
 <Description>
 Валюта</Description>
@@ -287,6 +293,13 @@ Tournaments</Description>
     set proxy.isContainsLimit = ..IsContainsLimit
     set proxy.startDate = $ZDATE(..StartDate, 3)
     set proxy.endDate = $ZDATE(..EndDate, 3)
+    
+    if $ISOBJECT(..RegOtherTabCaption){
+    	set proxy.regOtherTabCaption = ..RegOtherTabCaption.Value
+    }
+    else{
+	    set proxy.regOtherTabCaption = "Регистрация других участников"
+    }
     
     set proxy.currency = ##class(%ZEN.proxyObject).%New()
     if $ISOBJECT(..Currency){
@@ -403,6 +416,13 @@ Create or Update object</Description>
         set trn.OrganizerInfo.Value = data.organizer.info
         set trn.InfoUrl.Value = data.infoUrl
         set trn.AdditionInfoUrl.Value = data.addInfoUrl
+    }
+    
+    if $ISOBJECT(trn.RegOtherTabCaption){
+    	set trn.RegOtherTabCaption.Value = data.regOtherTabCaption
+    }
+    else{
+        set trn.RegOtherTabCaption = ##class(Dance.Data.Localization.LText).Create(data.regOtherTabCaption)
     }
         
     set trn.IdInternal = data.idInternal
@@ -834,6 +854,9 @@ Check update privilege</Description>
 </Value>
 <Value name="35">
 <Value>PaymentSystem</Value>
+</Value>
+<Value name="36">
+<Value>RegOtherTabCaption</Value>
 </Value>
 </Data>
 </Storage>

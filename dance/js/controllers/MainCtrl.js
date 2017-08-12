@@ -34,7 +34,7 @@ controllersModule.controller('MainCtrl', function($scope, $cookies, $filter, $wi
                                       childrens: {tournaments : {id: 'import-tournaments' , url: '#/import/tournaments' , parentId: 'import', name: $filter('localize')('Турниры')},
                                                   competitions: {id: 'import-competitions', url: '#/import/competitions', parentId: 'import', name: $filter('localize')('Группы')},
                                                   tickets     : {id: 'import-tickets'     , url: '#/import/tickets'     , parentId: 'import', name: $filter('localize')('Tickets')},
-                                                  persons     : {id: 'import-persons'     , url: '#/import/persons'     , parentId: 'import', name: $filter('localize')('Участники СТСР')}}},
+                                                  persons     : {id: 'import-persons'     , url: '#/import/persons'     , parentId: 'import', name: $filter('localize')('Участники ФТСАРР')}}},
                          searchprt: {id: 'searchprt', url: '#/search/participants', name: $filter('localize')('Поиск регистрации')},
                          feedback: {id: 'feedback', url: 'http://regdance.reformal.ru/', name: $filter('localize')('Задать вопрос')}
                         }; 

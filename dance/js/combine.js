@@ -1,4 +1,4 @@
-// Combine date time is 14.08.2016 15:56:55
+// Combine date time is 28.07.2017 0:21:50
 
 
 // ===============================================================================================================================
@@ -40,7 +40,7 @@ controllersModule.controller('MainCtrl', function($scope, $cookies, $filter, $wi
                                       childrens: {tournaments : {id: 'import-tournaments' , url: '#/import/tournaments' , parentId: 'import', name: $filter('localize')('Турниры')},
                                                   competitions: {id: 'import-competitions', url: '#/import/competitions', parentId: 'import', name: $filter('localize')('Группы')},
                                                   tickets     : {id: 'import-tickets'     , url: '#/import/tickets'     , parentId: 'import', name: $filter('localize')('Tickets')},
-                                                  persons     : {id: 'import-persons'     , url: '#/import/persons'     , parentId: 'import', name: $filter('localize')('Участники СТСР')}}},
+                                                  persons     : {id: 'import-persons'     , url: '#/import/persons'     , parentId: 'import', name: $filter('localize')('Участники ФТСАРР')}}},
                          searchprt: {id: 'searchprt', url: '#/search/participants', name: $filter('localize')('Поиск регистрации')},
                          feedback: {id: 'feedback', url: 'http://regdance.reformal.ru/', name: $filter('localize')('Задать вопрос')}
                         }; 
@@ -366,6 +366,12 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                           {name:'ageCategory.name'},
                           {name:'dancerClassesString', calculate: function(item){
                                                             item.dancerClassesString = '';
+
+                                                            if (item.isForAllDancerClasses){
+                                                                item.dancerClassesString = $filter('localize')('Все классы');
+                                                                return;
+                                                            }
+
                                                             for(var i=0; i < item.dancerClasses.length; i++){
                                                                 item.dancerClassesString = item.dancerClassesString + ', ' + item.dancerClasses[i].name;
                                                             }
@@ -713,6 +719,12 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
                           {name:'dancerClassesString', getCssClass: getCssClassFuncForClosedCompetitions,
                                                     calculate: function(item){
                                                             item.dancerClassesString = '';
+
+                                                            if (item.isForAllDancerClasses){
+                                                                item.dancerClassesString = $filter('localize')('Все классы');
+                                                                return;
+                                                            }
+
                                                             for(var i=0; i < item.dancerClasses.length; i++){
                                                                 item.dancerClassesString = item.dancerClassesString + ', ' + item.dancerClasses[i].name;
                                                             }
@@ -1193,7 +1205,7 @@ controllersModule.controller('SearchParticipantsCtrl', function($scope, $routePa
         //  
         $scope.participantTable.columns = [ 
                           {name: 'Партнер / Партнерша', sqlName: 'Created', isSorted: true, isSortable: true, isDown: false, isSearched: true, isSearchable: true},
-                          {name: 'СТСР', sqlName: '-', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: false},                          
+                          {name: 'ФТСАРР', sqlName: '-', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: false},                          
                           {name: 'WDSF', sqlName: '-', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: false},                          
                           {name: 'Клуб / Город', sqlName: '-', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: true},
                           {name: 'Статус', sqlName: 'PaymentStatus', isSorted: false, isSortable: false, isDown: true, isSearched: false, isSearchable: false, captionStyle: {textAlign: 'center', width: '110px'}},
@@ -1369,6 +1381,7 @@ Registration
 ===========================================================================================*/
   
 controllersModule.controller('RegistrationCtrl', function($scope, $interval, $routeParams, $filter, LocationSrvc, UtilsSrvc, OtherSrvc, PersonSrvc, TournamentSrvc, CompetitionSrvc, RegistrationSrvc, ParticipantSrvc, CoupleSrvc){
+    $('#divTypeOfView').hide();
     $scope.menu.pages.selected = {};
     $scope.menu.shortMenu = true;
      
@@ -1464,6 +1477,12 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                           {name:'dancerClassesString', getCssClass: getCssClassFuncForClosedCompetitions,
                                 calculate: function(item){
                                     item.dancerClassesString = '';
+
+                                    if (item.isForAllDancerClasses){
+                                    	item.dancerClassesString = $filter('localize')('Все классы');
+                                    	return;
+                                    }
+
                                     for(var i=0; i < item.dancerClasses.length; i++){
                                         item.dancerClassesString = item.dancerClassesString + ', ' + item.dancerClasses[i].name;
                                     }
@@ -1496,6 +1515,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         $scope.competitionTable.selectedItems = [];
         $scope.competitionTable.multiSelectMode = true;
         $scope.competitionTable.forciblyUpdate = 0;
+        $scope.competitionTable.otherFilter = {};
 
         $scope.pageStore.registration.grid.tableShortView = $scope.pageStore.registration.grid.tableShortView == null ? true : $scope.pageStore.registration.grid.tableShortView;
         
@@ -1511,8 +1531,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     $scope.competitionTable.loadItems = function(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText){
         if (!$scope.tournament)
             return;
-         
-        $scope.competitionTable.items = [];
+        
         $scope.competitionTable.selectedItems = [];
         $scope.competitionTable.itemsStatus = $filter('localize')('Идет загрузка групп...');
 
@@ -1521,13 +1540,18 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
             tournamentId: $scope.tournament.id,
             convertParams: {
                 loadWDSF: true,
-                loadPaymentsCount: true
+                loadPaymentsCount: true,
+                loadDancerClasses: true,
+                loadAgeCategory: true
+            },
+            otherFilter: {
+                dancerClass: $scope.competitionTable.otherFilter.dancerClass
             }
         };
             
             
         if ($scope.pageStore.registration.grid.tableShortView){
-            $('#divTypeOfView').hide();
+            //$('#divTypeOfView').hide();
         }
         else{
             $('#divTableCmpButtons,#divTableCmpStatus').css('width', '100%');
@@ -1549,7 +1573,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                         $('#divTableCmpButtons,#divTableCmpStatus').css('width', tableWidth);
                         $('#divTypeOfView').show();
                     }
-                }, 100, 50);
+                }, 1, 100);
             }   
         };
         
@@ -1570,6 +1594,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                     afterLoad();
                 },
                 function(data, status, headers, config){
+                    $scope.competitionTable.items = [];
                     $scope.cmpAlert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
                     $scope.competitionTable.itemsStatus = $filter('localize')('Произошла ошибка при загрузке групп.');
                 });
@@ -1587,6 +1612,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                     afterLoad();
                 },
                 function(data, status, headers, config){
+                    $scope.competitionTable.items = [];
                     $scope.cmpAlert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
                     $scope.competitionTable.itemsStatus = $filter('localize')('Произошла ошибка при загрузке групп.');
                 });
@@ -1594,7 +1620,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     };
 
     $scope.competitionTable.setHiddenCoulumns = function(value){
-        var columns = ["Discipline", "AgeGroup", "Class", "Type", "Limit"];
+        var columns = ["Discipline", "Type", "Limit"];
         for(var n=0; n < $scope.competitionTable.columns.length; n++){
             var curColumn = $scope.competitionTable.columns[n];
             if (columns.indexOf(curColumn.id) != -1)
@@ -1671,14 +1697,6 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 $scope.tabWDSF.visible = data.tabWDSFAllowed == 1;
                 $scope.tabOTHER.visible = data.tabOtherAllowed == 1;
                 
-                if ($scope.tournament.rank.code == 'Pro-Am'){
-                    $scope.tabOTHER.heading = $filter('localize')('Регистрация Pro-Am');
-                }
-                else{
-                    $scope.tabOTHER.heading = $filter('localize')('Регистрация других участников');   
-                }
-
-                
                 if ($routeParams.typeCode){
                     if ($routeParams.typeCode == 'udsr'){
                         $scope.tabUDSR.select();
@@ -1720,6 +1738,8 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                         $scope.pageStore.registrationData = null;
                     }
                 }
+
+                $scope.loadTournamentDancerClasses($scope.tournament.id);
             },
             function(data, status, headers, config){
                 $scope.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
@@ -1758,6 +1778,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
             case 'OTHER':
                 filter +=  $scope.tabOTHER.couple ? ('&coupleKey=' + $scope.tabOTHER.couple.key) : '';
                 filter +=  $scope.tabOTHER.athlete ? ('&athleteKey=' + $scope.tabOTHER.athlete.key) : '';
+                filter = filter.replace(/\+/g, '%2B');
                 break;
         }
 
@@ -1773,6 +1794,13 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     };
 
 
+    $scope.loadTournamentDancerClasses = function(trnId){
+        $scope.dancerClasses = [
+            {id: 9, code: '', name: 'Bronze Open'},
+            {id: 10, code: '', name: 'Silver Open'},
+            {id: 11, code: '', name: 'Gold Open'}
+        ];
+    };
 
     // Clear current tab for new registration
     $scope.clearAllForms = function(){
@@ -1811,6 +1839,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
 
         $scope.competitionTable.avialableMode = false;
         $scope.competitionTable.selectable = false;
+        $scope.competitionTable.otherFilter.dancerClass = null;
         $scope.competitionTable.refresh();  
     };
 
@@ -2535,7 +2564,7 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
                                     console.log('UDSR Couple is loaded');
                                     $scope.couple = data;
                                     $scope.type = "UDSR";
-                                    $scope.typeName = $filter('localize')('СТСР') + ' ';
+                                    $scope.typeName = $filter('localize')('ФТСАРР') + ' ';
                                 },
                                 function(data, status, headers, config){
                                     console.log('UDSR Couple is not loaded ', data);
@@ -2552,7 +2581,7 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
                             break;
 
                         case 'UDSR':
-                            $scope.typeName = $filter('localize')('СТСР') + ' ';
+                            $scope.typeName = $filter('localize')('ФТСАРР') + ' ';
                             break;
                         
                         default:
@@ -2723,6 +2752,30 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
         return '';
     };
     
+    $scope.competitionTable.remove = function(item){
+        function remove(){
+            ParticipantSrvc.removeById(item.id).then(
+                function(data){
+                    $scope.competitionTable.selectedItems = [];
+                    $scope.competitionTable.refresh();
+                    $scope.alert = UtilsSrvc.getAlert('Готово!', 'Участник удален.', 'success', true);
+                },
+                function(data, status, headers, config){
+                    $scope.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
+                });  
+        };
+
+        var msg = '';
+        if (item.couple){
+            msg = item.couple.man.lastName + ' - ' + item.couple.woman.lastName;
+        }
+        else{
+            msg = item.athlete.lastName + item.athlete.firstName;   
+        }
+
+        UtilsSrvc.openMessageBox('Удалить пару / участника из группы?', msg + ', ' + item.competition.name, remove);    
+    };
+
     $scope.init();
     $scope.loadCountries();
     $scope.loadTournament($routeParams.tournamentId);
@@ -2733,7 +2786,7 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
 // File: 9. controllers/CompetitionCtrl.js
 // ===============================================================================================================================
 'use strict';
-//dedddввd
+//dedddвв
 
 /*===========================================================================================
 Competition: create or update data 
@@ -2837,6 +2890,7 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
                 $scope.page.competition.isInternational = $scope.page.competition.isInternational == 1;
                 $scope.page.competition.isClosed = $scope.page.competition.isClosed == 1;
                 $scope.page.competition.isWDSF = $scope.page.competition.isWDSF == 1;
+                $scope.page.competition.udsrMaxNumberChecked = $scope.page.competition.udsrMaxNumberChecked == 1;
                 $scope.page.loadDancerClasses();
                 $scope.loadCompetitionRegions();
             },
@@ -3344,6 +3398,8 @@ controllersModule.controller('ImportCompetitionsCtrl', function($scope, $window,
                 $scope.page.competitionTable.itemsExistedTotal = 0;
                 
                 for(var i=0; i < data.items.length; i++){
+                    data.items[i].isInternational = data.items[i].isInternational == 1;
+                    
                     if (data.items[i].info && data.items[i].info.isExisted){
                         data.items[i].rowClass = "existsItem";
                         $scope.page.competitionTable.itemsExistedTotal++;
@@ -4967,9 +5023,9 @@ localizationModule.constant('DanceDictionary', {
         'Номер WDSF' : 'Number WDSF',
         'Номер партнера' : 'Male number',
         'Номер партнерши' : 'Female number',
-        'Номер СТСР' : 'Number UDSR',
+        'Номер ФТСАРР' : 'Number RFDARR',
         'Номера классификационных книжек WDSF' : 'Numbers of WDSF classification books',
-        'Номера классификационных книжек СТСР' : 'Numbers of UDSR classification books',
+        'Номера классификационных книжек ФТСАРР' : 'Numbers of RFDARR classification books',
         'Обратная связь' : 'Feedback',
         'Оплатить на danceplat.ru' : 'Pay on danceplat.ru',
         'Организатор' : 'Organizer',
@@ -5003,12 +5059,12 @@ localizationModule.constant('DanceDictionary', {
         'Регистрация WDSF' : 'Registration for WDSF',
         'Регистрация других участников' : 'Registration for other participants',
         'Регистрация осуществляется по WDSF номерам. Поиск участников идет по базе данных "World DanceSport Federation".' : 'Registration is carried by WDSF numbers. Find participants is the database "World DanceSport Federation".',
-        'Регистрация осуществляется по номерам классификационных книжек и на основании информации Базы данных спортсменов "Союза танцевального спорта России" на момент регистрации.' : 'Registration is carried by numbers and classification of books based on the information Databases athletes "Union DanceSport of Russia" at the time of registration.',
-        'Регистрация СТСР' : 'Registration for UDSR',
+        'Регистрация осуществляется по номерам классификационных книжек и на основании информации Базы данных спортсменов "ФТСАРР" на момент регистрации.' : 'Registration is carried by numbers and classification of books based on the information Databases athletes "RFDARR" at the time of registration.',
+        'Регистрация ФТСАРР' : 'Registration for RFDARR',
         'Регистрация участников »' : 'Registration of participants »',
         'Регистрация участников на турнир' : 'Registration of participants at the tournament',
         'Регистрация участников по WDSF номерам' : 'Registration of participants at WDSF numbers',
-        'Регистрация участников по СТСР номерам' : 'Registration of participants at UDSR numbers',
+        'Регистрация участников по ФТСАРР номерам' : 'Registration of participants at RFDARR numbers',
         'Режим' : 'Mode',
         'Система регистрации' : 'Registration system',
         'Скрывать дополнительные столбцы' : 'Hide additional columns',
@@ -5034,7 +5090,7 @@ localizationModule.constant('DanceDictionary', {
         'Удалить' : 'Remove',
         'Участник' : 'Participant',
         'Участники' : 'Participants',
-        'Участники СТСР' : 'UDSR Participants',
+        'Участники ФТСАРР' : 'RFDARR Participants',
         'Фамилия' : 'Last name',
         'Фамилия, Имя' : 'Full name',
         'Фильтр: Ранг турнира' : 'Filter: Rank of tournament',
@@ -5095,11 +5151,11 @@ localizationModule.constant('DanceDictionary', {
         'Выберите файл' : 'Select file',
         'Статистика' : 'Statistics',
         'Спортсменов в БД' : 'Total count athletes in database',
-        'Спортсменов СТСР в БД' : 'Total count UDSR athletes in database',
+        'Спортсменов ФТСАРР в БД' : 'Total count RFDARR athletes in database',
         'Спортсменов WDSF в БД' : 'Total count WDSF athletes in database',
         'Других спортсменов в БД' : 'Total count other athletes in database',
-        'Последнее обновление спортсменов СТСР было' : 'UDSR athletes last updated',
-        'Доступен СТСР':'Available for UDSR',
+        'Последнее обновление спортсменов ФТСАРР было' : 'RFDARR athletes last updated',
+        'Доступен ФТСАРР':'Available for RFDARR',
         'Доступен WDSF':'Available for WDSF',
         'Доступен другим':'Available for others',
         
@@ -5124,7 +5180,7 @@ localizationModule.constant('DanceDictionary', {
         'Группы пары •' : 'Competitions of couple •',
         'участника' : 'participant',
         'пары' : 'couple',
-        'СТСР' : 'UDSR',
+        'ФТСАРР' : 'RFDARR',
         'Перейти' : 'Watch',
         'Фамилия спортсмена' : 'Last name',
         'Вы можете найти все группы, в которых зарегистрирован спортсмен. Поиск по всем турнирам.' : 'You can find all competitions in which the registered athlete. Search All tournaments.',
@@ -5168,7 +5224,7 @@ localizationModule.constant('DanceDictionary', {
         'Перейдите по ссылке для получения подробной информации' : 'Click here for more information',
         'ВАЖНОЕ ОБЪЯВЛЕНИЕ' : 'Important announcement',
         'Зарегистрировать ещё участников »' : 'Register more participants »',
-        'Введите номера классификационных книжек СТСР' : 'Enter the number of UDSR classification books',
+        'Введите номера классификационных книжек ФТСАРР' : 'Enter the number of RFDARR classification books',
         'Введите номера классификационных книжек WDSF' : 'Enter the number of WDSF classification books',
         'Регистрация осуществляется по MIN номерам WDSF. Поиск участников идет по базе данных "World DanceSport Federation".' : 'Registration is performed by MIN numbers WDSF. Search participants in the database of "World DanceSport Federation".',
         'Тренер. Фамилия, Имя' : 'Trainer. Full name',
@@ -5185,13 +5241,14 @@ localizationModule.constant('DanceDictionary', {
         'Для некоторых групп могут быть введены ограничения. "Доступно мест" это "Лимит" минус "Количество проданных билетов".' : 'Some competition may be restrictions. "Available" this "Limit" minus "Number of tickets sold."',
         'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.' : 'Competitions in which there is no available tickets (0) closed to registration and ticket sales.',
         'Осталось мест' : 'Available',
-        'Перейти на сайт СТСР' : 'Go to UDSR site',
+        'Перейти на сайт ФТСАРР' : 'Go to RFDARR site',
         'Регистрация осуществляется по номерам классификационных книжек и на основании информации' : 'Registration is carried by numbers and classification of books based on the information',
-        'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
+        'Базы данных спортсменов "ФТСАРР"' : 'Databases athletes "RFDARR"',
         'на момент регистрации.' : 'at the time of registration.',
         'Выберите номинации' : 'Select competitions',
         'Класс ST, LA' : 'ST, LA class',
-        'Оплата отключена' : 'Payment is disabled'
+        'Оплата отключена' : 'Payment is disabled',
+        'Все классы' : 'All classes'
 
 
 
@@ -5299,9 +5356,9 @@ localizationModule.constant('DanceDictionary', {
         'Номер WDSF' : 'Numero WDSF',
         'Номер партнера' : 'Numero männer',
         'Номер партнерши' : 'Numero frau',
-        'Номер СТСР' : 'Numero UDSR',
+        'Номер ФТСАРР' : 'Numero RFDARR',
         'Номера классификационных книжек WDSF' : 'Nicht einstufung der bücher WDSF',
-        'Номера классификационных книжек СТСР' : 'Nicht Einstufung Bücher UDSR',
+        'Номера классификационных книжек ФТСАРР' : 'Nicht Einstufung Bücher RFDARR',
         'Обзор' : 'Überblick',
         'Обратная связь' : 'Feedback',
         'Оплатить на danceplat.ru' : 'Zahlen Sie danceplat.ru',
@@ -5335,7 +5392,7 @@ localizationModule.constant('DanceDictionary', {
         'Поля отмеченные * обязательны для заполнения.' : 'Mit * gekennzeichnete felder sind pflichtfelder.',
         'После завершения регистрации произойдет передача данных в danceplat.ru, по прошествии некоторого времени после завершения оплаты ваши данные отобразятся в регистрационных списках.' : 'Nach abschluss der registrierung der datenübertragung auftreten danceplat.ru, für einige zeit nach dem abschluss ihrer zahlungsdaten in den meldelisten angezeigt.',
         'После завершения регистрации произойдет переход на страницу с группами пары, там вы сможете выбрать необходимые группы и перейти к оплате.' : 'Nach abschluss der registrierung der datenübertragung auftreten danceplat.ru, für einige zeit nach dem abschluss ihrer zahlungsdaten in den meldelisten angezeigt',
-        'Последнее обновление спортсменов СТСР было' : 'Letztes update war UDSR athleten',
+        'Последнее обновление спортсменов ФТСАРР было' : 'Letztes update war RFDARR athleten',
         'Последняя страница' : 'Letzte seite',
         'Лимит' : 'Limit',
         'Предыдущая страница' : 'Vorherige seite',
@@ -5349,12 +5406,12 @@ localizationModule.constant('DanceDictionary', {
         'Регистрация осуществляется по WDSF номерам. Поиск участников идет по базе данных "World DanceSport Federation".' : 'Registrierung wird von WDSF-Nummer. Mitgliederbörse ist auf datenbank "World Dancesport Federation".',
         'Регистрация осуществляется по номерам классификационных книжек и на основании информации Базы данных спортсменов "Союза танцевального спорта России" на момент регистрации.' : 'Die Anmeldung erfolgt durch Zahlen und Klassifizierung der Bücher auf der Grundlage der Informationen vorgenommen, Datenbanken Athleten Union Dancesport Russland bei der Registrierung.',
         'Регистрация прошла успешно, на данной странице отображены все группы пары/участника в турнире.': 'Die registrierung ist erfolgreich, zeigt dieser seite alle paare gruppen / teilnehmer im turnier.',
-        'Регистрация СТСР' : 'Registrierung UDSR',
+        'Регистрация ФТСАРР' : 'Registrierung RFDARR',
         'Регистрация участников »' : 'Registrierung der Teilnehmer »',
         'Регистрация участников на турнир' : 'Registrierung für das turnier',
         'Регистрация участников невозможна! Статус турнира - "': 'Registrierung der teilnehmer ist nicht möglich! Cupstatus - "',
         'Регистрация участников по WDSF номерам' : 'Registrierung der teilnehmer an WDSF-Nummern',
-        'Регистрация участников по СТСР номерам' : 'Registrierung der teilnehmer an UDSR-Nummern',
+        'Регистрация участников по ФТСАРР номерам' : 'Registrierung der teilnehmer an RFDARR-Nummern',
         'Редактирование группы' : 'Bearbeiten einer gruppe',
         'Редактирование турнира' : 'Bearbeiten turnier',
         'Режим' : 'Modus',
@@ -5369,7 +5426,7 @@ localizationModule.constant('DanceDictionary', {
         'Список всех участников »' : 'Liste aller teilnehmer »',
         'Спортсменов WDSF в БД' : 'WDSF-Athleten in DB',
         'Спортсменов в БД' : 'Athleten in DB',
-        'Спортсменов СТСР в БД' : 'UDSR-Athleten in DB',
+        'Спортсменов ФТСАРР в БД' : 'RFDARR-Athleten in DB',
         'Справочники' : 'Verzeichnisse',
         'Ст: ' : 'St:',
         'Статистика' : 'Statistiken',
@@ -5389,7 +5446,7 @@ localizationModule.constant('DanceDictionary', {
         'Участник' : 'Party',
         'Участники' : 'Die teilnehmer',
         'Участники группы' : 'Gruppenmitglieder',
-        'Участники СТСР' : 'Teilnehmer UDSR',
+        'Участники ФТСАРР' : 'Teilnehmer RFDARR',
         'Фамилия' : 'Nachname',
         'Фамилия, Имя' : 'Nachname, Vorname',
         'Фильтр: Ранг турнира' : 'Filter: Rang turnier',
@@ -5435,7 +5492,7 @@ localizationModule.constant('DanceDictionary', {
         'Группы пары •' : 'Competitions of couple •',
         'участника' : 'participant',
         'пары' : 'couple',
-        'СТСР' : 'UDSR',
+        'ФТСАРР' : 'RFDARR',
         'Перейти' : 'Watch',
         'Фамилия спортсмена' : 'Last name',
         'Вы можете найти все группы, в которых зарегистрирован спортсмен. Поиск по всем турнирам.' : 'You can find all competitions in which the registered athlete. Search All tournaments.',
@@ -5471,7 +5528,7 @@ localizationModule.constant('DanceDictionary', {
         'Перейдите по ссылке для получения подробной информации' : 'Klicken Sie hier für weitere Informationen',
         'ВАЖНОЕ ОБЪЯВЛЕНИЕ' : 'Wichtige mitteilung',
         'Зарегистрировать ещё участников »' : 'Registrieren Sie sich mehr Teilnehmer »',
-        'Введите номера классификационных книжек СТСР' : 'Geben Sie die Nummer Einstufung Bücher UDSR',
+        'Введите номера классификационных книжек ФТСАРР' : 'Geben Sie die Nummer Einstufung Bücher RFDARR',
         'Введите номера классификационных книжек WDSF' : 'Geben Sie die Nummer Einstufung Bücher WDSF',
         'Регистрация осуществляется по MIN номерам WDSF. Поиск участников идет по базе данных "World DanceSport Federation".' : 'Die Anmeldung erfolgt durch MIN Zahlen WDSF getan. Suche Mitglieder ist die Datenbank "World Dance Sport Federation"',
         'Тренер. Фамилия, Имя' : 'Coach. Nachname Vorname',
@@ -5489,7 +5546,7 @@ localizationModule.constant('DanceDictionary', {
     'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.' : 'Competitions in which there is no available tickets (0) closed to registration and ticket sales.',
     'Осталось мест' : 'Available',
     
-    'Перейти на сайт СТСР' : 'Go to UDSR site',
+    'Перейти на сайт ФТСАРР' : 'Go to RFDARR site',
     'Регистрация осуществляется по номерам классификационных книжек и на основании информации' : 'Registration is carried by numbers and classification of books based on the information',
     'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
     'на момент регистрации.' : 'at the time of registration.',
@@ -5595,9 +5652,9 @@ localizationModule.constant('DanceDictionary', {
     'Номер WDSF' : 'Numero WDSF',
     'Номер партнера' : 'Numero Partner',
     'Номер партнерши' : 'Partner Number',
-    'Номер СТСР' : 'Numero STSR',
+    'Номер ФТСАРР' : 'Numero STSR',
     'Номера классификационных книжек WDSF' : 'Non classificazione dei libri WDSF',
-    'Номера классификационных книжек СТСР' : 'Non classificazione dei libri STSR',
+    'Номера классификационных книжек ФТСАРР' : 'Non classificazione dei libri STSR',
     'Обратная связь' : 'Retroazione',
     'Оплатить на danceplat.ru' : 'Pagare per danceplat.ru',
     'Организатор' : 'Organizzatore',
@@ -5632,11 +5689,11 @@ localizationModule.constant('DanceDictionary', {
     'Регистрация других участников' : 'Registrazione di altri partecipanti',
     'Регистрация осуществляется по WDSF номерам. Поиск участников идет по базе данных "World DanceSport Federation".' : 'La registrazione è fatto da numeri WDSF. Cerca Utenti è il database "World DanceSport Federazione".',
     'Регистрация осуществляется по номерам классификационных книжек и на основании информации Базы данных спортсменов "Союза танцевального спорта России" на момент регистрации.' : 'La registrazione è effettuata dal numero di libri e di classificazione in base alle informazioni Banche dati degli atleti dell\' Unione DanceSport Russia "al momento della registrazione.',
-    'Регистрация СТСР' : 'Registrati STSR',
+    'Регистрация ФТСАРР' : 'Registrati STSR',
     'Регистрация участников »' : 'Registrazione dei partecipanti "',
     'Регистрация участников на турнир' : 'L\'iscrizione al torneo',
     'Регистрация участников по WDSF номерам' : 'Registrazione dei partecipanti ai numeri WDSF',
-    'Регистрация участников по СТСР номерам' : 'Registrazione dei partecipanti per i numeri STSR',
+    'Регистрация участников по ФТСАРР номерам' : 'Registrazione dei partecipanti per i numeri STSR',
     'Режим' : 'Modo',
     'Система регистрации' : 'Sistema di registrazione',
     'Скрывать дополнительные столбцы' : 'Nascondi colonne aggiuntive',
@@ -5662,7 +5719,7 @@ localizationModule.constant('DanceDictionary', {
     'Удалить' : 'Rimuovere',
     'Участник' : 'Partito',
     'Участники' : 'Partecipanti',
-    'Участники СТСР' : 'Partecipanti STSR',
+    'Участники ФТСАРР' : 'Partecipanti STSR',
     'Фамилия' : 'Cognome',
     'Фамилия, Имя' : 'Cognome Nome',
     'Фильтр: Ранг турнира' : 'Filtro: Classifica torneo',
@@ -5719,11 +5776,11 @@ localizationModule.constant('DanceDictionary', {
     'Выберите файл' : 'Scegli Il File',
     'Статистика' : 'Statistica',
     'Спортсменов в БД' : 'Atleti nel database',
-    'Спортсменов СТСР в БД' : 'Atleti STSR nel database',
+    'Спортсменов ФТСАРР в БД' : 'Atleti STSR nel database',
     'Спортсменов WDSF в БД' : 'Atleti WDSF nel database',
     'Других спортсменов в БД' : 'Altri atleti nel database',
-    'Последнее обновление спортсменов СТСР было' : 'Ultimo aggiornamento era atleti STSR',
-    'Доступен СТСР' : 'Disponibile STSR',
+    'Последнее обновление спортсменов ФТСАРР было' : 'Ultimo aggiornamento era atleti STSR',
+    'Доступен ФТСАРР' : 'Disponibile STSR',
     'Доступен WDSF' : 'Disponibile WDSF',
     'Доступен другим' : 'Disponibile ad altri',
     'Поиск регистрации' : 'Ricerca registrazione',
@@ -5746,7 +5803,7 @@ localizationModule.constant('DanceDictionary', {
     'Группы пары •' : '• Gruppi coppie',
     'участника' : 'Membro',
     'пары' : 'vapore',
-    'СТСР' : 'STSR',
+    'ФТСАРР' : 'STSR',
     'Перейти' : 'Andare',
     'Фамилия спортсмена' : 'Atleta Cognome',
     'Вы можете найти все группы, в которых зарегистрирован спортсмен. Поиск по всем турнирам.' : 'Potete trovare tutti i gruppi in cui l\'atleta è stato registrato. Cerca in tutti i tornei.',
@@ -5790,7 +5847,7 @@ localizationModule.constant('DanceDictionary', {
     'Зарегистрировать ещё участников »' : 'Registrazione più membri »',
 
      
-    'Введите номера классификационных книжек СТСР' : 'Inserire il numero di libri di classificazione UDSR',
+    'Введите номера классификационных книжек ФТСАРР' : 'Inserire il numero di libri di classificazione RFDARR',
     'Введите номера классификационных книжек WDSF' : 'Inserire il numero di libri di classificazione WDSF',
     
     'Регистрация осуществляется по MIN номерам WDSF. Поиск участников идет по базе данных "World DanceSport Federation".' : 
@@ -5815,7 +5872,7 @@ localizationModule.constant('DanceDictionary', {
     'Gruppi in cui non c\'è spazio (0) chiuso per registrazione e vendita dei biglietti.',
     
     'Осталось мест' : 'Luoghi sinistra',
-    'Перейти на сайт СТСР' : 'Go to UDSR site',
+    'Перейти на сайт ФТСАРР' : 'Go to RFDARR site',
     'Регистрация осуществляется по номерам классификационных книжек и на основании информации' : 'Registration is carried by numbers and classification of books based on the information',
     'Базы данных спортсменов "Союза танцевального спорта России"' : 'Databases athletes "Union DanceSport of Russia"',
     'на момент регистрации.' : 'at the time of registration.',
@@ -5825,7 +5882,7 @@ localizationModule.constant('DanceDictionary', {
   },
   getTranslate: function(word, toLanguage){
     var def = function(key){
-        console.log("'" + key + "' : '',");
+        //console.log("'" + key + "' : '',");
         
         return key; 
     };  

@@ -58,6 +58,12 @@ controllersModule.controller('TournamentCompetitionsCtrl', function($scope, $int
                           {name:'dancerClassesString', getCssClass: getCssClassFuncForClosedCompetitions,
                                                     calculate: function(item){
                                                             item.dancerClassesString = '';
+
+                                                            if (item.isForAllDancerClasses){
+                                                                item.dancerClassesString = $filter('localize')('Все классы');
+                                                                return;
+                                                            }
+
                                                             for(var i=0; i < item.dancerClasses.length; i++){
                                                                 item.dancerClassesString = item.dancerClassesString + ', ' + item.dancerClasses[i].name;
                                                             }

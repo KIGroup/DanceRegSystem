@@ -1,5 +1,5 @@
 'use strict';
-//dedddввd
+//dedddвв
 
 /*===========================================================================================
 Competition: create or update data 
@@ -103,6 +103,7 @@ controllersModule.controller('CompetitionCtrl', function($scope, $window, $route
                 $scope.page.competition.isInternational = $scope.page.competition.isInternational == 1;
                 $scope.page.competition.isClosed = $scope.page.competition.isClosed == 1;
                 $scope.page.competition.isWDSF = $scope.page.competition.isWDSF == 1;
+                $scope.page.competition.udsrMaxNumberChecked = $scope.page.competition.udsrMaxNumberChecked == 1;
                 $scope.page.loadDancerClasses();
                 $scope.loadCompetitionRegions();
             },

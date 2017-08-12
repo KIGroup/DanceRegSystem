@@ -40,10 +40,10 @@
 	<div class="row-fluid">
 		<p><span style="font-weight: bold" ng-bind="'Статистика'|localize"></span></p>
 		<p><span ng-bind="'Спортсменов в БД'|localize"></span>: {{page.personStats.allCount}}</p>
-		<p><span ng-bind="'Спортсменов СТСР в БД'|localize"></span>: {{page.personStats.udsrCount}}</p>
+		<p><span ng-bind="'Спортсменов ФТСАРР в БД'|localize"></span>: {{page.personStats.udsrCount}}</p>
 		<p><span ng-bind="'Спортсменов WDSF в БД'|localize"></span>: {{page.personStats.wdsfCount}}</p>
 		<p><span ng-bind="'Других спортсменов в БД'|localize"></span>: {{page.personStats.otherCount}}</p>
-		<p><span ng-bind="'Последнее обновление спортсменов СТСР было'|localize"></span>: {{page.personStats.udsrLastUpdated + ', часовой пояс - 0'}}</p> 
+		<p><span ng-bind="'Последнее обновление спортсменов ФТСАРР было'|localize"></span>: {{page.personStats.udsrLastUpdated + ', часовой пояс - 0'}}</p> 
 		<button class="btn btn-small" ng-click="page.loadStats()" ng-bind="'Обновить статистику'"></button>
 	</div>
 	<br>

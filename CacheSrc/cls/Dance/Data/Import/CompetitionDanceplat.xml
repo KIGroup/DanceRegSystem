@@ -72,6 +72,12 @@ Imported competitions from other system</Description>
 <Parameter name="XMLNAME" value="solo"/>
 </Property>
 
+<Property name="IsInternational">
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+<Parameter name="XMLNAME" value="inter"/>
+</Property>
+
 <Property name="MaxAge">
 <Type>%Integer</Type>
 <Parameter name="XMLNAME" value="ageto"/>
@@ -118,13 +124,14 @@ Imported competitions from other system</Description>
         set proxy.limit = ..Limit
         set proxy.price = ..Price
         set proxy.name = ..Name
+        set proxy.isInternational = ..IsInternational
                         
         set realDicipline = ##class(Dance.Data.Discipline).CodeIdxOpen(..DisciplineCode,,.sc)
         if ($$$ISOK(sc)){
             set proxy.discipline = realDicipline.ConvertToProxyObject()
         }
         else{
-            do proxy.info.errorMessages.Insert("Дисциплина не найдена! Код = "_..DisciplineCode)    
+            do proxy.info.errorMessages.Insert("Дисциплина не найдена! Код = ["_..DisciplineCode_"]")    
         }
             
         set realAge = ##class(Dance.Data.AgeCategory).CodeIdxOpen(..AgeCategoryCode,,.sc)
@@ -132,7 +139,7 @@ Imported competitions from other system</Description>
             set proxy.ageCategory = realAge.ConvertToProxyObject()
         }
         else{
-            do proxy.info.errorMessages.Insert("Возрастная группа не найдена! Код = "_..AgeCategoryCode)
+            do proxy.info.errorMessages.Insert("Возрастная группа не найдена! Код = ["_..AgeCategoryCode_"]")
         }
             
         if (..IsSoloType = $$$YES){
@@ -147,7 +154,7 @@ Imported competitions from other system</Description>
             set proxy.type = type.ConvertToProxyObject()
         }
         else{
-            do proxy.info.errorMessages.Insert("Тип не найден! Соло = "_..IsSoloType)
+            do proxy.info.errorMessages.Insert("Тип не найден! Соло = ["_..IsSoloType_"]")
         }
         
         set proxy.dancerClasses = ##class(Dance.Data.DancerClass).GetAll().children
@@ -175,36 +182,39 @@ Imported competitions from other system</Description>
                 }
             }
             else{
-                do proxy.info.errorMessages.Insert("Класс не найден! Код = "_class) 
+                do proxy.info.errorMessages.Insert("Класс не найден! Код = ["_class_"]") 
             }       
         }
 
-        /*
-           Проверка сформированного списка классов доступных для танцора по умолчанию, тк с  данцплата может прилететь д***мо, поэто нужны доп. проверки
-        */
-        set defaultDancerClasses("Взрослые") = "6,3,2,4,5,9,8"
-        set defaultDancerClasses("Молодежь") = "6,3,2,4,5,9"
-        set defaultDancerClasses("Д-1") = "6,3"
-        set defaultDancerClasses("Д-2") = "6,3,2"
-        set defaultDancerClasses("Ю-1") = "6,3,2,4"
-        set defaultDancerClasses("Ю-2") = "6,3,2,4,5"
-        // Объединение A v B
-        set defaultDancerClasses("Молодежь+Ю-2") = "6,3,2,4,5,9"
-        set defaultDancerClasses("Ю-1+Д-2") = "6,3,2,4"
-        set defaultDancerClasses("Д-2+Д-1") = "6,3,2"
-        set defaultDancerClasses("Ю-2+Ю-1") = "6,3,2,4,5"
-        set defaultDancerClasses("Взрослые+Молодежь") = "6,3,2,4,5,9,8"
-        
-        set defaultClasses = $GET(defaultDancerClasses(realAge.Code))
-        if (defaultClasses '= "") {
-            for i=1:1:proxy.dancerClasses.Count(){
-                // Если класс выбран, но он не включен в список допустимых для воз.группы, то "развыбираем" его
-                if (proxy.dancerClasses.GetAt(i).selected) && ($FIND(defaultClasses, proxy.dancerClasses.GetAt(i).code) = 0){
-                     set proxy.dancerClasses.GetAt(i).selected = $$$NO
-                }
-            }
-        }
-        
+
+		if $ISOBJECT(realDicipline) && (realDicipline.Code '= "SD") && (realDicipline.Code '= "MD"){
+	        /*
+	           Проверка сформированного списка классов доступных для танцора по умолчанию, тк с  данцплата может прилететь д***мо, поэто нужны доп. проверки
+	        */
+	        set defaultDancerClasses("Взрослые") = "6,3,2,4,5,9,8"
+	        set defaultDancerClasses("Молодежь") = "6,3,2,4,5,9"
+	        set defaultDancerClasses("Д-1") = "6,3"
+	        set defaultDancerClasses("Д-2") = "6,3,2"
+	        set defaultDancerClasses("Ю-1") = "6,3,2,4"
+	        set defaultDancerClasses("Ю-2") = "6,3,2,4,5"
+	        // Объединение A v B
+	        set defaultDancerClasses("Молодежь+Ю-2") = "6,3,2,4,5,9"
+	        set defaultDancerClasses("Ю-1+Д-2") = "6,3,2,4"
+	        set defaultDancerClasses("Д-2+Д-1") = "6,3,2"
+	        set defaultDancerClasses("Ю-2+Ю-1") = "6,3,2,4,5"
+	        set defaultDancerClasses("Взрослые+Молодежь") = "6,3,2,4,5,9,8"
+	        
+	        set defaultClasses = $GET(defaultDancerClasses(realAge.Code))
+	        if (defaultClasses '= "") {
+	            for i=1:1:proxy.dancerClasses.Count(){
+	                // Если класс выбран, но он не включен в список допустимых для воз.группы, то "развыбираем" его
+	                if (proxy.dancerClasses.GetAt(i).selected) && ($FIND(defaultClasses, proxy.dancerClasses.GetAt(i).code) = 0){
+	                     set proxy.dancerClasses.GetAt(i).selected = $$$NO
+	                }
+	            }
+	        }
+		}
+		
         set proxy.info.isExisted = ##class(Dance.Data.Competition).IdInternalIdxExists(..IdInternal)
         set proxy.info.isErrored = (proxy.info.errorMessages.Count() '= 0)
     }
@@ -243,6 +253,7 @@ Create or update item</Description>
     set oldObj.Price = newObj.Price
     set oldObj.Rank = newObj.Rank
     set oldObj.TournamentIdExternal = newObj.TournamentIdExternal
+    set oldObj.IsInternational = newObj.IsInternational
     
     quit oldObj.%Save()
 ]]></Implementation>
@@ -301,6 +312,9 @@ Create or update item</Description>
 </Value>
 <Value name="15">
 <Value>Price</Value>
+</Value>
+<Value name="16">
+<Value>IsInternational</Value>
 </Value>
 </Data>
 </Storage>

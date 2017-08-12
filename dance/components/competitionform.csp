@@ -79,23 +79,25 @@
             </div>
         </div>
     </div>
-    <div class="control-group" ng-show="competition.regions">
-        <div class="row-fluid">
-            <label class="control-label" ng-bind="('Регион (доступ к регистрации)'|localize)"></label>
-            <div class="controls">
-                <dropdown-multiselect source-items="competition.regions"></dropdown-multiselect>
-            </div>
-        </div>
-    </div>
     <div class="control-group">
         <div class="row-fluid">
-            <div class="span6"> 
+            <div class="span12"> 
                 <label class="control-label" ng-bind="('Классы'|localize) + '*'"></label>
                 <div class="btn-group" style="margin-bottom: 15px;">
                     <button type="button" class="btn btn-mini btnCheckBox" style="padding: 0 12px 0 12px;" ng-repeat="class in competition.dancerClasses"  ng-model="class.selected" ng-bind="class.name|localize"  btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0"></button>
                 </div>
             </div>
-            <div class="span6">
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="row-fluid">
+	        <div class="span5">
+	            <label class="control-label" ng-bind="('Регион (доступ к регистрации)'|localize)"></label>
+	            <div class="controls">
+	                <dropdown-multiselect source-items="competition.regions"></dropdown-multiselect>
+	            </div>
+			</div>
+            <div class="span7">
                 <div class="row-fluid">
                     <div class="span2" title="{{'Регистрация в группу закрыта'|localize}}">
                          <label class="checkbox" style="padding-top: 27px;" >
@@ -104,10 +106,15 @@
                     </div>
                     <div class="span3">
                          <label class="checkbox" style="padding-top: 27px;" >
+                            <input type="checkbox" ng-model="competition.udsrMaxNumberChecked" title="{{'Максимальный номер ФТСАРР участника меньше 1000.'|localize}}">{{'ФТСАРР Pro'|localize}}
+                        </label>
+                    </div>
+                    <div class="span3">
+                         <label class="checkbox" style="padding-top: 27px;" >
                             <input type="checkbox" ng-model="competition.isWDSF" ng-disabled="!competition.startDate" title="{{'Выберите дату для активации переключателя'|localize}}">{{'WDSF'|localize}}
                         </label>
                     </div>
-                    <div class="span7">
+                    <div class="span4">
                          <label class="checkbox" style="padding-top: 27px;" >
                             <input type="checkbox" ng-model="competition.isInternational">{{'Международный'|localize}}
                         </label>

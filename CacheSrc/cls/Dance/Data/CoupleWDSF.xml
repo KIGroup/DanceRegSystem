@@ -81,12 +81,11 @@
     &sql(SELECT ID INTO :coupleId FROM Dance_Data.CoupleWDSF WHERE Man->Number = :manNumber AND Woman->Number = :womanNumber)
     if (SQLCODE = 0){
         set obj = ..%OpenId(coupleId,,.st)
-        set diffDays = $SYSTEM.SQL.DATEDIFF("dd", $P(obj.Updated, " ", 1), $P($ZDT($ZTS, 3), " ", 1))
-        if (diffDays <= 1){
+        set diff = $SYSTEM.SQL.DATEDIFF("minute", obj.Updated, $ZDT($ZTS, 3))
+        if (diff <= 600) && (obj.CStatus '= "Retired"){
             return obj
         }   
     }
-    
     
     set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCoupleByNumbers(manNumber, womanNumber, .st)
     if $$$ISERR(st) {

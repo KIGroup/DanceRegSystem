@@ -106,19 +106,22 @@ Date of birth</Description>
             //2 Фамилия Имя
             set person.LastName =  ##class(Dance.Data.Localization.LText).Create($P($LIST(propList, 2)," ",1), "Dance.Data.Localization.Translation;PersonLTextValue")      
             set person.FirstName =  ##class(Dance.Data.Localization.LText).Create($P($LIST(propList, 2)," ",2), "Dance.Data.Localization.Translation;PersonLTextValue")     
-            
-            
-            //11 Фио на англ. Пусть и для других языков будет на анлийском
-            do person.LastName.SetValueByLang($P($LIST(propList, 11)," ",1), "en")
-            do person.FirstName.SetValueByLang($P($LIST(propList, 11)," ",2), "en")
-            
-            do person.LastName.SetValueByLang($P($LIST(propList, 11)," ",1), "de")
-            do person.FirstName.SetValueByLang($P($LIST(propList, 11)," ",2), "de")
-
-            do person.LastName.SetValueByLang($P($LIST(propList, 11)," ",1), "it")
-            do person.FirstName.SetValueByLang($P($LIST(propList, 11)," ",2), "it")
         }
-            
+        else{
+	        do person.LastName.SetValueByLang($P($LIST(propList, 2)," ",1), "ru")
+        	do person.FirstName.SetValueByLang($P($LIST(propList, 2)," ",2), "ru")
+        }
+        
+        //11 Фио на англ. Пусть и для других языков будет на анлийском
+        do person.LastName.SetValueByLang($P($LIST(propList, 11)," ",1), "en")
+        do person.FirstName.SetValueByLang($P($LIST(propList, 11)," ",2), "en")
+        
+        do person.LastName.SetValueByLang($P($LIST(propList, 11)," ",1), "de")
+        do person.FirstName.SetValueByLang($P($LIST(propList, 11)," ",2), "de")
+
+        do person.LastName.SetValueByLang($P($LIST(propList, 11)," ",1), "it")
+        do person.FirstName.SetValueByLang($P($LIST(propList, 11)," ",2), "it")
+                
         //4 Дата рождения
         set dob = $LIST(propList, 4)
         if (dob '= "") && ($LENGTH(dob) = 10) set person.DOB = $ZDATEH($REPLACE(dob,".","/"), 4)

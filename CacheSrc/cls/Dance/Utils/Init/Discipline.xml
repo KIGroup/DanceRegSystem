@@ -43,28 +43,6 @@
 ]]></Data>
 </XData>
 
-<UDLText name="T">
-<Content><![CDATA[
-/*
--Европейская [Cт]
--Латиноамериканская [Ла]
--Двоеборье [10т]
--Сокращенное двоеборье (6 танцев) [6т]
--Сокращенное двоеборье (8 танцев) [8т]
--3 танца [3т]
--4 танца [4т]
--5 танцев [5т]
--Кубок польки [кубок польки]
--Кубок ча-ча-ча [кубок ча-ча-ча]
--Кубок вальса [кубок вальса]
--Кубок самбы [кубок самбы]
--Кубок джайва [кубок джайва]
--Кубок фокстрота [кубок фокстрота]
--Кубок квикстепа [кубок квикстепа]
-*/
-]]></Content>
-</UDLText>
-
 <XData name="LTextXData">
 <Data><![CDATA[
 <LTextXData>
@@ -156,6 +134,24 @@
 </LTextValueXData>
 ]]></Data>
 </XData>
+
+<Method name="Create">
+<Description>
+do ##class(Dance.Utils.Init.Discipline).Create()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set disc = ##class(Dance.Data.Discipline).%New()
+	set disc.Code = "SD"
+	set disc.Name = ##class(Dance.Data.Localization.LText).Create("Single dance")
+	w !,disc.%Save()
+	
+	set disc = ##class(Dance.Data.Discipline).%New()
+	set disc.Code = "MD"
+	set disc.Name = ##class(Dance.Data.Localization.LText).Create("Multi dance")
+	w !,disc.%Save()
+]]></Implementation>
+</Method>
 
 <Method name="CopyValueFromEngToAnother">
 <Description>

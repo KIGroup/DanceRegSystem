@@ -1,3 +1,6 @@
+#bodyDiv{
+	min-width: 1000px;
+}
 
 #gcalendar .accordion-inner{
     padding: 0;
@@ -444,7 +447,7 @@ form{
 
 .modal {
     /* new custom width */
-    width: 600px!important;
+    width: 700px!important;
     /* must be half of the width, minus scrollbar on the left (30px) */
     margin-left: -300px!important;
 }

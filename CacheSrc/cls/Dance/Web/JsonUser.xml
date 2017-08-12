@@ -687,6 +687,11 @@ Get all tournament competitions for grid</Description>
             set whereCondition = whereCondition_" AND cmpT.WDSF IS NULL AND cmpT.IsInternational=1 "
         }
       
+        // Если фильтруют по классу танцора
+        if $ISOBJECT(params.other.otherFilter.dancerClass){
+			set whereCondition = whereCondition_" AND (SELECT TOP 1 ID FROM Dance_Data.Competition_DancerClasses WHERE Competition = cmpT.ID AND DancerClasses = '"_..ParseParameter(params.other.otherFilter.dancerClass.id)_"') IS NOT NULL"
+        }
+      
         do ..GetProxyObjectsForGrid("SELECT %NOLOCK cmpT.ID FROM Dance_Data.Competition as cmpT ", "Dance.Data.Competition", params, params.other.convertParams, whereCondition).%ToJSON()
     }
     catch ex {
@@ -838,6 +843,9 @@ Available participants competitions for grid</Description>
 <Private>1</Private>
 <ReturnType>%ListOfObjects</ReturnType>
 <Implementation><![CDATA[
+	set trn = ##class(Dance.Data.Tournament).%OpenId(trnId)
+	set resultList = ##class(%ListOfObjects).%New()
+	 
     #dim man As Dance.Data.PersonUDSR = ""
     #dim woman As Dance.Data.PersonUDSR = ""
     #dim athlete As Dance.Data.PersonUDSR = ""
@@ -864,14 +872,20 @@ Available participants competitions for grid</Description>
             set ageWDSFList = ##class(Dance.Data.AgeCategoryWDSF).GetAllAvailableList(coupleWDSF.AgeCategory) 
         }
     }
+    else{
+    	quit resultList
+    }
     
-    set maleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(man.DOB, 3), "-", 1)
-    set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(woman.DOB, 3), "-", 1)
+    //set maleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(man.DOB, 3), "-", 1)
+    //set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(woman.DOB, 3), "-", 1)
+    
+    set maleAge = ##class(Dance.Data.Person).GetAge($ZDT(man.DOB, 3), $ZDT(trn.StartDate, 3))
+    set femaleAge = ##class(Dance.Data.Person).GetAge($ZDT(woman.DOB, 3), $ZDT(trn.StartDate, 3))
     set ageUDSRList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
     
     
     set sourceList = ..GetTournamentCompetitionsList(trnId, $ISOBJECT(couple))
-    set resultList = ##class(%ListOfObjects).%New()
+   
     
     for i=1:1:sourceList.Count(){
         #dim cmp As Dance.Data.Competition = sourceList.GetAt(i)
@@ -942,6 +956,11 @@ Available participants competitions for grid</Description>
                     }
                 }
             }
+            
+        	// Если группа ограничена по номеру СТСР участника
+        	if (cmp.UDSRMaxNumber > 0) && $ISOBJECT(man) && ($NUMBER(man.Number) > cmp.UDSRMaxNumber){
+        		continue
+        	}
         }
         
         do resultList.Insert(cmp)
@@ -1077,13 +1096,16 @@ Available participants competitions for grid</Description>
 <Private>1</Private>
 <ReturnType>%ListOfObjects</ReturnType>
 <Implementation><![CDATA[
+	set trn = ##class(Dance.Data.Tournament).%OpenId(trnId)
     set (man, woman) = ""
     set (athleteData, coupleData) = ""
     set (prtObjKey, prtObjClassName) = ""
+    set country = ""
     
     if $ISOBJECT(params.athlete){
         set athleteData = params.athlete
         set (man, woman) = params.athlete
+        set country = ##class(Dance.Data.Country).%OpenId(params.athlete.otherInfo.country.id)
         set prtObjKey = params.athlete.key
         set prtObjClassName = ##class(Dance.Data.ParticipantSingleOther).%ClassName(1)
     }
@@ -1092,11 +1114,15 @@ Available participants competitions for grid</Description>
         set man = params.couple.man
         set woman = params.couple.woman
         set prtObjKey = params.couple.key
+        set country = ##class(Dance.Data.Country).%OpenId(params.couple.otherInfo.country.id)
         set prtObjClassName = ##class(Dance.Data.ParticipantCoupleOther).%ClassName(1)
     }
    
-    set maleAge = $P($ZD($NOW(),3), "-", 1) - $P(man.dob, "-", 1)
-    set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P(woman.dob, "-", 1)
+    //set maleAge = $P($ZD($NOW(),3), "-", 1) - $P(man.dob, "-", 1)
+    //set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P(woman.dob, "-", 1)
+    
+    set maleAge = ##class(Dance.Data.Person).GetAge(man.dob, $ZDT(trn.StartDate, 3))
+    set femaleAge = ##class(Dance.Data.Person).GetAge(woman.dob, $ZDT(trn.StartDate, 3))
     set ageList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
         
     set sourceList = ..GetTournamentCompetitionsList(trnId, $ISOBJECT(coupleData))
@@ -1111,13 +1137,18 @@ Available participants competitions for grid</Description>
         }
         
         // Нельзя допускать в WDSF группы и в группы, которые не разрешены для международников
-        if $ISOBJECT(cmp.WDSF) || (cmp.IsInternational = $$$NO){
+        if $ISOBJECT(cmp.WDSF) || (cmp.IsInternational = $$$NO && (country.WDSFName '= "Russian Federation")){
             continue
         }
         
         // Если по возрасту нельзя записаться в группу, то переходим к следующей группе
         if ($LISTFIND(ageList, cmp.AgeCategory.%Id()) = 0){
             continue
+        }
+        
+        // Если фильтруют по классу танцора
+        if $ISOBJECT(params.otherFilter.dancerClass) && (##class(Dance.Data.Competition).IsAvailableForDancerClass(cmp.%Id(), params.otherFilter.dancerClass.id) = $$$NO){
+        	continue
         }
         
         do resultList.Insert(cmp)
@@ -1281,7 +1312,7 @@ Get all participants of the competition for grid</Description>
         set athKey = $GET(%request.Data("athleteKey", 1))
         
         set table = ""
-        set where = "Competition->Tournament = '"_..ParseParameter(trnId)_"' "
+        set where = "Competition->Tournament = '"_..ParseParameter(trnId)_"' AND IsActive = 1 "
         
         set convertParams = ##class(%ZEN.proxyObject).%New()
         set convertParams.competitionParams = ##class(%ZEN.proxyObject).%New()
@@ -1758,6 +1789,8 @@ Feedback from users </Description>
         set cplKey = $GET(%request.Data("coupleKey", 1))
         set athKey = $GET(%request.Data("athleteKey", 1))
         
+        set ^temp("cplKey") = cplKey
+        
         if (cplId '= ""){
             // WDSF or UDSR
             set couple = ##class(Dance.Data.Couple).%OpenId(cplId)
@@ -1821,7 +1854,7 @@ Feedback from users </Description>
 Get all competition regions</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT id as id, name || ' [' || LIST(CodeNumbers) ||  ']' as name FROM Dance_Data.CompetitionRegion GROUP BY ID")
+<Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT id as id, name || ' [' || LIST(CodeNumbers) ||  ']' as name FROM Dance_Data.CompetitionRegion GROUP BY ID ORDER BY Name")
 ]]></Implementation>
 </Method>
 </Class>

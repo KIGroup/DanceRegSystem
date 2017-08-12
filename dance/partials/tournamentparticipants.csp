@@ -1,4 +1,4 @@
-<div class="row-fluid">
+<div class="row-fluid" style="position: relative;">
     <a href="http://www.intersystems.com/ru/library/software-downloads/" title="InterSystems site" target="_blank" style="height:80px; position: absolute; right: 22px;">
         <img src="img/logoPoweredByIntersystems.png"  style="height:80px;"/>
     </a>

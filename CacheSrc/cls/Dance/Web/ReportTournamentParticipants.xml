@@ -39,6 +39,8 @@
 <FormalSpec>lang:%String,trnId:%String</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+	set ^temp("report", $ZDT($H, 3)) = $LB(lang, trnId)
+	
     set trn = ##class(Dance.Data.Tournament).%OpenId(trnId)
     
     do ##class(%MessageDictionary).SetSessionLanguage(lang)
@@ -69,7 +71,7 @@
         
         set rowFormat = "%Created;%ManNumber;%ManLastName;%ManFirstName;%ManStClass;%ManLaClass;%ManDob;%WomanNumber;%WomanLastName;%WomanFirstName;%WomanStClass;%WomanLaClass;%WomanDob;%Competitions;%Club;%City;%Region;%Trainer1LastName;%Trainer1FirstName;%Trainer2LastName;%Trainer2FirstName;%Category"
         w "Дата регистрации;Книжка партнера;Фамилия партнера;Имя партнера;Класс партнера СТ;Класс партнера ЛА;Дата рождения партнера;Книжка партнерши;Фамилия партнерши;Имя партнерши;Класс партнерши СТ;Класс партнерши ЛА;Дата рождения партнерши;Группы;Клуб;Город;Регион;Тренер1 Фамилия;Тренер1 Имя;Тренер2 Фамилия;Тренер2 Имя;Категория(Pro/Am) партнер/партнерша",!
-        
+       
         do ..WriteToDeviceFromAnyCoupleList(udsrCouples, rowFormat)
         do ..WriteToDeviceFromAnyAthleteList(udsrSingles, rowFormat)
         
@@ -78,9 +80,11 @@
         
         do ..WriteToDeviceFromAnyCoupleList(otherCouples, rowFormat)
         do ..WriteToDeviceFromAnyAthleteList(otherSingles, rowFormat)
+       
     }
     catch ex{
-        set status = ex.AsStatus()  
+        set status = ex.AsStatus() 
+        s ^temp("report", "error") = $SYSTEM.Status.GetErrorText(status)
     }
     
     q status
@@ -92,6 +96,8 @@
 <FormalSpec>lang:%String,trnId:%String,accessCode:%String</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+	set ^temp("report") = $LB(lang, trnId, accessCode)
+	
     set trn = ##class(Dance.Data.Tournament).%OpenId(trnId)
     if (..GetAccessHashForTournament(trn) '= accessCode) {
         quit ##class(Dance.Utils.Msg).GetErrorStatus("Wrong access code for tournament")
@@ -410,7 +416,10 @@
         quit:(SQLCODE '= 0)
         
         set proxy = ##class(%ZEN.proxyObject).%New()
-        set proxy.athlete = ##class(Dance.Data.ParticipantSingleUDSR).%OpenId(athId).ConvertToProxyObject()
+        set athlete = ##class(Dance.Data.PersonUDSR).%OpenId(athId,,.st)
+        $$$TOE(st, st)
+        
+        set proxy.athlete = athlete.ConvertToProxyObject()
         set proxy.competitions = ""
         
         &sql(DECLARE CmpAthUDSRCur CURSOR FOR 
@@ -462,7 +471,7 @@
         quit:(SQLCODE '= 0)
         
         set proxy = ##class(%ZEN.proxyObject).%New()
-        set proxy.athlete = ##class(Dance.Data.ParticipantSingleWDSF).%OpenId(prtId).ConvertToProxyObject(params).athlete
+        set proxy.athlete = ##class(Dance.Data.PersonWDSF).%OpenId(prtId).ConvertToProxyObject(params).athlete
         set proxy.athlete.number = ""
         set proxy.competitions = ""
         

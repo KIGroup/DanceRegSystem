@@ -27,7 +27,7 @@ do ##class(Dance.Utils.TaskSyncWDSFController).SyncCompetitions()</Description>
 		// wdsf date format: YYYY-MM-DD
 		set prevSyncSinceDate = $GET(^Settings("Dance", "LastSyncWDSFCompetitions"), $ZD($H-1, 3))
 		if (nowSyncSinceDate = ""){
-			set nowSyncSinceDate = $ZD($ZDH(prevSyncSinceDate, 15) + 1, 3)
+			set nowSyncSinceDate = $ZD($ZDH(prevSyncSinceDate, 15) - 7, 3)
 		}
 		
 		set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCompetitions($ZD($H - 365, 3), $ZD($H + 365, 3), nowSyncSinceDate, .st)

@@ -6,6 +6,7 @@ Registration
 ===========================================================================================*/
   
 controllersModule.controller('RegistrationCtrl', function($scope, $interval, $routeParams, $filter, LocationSrvc, UtilsSrvc, OtherSrvc, PersonSrvc, TournamentSrvc, CompetitionSrvc, RegistrationSrvc, ParticipantSrvc, CoupleSrvc){
+    $('#divTypeOfView').hide();
     $scope.menu.pages.selected = {};
     $scope.menu.shortMenu = true;
      
@@ -101,6 +102,12 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                           {name:'dancerClassesString', getCssClass: getCssClassFuncForClosedCompetitions,
                                 calculate: function(item){
                                     item.dancerClassesString = '';
+
+                                    if (item.isForAllDancerClasses){
+                                    	item.dancerClassesString = $filter('localize')('Все классы');
+                                    	return;
+                                    }
+
                                     for(var i=0; i < item.dancerClasses.length; i++){
                                         item.dancerClassesString = item.dancerClassesString + ', ' + item.dancerClasses[i].name;
                                     }
@@ -133,6 +140,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         $scope.competitionTable.selectedItems = [];
         $scope.competitionTable.multiSelectMode = true;
         $scope.competitionTable.forciblyUpdate = 0;
+        $scope.competitionTable.otherFilter = {};
 
         $scope.pageStore.registration.grid.tableShortView = $scope.pageStore.registration.grid.tableShortView == null ? true : $scope.pageStore.registration.grid.tableShortView;
         
@@ -148,8 +156,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     $scope.competitionTable.loadItems = function(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText){
         if (!$scope.tournament)
             return;
-         
-        $scope.competitionTable.items = [];
+        
         $scope.competitionTable.selectedItems = [];
         $scope.competitionTable.itemsStatus = $filter('localize')('Идет загрузка групп...');
 
@@ -158,13 +165,18 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
             tournamentId: $scope.tournament.id,
             convertParams: {
                 loadWDSF: true,
-                loadPaymentsCount: true
+                loadPaymentsCount: true,
+                loadDancerClasses: true,
+                loadAgeCategory: true
+            },
+            otherFilter: {
+                dancerClass: $scope.competitionTable.otherFilter.dancerClass
             }
         };
             
             
         if ($scope.pageStore.registration.grid.tableShortView){
-            $('#divTypeOfView').hide();
+            //$('#divTypeOfView').hide();
         }
         else{
             $('#divTableCmpButtons,#divTableCmpStatus').css('width', '100%');
@@ -186,7 +198,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                         $('#divTableCmpButtons,#divTableCmpStatus').css('width', tableWidth);
                         $('#divTypeOfView').show();
                     }
-                }, 100, 50);
+                }, 1, 100);
             }   
         };
         
@@ -207,6 +219,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                     afterLoad();
                 },
                 function(data, status, headers, config){
+                    $scope.competitionTable.items = [];
                     $scope.cmpAlert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
                     $scope.competitionTable.itemsStatus = $filter('localize')('Произошла ошибка при загрузке групп.');
                 });
@@ -224,6 +237,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                     afterLoad();
                 },
                 function(data, status, headers, config){
+                    $scope.competitionTable.items = [];
                     $scope.cmpAlert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
                     $scope.competitionTable.itemsStatus = $filter('localize')('Произошла ошибка при загрузке групп.');
                 });
@@ -231,7 +245,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     };
 
     $scope.competitionTable.setHiddenCoulumns = function(value){
-        var columns = ["Discipline", "AgeGroup", "Class", "Type", "Limit"];
+        var columns = ["Discipline", "Type", "Limit"];
         for(var n=0; n < $scope.competitionTable.columns.length; n++){
             var curColumn = $scope.competitionTable.columns[n];
             if (columns.indexOf(curColumn.id) != -1)
@@ -308,14 +322,6 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 $scope.tabWDSF.visible = data.tabWDSFAllowed == 1;
                 $scope.tabOTHER.visible = data.tabOtherAllowed == 1;
                 
-                if ($scope.tournament.rank.code == 'Pro-Am'){
-                    $scope.tabOTHER.heading = $filter('localize')('Регистрация Pro-Am');
-                }
-                else{
-                    $scope.tabOTHER.heading = $filter('localize')('Регистрация других участников');   
-                }
-
-                
                 if ($routeParams.typeCode){
                     if ($routeParams.typeCode == 'udsr'){
                         $scope.tabUDSR.select();
@@ -357,6 +363,8 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                         $scope.pageStore.registrationData = null;
                     }
                 }
+
+                $scope.loadTournamentDancerClasses($scope.tournament.id);
             },
             function(data, status, headers, config){
                 $scope.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
@@ -395,6 +403,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
             case 'OTHER':
                 filter +=  $scope.tabOTHER.couple ? ('&coupleKey=' + $scope.tabOTHER.couple.key) : '';
                 filter +=  $scope.tabOTHER.athlete ? ('&athleteKey=' + $scope.tabOTHER.athlete.key) : '';
+                filter = filter.replace(/\+/g, '%2B');
                 break;
         }
 
@@ -410,6 +419,13 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
     };
 
 
+    $scope.loadTournamentDancerClasses = function(trnId){
+        $scope.dancerClasses = [
+            {id: 9, code: '', name: 'Bronze Open'},
+            {id: 10, code: '', name: 'Silver Open'},
+            {id: 11, code: '', name: 'Gold Open'}
+        ];
+    };
 
     // Clear current tab for new registration
     $scope.clearAllForms = function(){
@@ -448,6 +464,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
 
         $scope.competitionTable.avialableMode = false;
         $scope.competitionTable.selectable = false;
+        $scope.competitionTable.otherFilter.dancerClass = null;
         $scope.competitionTable.refresh();  
     };
 

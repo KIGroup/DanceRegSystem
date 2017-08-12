@@ -200,6 +200,8 @@ Change IsActive property to 0. (hide item from table)</Description>
         set st = ##class(Dance.Data.Participant).Deactivate(id)
         if $$$ISERR(st) $$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_ParticipantDeactivate"," | "_st))
         
+        do ##class(Dance.Data.Tournament).UpdateTournament(##class(Dance.Data.Participant).%OpenId(id).Tournament.%Id())
+        
         TCOMMIT
     }
     catch ex {

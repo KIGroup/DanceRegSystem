@@ -131,6 +131,23 @@ Last name</Description>
 ]]></Implementation>
 </Method>
 
+<Method name="GetAge">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>personDob:%TimeStamp,onDate:%TimeStamp</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+	set years = $P(onDate, "-", 1) - $P(personDob, "-", 1)
+	set months = $P(onDate, "-", 2) - $P(personDob, "-", 2)
+	set days = $P(onDate, "-", 3) - $P(personDob, "-", 3)
+	
+	if (months < 0) || ((months = 0) && (days < 0)){
+		set years = years - 1
+	}
+	
+	quit years
+]]></Implementation>
+</Method>
+
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^Dance.Data.PersonD</DataLocation>

@@ -12,7 +12,8 @@ Import all objects from XML to table</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	set st = $$$OK
-
+	
+	set ^test("pageWithParameters") = pageWithParameters
 	try{
 		TSTART
 				
@@ -21,7 +22,7 @@ Import all objects from XML to table</Description>
 		set httprequest.ContentEncoding = "UTF-8"
 		do httprequest.Get(pageWithParameters)
 		
-		#dim stream As %Stream.Object = httprequest.HttpResponse.Data
+		#dim stream As %Stream.Object = $ZCVT(httprequest.HttpResponse.Data.Read(10000000), "O", "UTF8")
 		#dim reader As %XML.Reader = ##class(%XML.Reader).%New()
 
 		$$$THROWONERROR(st, reader.OpenStream(stream, "literal"))

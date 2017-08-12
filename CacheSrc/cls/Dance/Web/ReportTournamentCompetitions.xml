@@ -58,7 +58,7 @@
 					IFNULL(WDSF->ID, '-', '+') As IsWDSF
 			 FROM Dance_Data.Competition As MainPart
 			 WHERE Tournament = :trnId
-			 ORDER BY IdExternal)   
+			 ORDER BY TO_NUMBER(IdExternal))   
         
 	    &sql(OPEN CurCmp)
 	    for  

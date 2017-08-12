@@ -132,7 +132,7 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
                                     console.log('UDSR Couple is loaded');
                                     $scope.couple = data;
                                     $scope.type = "UDSR";
-                                    $scope.typeName = $filter('localize')('СТСР') + ' ';
+                                    $scope.typeName = $filter('localize')('ФТСАРР') + ' ';
                                 },
                                 function(data, status, headers, config){
                                     console.log('UDSR Couple is not loaded ', data);
@@ -149,7 +149,7 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
                             break;
 
                         case 'UDSR':
-                            $scope.typeName = $filter('localize')('СТСР') + ' ';
+                            $scope.typeName = $filter('localize')('ФТСАРР') + ' ';
                             break;
                         
                         default:
@@ -320,6 +320,30 @@ controllersModule.controller('PaymentCtrl', function($scope, $routeParams, $wind
         return '';
     };
     
+    $scope.competitionTable.remove = function(item){
+        function remove(){
+            ParticipantSrvc.removeById(item.id).then(
+                function(data){
+                    $scope.competitionTable.selectedItems = [];
+                    $scope.competitionTable.refresh();
+                    $scope.alert = UtilsSrvc.getAlert('Готово!', 'Участник удален.', 'success', true);
+                },
+                function(data, status, headers, config){
+                    $scope.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
+                });  
+        };
+
+        var msg = '';
+        if (item.couple){
+            msg = item.couple.man.lastName + ' - ' + item.couple.woman.lastName;
+        }
+        else{
+            msg = item.athlete.lastName + item.athlete.firstName;   
+        }
+
+        UtilsSrvc.openMessageBox('Удалить пару / участника из группы?', msg + ', ' + item.competition.name, remove);    
+    };
+
     $scope.init();
     $scope.loadCountries();
     $scope.loadTournament($routeParams.tournamentId);

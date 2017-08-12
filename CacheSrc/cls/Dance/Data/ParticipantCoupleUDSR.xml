@@ -28,24 +28,24 @@
 <FormalSpec>params:%ZEN.proxyObject</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
 <Implementation><![CDATA[
-	set proxy = ##super(params)
-	set proxy.couple = ..Couple.ConvertToProxyObject()
-	
-	set proxy.couple.competitionsCount = "-"
-	set proxy.couple.paymentsCount = "-"
-	
-	
-	if $ISOBJECT(proxy.competition.tournament){	
-		if (params.loadPrtObjCompetitionsCount){
-			set proxy.couple.competitionsCount = ..PrtObjCompetitionsCount
-		}
-		
-		if (params.loadPrtObjPaymentsCount){
-			set proxy.couple.paymentsCount = ..PrtObjPaymentsCount
-		}
-	}
-	
-	quit proxy
+    set proxy = ##super(params)
+    set proxy.couple = ..Couple.ConvertToProxyObject()
+    
+    set proxy.couple.competitionsCount = "-"
+    set proxy.couple.paymentsCount = "-"
+    
+    
+    if $ISOBJECT(proxy.competition.tournament){ 
+        if (params.loadPrtObjCompetitionsCount){
+            set proxy.couple.competitionsCount = ..PrtObjCompetitionsCount
+        }
+        
+        if (params.loadPrtObjPaymentsCount){
+            set proxy.couple.paymentsCount = ..PrtObjPaymentsCount
+        }
+    }
+    
+    quit proxy
 ]]></Implementation>
 </Method>
 
@@ -56,46 +56,46 @@
 <FormalSpec><![CDATA[recorder:Recorder,competition:Competition,couple:%ZEN.proxyObject,&st]]></FormalSpec>
 <ReturnType>Participant</ReturnType>
 <Implementation><![CDATA[
-	set coupleDB = ##class(Dance.Data.CoupleUDSR).%OpenId(couple.id,,.st)
-	if $$$ISOK(st){
-		if (coupleDB.Man.Club '= "" ) && (coupleDB.Woman.Club '= "" ) && ($ZCVT(coupleDB.Man.Club, "L") '= $ZCVT(coupleDB.Woman.Club, "L")){
-			set st = ##class(Dance.Utils.Msg).GetErrorStatus("error_CoupleDifferentClubs", " "_coupleDB.Man.Number_" - "_coupleDB.Man.Club_"; "_coupleDB.Woman.Number_" - "_coupleDB.Woman.Club_".")
-			quit $$$NULLOREF
-		}
-	}
-	
-	if ..CmpCplUDSRIdxExists(competition.%Id(), couple.id) {
-		set obj = ..CmpCplUDSRIdxOpen(competition.%Id(), couple.id)
-		set obj.IsActive = 1
-		set st = obj.%Save()
-		quit obj
-	}
-	
-	set obj = ..%New()
-	
-	// Свойства класса
-	set obj.Couple = coupleDB
-	
-	// Свойства базового класса
-	set obj.Recorder = recorder
-	set obj.Competition = competition
-	set obj.Tournament = competition.Tournament
-	
-	set obj.FullName = ##class(Dance.Data.Localization.LText).Create("")
-	set st = ..UpdateParticipantFullName(obj)
-	quit:$$$ISERR(st) $$$NULLOREF
-	
-	set obj.Country = coupleDB.Man.Country	
-	set obj.City = coupleDB.Man.City
-	set obj.Club = coupleDB.Man.Club
-	set obj.MainTrainer = coupleDB.Man.MainTrainer
-	set obj.OtherTrainers = coupleDB.Man.OtherTrainers
-	
-	set obj.PrtObjKey = coupleDB.%ClassName(1)_"@"_coupleDB.%Id()
-	
-	set st = obj.%Save()
-	
-	quit obj
+    set coupleDB = ##class(Dance.Data.CoupleUDSR).%OpenId(couple.id,,.st)
+    if $$$ISOK(st) && (couple.withoutCheckClubs = 0){
+        if (coupleDB.Man.Club '= "" ) && (coupleDB.Woman.Club '= "" ) && ($ZCVT(coupleDB.Man.Club, "L") '= $ZCVT(coupleDB.Woman.Club, "L")){
+            set st = ##class(Dance.Utils.Msg).GetErrorStatus("error_CoupleDifferentClubs", " "_coupleDB.Man.Number_" - "_coupleDB.Man.Club_"; "_coupleDB.Woman.Number_" - "_coupleDB.Woman.Club_".")
+            quit $$$NULLOREF
+        }
+    }
+    
+    if ..CmpCplUDSRIdxExists(competition.%Id(), couple.id) {
+        set obj = ..CmpCplUDSRIdxOpen(competition.%Id(), couple.id)
+        set obj.IsActive = 1
+        set st = obj.%Save()
+        quit obj
+    }
+    
+    set obj = ..%New()
+    
+    // Свойства класса
+    set obj.Couple = coupleDB
+    
+    // Свойства базового класса
+    set obj.Recorder = recorder
+    set obj.Competition = competition
+    set obj.Tournament = competition.Tournament
+    
+    set obj.FullName = ##class(Dance.Data.Localization.LText).Create("")
+    set st = ..UpdateParticipantFullName(obj)
+    quit:$$$ISERR(st) $$$NULLOREF
+    
+    set obj.Country = coupleDB.Man.Country  
+    set obj.City = coupleDB.Man.City
+    set obj.Club = coupleDB.Man.Club
+    set obj.MainTrainer = coupleDB.Man.MainTrainer
+    set obj.OtherTrainers = coupleDB.Man.OtherTrainers
+    
+    set obj.PrtObjKey = coupleDB.%ClassName(1)_"@"_coupleDB.%Id()
+    
+    set st = obj.%Save()
+    
+    quit obj
 ]]></Implementation>
 </Method>
 
@@ -104,7 +104,7 @@
 Имя участника для выбранного языка</Description>
 <FormalSpec>lang:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit ..Couple.Man.LastName.GetValueByLang(lang)_" "_..Couple.Man.FirstName.GetValueByLang(lang)_" - "_..Couple.Woman.LastName.GetValueByLang(lang)_" "_..Couple.Woman.FirstName.GetValueByLang(lang)
+<Implementation><![CDATA[    quit ..Couple.Man.LastName.GetValueByLang(lang)_" "_..Couple.Man.FirstName.GetValueByLang(lang)_" - "_..Couple.Woman.LastName.GetValueByLang(lang)_" "_..Couple.Woman.FirstName.GetValueByLang(lang)
 ]]></Implementation>
 </Method>
 

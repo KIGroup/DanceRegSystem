@@ -1,4 +1,4 @@
-<div class="row-fluid">
+<div class="row-fluid" style="position: relative;">
     <a href="http://www.intersystems.com/ru/library/software-downloads/" title="InterSystems site" target="_blank" style="height:80px; position: absolute; right: 22px;">
         <img src="img/logoPoweredByIntersystems.png"  style="height:80px;"/>
     </a>
@@ -68,7 +68,13 @@
         multi-select-mode="competitionTable.multiSelectMode"
         on-select="competitionTable.onSelect(item)"
         
-        action-column-visible="false"
+        action-column-visible="!menu.readOnlyMode && menu.admin"
+        action-column-icon="'fa fa-ellipsis-h'"
+    
+        first-row-action-icon="'fa fa-times'"
+        first-row-action-title="'Удалить'|localize"
+        first-row-action-method="competitionTable.remove(item)"
+            
         forcibly-update="competitionTable.forciblyUpdate"
     />
 </div>          

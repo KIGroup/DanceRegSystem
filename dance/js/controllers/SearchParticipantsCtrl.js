@@ -24,7 +24,7 @@ controllersModule.controller('SearchParticipantsCtrl', function($scope, $routePa
         //  
         $scope.participantTable.columns = [ 
                           {name: 'Партнер / Партнерша', sqlName: 'Created', isSorted: true, isSortable: true, isDown: false, isSearched: true, isSearchable: true},
-                          {name: 'СТСР', sqlName: '-', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: false},                          
+                          {name: 'ФТСАРР', sqlName: '-', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: false},                          
                           {name: 'WDSF', sqlName: '-', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: false},                          
                           {name: 'Клуб / Город', sqlName: '-', isSorted: false, isSortable: true, isDown: true, isSearched: false, isSearchable: true},
                           {name: 'Статус', sqlName: 'PaymentStatus', isSorted: false, isSortable: false, isDown: true, isSearched: false, isSearchable: false, captionStyle: {textAlign: 'center', width: '110px'}},

@@ -48,19 +48,42 @@ S-6
 ]]></Data>
 </XData>
 
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^Dance.Utils.Init.DancerClassD</DataLocation>
-<DefaultData>DancerClassDefaultData</DefaultData>
-<IdLocation>^Dance.Utils.Init.DancerClassD</IdLocation>
-<IndexLocation>^Dance.Utils.Init.DancerClassI</IndexLocation>
-<StreamLocation>^Dance.Utils.Init.DancerClassS</StreamLocation>
-<ExtentSize>100000</ExtentSize>
-<Data name="DancerClassDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-</Data>
-</Storage>
+<Method name="CreateNew">
+<Description>
+w ##class(Dance.Utils.Init.DancerClass).CreateNew()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set st = $$$OK
+	
+	try{
+		TSTART
+		
+		set dc = ##class(Dance.Data.DancerClass).%New()
+		set dc.Code = "3(Pro-Am)"
+		set dc.Name = "Bronze Open"
+		$$$TOE(st, dc.%Save())
+		
+		set dc = ##class(Dance.Data.DancerClass).%New()
+		set dc.Code = "2(Pro-Am)"
+		set dc.Name = "Silver Open"
+		$$$TOE(st, dc.%Save())
+		
+		
+		set dc = ##class(Dance.Data.DancerClass).%New()
+		set dc.Code = "1(Pro-Am)"
+		set dc.Name = "Gold Open"
+		$$$TOE(st, dc.%Save())
+		
+		TCOMMIT
+	}
+	catch(ex){
+		TROLLBACK
+		set st = ex.AsStatus()
+	}
+	
+	quit st
+]]></Implementation>
+</Method>
 </Class>
 </Export>
