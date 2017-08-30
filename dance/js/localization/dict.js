@@ -306,7 +306,32 @@ localizationModule.constant('DanceDictionary', {
         'Выберите номинации' : 'Select competitions',
         'Класс ST, LA' : 'ST, LA class',
         'Оплата отключена' : 'Payment is disabled',
-        'Все классы' : 'All classes'
+        'Все классы' : 'All classes',
+
+        'Настройки вкладки - Регистрация ФТСАРР' : 'Tab settings - Registration RFDARR',
+        'Настройки вкладки - Регистрация WDSF' : 'Tab settings - Registration WDSF',
+        'Настройки вкладки - Регистрация других' : 'Tab settings - Registration other participants',
+        'Система оплаты и валюта' : 'Payment system and currency',
+        'Служебные параметры' : 'Service parametrs',
+        'Информация о турнире (название ссылки)' : 'Tournament info (name of link)',
+        'Ссылка на информацию' : 'Tournament info - Link',
+        'Доп. информация (название ссылки)' : 'Additional trn/ info (name of link)',
+        'Ссылка на доп. информацию' : 'Addit. trn. info link',
+        'Инструкция к регистрации, ссылка' : 'Instruction link',
+        'Вкладка доступна для ФТСАРР' : 'Allowed for RFDARR',
+        'Вкладка доступна для WDSF' : 'Allowed for WDSF',
+        'Название вкладки' : 'Name of tab',
+        'Вкладка доступна для других участников' : 'Allowed for other participants',
+        'Система оплаты' : 'Payment system',
+        'Валюта' : 'Currency',
+        'Доступ к экспорту' : 'Access to export',
+        'Сформировать ссылку' : 'Make link',
+        'Список всех участников' : 'All participants list',
+        'Только оплатившие участники' : 'Only paid participants',
+        'Измените или оставьте значения по умолчанию' : 'Change or do nothing',
+        'Экспорт' : 'Export',
+        'Перейдите по ссылки' : 'Move to link',
+        'Категория (Pro-Am)' : 'Category (Pro-Am)' 
 
 
 
@@ -610,7 +635,32 @@ localizationModule.constant('DanceDictionary', {
     'на момент регистрации.' : 'at the time of registration.',
     'Выберите номинации' : 'Select competitions',
     'Класс ST, LA' : 'ST, LA class',
-    'Регистрация закрыта':'Registration is closed'
+    'Регистрация закрыта':'Registration is closed',
+
+    'Настройки вкладки - Регистрация ФТСАРР' : 'Tab settings - Registration RFDARR',
+    'Настройки вкладки - Регистрация WDSF' : 'Tab settings - Registration WDSF',
+    'Настройки вкладки - Регистрация других' : 'Tab settings - Registration other participants',
+    'Система оплаты и валюта' : 'Payment system and currency',
+    'Служебные параметры' : 'Service parametrs',
+    'Информация о турнире (название ссылки)' : 'Tournament info (name of link)',
+    'Ссылка на информацию' : 'Tournament info - Link',
+    'Доп. информация (название ссылки)' : 'Additional trn/ info (name of link)',
+    'Ссылка на доп. информацию' : 'Addit. trn. info link',
+    'Инструкция к регистрации, ссылка' : 'Instruction link',
+    'Вкладка доступна для ФТСАРР' : 'Allowed for RFDARR',
+    'Вкладка доступна для WDSF' : 'Allowed for WDSF',
+    'Название вкладки' : 'Name of tab',
+    'Вкладка доступна для других участников' : 'Allowed for other participants',
+    'Система оплаты' : 'Payment system',
+    'Валюта' : 'Currency',
+    'Доступ к экспорту' : 'Access to export',
+    'Сформировать ссылку' : 'Make link',
+    'Список всех участников' : 'All participants list',
+    'Только оплатившие участники' : 'Only paid participants',
+    'Измените или оставьте значения по умолчанию' : 'Change or do nothing',
+    'Экспорт' : 'Export',
+    'Перейдите по ссылки' : 'Move to link',
+    'Категория (Pro-Am)' : 'Category (Pro-Am)' 
 
   },
   toItalian: {
@@ -877,7 +927,7 @@ localizationModule.constant('DanceDictionary', {
     ' - участие не оплачено.' : ' - La partecipazione non è pagato.',
     ' - участие отменено.' : ' - Partecipazione annullato.',
     'Оплачены' : 'Pagato',
-    'd MMMM' : 'd MMMM',
+    'd MMMM' : 'd MMMM', 
     'WDSF Controller' : 'WDSF controller',
     'Возр. группа' : 'Crescente. gruppo',
     'Выберите организатора для доступа к регистрации:' : 'Selezionare organizzatore per l\'accesso alla registrazione: ',
@@ -936,13 +986,38 @@ localizationModule.constant('DanceDictionary', {
     'на момент регистрации.' : 'at the time of registration.',
     'Выберите номинации' : 'Select competitions',
     'Класс ST, LA' : 'ST, LA class',
-    'Регистрация закрыта':'Registration is closed' 
+    'Регистрация закрыта':'Registration is closed',
+    
+    'Настройки вкладки - Регистрация ФТСАРР' : 'Tab settings - Registration RFDARR',
+    'Настройки вкладки - Регистрация WDSF' : 'Tab settings - Registration WDSF',
+    'Настройки вкладки - Регистрация других' : 'Tab settings - Registration other participants',
+    'Система оплаты и валюта' : 'Payment system and currency',
+    'Служебные параметры' : 'Service parametrs',
+    'Информация о турнире (название ссылки)' : 'Tournament info (name of link)',
+    'Ссылка на информацию' : 'Tournament info - Link',
+    'Доп. информация (название ссылки)' : 'Additional trn/ info (name of link)',
+    'Ссылка на доп. информацию' : 'Addit. trn. info link',
+    'Инструкция к регистрации, ссылка' : 'Instruction link',
+    'Вкладка доступна для ФТСАРР' : 'Allowed for RFDARR',
+    'Вкладка доступна для WDSF' : 'Allowed for WDSF',
+    'Название вкладки' : 'Name of tab',
+    'Вкладка доступна для других участников' : 'Allowed for other participants',
+    'Система оплаты' : 'Payment system',
+    'Валюта' : 'Currency',
+    'Доступ к экспорту' : 'Access to export',
+    'Сформировать ссылку' : 'Make link',
+    'Список всех участников' : 'All participants list',
+    'Только оплатившие участники' : 'Only paid participants',
+    'Измените или оставьте значения по умолчанию' : 'Change or do nothing',
+    'Экспорт' : 'Export',
+    'Перейдите по ссылки' : 'Move to link',
+    'Категория (Pro-Am)' : 'Category (Pro-Am)' 
   },
   getTranslate: function(word, toLanguage){
     var def = function(key){
         //console.log("'" + key + "' : '',");
         
-        return key; 
+        return key;  
     };  
      
           

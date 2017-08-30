@@ -64,7 +64,20 @@ do ##class(Dance.Utils.Msg).Init()</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-    
+	
+    do ..SetMsgForLangs("msg_AndOlder",
+                        "и старше",
+                        "and older",
+                        "und älter",
+                        "anni e più")
+                        
+    do ..SetMsgForLangs("msg_AndYounger",
+                        "и младше",
+                        "and younger",
+                        "und jünger",
+                        "e più giovane")
+                        
+    /*
     do ..SetMsgForLangs("error_CoupleDifferentClubs",
                         "Партнер и партнерша должны быть из одного клуба!",
                         "Male partner and female partner must be from the same club!",
@@ -195,7 +208,7 @@ do ##class(Dance.Utils.Msg).Init()</Description>
                         "Registrar denied access to the tournament.",
                         "Registrar denied access to the tournament.",
                         "Registrar denied access to the tournament.")
-                        
+    */                    
     q $$$OK
 ]]></Implementation>
 </Method>

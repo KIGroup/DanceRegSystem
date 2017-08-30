@@ -62,8 +62,13 @@ Convert "Tournament imported" object to %ZEN.proxyObject (for JSON)</Description
 	
 	set proxy.info = ##class(%ZEN.proxyObject).%New()
 	set proxy.info.isExisted = ##class(Dance.Data.Tournament).IdInternalIdxExists(..IdInternal)
-	set proxy.info.isRemoved = ..IsRemoved 
-	
+	set proxy.info.isRemoved = ..IsRemoved
+	set proxy.infoUrlTitle = "Информация"
+    set proxy.regOtherTabCaption = "Регистрация других участников"
+    set proxy.regOtherInstructionUrl = "https://docs.google.com/document/d/10dD-UfcgOTz5U3PyCscx98zlwHfPMo3pDtsGx9Tw9cA/pub#id.que620483qjc"
+    set proxy.regWDSFInstructionUrl = "https://docs.google.com/document/d/10dD-UfcgOTz5U3PyCscx98zlwHfPMo3pDtsGx9Tw9cA/pub#id.xlq82eu99axl"
+    set proxy.regUDSRInstructionUrl = "https://docs.google.com/document/d/10dD-UfcgOTz5U3PyCscx98zlwHfPMo3pDtsGx9Tw9cA/pub#id.4m1w34n6ya88"
+    
 	quit proxy
 ]]></Implementation>
 </Method>

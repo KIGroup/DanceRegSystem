@@ -117,7 +117,6 @@
                 <li><a ng-hide="menu.pages.searchprt.id==menu.pages.selected.id || menu.pages.feedback.id==menu.pages.selected.id" ng-href="{{menu.pages.searchprt.url}}" ng-bind="menu.pages.searchprt.name" title="{{'Поиск регистрации участника по фамилии!'|localize}}" style="padding-left: 0;"></a></li>
                 <li><a ng-show="menu.pages.searchprt.id==menu.pages.selected.id && menu.pages.feedback.id!=menu.pages.selected.id" href="" onclick="window.history.back()" style="padding-left: 0;"><i class="fa fa-reply"></i> {{'Вернуться назад'|localize}}</a></li>
                 -->
-                <li><a style="padding-left: 0;" target="_blank" href="https://docs.google.com/document/d/10dD-UfcgOTz5U3PyCscx98zlwHfPMo3pDtsGx9Tw9cA/pub#id.4m1w34n6ya88" ng-bind="'Инструкция к регистрации'|localize"></a></li>
                 <li ng-hide="menu.pages.searchprt.id==menu.pages.selected.id"><a target="_blank" ng-hide="menu.pages.feedback.id==menu.pages.selected.id" ng-href="{{menu.pages.feedback.url}}" ng-bind="menu.pages.feedback.name" title="{{'Оставьте свои отзывы, предложения, замечания!'|localize}}"></a></li>
                 <li ng-hide="menu.pages.searchprt.id==menu.pages.selected.id"><a ng-show="menu.pages.feedback.id==menu.pages.selected.id" href="" onclick="window.history.back()"><i class="fa fa-reply"></i> {{'Вернуться назад'|localize}}</a></li>
                   

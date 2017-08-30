@@ -7,11 +7,11 @@
     <pre ng-hide="tournament.id" style="text-align: center;"><i class="fa fa-spinner fa-spin fa-lg" style="color: rgb(204, 204, 204);"></i></pre>
 </div>
 <div ng-show="tournament && tournament.addInfoUrl!=''" style="text-align: center; color: darkred; padding-top: 12px;" title="{{'Перейдите по ссылке для получения подробной информации'|localize}}">
-    <a class="trnAdditionInfoUrl" ng-href="{{tournament.addInfoUrl}}" target="_blank">{{('ВАЖНОЕ ОБЪЯВЛЕНИЕ'|localize)}}</a>
+    <a class="trnAdditionInfoUrl" ng-href="{{tournament.addInfoUrl}}" target="_blank">{{(tournament.addInfoUrlTitle|localize)}}</a>
 </div>
 <br>
 <div class="row-fluid" style="text-align: center;" ng-show="tournament.status.code != 'Completed'">
-    <a ng-href="{{tournament.infoUrl}}" target="_blank" class="trnMenu" title="{{'Информация о турнире'|localize}}" ng-bind="'Информация »'|localize"></a>
+    <a ng-hide="tournament.infoUrl==''" ng-href="{{tournament.infoUrl}}" target="_blank" class="trnMenu" title="{{tournament.infoUrlTitle|localize}}" ng-bind="(tournament.infoUrlTitle|localize) + ' »'"></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <a ng-href="" class="trnMenuSelected" title="{{'Сейчас Вы на этой странице'|localize}}" ng-bind="'Регистрация •'|localize"></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -45,6 +45,7 @@
                     <img ng-show="tabUDSR.searchForm.processing" style="padding: 5px 5px 13px 5px;" src="img/loader2.gif"/>
                 </div>
                 <div class="row-fluid" style="padding-top: 12px; padding-bottom: 2px;">
+                    <p>[ <font COLOR="RED"><b>!</b></font> ]  <a href="{{tournament.regUDSRInstructionUrl}}" target="_blank" title="{{'Перейдите по ссылки'|localize}}">{{'Инструкция к регистрации'|localize}}</a></p>
                     <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Регистрация осуществляется по номерам классификационных книжек и на основании информации'|localize}} <a href="http://dance.vftsarr.ru" target="_blank" title="{{'Перейти на сайт ФТСАРР'|localize}}">{{'Базы данных спортсменов "ФТСАРР"'|localize}}</a> {{'на момент регистрации.'|localize}}</p>
                     <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
                     <p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
@@ -171,6 +172,7 @@
                     <img ng-show="tabWDSF.searchForm.processing" style="padding: 5px 5px 13px 5px;" src="img/loader2.gif"/>
                 </div>
                 <div class="row-fluid" style="padding-top: 12px; padding-bottom: 2px;">
+                    <p>[ <font COLOR="RED"><b>!</b></font> ]  <a href="{{tournament.regWDSFInstructionUrl}}" target="_blank" title="{{'Перейдите по ссылки'|localize}}">{{'Инструкция к регистрации'|localize}}</a></p>
                     <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Регистрация осуществляется по MIN номерам WDSF. Поиск участников идет по базе данных "World DanceSport Federation".'|localize}}</p>
                     <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
                     <p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
@@ -617,6 +619,7 @@
                 <p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('OTHER')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p> 
             </div>
             <div class="row-fluid" ng-hide="tabOTHER.formCouple.btnBackVisible || tabOTHER.formSingle.btnBackVisible" style="padding-top: 5px; padding-bottom: 0px;">
+                <p>[ <font COLOR="RED"><b>!</b></font> ]  <a href="{{tournament.regOtherInstructionUrl}}" target="_blank" title="{{'Перейдите по ссылки'|localize}}">{{'Инструкция к регистрации'|localize}}</a></p>
                 <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Поля отмеченные * обязательны для заполнения.'|localize}}</p>
                 <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
                 <p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>

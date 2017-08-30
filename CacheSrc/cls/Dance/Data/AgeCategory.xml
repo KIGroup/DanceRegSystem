@@ -108,21 +108,36 @@ Create or update age category</Description>
 <FormalSpec>youngestPartnerMinAge,youngestPartnerMaxAge,oldestPartnerMinAge,oldestPartnerMaxAge</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	
 	set result = ""
 	
 	if (youngestPartnerMinAge = oldestPartnerMinAge){
-		set result = youngestPartnerMinAge_" - "
+		if (youngestPartnerMinAge = 0){
+			set result = "... - "
+		}
+		else{
+			set result = youngestPartnerMinAge_" - "
+		}
 	}
 	else{
 		set result = oldestPartnerMinAge_"/"_youngestPartnerMinAge_" - "
 	}
 	
 	if (oldestPartnerMaxAge = youngestPartnerMaxAge){
-		set result = result_oldestPartnerMaxAge
+		if (oldestPartnerMaxAge >= 99){
+			set result = result_"..."
+		}
+		else{
+			set result = result_oldestPartnerMaxAge
+		}
 	}
 	else{
 		set result = result_oldestPartnerMaxAge_"/"_youngestPartnerMaxAge
+	}
+	
+	set result = $REPLACE(result, " - ...", " "_##class(Dance.Utils.Msg).GetMsg("msg_AndOlder"))
+	if ($FIND(result, "... - ") > 0){
+		set result = $REPLACE(result, "... - ", "")
+		set result = result_" "_##class(Dance.Utils.Msg).GetMsg("msg_AndYounger")
 	}
 	
 	quit result

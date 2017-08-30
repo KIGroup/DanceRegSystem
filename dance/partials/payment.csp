@@ -7,11 +7,11 @@
     <pre ng-hide="tournament.id" style="text-align: center;"><i class="fa fa-spinner fa-spin fa-lg" style="color: rgb(204, 204, 204);"></i></pre>
 </div>  
 <div ng-show="tournament && tournament.addInfoUrl!=''" style="text-align: center; color: darkred; padding-top: 12px;" title="{{'Перейдите по ссылке для получения подробной информации'|localize}}">
-    <a class="trnAdditionInfoUrl" ng-href="{{tournament.addInfoUrl}}" target="_blank">{{('ВАЖНОЕ ОБЪЯВЛЕНИЕ'|localize)}}</a>
+    <a class="trnAdditionInfoUrl" ng-href="{{tournament.addInfoUrl}}" target="_blank">{{(tournament.addInfoUrlTitle|localize)}}</a>
 </div>
 <br>
 <div class="row-fluid" style="text-align: center;">
-    <a ng-href="{{tournament.infoUrl}}" target="_blank" class="trnMenu" title="{{'Информация о турнире'|localize}}" ng-bind="'Информация »'|localize"></a>
+    <a ng-hide="tournament.infoUrl==''"  ng-href="{{tournament.infoUrl}}" target="_blank" class="trnMenu" title="{{tournament.infoUrlTitle|localize}}" ng-bind="(tournament.infoUrlTitle|localize) + ' »'"></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <a ng-href="" ng-class="recorderHash ? 'trnMenu' : 'disabled'" title="{{'Регистрация участников на турнир'|localize}}" ng-bind="'Регистрация »'|localize" ng-click="locationSrvc.goTo(':recorderHash/tournament/' + tournament.id + '/registration', recorderHash)"></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

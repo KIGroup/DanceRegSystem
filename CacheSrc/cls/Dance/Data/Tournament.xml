@@ -234,9 +234,22 @@ Tournaments</Description>
 <Type>%Boolean</Type>
 </Property>
 
+<Property name="InfoUrlTitle">
+<Description>
+Мультияычное название ссылки на инфу о турнире</Description>
+<Type>Dance.Data.Localization.LText</Type>
+</Property>
+
 <Property name="InfoUrl">
 <Description>
 Мультияычная ссылка на инфу о турнире</Description>
+<Type>Dance.Data.Localization.LText</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="AdditionInfoUrlTitle">
+<Description>
+Мультияычное название ссылки на дополнительную инфу о турнире</Description>
 <Type>Dance.Data.Localization.LText</Type>
 <Required>1</Required>
 </Property>
@@ -251,6 +264,24 @@ Tournaments</Description>
 <Property name="RegOtherTabCaption">
 <Description>
 Заголовок вкладки для регистрации всяких прочих пар</Description>
+<Type>Dance.Data.Localization.LText</Type>
+</Property>
+
+<Property name="RegOtherInstructionUrl">
+<Description>
+Мультиязычная ссылка на инструкцию к регистрации</Description>
+<Type>Dance.Data.Localization.LText</Type>
+</Property>
+
+<Property name="RegWDSFInstructionUrl">
+<Description>
+Мультиязычная ссылка на инструкцию к регистрации</Description>
+<Type>Dance.Data.Localization.LText</Type>
+</Property>
+
+<Property name="RegUDSRInstructionUrl">
+<Description>
+Мультиязычная ссылка на инструкцию к регистрации</Description>
 <Type>Dance.Data.Localization.LText</Type>
 </Property>
 
@@ -294,11 +325,46 @@ Tournaments</Description>
     set proxy.startDate = $ZDATE(..StartDate, 3)
     set proxy.endDate = $ZDATE(..EndDate, 3)
     
+    if $ISOBJECT(..InfoUrlTitle){
+    	set proxy.infoUrlTitle = ..InfoUrlTitle.Value
+    }
+    else{
+	    set proxy.infoUrlTitle = "Информация"
+    }
+    
+    if $ISOBJECT(..AdditionInfoUrlTitle){
+    	set proxy.addInfoUrlTitle = ..AdditionInfoUrlTitle.Value
+    }
+    else{
+	    set proxy.addInfoUrlTitle = "ВАЖНОЕ ОБЪЯВЛЕНИЕ"
+    }
+    
     if $ISOBJECT(..RegOtherTabCaption){
     	set proxy.regOtherTabCaption = ..RegOtherTabCaption.Value
     }
     else{
 	    set proxy.regOtherTabCaption = "Регистрация других участников"
+    }
+    
+    if $ISOBJECT(..RegOtherInstructionUrl){
+    	set proxy.regOtherInstructionUrl = ..RegOtherInstructionUrl.Value
+    }
+    else{
+	    set proxy.regOtherInstructionUrl = "https://docs.google.com/document/d/10dD-UfcgOTz5U3PyCscx98zlwHfPMo3pDtsGx9Tw9cA/pub#id.que620483qjc"
+    }
+    
+    if $ISOBJECT(..RegWDSFInstructionUrl){
+    	set proxy.regWDSFInstructionUrl = ..RegWDSFInstructionUrl.Value
+    }
+    else{
+	    set proxy.regWDSFInstructionUrl = "https://docs.google.com/document/d/10dD-UfcgOTz5U3PyCscx98zlwHfPMo3pDtsGx9Tw9cA/pub#id.xlq82eu99axl"
+    }
+    
+    if $ISOBJECT(..RegUDSRInstructionUrl){
+    	set proxy.regUDSRInstructionUrl = ..RegUDSRInstructionUrl.Value
+    }
+    else{
+	    set proxy.regUDSRInstructionUrl = "https://docs.google.com/document/d/10dD-UfcgOTz5U3PyCscx98zlwHfPMo3pDtsGx9Tw9cA/pub#id.4m1w34n6ya88"
     }
     
     set proxy.currency = ##class(%ZEN.proxyObject).%New()
@@ -356,10 +422,7 @@ Tournaments</Description>
         set proxy.addInfoUrl = ..AdditionInfoUrl.Value
     //}
     
-    //set proxy.annUrl = ..AnnouncementUrl
-    
     set proxy.organizer = ##class(%ZEN.proxyObject).%New()
-    //set proxy.organizer.site = ..OrganizerSite
     
     if (params.loadOrganizer){  
         set proxy.organizer.info = ..OrganizerInfo.Value
@@ -418,19 +481,52 @@ Create or Update object</Description>
         set trn.AdditionInfoUrl.Value = data.addInfoUrl
     }
     
+    // Название ссылки
+    if $ISOBJECT(trn.InfoUrlTitle){
+    	set trn.InfoUrlTitle.Value = data.infoUrlTitle
+    }
+    else{
+        set trn.InfoUrlTitle = ##class(Dance.Data.Localization.LText).Create(data.infoUrlTitle)
+    }
+    // Название ссылки
+    if $ISOBJECT(trn.AdditionInfoUrlTitle){
+    	set trn.AdditionInfoUrlTitle.Value = data.addInfoUrlTitle
+    }
+    else{
+        set trn.AdditionInfoUrlTitle = ##class(Dance.Data.Localization.LText).Create(data.addInfoUrlTitle)
+    }
+    // Название вкладки
     if $ISOBJECT(trn.RegOtherTabCaption){
     	set trn.RegOtherTabCaption.Value = data.regOtherTabCaption
     }
     else{
         set trn.RegOtherTabCaption = ##class(Dance.Data.Localization.LText).Create(data.regOtherTabCaption)
     }
+    // Ссылка на инструкцию
+    if $ISOBJECT(trn.RegOtherInstructionUrl){
+    	set trn.RegOtherInstructionUrl.Value = data.regOtherInstructionUrl
+    }
+    else{
+        set trn.RegOtherInstructionUrl = ##class(Dance.Data.Localization.LText).Create(data.regOtherInstructionUrl)
+    }
+    // Ссылка на инструкцию
+    if $ISOBJECT(trn.RegWDSFInstructionUrl){
+    	set trn.RegWDSFInstructionUrl.Value = data.regWDSFInstructionUrl
+    }
+    else{
+        set trn.RegWDSFInstructionUrl = ##class(Dance.Data.Localization.LText).Create(data.regWDSFInstructionUrl)
+    }
+    // Ссылка на инструкцию
+    if $ISOBJECT(trn.RegUDSRInstructionUrl){
+    	set trn.RegUDSRInstructionUrl.Value = data.regUDSRInstructionUrl
+    }
+    else{
+        set trn.RegUDSRInstructionUrl = ##class(Dance.Data.Localization.LText).Create(data.regUDSRInstructionUrl)
+    }
         
     set trn.IdInternal = data.idInternal
     set trn.IdExternal = data.idExternal
     set trn.Hash = data.hash
-    
-    //set trn.AnnouncementUrl = data.annUrl     
-    //set trn.OrganizerSite = data.organizer.site
     
     set trn.Country = ##class(Dance.Data.Country).%OpenId(data.location.country.id)
     set trn.Currency = ##class(Dance.Data.Currency).%OpenId(data.currency.id)
@@ -857,6 +953,21 @@ Check update privilege</Description>
 </Value>
 <Value name="36">
 <Value>RegOtherTabCaption</Value>
+</Value>
+<Value name="37">
+<Value>InfoUrlTitle</Value>
+</Value>
+<Value name="38">
+<Value>AdditionInfoUrlTitle</Value>
+</Value>
+<Value name="39">
+<Value>RegOtherInstructionUrl</Value>
+</Value>
+<Value name="40">
+<Value>RegWDSFInstructionUrl</Value>
+</Value>
+<Value name="41">
+<Value>RegUDSRInstructionUrl</Value>
 </Value>
 </Data>
 </Storage>

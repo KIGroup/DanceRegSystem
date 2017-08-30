@@ -1123,8 +1123,21 @@ Available participants competitions for grid</Description>
     
     set maleAge = ##class(Dance.Data.Person).GetAge(man.dob, $ZDT(trn.StartDate, 3))
     set femaleAge = ##class(Dance.Data.Person).GetAge(woman.dob, $ZDT(trn.StartDate, 3))
-    set ageList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
-        
+    
+    set ageList = $LB("0")
+    // Для турниров Pro-Am особая логика, влияет возраст только AM партнера
+    if (trn.TRank.Code = "Pro-Am"){
+    	set amAGE = femaleAge
+    	if (man.category = "Am"){
+    		set amAGE = maleAge
+    	}
+    	
+    	set ageList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(amAGE, amAGE) 
+    }
+    else{
+    	set ageList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
+    }
+    
     set sourceList = ..GetTournamentCompetitionsList(trnId, $ISOBJECT(coupleData))
     set resultList = ##class(%ListOfObjects).%New()
     
