@@ -76,6 +76,13 @@ Tournaments</Description>
 <Parameter name="FORMAT" value="3"/>
 </Property>
 
+<Property name="AgeCalcDate">
+<Description>
+Дата для вычисления возраста спортсмена, null - значит от текущего года</Description>
+<Type>%Date</Type>
+<Parameter name="FORMAT" value="3"/>
+</Property>
+
 <Property name="OrganizerInfo">
 <Description>
 Орагнизатор</Description>
@@ -324,6 +331,9 @@ Tournaments</Description>
     set proxy.isContainsLimit = ..IsContainsLimit
     set proxy.startDate = $ZDATE(..StartDate, 3)
     set proxy.endDate = $ZDATE(..EndDate, 3)
+    if (..AgeCalcDate '= ""){
+    	set proxy.ageCalcDate = $ZDATE(..AgeCalcDate, 3)
+    }
     
     if $ISOBJECT(..InfoUrlTitle){
     	set proxy.infoUrlTitle = ..InfoUrlTitle.Value
@@ -535,6 +545,12 @@ Create or Update object</Description>
         
     set trn.StartDate = $ZDATEH(data.startDate, 15)
     set trn.EndDate = $ZDATEH(data.endDate, 15)
+    if (data.ageCalcDate = ""){
+	    set trn.AgeCalcDate = ""
+    }
+    else{
+    	set trn.AgeCalcDate = $ZDATEH(data.ageCalcDate, 15)
+    }
     
     set trn.TabUDSRAllowed = data.tabUDSRAllowed = $$$YES
     set trn.TabWDSFAllowed = data.tabWDSFAllowed = $$$YES
@@ -968,6 +984,9 @@ Check update privilege</Description>
 </Value>
 <Value name="41">
 <Value>RegUDSRInstructionUrl</Value>
+</Value>
+<Value name="42">
+<Value>AgeCalcDate</Value>
 </Value>
 </Data>
 </Storage>

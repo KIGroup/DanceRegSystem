@@ -876,17 +876,21 @@ Available participants competitions for grid</Description>
     	quit resultList
     }
     
-    //set maleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(man.DOB, 3), "-", 1)
-    //set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(woman.DOB, 3), "-", 1)
+    // Вычисляем возраст
+    set (maleAge,femaleAge) = 0
+    if (trn.AgeCalcDate '= ""){
+	    set maleAge = ##class(Dance.Data.Person).GetAge($ZDT(man.DOB, 3), $ZDT(trn.AgeCalcDate, 3))
+    	set femaleAge = ##class(Dance.Data.Person).GetAge($ZDT(woman.DOB, 3), $ZDT(trn.AgeCalcDate, 3))
+    }
+    else{
+	    set maleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(man.DOB, 3), "-", 1)
+    	set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P($ZDT(woman.DOB, 3), "-", 1)
+    }
     
-    set maleAge = ##class(Dance.Data.Person).GetAge($ZDT(man.DOB, 3), $ZDT(trn.StartDate, 3))
-    set femaleAge = ##class(Dance.Data.Person).GetAge($ZDT(woman.DOB, 3), $ZDT(trn.StartDate, 3))
     set ageUDSRList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
-    
     
     set sourceList = ..GetTournamentCompetitionsList(trnId, $ISOBJECT(couple))
    
-    
     for i=1:1:sourceList.Count(){
         #dim cmp As Dance.Data.Competition = sourceList.GetAt(i)
         
@@ -1118,11 +1122,16 @@ Available participants competitions for grid</Description>
         set prtObjClassName = ##class(Dance.Data.ParticipantCoupleOther).%ClassName(1)
     }
    
-    //set maleAge = $P($ZD($NOW(),3), "-", 1) - $P(man.dob, "-", 1)
-    //set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P(woman.dob, "-", 1)
-    
-    set maleAge = ##class(Dance.Data.Person).GetAge(man.dob, $ZDT(trn.StartDate, 3))
-    set femaleAge = ##class(Dance.Data.Person).GetAge(woman.dob, $ZDT(trn.StartDate, 3))
+   	// Вычисляем возраст
+   	set (maleAge,femaleAge) = 0
+    if (trn.AgeCalcDate '= ""){
+    	set maleAge = ##class(Dance.Data.Person).GetAge(man.dob, $ZDT(trn.AgeCalcDate, 3))
+    	set femaleAge = ##class(Dance.Data.Person).GetAge(woman.dob, $ZDT(trn.AgeCalcDate, 3))
+    }
+    else{
+	    set maleAge = $P($ZD($NOW(),3), "-", 1) - $P(man.dob, "-", 1)
+    	set femaleAge = $P($ZD($NOW(),3), "-", 1) - $P(woman.dob, "-", 1)
+    }
     
     set ageList = $LB("0")
     // Для турниров Pro-Am особая логика, влияет возраст только AM партнера

@@ -57,6 +57,7 @@ controllersModule.controller('TournamentCtrl', function($scope, $window, $routeP
     $scope.page.saveTournament = function(){
 	    $scope.page.tournament.startDate = UtilsSrvc.getValidDate($scope.page.tournament.startDate);
 	    $scope.page.tournament.endDate = UtilsSrvc.getValidDate($scope.page.tournament.endDate);
+        $scope.page.tournament.ageCalcDate = UtilsSrvc.getValidDate($scope.page.tournament.ageCalcDate);
    		
    		if ($scope.page.tournament.endDate == "" || $scope.page.tournament.startDate == "")
    			return;

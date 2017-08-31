@@ -127,6 +127,17 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row-fluid">
+                    <div class="span4">
+                        <div class="control-group" title="{{'Вычисление возраста участника на указанную дату, если дата не указана, то вычисление возраста происходит на момент запроса групп'|localize}}">
+                            <label class="control-label" ng-bind="('Вычислять возраст на дату'|localize) + ''"></label>
+                            <div class="controls">
+                                <input type="text" class="span12" datepicker-popup="{{'d MMMM y'|localize}}" ng-model="tournament.ageCalcDate" show-weeks="false" start-mode="2" ng-required="false" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </accordion-group>
 
             <!-- =========================================================================== -->

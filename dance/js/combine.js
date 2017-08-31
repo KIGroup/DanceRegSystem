@@ -1,4 +1,4 @@
-// Combine date time is 12.08.2017 21:27:32
+// Combine date time is 31.08.2017 22:32:48
 
 
 // ===============================================================================================================================
@@ -185,6 +185,7 @@ controllersModule.controller('TournamentCtrl', function($scope, $window, $routeP
     $scope.page.saveTournament = function(){
 	    $scope.page.tournament.startDate = UtilsSrvc.getValidDate($scope.page.tournament.startDate);
 	    $scope.page.tournament.endDate = UtilsSrvc.getValidDate($scope.page.tournament.endDate);
+        $scope.page.tournament.ageCalcDate = UtilsSrvc.getValidDate($scope.page.tournament.ageCalcDate);
    		
    		if ($scope.page.tournament.endDate == "" || $scope.page.tournament.startDate == "")
    			return;
