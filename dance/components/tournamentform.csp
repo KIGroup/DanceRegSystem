@@ -155,9 +155,19 @@
                     </div>
                 </div>
                  <div class="row-fluid" style="display: flex; padding-bottom: 10px;">
-                    <label class="checkbox" style="padding-right: 20px;">
-                        <input type="checkbox" ng-model="tournament.tabUDSRAllowed" ng-true-value="1" ng-false-value="0">{{'Вкладка доступна для ФТСАРР'|localize}}
-                    </label>
+                     <div class="span6">
+                        <label class="checkbox" style="padding-right: 20px;">
+                            <input type="checkbox" ng-model="tournament.tabUDSRAllowed" ng-true-value="1" ng-false-value="0">{{'Вкладка доступна для ФТСАРР'|localize}}
+                        </label>
+                    </div>
+
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="checkbox" style="padding-right: 20px;">
+                                <input type="checkbox" ng-model="tournament.isRequiredInsuranceVerification" ng-true-value="1" ng-false-value="0">{{'Проверять страхование'|localize}}
+                            </label>
+                        </div>
+                    </div>
                 </div>         
             </accordion-group>
 

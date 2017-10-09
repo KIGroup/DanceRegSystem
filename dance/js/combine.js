@@ -1,4 +1,4 @@
-// Combine date time is 31.08.2017 22:32:48
+// Combine date time is 09.10.2017 23:57:58
 
 
 // ===============================================================================================================================
@@ -175,6 +175,7 @@ controllersModule.controller('TournamentCtrl', function($scope, $window, $routeP
                 $scope.page.tournament.tabUDSRAllowed = $scope.page.tournament.tabUDSRAllowed == 1 ? "1" : "0";
                 $scope.page.tournament.tabWDSFAllowed = $scope.page.tournament.tabWDSFAllowed == 1 ? "1" : "0";
                 $scope.page.tournament.tabOtherAllowed = $scope.page.tournament.tabOtherAllowed == 1 ? "1" : "0";
+                $scope.page.tournament.isRequiredInsuranceVerification = $scope.page.tournament.isRequiredInsuranceVerification == 1 ? "1" : "0";
             },
             function(data, status, headers, config){
                 $scope.page.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);
@@ -1697,6 +1698,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 $scope.tabUDSR.visible = data.tabUDSRAllowed == 1;
                 $scope.tabWDSF.visible = data.tabWDSFAllowed == 1;
                 $scope.tabOTHER.visible = data.tabOtherAllowed == 1;
+                $scope.tournament.isRequiredInsuranceVerification = $scope.tournament.isRequiredInsuranceVerification == 1;
                 
                 if ($routeParams.typeCode){
                     if ($routeParams.typeCode == 'udsr'){
@@ -1878,7 +1880,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         };
 
         if (manNumber != '' && womanNumber != ''){
-            CoupleSrvc.getUDSRByNumbers(manNumber, womanNumber).then(
+            CoupleSrvc.getUDSRByNumbersForTournament(manNumber, womanNumber, $scope.tournament.id).then(
                 function(data){
                     $scope.tabUDSR.couple = data;
                     afterSuccess();
@@ -1889,7 +1891,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 });  
         }
         else{
-            PersonSrvc.getByUDSRNumber(manNumber ? manNumber : womanNumber).then(
+            PersonSrvc.getByUDSRNumberForTournament(manNumber ? manNumber : womanNumber, $scope.tournament.id).then(
                 function(data){
                     $scope.tabUDSR.athlete = data;
                     afterSuccess();
@@ -3804,6 +3806,11 @@ servicesModule.factory('CoupleSrvc', function(RESTSrvc) {
 	        if (!woman || woman == '') woman = 0;
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/couple/udsr/man/' + man + '/woman/' + woman});
         },
+        getUDSRByNumbersForTournament: function(man, woman, tournamentId){
+            if (!man || man == '') man = 0;
+            if (!woman || woman == '') woman = 0;
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/couple/udsr/man/' + man + '/woman/' + woman + '/tournament/' + tournamentId});
+        },
         getWDSFByNumbers: function(man, woman){
 	        if (!man || man == '') man = 0;
 	        if (!woman || woman == '') woman = 0;
@@ -3856,6 +3863,9 @@ servicesModule.factory('PersonSrvc', function(RESTSrvc) {
     return {
         getByUDSRNumber: function(number){
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/person/udsr/' + number});
+        },
+        getByUDSRNumberForTournament: function(number, trnId){
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/person/udsr/' + number + '/tournament/' + trnId});
         },
         getByWDSFNumber: function(number){
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/person/wdsf/' + number});

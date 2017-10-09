@@ -45,11 +45,11 @@
                     <img ng-show="tabUDSR.searchForm.processing" style="padding: 5px 5px 13px 5px;" src="img/loader2.gif"/>
                 </div>
                 <div class="row-fluid" style="padding-top: 12px; padding-bottom: 2px;">
-                    <p>[ <font COLOR="RED"><b>!</b></font> ]  <a href="{{tournament.regUDSRInstructionUrl}}" target="_blank" title="{{'Перейдите по ссылки'|localize}}">{{'Инструкция к регистрации'|localize}}</a></p>
-                    <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Регистрация осуществляется по номерам классификационных книжек и на основании информации'|localize}} <a href="http://dance.vftsarr.ru" target="_blank" title="{{'Перейти на сайт ФТСАРР'|localize}}">{{'Базы данных спортсменов "ФТСАРР"'|localize}}</a> {{'на момент регистрации.'|localize}}</p>
-                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
-                    <p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
-                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в \"соло\" заполните только одно поле.'|localize}}</p> 
+                    <p>[ <font COLOR="GREEN"><b>i</b></font> ]  <a href="{{tournament.regUDSRInstructionUrl}}" target="_blank" title="{{'Перейдите по ссылки'|localize}}">{{'Инструкция к регистрации'|localize}}</a></p>
+                    <p>[ <font COLOR="GREEN"><b>i</b></font> ]  {{'Регистрация осуществляется по номерам классификационных книжек и на основании информации'|localize}} <a href="http://dance.vftsarr.ru" target="_blank" title="{{'Перейти на сайт ФТСАРР'|localize}}">{{'Базы данных спортсменов "ФТСАРР"'|localize}}</a> {{'на момент регистрации.'|localize}}</p>
+                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
+                    <p ng-hide="tournament.isContainsSolo">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
+                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для регистрации в \"соло\" заполните только одно поле.'|localize}}</p> 
                 </div>
             </form>
             <!-- ================== -->
@@ -69,6 +69,8 @@
                     <p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabUDSR.couple.man.lastName + ' ' + tabUDSR.couple.man.firstName"></span></p>
                     <p><span class="spnTitle" ng-bind="'Дата рождения'|localize"></span>: <span ng-bind="tabUDSR.couple.man.dob|convertCacheDate:('d MMMM y'|localize)"></span></p>
                     <p><span class="spnTitle" ng-bind="'Класс'|localize"></span>: <span ng-show="tabUDSR.couple.man.stClass.name" ng-bind="('Ст: '|localize) + tabUDSR.couple.man.stClass.name"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span ng-show="tabUDSR.couple.man.laClass.name" ng-bind="('Ла: '|localize) + tabUDSR.couple.man.laClass.name"></span></p>
+                    <p ng-show="tabUDSR.couple.man.otherInfo.insurance.organizationName && tournament.isRequiredInsuranceVerification"><span class="spnTitle" ng-bind="'Страхование'|localize"></span>: <span ng-bind="'действует до ' + (tabUDSR.couple.man.otherInfo.insurance.dateEnd|convertCacheDate:('d.MM.y'|localize)) + ', ' + tabUDSR.couple.man.otherInfo.insurance.organizationName"></span></p>
+                    <p ng-hide="tabUDSR.couple.man.otherInfo.insurance.organizationName || !tournament.isRequiredInsuranceVerification"><span class="spnTitle" ng-bind="'Страхование'|localize"></span>: <span style="color: red;">{{'отсутствует по данным ФТСАРР'}}</span></p>
                     
                     <div ng-hide="resultTableVisible">
                         <button type="button" ng-show="tabUDSR.couple" style="margin-top: 25px;" class="btn btn-small" ng-click="tabUDSR.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
@@ -93,6 +95,8 @@
                     <p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabUDSR.couple.woman.lastName + ' ' + tabUDSR.couple.woman.firstName"></span></p>
                     <p><span class="spnTitle" ng-bind="'Дата рождения'|localize"></span>: <span ng-bind="tabUDSR.couple.woman.dob|convertCacheDate:('d MMMM y'|localize)"></span></p>
                     <p><span class="spnTitle" ng-bind="'Класс'|localize"        ></span>: <span ng-show="tabUDSR.couple.woman.stClass.name" ng-bind="('Ст: '|localize) + tabUDSR.couple.woman.stClass.name"></span>&nbsp;&nbsp;&nbsp;<span ng-show="tabUDSR.couple.woman.laClass.name" ng-bind="'Ла: ' + tabUDSR.couple.woman.laClass.name"></span></p>
+                    <p ng-show="tabUDSR.couple.woman.otherInfo.insurance.organizationName && tournament.isRequiredInsuranceVerification"><span class="spnTitle" ng-bind="'Страхование'|localize"></span>: <span ng-bind="'действует до ' + (tabUDSR.couple.woman.otherInfo.insurance.dateEnd|convertCacheDate:('d.MM.y'|localize)) + ', ' + tabUDSR.couple.woman.otherInfo.insurance.organizationName"></span></p>
+                    <p ng-hide="tabUDSR.couple.woman.otherInfo.insurance.organizationName || !tournament.isRequiredInsuranceVerification"><span class="spnTitle" ng-bind="'Страхование'|localize"></span>: <span style="color: red;">{{'отсутствует по данным ФТСАРР'}}</span></p>  
                 </div>
                 <!-- Other info -->
                 <div class="span4">
@@ -119,7 +123,9 @@
                     <p><span class="spnTitle" ng-bind="'Фамилия, Имя'|localize"></span>: <span ng-bind="tabUDSR.athlete.lastName + ' ' + tabUDSR.athlete.firstName"></span></p>
                     <p><span class="spnTitle" ng-bind="'Дата рождения'|localize"></span>: <span ng-bind="tabUDSR.athlete.dob|convertCacheDate:('d MMMM y'|localize)"></span></p>
                     <p><span class="spnTitle" ng-bind="'Класс'|localize"></span>: <span ng-show="tabUDSR.athlete.stClass.name" ng-bind="('Ст: '|localize) + tabUDSR.athlete.stClass.name"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span ng-show="tabUDSR.athlete.laClass.name" ng-bind="('Ла: '|localize) + tabUDSR.athlete.laClass.name"></span></p>
-                    
+                    <p ng-show="tabUDSR.athlete.otherInfo.insurance.organizationName && tournament.isRequiredInsuranceVerification"><span class="spnTitle" ng-bind="'Страхование'|localize"></span>: <span ng-bind="'действует до ' + (tabUDSR.athlete.otherInfo.insurance.dateEnd|convertCacheDate:('d.MM.y'|localize)) + ', ' + tabUDSR.athlete.otherInfo.insurance.organizationName"></span></p>
+                    <p ng-hide="tabUDSR.athlete.otherInfo.insurance.organizationName || !tournament.isRequiredInsuranceVerification"><span class="spnTitle" ng-bind="'Страхование'|localize"></span>: <span style="color: red;">{{'отсутствует по данным ФТСАРР'}}</span></p>  
+        
                     <div ng-hide="resultTableVisible">
                         <button type="button" ng-show="tabUDSR.athlete" style="margin-top: 25px;" class="btn btn-small" ng-click="tabUDSR.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
                         <button type="button" ng-show="tabUDSR.athlete" title="{{competitionTable.selectedItems.length==0 ? ('Выберите группы!'|localize) :''}}" style="margin-top: 25px;" class="btn btn-small" ng-click="confirmDialog.open('UDSR', tabUDSR.registration)" ng-disabled="competitionTable.selectedItems.length==0">
@@ -145,8 +151,9 @@
             </div>
 
             <div class="row-fluid" ng-show="(tabUDSR.couple || tabUDSR.athlete) && !resultTableVisible" style="padding-top: 20px; padding-bottom: 0px;">
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('UDSR')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p>  
+                <p ng-show="tournament.isRequiredInsuranceVerification && ((tabUDSR.couple && (!tabUDSR.couple.man.otherInfo.insurance.organizationName || !tabUDSR.couple.woman.otherInfo.insurance.organizationName)) || (tabUDSR.athlete && !tabUDSR.athlete.otherInfo.insurance.organizationName))">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Вы можете оформить страховой полис на сайте '}}<a ng-href="{{'https://sport.insure/oformit_polis/DANCEPLAT'}}" target="_blank">sport.insure</a>{{' со скидкой 10% по промокоду DANCEPLAT'}}</p>
+                <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
+                <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('UDSR')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p>  
             </div>
             <stcalert data="tabUDSR.alert" style="margin-top: 25px;"/>
         </tab>
@@ -172,11 +179,11 @@
                     <img ng-show="tabWDSF.searchForm.processing" style="padding: 5px 5px 13px 5px;" src="img/loader2.gif"/>
                 </div>
                 <div class="row-fluid" style="padding-top: 12px; padding-bottom: 2px;">
-                    <p>[ <font COLOR="RED"><b>!</b></font> ]  <a href="{{tournament.regWDSFInstructionUrl}}" target="_blank" title="{{'Перейдите по ссылки'|localize}}">{{'Инструкция к регистрации'|localize}}</a></p>
-                    <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Регистрация осуществляется по MIN номерам WDSF. Поиск участников идет по базе данных "World DanceSport Federation".'|localize}}</p>
-                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
-                    <p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
-                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в \"соло\" заполните только одно поле.'|localize}}</p> 
+                    <p>[ <font COLOR="GREEN"><b>i</b></font> ]  <a href="{{tournament.regWDSFInstructionUrl}}" target="_blank" title="{{'Перейдите по ссылки'|localize}}">{{'Инструкция к регистрации'|localize}}</a></p>
+                    <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Регистрация осуществляется по MIN номерам WDSF. Поиск участников идет по базе данных "World DanceSport Federation".'|localize}}</p>
+                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
+                    <p ng-hide="tournament.isContainsSolo">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
+                    <p ng-show="tournament.isContainsSolo">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для регистрации в \"соло\" заполните только одно поле.'|localize}}</p> 
                 </div>
             </form>
             <!-- ================== -->
@@ -198,8 +205,8 @@
                             </div>
                         </div>
                         <div style="position: absolute; width: 300px;">
-                            <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Часть данных получена от WDSF.'|localize}}</p>
-                            <p style="padding-bottom: 7px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Доп. поля можно не заполнять.'|localize}}</p>
+                            <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Часть данных получена от WDSF.'|localize}}</p>
+                            <p style="padding-bottom: 7px;">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Доп. поля можно не заполнять.'|localize}}</p>
                         </div>
                         <div ng-hide="resultTableVisible" style="padding-top: 70px;">
                             <button type="button" ng-show="tabWDSF.formCouple.btnBackVisible" class="btn btn-small" ng-click="tabWDSF.formCouple.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
@@ -288,8 +295,8 @@
                             </div>
                         </div>
 
-                        <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Часть данных получена от WDSF.'|localize}}</p>
-                        <p style="padding-bottom: 7px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Заполните / измените остальные поля.'|localize}}</p>
+                        <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Часть данных получена от WDSF.'|localize}}</p>
+                        <p style="padding-bottom: 7px;">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Заполните / измените остальные поля.'|localize}}</p>
 
                         <div ng-hide="resultTableVisible">
                             <button type="button" ng-show="tabWDSF.formSingle.btnBackVisible" class="btn btn-small" ng-click="tabWDSF.formSingle.back()"><i class="fa fa-chevron-left"></i>&nbsp;&nbsp;{{'Назад'|localize}}</button>
@@ -348,8 +355,8 @@
             </div>
 
             <div class="row-fluid" ng-show="(tabWDSF.formCouple.btnRegistrationVisible || tabWDSF.formSingle.btnRegistrationVisible) && !resultTableVisible" style="padding-top: 20px; padding-bottom: 0px;">
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('WDSF')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p>  
+                <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
+                <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('WDSF')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p>  
             </div>
             <stcalert data="tabWDSF.alert" style="margin-top: 25px;"/>
         </tab>
@@ -615,15 +622,15 @@
             </div>
 
             <div class="row-fluid" ng-show="(tabOTHER.formCouple.btnBackVisible || tabOTHER.formSingle.btnBackVisible) && !resultTableVisible" style="padding-top: 5px; padding-bottom: 0px;">
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('OTHER')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p> 
+                <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Щелчком мыши выберите группы, в которые необходимо зарегистрировать пару.'|localize}}</p>
+                <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'В списке не отображены группы, в которых данная пара уже зарегистрирована.'|localize}} <a ng-init="regCompetitionsCount=0" ng-show="regCompetitionsCount > 0" href="" ng-click="openParticipantCompetitions('OTHER')" class="cellLink" ng-bind="('Перейти к списку групп пары / участника для оплаты ('|localize) + regCompetitionsCount + ') »'"></a></p> 
             </div>
             <div class="row-fluid" ng-hide="tabOTHER.formCouple.btnBackVisible || tabOTHER.formSingle.btnBackVisible" style="padding-top: 5px; padding-bottom: 0px;">
-                <p>[ <font COLOR="RED"><b>!</b></font> ]  <a href="{{tournament.regOtherInstructionUrl}}" target="_blank" title="{{'Перейдите по ссылки'|localize}}">{{'Инструкция к регистрации'|localize}}</a></p>
-                <p>[ <font COLOR="RED"><b>!</b></font> ] {{'Поля отмеченные * обязательны для заполнения.'|localize}}</p>
-                <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
-                <p ng-hide="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
-                <p ng-show="tournament.isContainsSolo">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в \"соло\" нажмите на переключатель.'|localize}}</p> 
+                <p>[ <font COLOR="GREEN"><b>i</b></font> ]  <a href="{{tournament.regOtherInstructionUrl}}" target="_blank" title="{{'Перейдите по ссылки'|localize}}">{{'Инструкция к регистрации'|localize}}</a></p>
+                <p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Поля отмеченные * обязательны для заполнения.'|localize}}</p>
+                <p ng-show="tournament.isContainsSolo">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для всех номинаций кроме \"соло\", стоимость участия указана для пары участников.'|localize}}</p>
+                <p ng-hide="tournament.isContainsSolo">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для всех номинаций стоимость участия указана для пары участников.'|localize}}</p>
+                <p ng-show="tournament.isContainsSolo">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для регистрации в \"соло\" нажмите на переключатель.'|localize}}</p> 
             </div>
             <stcalert data="tabOTHER.alert" style="margin-top: 25px;"/>
         </tab>
@@ -745,6 +752,8 @@
                 63156   92779 <a href="" ng-click="tabUDSR.searchForm.manNumber='63156'; tabUDSR.searchForm.womanNumber='92779';">select</a>
                 62743   80619 <a href="" ng-click="tabUDSR.searchForm.manNumber='62743'; tabUDSR.searchForm.womanNumber='80619';">select</a>
                 24069   45633 <a href="" ng-click="tabUDSR.searchForm.manNumber='24069'; tabUDSR.searchForm.womanNumber='45633';">select</a>
+
+                124539   124516 <a href="" ng-click="tabUDSR.searchForm.manNumber='124539'; tabUDSR.searchForm.womanNumber='124516';">select</a>
                 
         </pre>
     </div>

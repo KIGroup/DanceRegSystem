@@ -1461,7 +1461,7 @@ Get one couple by Id</Description>
 <Description>
 Get couple UDSR by numbers</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>manNumber:%String,womanNumber:%String</FormalSpec>
+<FormalSpec>manNumber:%String,womanNumber:%String,trnId:%String=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     set st = $$$OK
@@ -1472,12 +1472,23 @@ Get couple UDSR by numbers</Description>
             //$$$ThrowStatus(##class(Dance.Utils.Msg).GetErrorStatus("error_CoupleUDSRNotFoundByNumbers", " | Man - "_+manNumber_", Woman - "_+womanNumber))
         }
         
-        set couple = ##class(Dance.Data.CoupleUDSR).GetByNumbers(+manNumber, +womanNumber, .st)
+        #dim couple As Dance.Data.CoupleUDSR = ##class(Dance.Data.CoupleUDSR).GetByNumbers(+manNumber, +womanNumber, .st)
         $$$THROWONERROR(st, st)
         
         do ##class(Dance.Data.MatchingCoupleUDSRWDSF).CreateByUDSR(couple, .stWDSF)
-            
-        do couple.ConvertToProxyObject().%ToJSON()
+        
+        set coupleProxy = couple.ConvertToProxyObject()
+        
+        if (trnId '= ""){
+        	set tournament = ##class(Dance.Data.Tournament).%OpenId(trnId)
+        	if (tournament.IsRequiredInsuranceVerification){
+        		set coupleProxy.man.otherInfo.insurance = ##class(Dance.VFTSARR.API).GetInsuranceInfo(coupleProxy.man.number, $ZDATE(tournament.StartDate, 3), $ZDATE(tournament.EndDate, 3))
+        		set coupleProxy.woman.otherInfo.insurance = ##class(Dance.VFTSARR.API).GetInsuranceInfo(coupleProxy.woman.number, $ZDATE(tournament.StartDate, 3), $ZDATE(tournament.EndDate, 3))
+        		
+        	}
+        }
+          
+        do coupleProxy.%ToJSON()
     }
     catch(ex){
         set st = ex.AsStatus()
@@ -1538,7 +1549,7 @@ Person                                                                          
 
 Get person UDSR by numbers</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>number:%String</FormalSpec>
+<FormalSpec>number:%String,trnId:%String=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     set st = $$$OK
@@ -1546,7 +1557,17 @@ Get person UDSR by numbers</Description>
     try{
         set athlete = ##class(Dance.Data.PersonUDSR).NumberUDSRIdxOpen(number,,.st)
         $$$THROWONERROR(st, st)
-        do athlete.ConvertToProxyObject().%ToJSON()
+   
+   		set athleteProxy = athlete.ConvertToProxyObject()
+   		
+        if (trnId '= ""){
+        	set tournament = ##class(Dance.Data.Tournament).%OpenId(trnId)
+        	if (tournament.IsRequiredInsuranceVerification){
+        		set athleteProxy.otherInfo.insurance = ##class(Dance.VFTSARR.API).GetInsuranceInfo(athleteProxy.number, $ZDATE(tournament.StartDate, 3), $ZDATE(tournament.EndDate, 3))
+        	}
+        }
+        
+        do athleteProxy.%ToJSON()
     }
     catch(ex){
         set st = ex.AsStatus()

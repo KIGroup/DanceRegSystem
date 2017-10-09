@@ -47,6 +47,7 @@ controllersModule.controller('TournamentCtrl', function($scope, $window, $routeP
                 $scope.page.tournament.tabUDSRAllowed = $scope.page.tournament.tabUDSRAllowed == 1 ? "1" : "0";
                 $scope.page.tournament.tabWDSFAllowed = $scope.page.tournament.tabWDSFAllowed == 1 ? "1" : "0";
                 $scope.page.tournament.tabOtherAllowed = $scope.page.tournament.tabOtherAllowed == 1 ? "1" : "0";
+                $scope.page.tournament.isRequiredInsuranceVerification = $scope.page.tournament.isRequiredInsuranceVerification == 1 ? "1" : "0";
             },
             function(data, status, headers, config){
                 $scope.page.alert = UtilsSrvc.getAlert('Внимание!', data, 'error', true);

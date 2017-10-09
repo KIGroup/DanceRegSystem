@@ -88,6 +88,8 @@ Public REST URLs</Description>
 
 <Route Method="GET" Url="/couple/udsr/man/:manNumber/woman/:womanNumber" Call="Dance.Web.JsonUser:GetCoupleUDSRByNumbers"/>
 
+<Route Method="GET" Url="/couple/udsr/man/:manNumber/woman/:womanNumber/tournament/:trnId" Call="Dance.Web.JsonUser:GetCoupleUDSRByNumbers"/>
+
 <Route Method="GET" Url="/couple/wdsf/man/:manNumber/woman/:womanNumber" Call="Dance.Web.JsonUser:GetCoupleWDSFByNumbers"/>
 
 <Route Method="POST" Url="/couple/registration/existing" Call="Dance.Web.JsonCouple:RegistrationExistingCouple"/>
@@ -99,6 +101,7 @@ Public REST URLs</Description>
 <!-- ========================================================================================================= -->
 
 <Route Method="GET" Url="/person/udsr/:number" Call="Dance.Web.JsonUser:GetPersonByUDSRNumber"/>
+<Route Method="GET" Url="/person/udsr/:number/tournament/:trnId" Call="Dance.Web.JsonUser:GetPersonByUDSRNumber"/>
 <Route Method="GET" Url="/person/wdsf/:number" Call="Dance.Web.JsonUser:GetPersonByWDSFNumber"/>
 
 

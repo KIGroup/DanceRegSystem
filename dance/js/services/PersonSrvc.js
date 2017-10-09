@@ -10,6 +10,9 @@ servicesModule.factory('PersonSrvc', function(RESTSrvc) {
         getByUDSRNumber: function(number){
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/person/udsr/' + number});
         },
+        getByUDSRNumberForTournament: function(number, trnId){
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/person/udsr/' + number + '/tournament/' + trnId});
+        },
         getByWDSFNumber: function(number){
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/person/wdsf/' + number});
         },

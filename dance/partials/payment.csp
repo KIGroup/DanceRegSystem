@@ -28,7 +28,7 @@
 <stcalert data="registrationAlert" style="margin: 10px 0 20px 0;"/>
 
 <p ng-hide="recorderHash">[ <font COLOR="RED"><b>!</b></font> ] <span  style="color:rgb(163, 0, 0);" ng-bind="'Код доступа не найден, переход на страницу для регистрации невозможен.'|localize"></span></p>
-<p ng-hide="tournament.paymentSystem.code=='Disabled'">[ <font COLOR="RED"><b>!</b></font> ] {{'Щелчком мыши выберите необходимые группы для передачи данных в платежную систему.'|localize}}</p>
+<p ng-hide="tournament.paymentSystem.code=='Disabled'">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Щелчком мыши выберите необходимые группы для передачи данных в платежную систему.'|localize}}</p>
 
 <!-- Competitions -->
 <div class="row-fluid" style="padding-top: 10px;">

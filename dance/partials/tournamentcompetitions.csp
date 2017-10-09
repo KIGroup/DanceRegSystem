@@ -23,9 +23,9 @@
 <br>
 
 <p ng-hide="recorderHash">[ <font COLOR="RED"><b>!</b></font> ] <span  style="color:rgb(163, 0, 0);" ng-bind="'Код доступа не найден, переход на страницу для регистрации невозможен.'|localize"></span></p>
-<p style="margin: 0 0 10px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Для просмотра списка участников группы нажмите на ссылку (») в колонке "Участники".'|localize}}</p>
-<p style="margin: 0 0 10px;" ng-show="page.tournament.isContainsLimit">[ <font COLOR="RED"><b>!</b></font> ] {{'Для некоторых групп могут быть введены ограничения. "Доступно мест" это "Лимит" минус "Количество проданных билетов".'|localize}}</p>
-<p style="margin: 0 0 20px;" ng-show="page.tournament.isContainsLimit">[ <font COLOR="RED"><b>!</b></font> ] {{'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.'|localize}}</p>
+<p style="margin: 0 0 10px;">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для просмотра списка участников группы нажмите на ссылку (») в колонке "Участники".'|localize}}</p>
+<p style="margin: 0 0 10px;" ng-show="page.tournament.isContainsLimit">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для некоторых групп могут быть введены ограничения. "Доступно мест" это "Лимит" минус "Количество проданных билетов".'|localize}}</p>
+<p style="margin: 0 0 20px;" ng-show="page.tournament.isContainsLimit">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Группы, в которых не осталось мест(0) закрыты для регистрации и продажи билетов.'|localize}}</p>
 
 <div class="row-fluid">
     <div class="row-fluid" style="margin-bottom: 12px;">

@@ -321,6 +321,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 $scope.tabUDSR.visible = data.tabUDSRAllowed == 1;
                 $scope.tabWDSF.visible = data.tabWDSFAllowed == 1;
                 $scope.tabOTHER.visible = data.tabOtherAllowed == 1;
+                $scope.tournament.isRequiredInsuranceVerification = $scope.tournament.isRequiredInsuranceVerification == 1;
                 
                 if ($routeParams.typeCode){
                     if ($routeParams.typeCode == 'udsr'){
@@ -502,7 +503,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         };
 
         if (manNumber != '' && womanNumber != ''){
-            CoupleSrvc.getUDSRByNumbers(manNumber, womanNumber).then(
+            CoupleSrvc.getUDSRByNumbersForTournament(manNumber, womanNumber, $scope.tournament.id).then(
                 function(data){
                     $scope.tabUDSR.couple = data;
                     afterSuccess();
@@ -513,7 +514,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
                 });  
         }
         else{
-            PersonSrvc.getByUDSRNumber(manNumber ? manNumber : womanNumber).then(
+            PersonSrvc.getByUDSRNumberForTournament(manNumber ? manNumber : womanNumber, $scope.tournament.id).then(
                 function(data){
                     $scope.tabUDSR.athlete = data;
                     afterSuccess();

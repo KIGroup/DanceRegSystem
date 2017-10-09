@@ -1,6 +1,6 @@
-<p ng-show="menu.admin">[ <font COLOR="RED"><b>!</b></font> ] {{'Для регистрации в турнире нажмите на ссылку (») в колонке "Регистрация".'|localize}}</p>
-<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Для просмотра списка всех групп турнира нажмите на ссылку (») в колонке "Группы" или выберите внизу вкладку "Группы(N)".'|localize}}</p>
-<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Для просмотра списка всех участников турнира нажмите на ссылку (») в колонке "Участники".'|localize}}</p>
+<p ng-show="menu.admin">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для регистрации в турнире нажмите на ссылку (») в колонке "Регистрация".'|localize}}</p>
+<p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для просмотра списка всех групп турнира нажмите на ссылку (») в колонке "Группы" или выберите внизу вкладку "Группы(N)".'|localize}}</p>
+<p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для просмотра списка всех участников турнира нажмите на ссылку (») в колонке "Участники".'|localize}}</p>
 
 <div class="row-fluid">
 	<div class="row-fluid">
@@ -85,7 +85,7 @@
 			</div>
 		</tab>
 		<tab heading="{{('Группы'|localize) + ' (' + page.competitionTable.itemsTotal + ')'}}"  active="pageStore.tournaments.tabCompetitionsActive">
-			<p style="padding-bottom: 10px;">[ <font COLOR="RED"><b>!</b></font> ] {{'Для просмотра списка участников группы нажмите на ссылку (») в колонке "Участники".'|localize}}</p>
+			<p style="padding-bottom: 10px;">[ <font COLOR="GREEN"><b>i</b></font> ] {{'Для просмотра списка участников группы нажмите на ссылку (») в колонке "Участники".'|localize}}</p>
 
 			<div class="row-fluid">
 				<button type="button" style="margin-bottom: 15px; font-size: 1em; margin-right: 10px;" class="btn btn-mini btnRadio" ng-model="pageStore.tournaments.gridCompetitions.filterDate" btn-radio="''" ng-bind="'Все дни'|localize" ng-click="page.competitionTable.changeDateFilter('')"></button>

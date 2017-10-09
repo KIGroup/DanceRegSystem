@@ -241,6 +241,13 @@ Tournaments</Description>
 <Type>%Boolean</Type>
 </Property>
 
+<Property name="IsRequiredInsuranceVerification">
+<Description>
+Требуется проверка страхования</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
 <Property name="InfoUrlTitle">
 <Description>
 Мультияычное название ссылки на инфу о турнире</Description>
@@ -442,6 +449,8 @@ Tournaments</Description>
     set proxy.tabWDSFAllowed = ..TabWDSFAllowed
     set proxy.tabOtherAllowed = ..TabOtherAllowed
     
+    set proxy.isRequiredInsuranceVerification = ..IsRequiredInsuranceVerification
+    
     if ($ISOBJECT(..PaymentSystem)){
         set proxy.paymentSystem = ..PaymentSystem.ConvertToProxyObject()
     }
@@ -555,6 +564,8 @@ Create or Update object</Description>
     set trn.TabUDSRAllowed = data.tabUDSRAllowed = $$$YES
     set trn.TabWDSFAllowed = data.tabWDSFAllowed = $$$YES
     set trn.TabOtherAllowed = data.tabOtherAllowed = $$$YES
+    
+    set trn.IsRequiredInsuranceVerification = data.isRequiredInsuranceVerification = $$$YES
     
     set trn.PaymentSystem = ##class(Dance.Data.PaymentSystem).%OpenId(data.paymentSystem.id)
                 
@@ -987,6 +998,9 @@ Check update privilege</Description>
 </Value>
 <Value name="42">
 <Value>AgeCalcDate</Value>
+</Value>
+<Value name="43">
+<Value>IsRequiredInsuranceVerification</Value>
 </Value>
 </Data>
 </Storage>

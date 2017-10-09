@@ -12,6 +12,11 @@ servicesModule.factory('CoupleSrvc', function(RESTSrvc) {
 	        if (!woman || woman == '') woman = 0;
             return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/couple/udsr/man/' + man + '/woman/' + woman});
         },
+        getUDSRByNumbersForTournament: function(man, woman, tournamentId){
+            if (!man || man == '') man = 0;
+            if (!woman || woman == '') woman = 0;
+            return RESTSrvc.getPromise({method: 'GET', url: AppSettings.user + '/couple/udsr/man/' + man + '/woman/' + woman + '/tournament/' + tournamentId});
+        },
         getWDSFByNumbers: function(man, woman){
 	        if (!man || man == '') man = 0;
 	        if (!woman || woman == '') woman = 0;

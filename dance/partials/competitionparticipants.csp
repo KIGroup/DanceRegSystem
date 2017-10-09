@@ -24,7 +24,7 @@
 <br>
 
 <p ng-hide="recorderHash">[ <font COLOR="RED"><b>!</b></font> ] <span  style="color:rgb(163, 0, 0);" ng-bind="'Код доступа не найден, переход на страницу для регистрации невозможен.'|localize"></span></p>
-<p>[ <font COLOR="RED"><b>!</b></font> ] {{'Нажмите на ссылку (») в колонке "Группы" для просмотра списка групп турнира, в которых зарегистрирована пара (участник).'|localize}}</p>
+<p>[ <font COLOR="GREEN"><b>i</b></font> ] {{'Нажмите на ссылку (») в колонке "Группы" для просмотра списка групп турнира, в которых зарегистрирована пара (участник).'|localize}}</p>
 
 <div class="row-fluid" style="margin-bottom: 5px;">
     <span style="font-weight: bold;">{{('Участники группы'|localize) + ' '}}<span class="tableCaptionImportant">{{page.competition.name}}</span>{{''}}</span>
