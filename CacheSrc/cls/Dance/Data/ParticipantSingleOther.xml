@@ -44,6 +44,11 @@
 <Parameter name="FORMAT" value="3"/>
 </Property>
 
+<Index name="CmpAthKeyIdx">
+<Properties>Competition,AthleteKey</Properties>
+<Unique>1</Unique>
+</Index>
+
 <Index name="AthleteKeyIdx">
 <Properties>AthleteKey</Properties>
 </Index>
@@ -92,6 +97,13 @@
 <FormalSpec><![CDATA[recorder:Recorder,competition:Competition,athlete:%ZEN.proxyObject,&st]]></FormalSpec>
 <ReturnType>Participant</ReturnType>
 <Implementation><![CDATA[
+	if ..CmpAthKeyIdxExists(competition.%Id(), athlete.key ) {
+		set obj = ..CmpAthKeyIdxOpen(competition.%Id(), athlete.key)
+		set obj.IsActive = 1
+		set st = obj.%Save()
+		quit obj
+	}
+	
 	set obj = ..%New()
 	
 	// Свойства класса

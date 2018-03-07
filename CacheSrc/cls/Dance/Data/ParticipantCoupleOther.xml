@@ -76,6 +76,11 @@
 <Parameter name="VALUELIST" value=",Pro,Am"/>
 </Property>
 
+<Index name="CmpCplKeyIdx">
+<Properties>Competition,CoupleKey</Properties>
+<Unique>1</Unique>
+</Index>
+
 <Index name="CoupleKeyIdx">
 <Properties>CoupleKey</Properties>
 </Index>
@@ -133,6 +138,13 @@
 <FormalSpec><![CDATA[recorder:Recorder,competition:Competition,couple:%ZEN.proxyObject,&st]]></FormalSpec>
 <ReturnType>Participant</ReturnType>
 <Implementation><![CDATA[
+	if ..CmpCplKeyIdxExists(competition.%Id(), couple.key ) {
+		set obj = ..CmpCplKeyIdxOpen(competition.%Id(), couple.key)
+		set obj.IsActive = 1
+		set st = obj.%Save()
+		quit obj
+	}
+	
     set obj = ..%New()
 
     // Свойства класса
