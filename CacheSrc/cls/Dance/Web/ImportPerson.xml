@@ -24,17 +24,9 @@
 			set gender = "Female"
 		}
 		
-		set newStream = ##class(%CSP.CharacterStream).%New()
-		
 		while 'stream.AtEnd {
-			set line = $REPLACE(stream.ReadLine(), $C(10), $C(13)_$C(10))
+			set line = stream.ReadLine()
 			set line = $ZCVT(line, "I", "CP1251")
-			do newStream.Write(line)
-		}
-		kill stream
-		
-		while 'newStream.AtEnd {
-			set line = newStream.ReadLine()
 			
 			if ($FIND(line,";") = 0) continue
 			
@@ -49,6 +41,7 @@
 				do result.errorMessages.Insert(error)
 			}
 		}
+		
 		
 		w "<p style='margin: 0 0 10px 0;'><strong>Результат импорта данных</strong></p>"
 		w "<p style='margin: 0 0 10px 0;'>Всего записей в файле: "_(result.success + result.errorMessages.Count())_"</p>"

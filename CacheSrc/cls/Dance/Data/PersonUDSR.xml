@@ -48,6 +48,11 @@ Date of birth</Description>
 <Type>%String</Type>
 </Property>
 
+<Property name="ImportFieldsHash">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="500"/>
+</Property>
+
 <Index name="NumberUDSRIdx">
 <Properties>Number</Properties>
 <Unique>1</Unique>
@@ -90,9 +95,14 @@ Date of birth</Description>
     do ##class(%MessageDictionary).SetSessionLanguage("ru")
     set st = $$$OK
     
+    if ($LENGTH(data) > 300){
+    	quit $SYSTEM.Status.Error(5001, "Подозрительно длинная строка: "_$E(data, 1, 30)_"...")
+    }
+    
     try{
         TSTART
-            
+        
+        set fieldsHash = ##class(%SYSTEM.Encryption).MD5Hash(data)   
         set propList = $LISTFROMSTRING(data, ";")
         set person = ..NumberUDSRIdxOpen($LIST(propList, 1))
             
@@ -108,9 +118,17 @@ Date of birth</Description>
             set person.FirstName =  ##class(Dance.Data.Localization.LText).Create($P($LIST(propList, 2)," ",2), "Dance.Data.Localization.Translation;PersonLTextValue")     
         }
         else{
+	        if (person.ImportFieldsHash = fieldsHash){
+		        // Ибо нет смысла продолжать обновление
+	        	TROLLBACK
+	        	return $$$OK
+	        }
+	        
 	        do person.LastName.SetValueByLang($P($LIST(propList, 2)," ",1), "ru")
         	do person.FirstName.SetValueByLang($P($LIST(propList, 2)," ",2), "ru")
         }
+        
+        set person.ImportFieldsHash = fieldsHash
         
         //11 Фио на англ. Пусть и для других языков будет на анлийском
         do person.LastName.SetValueByLang($P($LIST(propList, 11)," ",1), "en")
@@ -180,6 +198,7 @@ Date of birth</Description>
     catch(ex){
         TROLLBACK
         set st = ex.AsStatus()
+        do ##class(Dance.Utils.Journal).Create("Error", "PersonUDSR.UpdateFromString", $SYSTEM.Status.GetErrorText(st))
     }
     
     quit st
@@ -267,6 +286,9 @@ Date of birth</Description>
 </Value>
 <Value name="9">
 <Value>NumberWDSF</Value>
+</Value>
+<Value name="10">
+<Value>ImportFieldsHash</Value>
 </Value>
 </Data>
 </Storage>
