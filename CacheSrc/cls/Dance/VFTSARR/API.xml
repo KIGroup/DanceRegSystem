@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Dance.VFTSARR.API">
+<Abstract>1</Abstract>
+<TimeCreated>64564,1348.785484</TimeCreated>
+
+<Method name="GetInsuranceInfo">
+<Description>
+do ##class(Dance.VFTSARR.API).GetInsuranceInfo(22257, "2017-10-01", "2017-10-02").%ToJSON()</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dancerNumber:%String,trnDateBegin:%TimeStamp,trnDateEnd:%TimeStamp</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set sc = $$$OK
+	set pResponse = ##class(%ZEN.proxyObject).%New()
+	set pResponse.exists = 0
+	set buyInsureUrl = "https://sport.insure/oformit_polis/DANCEPLAT"
+	set promocode = "DANCEPLAT"
+	
+ 	try 
+ 	{
+	 
+		set httprequest = ##class(%Net.HttpRequest).%New()
+		set httprequest.Server = "rdsu.info"
+		set httprequest.ContentEncoding = "UTF-8"
+		set httprequest.Timeout = 10
+		do httprequest.Get("/assets/id/id_exportdance.php?sportsmen="_dancerNumber)
+		
+		set content = httprequest.HttpResponse.Data.Read(10000000)
+		$$$THROWONERROR(st, ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(content,,.resultArr, 1))
+		
+		if (resultArr.Count() = 0){
+			set pResponse.message = "Страховка не найдена"
+			set pResponse.promoCode = promocode
+			set pResponse.buyInsureUrl = buyInsureUrl
+			return pResponse
+		}
+		/*
+		fio	ПППП Наталья Владимировна
+		cnum	2220057
+		days	365
+		date_begin	2018-03-23
+		date_end	2019-03-22
+		company_name	J"Tw11enty First Century"
+		*/
+		
+		set insData = resultArr.GetAt(1)
+		set dateBeginStr = $PROPERTY(insData, "date_begin")
+		set dateBeginH = $ZDH(dateBeginStr, 3)
+		set dateEndStr = $PROPERTY(insData, "date_end")
+		set dateEndH = $ZDH(dateEndStr, 3)
+		set companyName = $PROPERTY(insData, "company_name")
+		
+		if (dateBeginH <= $ZDH(trnDateBegin, 3)) && (dateEndH >= $ZDH(trnDateEnd, 3)){
+			set pResponse.exists = 1
+			set pResponse.dateBegin = dateBeginStr
+			set pResponse.dateEnd = dateEndStr
+			set pResponse.organizationName = companyName
+		}
+		else{
+			set pResponse.message = "Cтраховка не действительна на дату турнира"
+			set pResponse.promoCode = promocode
+			set pResponse.buyInsureUrl = buyInsureUrl
+		}
+ 	}
+ 	catch ex
+ 	{
+  		set sc = ex.AsStatus()
+  		set pResponse.message = $SYSTEM.Status.GetErrorText(sc)
+ 	}
+ 	
+ 	quit pResponse
+]]></Implementation>
+</Method>
+
+<Method name="GetInsuranceInfoOld">
+<Description>
+do ##class(Dance.VFTSARR.API).GetInsuranceInfo(172910, "2017-10-01", "2017-10-02").%ToJSON()</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dancerNumber:%String,dateBegin:%TimeStamp,dateEnd:%TimeStamp</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	//set dancerNumber = "12222222"
+	set sc = $$$OK
+	set pResponse = ##class(%ZEN.proxyObject).%New()
+	set pResponse.exists = 0
+	set buyInsureUrl = "https://sport.insure/oformit_polis/DANCEPLAT"
+	set promocode = "DANCEPLAT"
+	
+	/*/ TEST
+	set pResponse.exists = 1
+	set pResponse.dateBegin = $ZD($NOW()-1, 3)
+	set pResponse.dateEnd = $ZD($NOW()+4, 3)
+	set pResponse.organizationName = "Test org"
+	return pResponse
+	*/	
+ 	try 
+ 	{
+	 	/*
+	 	http://dance.vftsarr.ru/api/checkdancerinsurance.php?bookno=65721&date_begin=2017-09-16&date_end=2017-09-17
+	 	если у спортсмена привязана страховка, сроки которой покрывают сроки соревнования, то выдается ответ вида:
+		OK|65721|2017-01-02|2018-01-01|ЗАО СК "Двадцать первый век"
+
+		Здесь:
+		ОК = все в порядке, страховка есть, можно регистрировать
+		65721 = номер спортсмена, по которому делался запрос
+		2017-01-02 = начало срока страхования спортсмена
+		2018-01-01 = конец срока страхования спорстмена
+		ЗАО СК "Двадцать первый век" = название страховой компании
+	 	*/
+		set httprequest = ##class(%Net.HttpRequest).%New()
+		set httprequest.Server = "dance.vftsarr.ru"
+		//set httprequest.ContentEncoding = "UTF-8"
+		set httprequest.Timeout = 10
+		do httprequest.Get("/api/checkdancerinsurance.php?bookno="_dancerNumber_"&date_begin="_dateBegin_"&date_end="_dateEnd)
+		
+		set resultStr = httprequest.HttpResponse.Data.Read(10000000)
+		set resultStr = $ZCVT(resultStr, "I", "CP1251")
+		if (resultStr = "") || (resultStr = "NO"){
+			set pResponse.message = "Страховка не найдена"
+			set pResponse.promoCode = promocode
+			set pResponse.buyInsureUrl = buyInsureUrl
+			return pResponse
+		}
+		
+		if (resultStr = "The athlete is not found in the database"){
+			set pResponse.message = "Спортсмен с номером "_dancerNumber_" не найден."
+			return pResponse
+		}
+		
+		set listParams = $LISTFROMSTRING(resultStr, "|")
+		if ($LISTGET(listParams, 1) '= "OK"){
+			set pResponse.message = "Страховка не найдена"
+			set pResponse.promoCode = promocode
+			set pResponse.buyInsureUrl = buyInsureUrl
+			return pResponse
+		}
+		
+		set pResponse.exists = 1
+		set pResponse.dateBegin = $LISTGET(listParams, 3)
+		set pResponse.dateEnd = $LISTGET(listParams, 4)
+		set pResponse.organizationName = $LISTGET(listParams, 5)
+ 	}
+ 	catch ex
+ 	{
+  		set sc = ex.AsStatus()
+  		set pResponse.message = $SYSTEM.Status.GetErrorText(sc)
+ 	}
+ 	
+ 	quit pResponse
+]]></Implementation>
+</Method>
+
+<Method name="Test">
+<Description>
+do ##class(Dance.VFTSARR.API).Test()</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	do ##class(Dance.VFTSARR.API).GetInsuranceInfo(160047, "2017-10-01", "2017-10-02")
+	
+	 &sql(DECLARE Curr1 CURSOR FOR 
+            SELECT %NOLOCK TOP 1000 ID, Number
+            FROM Dance_Data.PersonUDSR
+            ORDER BY ID DESC)   
+        
+    &sql(OPEN Curr1)
+    for  
+    {   
+        &sql(FETCH Curr1 INTO :id, :number) 
+        quit:(SQLCODE '= 0)
+        
+        set proxy = ##class(Dance.VFTSARR.API).GetInsuranceInfo(number, "2017-10-04", "2017-10-06")
+        
+        w !,"ID="_id, "; number=",number, "; "_proxy.message
+        if (proxy.exists = 1){
+        	quit
+        }
+    }
+    
+    &sql(CLOSE Curr1)
+]]></Implementation>
+</Method>
+</Class>
+</Export>
