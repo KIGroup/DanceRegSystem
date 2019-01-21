@@ -1,4 +1,4 @@
-// Combine date time is 09.10.2017 23:57:58
+// Combine date time is 21.01.2019 23:07:04
 
 
 // ===============================================================================================================================
@@ -1522,10 +1522,10 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         $scope.pageStore.registration.grid.tableShortView = $scope.pageStore.registration.grid.tableShortView == null ? true : $scope.pageStore.registration.grid.tableShortView;
         
         if ($scope.pageStore.registration.grid.tableShortView){
-            $scope.competitionTable.setHiddenCoulumns(true);
+            $scope.competitionTable.setHiddenCoulumns(true, false);
         }
         else{
-            $scope.competitionTable.setHiddenCoulumns(false);
+            $scope.competitionTable.setHiddenCoulumns(false, false);
         }  
     };
 
@@ -1621,7 +1621,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         }
     };
 
-    $scope.competitionTable.setHiddenCoulumns = function(value){
+    $scope.competitionTable.setHiddenCoulumns = function(value, refreshTable){
         var columns = ["Discipline", "Type", "Limit"];
         for(var n=0; n < $scope.competitionTable.columns.length; n++){
             var curColumn = $scope.competitionTable.columns[n];
@@ -1637,7 +1637,10 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         }
 
         $scope.pageStore.registration.grid.tableShortView = value;
-        $scope.competitionTable.refresh();
+
+        if (refreshTable) {
+            $scope.competitionTable.refresh();
+        }
     };
 
     // Select competition

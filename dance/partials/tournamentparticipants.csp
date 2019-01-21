@@ -13,7 +13,7 @@
 <div class="row-fluid" style="text-align: center;" >
     <a ng-hide="page.tournament.infoUrl==''" ng-href="{{page.tournament.infoUrl}}" target="_blank" class="trnMenu" title="{{page.tournament.infoUrlTitle|localize}}" ng-bind="(page.tournament.infoUrlTitle|localize) + ' »'"></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <a ng-href="" ng-class="recorderHash ? 'trnMenu' : 'disabled'" title="{{'Регистрация участников на турнир'|localize}}" ng-bind="'Регистрация »'|localize" ng-click="locationSrvc.goTo(':recorderHash/tournament/' + page.tournament.id + '/registration', recorderHash)"></a>
+    <a ng-href="" ng-class="recorderHash ? 'trnMenu' : 'disabled'" title="{{'Регистрация участников на турнир'|localize}}" ng-bind="'Регистрация »'|localize" ng-click="locationSrvc.goTo(':recorderHash/tournament/' + page.tournament.id + '/registration/type/' + page.tournament.defaultActiveTabCode, recorderHash)"></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <a ng-href="" class="trnMenu" title="{{'Список всех групп турнира'|localize}}" ng-bind="'Группы »'|localize"  ng-click="locationSrvc.goTo(':recorderHash/tournament/' + page.tournament.id + '/competitions', recorderHash)"></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

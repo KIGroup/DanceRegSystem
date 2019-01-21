@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 664_3U)" ts="2019-01-21 23:05:09">
 <Class name="Dance.Data.Tournament">
 <Description>
 Tournaments</Description>
@@ -281,6 +281,12 @@ Tournaments</Description>
 <Type>Dance.Data.Localization.LText</Type>
 </Property>
 
+<Property name="RegWDSFTabCaption">
+<Description>
+Заголовок вкладки для регистрации WDSF пар</Description>
+<Type>Dance.Data.Localization.LText</Type>
+</Property>
+
 <Property name="RegOtherInstructionUrl">
 <Description>
 Мультиязычная ссылка на инструкцию к регистрации</Description>
@@ -311,6 +317,12 @@ Tournaments</Description>
 <Type>Dance.Data.PaymentSystem</Type>
 </Property>
 
+<Property name="DefaultActiveTabCode">
+<Description>
+Вкладка активная по умолчанию для турнира - при заходе на страницу</Description>
+<Type>%String</Type>
+</Property>
+
 <Index name="IdInternalIdx">
 <Properties>IdInternal</Properties>
 <Unique>1</Unique>
@@ -338,6 +350,7 @@ Tournaments</Description>
     set proxy.isContainsLimit = ..IsContainsLimit
     set proxy.startDate = $ZDATE(..StartDate, 3)
     set proxy.endDate = $ZDATE(..EndDate, 3)
+    set proxy.defaultActiveTabCode = ..DefaultActiveTabCode
     if (..AgeCalcDate '= ""){
     	set proxy.ageCalcDate = $ZDATE(..AgeCalcDate, 3)
     }
@@ -361,6 +374,13 @@ Tournaments</Description>
     }
     else{
 	    set proxy.regOtherTabCaption = "Регистрация других участников"
+    }
+    
+    if $ISOBJECT(..RegWDSFTabCaption){
+    	set proxy.regWDSFTabCaption = ..RegWDSFTabCaption.Value
+    }
+    else{
+	    set proxy.regWDSFTabCaption = "Регистрация WDSF"
     }
     
     if $ISOBJECT(..RegOtherInstructionUrl){
@@ -521,6 +541,15 @@ Create or Update object</Description>
     else{
         set trn.RegOtherTabCaption = ##class(Dance.Data.Localization.LText).Create(data.regOtherTabCaption)
     }
+    
+    // Название вкладки
+    if $ISOBJECT(trn.RegWDSFTabCaption){
+    	set trn.RegWDSFTabCaption.Value = data.regWDSFTabCaption
+    }
+    else{
+        set trn.RegWDSFTabCaption = ##class(Dance.Data.Localization.LText).Create(data.regWDSFTabCaption)
+    }
+    
     // Ссылка на инструкцию
     if $ISOBJECT(trn.RegOtherInstructionUrl){
     	set trn.RegOtherInstructionUrl.Value = data.regOtherInstructionUrl
@@ -554,6 +583,7 @@ Create or Update object</Description>
         
     set trn.StartDate = $ZDATEH(data.startDate, 15)
     set trn.EndDate = $ZDATEH(data.endDate, 15)
+    
     if (data.ageCalcDate = ""){
 	    set trn.AgeCalcDate = ""
     }
@@ -568,6 +598,11 @@ Create or Update object</Description>
     set trn.IsRequiredInsuranceVerification = data.isRequiredInsuranceVerification = $$$YES
     
     set trn.PaymentSystem = ##class(Dance.Data.PaymentSystem).%OpenId(data.paymentSystem.id)
+    if (data.defaultActiveTabCode) {
+    	set trn.DefaultActiveTabCode = data.defaultActiveTabCode
+    } else {
+	    set trn.DefaultActiveTabCode = "udsr"
+	}
                 
     set st = trn.%Save()
             
@@ -1001,6 +1036,12 @@ Check update privilege</Description>
 </Value>
 <Value name="43">
 <Value>IsRequiredInsuranceVerification</Value>
+</Value>
+<Value name="44">
+<Value>RegWDSFTabCaption</Value>
+</Value>
+<Value name="45">
+<Value>DefaultActiveTabCode</Value>
 </Value>
 </Data>
 </Storage>

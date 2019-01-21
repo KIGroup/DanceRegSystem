@@ -163,7 +163,7 @@
         <!-- ================================================================================================================================== -->
         <!-- WDSF                                                       WDSF                                                               WDSF -->
         <!-- ================================================================================================================================== -->
-        <tab heading="{{'Регистрация WDSF'|localize}}" ng-show="tabWDSF.visible" active="tabWDSF.active" disabled="tabWDSF.disabled" select="tabWDSF.select()" title="{{tabWDSF.disabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация участников по WDSF номерам'|localize)}}">
+        <tab heading="{{tournament.regWDSFTabCaption|localize}}" ng-show="tabWDSF.visible" active="tabWDSF.active" disabled="tabWDSF.disabled" select="tabWDSF.select()" title="{{tabWDSF.disabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация участников по WDSF номерам'|localize)}}">
             <!-- ================== -->
             <!-- Search form (WDSF) -->
             <!-- ================== -->
@@ -366,7 +366,7 @@
         <!-- ================================================================================================================================== -->
         <!-- OTHER                                                      OTHER                                                             OTHER -->
         <!-- ================================================================================================================================== -->
-        <tab heading="{{tournament.regOtherTabCaption}}" ng-show="tabOTHER.visible" active="tabOTHER.active" disabled="tabOTHER.disabled" select="tabOTHER.select()" title="{{tabOTHER.isabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация других участников'|localize)}}">
+        <tab heading="{{tournament.regOtherTabCaption|localize}}" ng-show="tabOTHER.visible" active="tabOTHER.active" disabled="tabOTHER.disabled" select="tabOTHER.select()" title="{{tabOTHER.isabled ? ('Чтобы разблокировать вкладку нажмите ″Назад″'|localize) : ('Регистрация других участников'|localize)}}">
             <!-- =================== -->
             <!-- Couple data (OTHER) -->
             <!-- =================== -->
@@ -658,8 +658,8 @@
                 </ul>
             </div>
             <div id="divTypeOfView" class="btn-group pull-right">
-                <button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.registration.grid.tableShortView" btn-radio="true" ng-bind="'Коротко'|localize" title="{{'Скрывать дополнительные столбцы'|localize}}" ng-click="competitionTable.setHiddenCoulumns(true)"></button>
-                <button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.registration.grid.tableShortView" btn-radio="false" ng-bind="'Детально'|localize" title="{{'Отображать дополнительные столбцы'|localize}}" ng-click="competitionTable.setHiddenCoulumns(false)"></button>
+                <button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.registration.grid.tableShortView" btn-radio="true" ng-bind="'Коротко'|localize" title="{{'Скрывать дополнительные столбцы'|localize}}" ng-click="competitionTable.setHiddenCoulumns(true, true)"></button>
+                <button type="button" class="btn btn-mini btnRadio" ng-model="pageStore.registration.grid.tableShortView" btn-radio="false" ng-bind="'Детально'|localize" title="{{'Отображать дополнительные столбцы'|localize}}" ng-click="competitionTable.setHiddenCoulumns(false, true)"></button>
             </div>
         </div> 
     </div>
