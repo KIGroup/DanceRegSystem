@@ -12,6 +12,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
      
     $scope.recorderHash = $routeParams.recorderHash || null;
     $scope.locationSrvc = LocationSrvc; 
+    $scope.tournamentIsLoading = true;
 
     var intervalForTable = null;
     
@@ -149,12 +150,12 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         }
         else{
             $scope.competitionTable.setHiddenCoulumns(false, false);
-        }  
+        } 
     };
 
     /// Load All Competitions in Tournament  
     $scope.competitionTable.loadItems = function(pageCurr, pageSize, sqlName, isDown, searchSqlName, searchText){
-        if (!$scope.tournament)
+        if (!$scope.tournament || $scope.tournamentIsLoading)
             return;
         
         $scope.competitionTable.selectedItems = [];
@@ -303,6 +304,7 @@ controllersModule.controller('RegistrationCtrl', function($scope, $interval, $ro
         TournamentSrvc.getById(id, "?loadFullName=1&loadStatus=1&loadUrls=1&loadRank=1").then(
             function(data){
                 $scope.tournament = data;
+                $scope.tournamentIsLoading = false;
                  
                 $scope.tournament.isContainsLimit = data.isContainsLimit == 1;
                 

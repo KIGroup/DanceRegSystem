@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 664_3U)" ts="2019-01-21 23:05:09">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 664_3U)" ts="2019-01-22 22:49:16">
 <Class name="Dance.Data.Tournament">
 <Description>
 Tournaments</Description>
 <Super>%Persistent</Super>
+<TimeChanged>65035,82031.852845</TimeChanged>
 <TimeCreated>63274,63417.76954</TimeCreated>
 
 <Property name="AccessCode">
@@ -598,7 +599,7 @@ Create or Update object</Description>
     set trn.IsRequiredInsuranceVerification = data.isRequiredInsuranceVerification = $$$YES
     
     set trn.PaymentSystem = ##class(Dance.Data.PaymentSystem).%OpenId(data.paymentSystem.id)
-    if (data.defaultActiveTabCode) {
+    if (data.defaultActiveTabCode '= "") {
     	set trn.DefaultActiveTabCode = data.defaultActiveTabCode
     } else {
 	    set trn.DefaultActiveTabCode = "udsr"

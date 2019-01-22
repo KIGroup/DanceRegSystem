@@ -145,10 +145,9 @@
                     </div>
                     <div class="span6">
                         <div class="control-group">
-                            <label class="control-label" ng-bind="('Вкладка регистрации по умолчанию'|localize) + ''"></label>
-                            <select class="span12" ng-model="tournament.defaultActiveTabCode">
-                                <option value=""></option>
-                                <option value="udsr">{{'СТСР'|localize}}</option>
+                            <label class="control-label" ng-bind="('Вкладка регистрации по умолчанию'|localize) + '*'"></label>
+                            <select class="span12" ng-model="tournament.defaultActiveTabCode" required>
+                                <option value="udsr">{{'ФТСАРР'|localize}}</option>
                                 <option value="wdsf">WDSF</option>
                                 <option value="other">{{'Другие'|localize}}</option>
                             </select>

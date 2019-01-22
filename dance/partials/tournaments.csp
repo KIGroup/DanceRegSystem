@@ -164,7 +164,7 @@
 		    	<div class="controls">
 		        	<select class="span12" ng-model="confirmDialog.defaultType" style="margin:0;">
 		        		<option value="">{{('-- Вкладка по умолчанию --'|localize)}}</option>
-		        		<option value="udsr">{{'СТСР'|localize}}</option>
+		        		<option value="udsr">{{'ФТСАРР'|localize}}</option>
 		        		<option value="wdsf">WDSF</option>
 		        		<option value="other">{{'Другие'|localize}}</option>
 		   			</select>

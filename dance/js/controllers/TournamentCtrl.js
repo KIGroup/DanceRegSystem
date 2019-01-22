@@ -35,7 +35,8 @@ controllersModule.controller('TournamentCtrl', function($scope, $window, $routeP
                                   organizer:{},
                                   tabUDSRAllowed: '1',
         						  tabWDSFAllowed: '1',
-        						  tabOtherAllowed: '1',
+                                  tabOtherAllowed: '1',
+                                  defaultActiveTabCode: 'udsr',
                                   location: {country:{}}};
     };
   
