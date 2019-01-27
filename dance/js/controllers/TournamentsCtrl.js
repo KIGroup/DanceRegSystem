@@ -86,6 +86,7 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                                                             $scope.confirmDialog = {
                                                                 tournament: item,
                                                                 recorders: data.recorders,
+                                                                defaultType: item.defaultActiveTabCode,
                                                                 getLink: function(rec){
                                                                     var url = '#/recorder/' + rec.hash + '/tournament/' + this.tournament.id + '/registration';
                                                                     if (this.defaultType)

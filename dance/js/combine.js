@@ -1,4 +1,4 @@
-// Combine date time is 22.01.2019 22:50:15
+// Combine date time is 27.01.2019 17:21:48
 
 
 // ===============================================================================================================================
@@ -309,6 +309,7 @@ controllersModule.controller('TournamentsCtrl', function($scope, $location, $fil
                                                             $scope.confirmDialog = {
                                                                 tournament: item,
                                                                 recorders: data.recorders,
+                                                                defaultType: item.defaultActiveTabCode,
                                                                 getLink: function(rec){
                                                                     var url = '#/recorder/' + rec.hash + '/tournament/' + this.tournament.id + '/registration';
                                                                     if (this.defaultType)
