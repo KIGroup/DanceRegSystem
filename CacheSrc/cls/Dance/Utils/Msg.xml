@@ -64,7 +64,8 @@ do ##class(Dance.Utils.Msg).Init()</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	
+    
+   	
     do ..SetMsgForLangs("msg_AndOlder",
                         "и старше",
                         "and older",

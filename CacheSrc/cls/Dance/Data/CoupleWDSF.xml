@@ -34,6 +34,7 @@
         
     if (##class(MatchingCoupleUDSRWDSF).WDSFIdxExists(..%Id())){
         set coupleUDSR = ##class(MatchingCoupleUDSRWDSF).WDSFIdxOpen(..%Id()).UDSR
+        
         if (coupleUDSR.Man.IsActive){
             set proxy.idUDSR = coupleUDSR.%Id()
             set proxy.man.idUDSR = coupleUDSR.Man.%Id()
@@ -71,12 +72,12 @@
 <Implementation><![CDATA[
     set st = $$$OK
     #dim obj As CoupleWDSF = ""
- 
+    
     if (manNumber = "") || (womanNumber = ""){
         set st = $system.Status.Error(5001, "Empty WDSF numbers")
         quit obj
     }
-       
+    
     set (coupleId, SQLCODE) = ""
     &sql(SELECT ID INTO :coupleId FROM Dance_Data.CoupleWDSF WHERE Man->Number = :manNumber AND Woman->Number = :womanNumber)
     if (SQLCODE = 0){
@@ -86,6 +87,7 @@
             return obj
         }   
     }
+    
     
     set wdsfData = ##class(Dance.Wdsf.ControllerAPI).GetCoupleByNumbers(manNumber, womanNumber, .st)
     if $$$ISERR(st) {
@@ -122,6 +124,9 @@
     catch(ex){
         do ##class(Dance.Utils.Email).Send("ilsondll@gmail.com", $SYSTEM.Status.GetErrorText(ex.AsStatus()_"; "_manNumber_";"_womanNumber))
     }
+    
+    
+    
     
     set obj.WDSFId = wdsfData.id
     set obj.Man = ##class(PersonWDSF).SaveFromWDSF(wdsfData.man, .st)   

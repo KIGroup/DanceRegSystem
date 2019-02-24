@@ -50,24 +50,24 @@ Last name</Description>
 <FormalSpec>params:%ZEN.proxyObject=""</FormalSpec>
 <ReturnType>%ZEN.proxyObject</ReturnType>
 <Implementation><![CDATA[
-	set proxy = ##class(%ZEN.proxyObject).%New()
-	set proxy.id = ..%Id()
-	set proxy.number = ..Number
-	set proxy.lastName = ..LastName.Value
-	set proxy.firstName = ..FirstName.Value
-	set proxy.gender = ..Gender	
-	set proxy.updated = ..Updated
-	set proxy.isActive = ..IsActive
-	set proxy.otherInfo = ##class(%ZEN.proxyObject).%New()
-	set proxy.otherInfo.country = ..Country.ConvertToProxyObject()
-		
-	quit proxy
+    set proxy = ##class(%ZEN.proxyObject).%New()
+    set proxy.id = ..%Id()
+    set proxy.number = ..Number
+    set proxy.lastName = ..LastName.Value
+    set proxy.firstName = ..FirstName.Value
+    set proxy.gender = ..Gender 
+    set proxy.updated = ..Updated
+    set proxy.isActive = ..IsActive
+    set proxy.otherInfo = ##class(%ZEN.proxyObject).%New()
+    set proxy.otherInfo.country = ..Country.ConvertToProxyObject()
+        
+    quit proxy
 ]]></Implementation>
 </Method>
 
 <Method name="GetFullName">
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit ..LastName.Value_" "_..FirstName.Value
+<Implementation><![CDATA[    quit ..LastName.Value_" "_..FirstName.Value
 ]]></Implementation>
 </Method>
 
@@ -76,58 +76,58 @@ Last name</Description>
 <FormalSpec><![CDATA[personId:%String,cmpId:%String,&st]]></FormalSpec>
 <ReturnType>%ListOfObjects</ReturnType>
 <Implementation><![CDATA[
-	set st = $$$OK
-	set cmpList = ##class(%ListOfObjects).%New()
-	
-	set cmp = ##class(Competition).%OpenId(cmpId,,.st)
-	set cmpTournamentId = cmp.Tournament.%Id()
-	
-	
-	set params = ##class(%ZEN.proxyObject).%New()
-	set params.loadTournament = $$$YES
-	set params.tournamentParams = ##class(%ZEN.proxyObject).%New()
-	set params.tournamentParams.loadLocation = $$$YES
-	set params.loadDiscipline = $$$YES
-	set params.loadAgeCategory = $$$YES 
-	set params.loadType = $$$YES
-	set params.loadWDSF = $$$YES
-	set params.loadDancerClasses = $$$YES
-	
-	
-	&sql(DECLARE CrsCmpConflict CURSOR FOR
-			SELECT ID INTO :cmpConflictId
-		 	FROM Dance_Data.Competition
-		 	WHERE Tournament->TStatus->Code <> 'Canceled' 
-		 	   AND Tournament->TStatus->Code <> 'Completed'
-		 	   AND Tournament <> :cmpTournamentId 
-		 	   AND StartDate = :cmp.StartDate
-		 	   AND ID IN (SELECT prtCoupleUDSR.Competition 
-		 	   			  FROM Dance_Data.ParticipantCoupleUDSR as prtCoupleUDSR 
-		 	   			  WHERE prtCoupleUDSR.Competition->StartDate = :cmp.StartDate AND (prtCoupleUDSR.Couple->Man = :personId OR prtCoupleUDSR.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
-		 	   			  UNION
-		 	   			  SELECT prtCoupleWDSF.Competition 
-		 	   			  FROM Dance_Data.ParticipantCoupleWDSF as prtCoupleWDSF 
-		 	   			  WHERE prtCoupleWDSF.Competition->StartDate = :cmp.StartDate AND (prtCoupleWDSF.Couple->Man = :personId OR prtCoupleWDSF.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
-		 	   			  UNION
-		 	   			  SELECT prtSingleUDSR.Competition 
-		 	   			  FROM Dance_Data.ParticipantSingleUDSR as prtSingleUDSR 
-		 	   			  WHERE prtSingleUDSR.Competition->StartDate = :cmp.StartDate AND prtSingleUDSR.Athlete = :personId  AND TicketStatus = 'Piad'
-		 	   			  UNION
-		 	   			  SELECT prtSingleWDSF.Competition 
-		 	   			  FROM Dance_Data.ParticipantSingleWDSF as prtSingleWDSF 
-		 	   			  WHERE prtSingleWDSF.Competition->StartDate = :cmp.StartDate AND prtSingleWDSF.Athlete = :personId AND TicketStatus = 'Piad'))
-		
-	&sql(OPEN CrsCmpConflict)
-	for{
-		&sql(FETCH CrsCmpConflict INTO :cmpConflictId) 
-		quit:(SQLCODE '= 0)
-		
-		do cmpList.Insert(##class(Competition).%OpenId(cmpConflictId).ConvertToProxyObject(params))
-	}
-		
-	&sql(CLOSE CrsCmpConflict)
-	
-	quit cmpList
+    set st = $$$OK
+    set cmpList = ##class(%ListOfObjects).%New()
+    
+    set cmp = ##class(Competition).%OpenId(cmpId,,.st)
+    set cmpTournamentId = cmp.Tournament.%Id()
+    
+    
+    set params = ##class(%ZEN.proxyObject).%New()
+    set params.loadTournament = $$$YES
+    set params.tournamentParams = ##class(%ZEN.proxyObject).%New()
+    set params.tournamentParams.loadLocation = $$$YES
+    set params.loadDiscipline = $$$YES
+    set params.loadAgeCategory = $$$YES 
+    set params.loadType = $$$YES
+    set params.loadWDSF = $$$YES
+    set params.loadDancerClasses = $$$YES
+    
+    
+    &sql(DECLARE CrsCmpConflict CURSOR FOR
+            SELECT ID INTO :cmpConflictId
+            FROM Dance_Data.Competition
+            WHERE Tournament->TStatus->Code <> 'Canceled' 
+               AND Tournament->TStatus->Code <> 'Completed'
+               AND Tournament <> :cmpTournamentId 
+               AND StartDate = :cmp.StartDate
+               AND ID IN (SELECT prtCoupleUDSR.Competition 
+                          FROM Dance_Data.ParticipantCoupleUDSR as prtCoupleUDSR 
+                          WHERE prtCoupleUDSR.Competition->StartDate = :cmp.StartDate AND (prtCoupleUDSR.Couple->Man = :personId OR prtCoupleUDSR.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
+                          UNION
+                          SELECT prtCoupleWDSF.Competition 
+                          FROM Dance_Data.ParticipantCoupleWDSF as prtCoupleWDSF 
+                          WHERE prtCoupleWDSF.Competition->StartDate = :cmp.StartDate AND (prtCoupleWDSF.Couple->Man = :personId OR prtCoupleWDSF.Couple->Woman = :personId)  AND TicketStatus = 'Piad'
+                          UNION
+                          SELECT prtSingleUDSR.Competition 
+                          FROM Dance_Data.ParticipantSingleUDSR as prtSingleUDSR 
+                          WHERE prtSingleUDSR.Competition->StartDate = :cmp.StartDate AND prtSingleUDSR.Athlete = :personId  AND TicketStatus = 'Piad'
+                          UNION
+                          SELECT prtSingleWDSF.Competition 
+                          FROM Dance_Data.ParticipantSingleWDSF as prtSingleWDSF 
+                          WHERE prtSingleWDSF.Competition->StartDate = :cmp.StartDate AND prtSingleWDSF.Athlete = :personId AND TicketStatus = 'Piad'))
+        
+    &sql(OPEN CrsCmpConflict)
+    for{
+        &sql(FETCH CrsCmpConflict INTO :cmpConflictId) 
+        quit:(SQLCODE '= 0)
+        
+        do cmpList.Insert(##class(Competition).%OpenId(cmpConflictId).ConvertToProxyObject(params))
+    }
+        
+    &sql(CLOSE CrsCmpConflict)
+    
+    quit cmpList
 ]]></Implementation>
 </Method>
 

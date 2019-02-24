@@ -21,16 +21,6 @@ do ##class(Dance.Utils.TaskTickets).Import()</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-    /*
-    do ##class(Dance.Data.Import.TicketDanceplat).%KillExtent()
-    do ##class(Dance.Data.Ticket).%DeleteExtent()
-    do ##class(Dance.Data.Participant).%DeleteExtent()
-    do ##class(Dance.Data.Couple).%DeleteExtent()
-    do ##class(Dance.Data.PersonWDSF).%DeleteExtent()
-    
-    d ##class(Dance.Data.Import.TicketDanceplat).%KillExtent()
-    d ##class(Dance.Data.Ticket).%KillExtent()
-    */
     set st = $$$OK
     
     try{

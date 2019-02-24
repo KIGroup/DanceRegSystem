@@ -82,7 +82,8 @@
              FROM Dance_Data_Import.TicketDanceplat as tic
              WHERE (SELECT cmp.Tournament->TStatus->Code 
                     FROM Dance_Data.Competition as cmp 
-                    WHERE cmp.IdInternal = tic.GroupIdInternal) IN ('Registration','RegistrationClosed'))   
+                    WHERE cmp.IdInternal = tic.GroupIdInternal) IN ('Registration','RegistrationClosed') AND DATEDIFF('day',PaymentCreated, NOW()) < 5
+             ORDER BY ID DESC)   
                     
         &sql(OPEN TicketCurs)
         for  
@@ -97,7 +98,7 @@
             set st = ..SaveOneFromImportTable(ticketImport, competition)
             if $$$ISERR(st){
                 do ##class(Dance.Utils.Journal).Create("Log", "Dance.Data.TicketDanceplat.SaveAllFromImportTable() Error", $SYSTEM.Status.GetErrorText(st))
-            }   
+            }  
         }
         
         &sql(CLOSE TicketCurs)  
@@ -121,7 +122,7 @@
     set st = $$$OK
     set isTrace = $$$YES
     w:(isTrace) !,!,"Start 'SaveOneFromImportTable' ticketId="_ticketImport.%Id()
-    //do ##class(Dance.Utils.Journal).Create("Log", "Dance.Data.TicketDanceplat.SaveOneFromImportTable()", "Start for ticketId="_ticketImport.%Id())
+    do ##class(Dance.Utils.Journal).Create("Log", "Dance.Data.TicketDanceplat.SaveOneFromImportTable()", "Start for ticketId="_ticketImport.%Id())
     
     try{
         TSTART
@@ -146,7 +147,7 @@
             set prtClassName = "Dance.Data.ParticipantSingleUDSR"
     
             if $ISOBJECT(manUDSR) && $ISOBJECT(womanUDSR){
-                w:(isTrace) !,"--Find man and woman UDSR."
+                w:(isTrace) !,"--Find man and woman UDSR. man Num="_manUDSR.Number_", woman Num="_womanUDSR.Number
                 
                 // Couple UDSR
                 set prtObject = ##class(Dance.Data.CoupleUDSR).GetByNumbers(manUDSR.Number, womanUDSR.Number,.st)   
@@ -188,7 +189,7 @@
                 set prtObject = womanUDSR
             }
             
-            w:(isTrace) !,"Create participant "_prtClassName
+            // Create participant
             set prtObjectProxy = prtObject.ConvertToProxyObject()
             set prtObjectProxy.withoutCheckClubs = 1   
             set participant = $CLASSMETHOD(prtClassName, "Create", ##class(Dance.Data.Recorder).GetSystemRecorder(), competition, prtObjectProxy, .st)
@@ -223,12 +224,12 @@
                     
                 }
                 else{
-                    w:(isTrace) !,"---Create prt couple Other."
+                    w:(isTrace) !,"---Find existed prt couple Other."
         
                     set participant = ..GetParticipantOtherFromImportedTicket(ticketImport, competition, $$$NO, .st)
                     
                     if $ISOBJECT(participant) = $$$NO {
-                        // Create participantCoupleOther
+                        w:(isTrace) !,"---Create prt couple Other."
                         set participant = ..CreateParticipantOtherByImportedTicket(ticketImport, competition, $$$NO, .st)
                     }                                     
                 }
@@ -544,7 +545,7 @@ do ##class(Dance.Data.TicketDanceplat).Test()</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     TSTART
-    set ticketImport = ##class(Dance.Data.Import.TicketDanceplat).%OpenId(15940)
+    set ticketImport = ##class(Dance.Data.Import.TicketDanceplat).%OpenId(11553)
     set competition = ##class(Dance.Data.Competition).IdInternalIdxOpen(ticketImport.GroupIdInternal)
     w !,..SaveOneFromImportTable(ticketImport, competition)
     TCOMMIT

@@ -6,6 +6,10 @@ Dancer classes: A,B,C ....</Description>
 <Super>%Persistent,%XML.Adaptor</Super>
 <TimeCreated>63289,41260.549928</TimeCreated>
 
+<Parameter name="JsonClass">
+<Default>Dance.Web.JsonDancerClass</Default>
+</Parameter>
+
 <Property name="Name">
 <Type>%String</Type>
 <Required>1</Required>
@@ -96,9 +100,6 @@ Convert "DancerClass" object to %ZEN.proxyObject (for JSON)</Description>
 </Value>
 <Value name="3">
 <Value>Code</Value>
-</Value>
-<Value name="4">
-<Value>Federation</Value>
 </Value>
 </Data>
 </Storage>

@@ -139,9 +139,9 @@
                       Dance_Data_Localization.LTextValue as ltvalLN ON ltvalLN.LText = person.LastName 
                  INNER JOIN 
                       Dance_Data_Localization.LTextValue as ltvalFN ON ltvalFN.LText = person.FirstName
-                 WHERE %UPPER(ltvalLN.Value) = %UPPER(TRIM(BOTH ' ' FROM :manLastName)) 
+                 WHERE %UPPER(TRIM(ltvalLN.Value)) = %UPPER(TRIM(BOTH ' ' FROM :manLastName)) 
                        AND 
-                       %UPPER(ltvalFN.Value) = %UPPER(TRIM(BOTH ' ' FROM :manFirstName)))   
+                       %UPPER(TRIM(ltvalFN.Value)) = %UPPER(TRIM(BOTH ' ' FROM :manFirstName)))   
             &sql(OPEN ManCur)
             for  
             {   
@@ -198,7 +198,7 @@ do ##class(Dance.Data.MatchingCoupleUDSRWDSF).FixLocalization()</Description>
         &sql(DECLARE MtCur CURSOR FOR 
              SELECT UDSR, WDSF
              FROM Dance_Data.MatchingCoupleUDSRWDSF
-             WHERE UDSR->Man->LastName->Value <> WDSF->Man->LastName->Value OR UDSR->Woman->LastName->Value <> WDSF->Woman->LastName->Value)    
+             WHERE TRIM(UDSR->Man->LastName->Value) <> TRIM(WDSF->Man->LastName->Value) OR TRIM(UDSR->Woman->LastName->Value) <> TRIM(WDSF->Woman->LastName->Value))    
         &sql(OPEN MtCur)
         for  
         {   

@@ -191,11 +191,6 @@ Competition in the tournament, has participants</Description>
     set proxy.dancerClasses = ##class(%ListOfObjects).%New()
     
     if (params.loadDancerClasses){
-	    set totalClassCount = 0
-		// 7 - "H" - not valid
-	    &sql(SELECT COUNT(ID) INTO :totalClassCount FROM Dance_Data.DancerClass WHERE Code <> '7')
-	    set proxy.isForAllDancerClasses = (..DancerClasses.Count() = totalClassCount) || (..DancerClasses.Count() > totalClassCount)
-	    
         set dcKey = ""
         for i=1:1:..DancerClasses.Count(){
             set dcKey = ..DancerClasses.Next(dcKey)
@@ -208,6 +203,11 @@ Competition in the tournament, has participants</Description>
     set proxy.dancerClasses = ##class(%ListOfObjects).%New()
     
     if (params.loadDancerClasses){
+	    set totalClassCount = 0
+	    // 7 - "H" - not valid
+	    &sql(SELECT COUNT(ID) INTO :totalClassCount FROM Dance_Data.DancerClass WHERE Code <> '7')
+	    set proxy.isForAllDancerClasses = (..DancerClasses.Count() = totalClassCount) || (..DancerClasses.Count() > totalClassCount)
+	    
         set dcKey = ""
         for i=1:1:..DancerClasses.Count(){
             set dcKey = ..DancerClasses.Next(dcKey)

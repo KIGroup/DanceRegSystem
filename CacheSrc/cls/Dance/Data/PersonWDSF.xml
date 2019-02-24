@@ -81,15 +81,11 @@ Create or save modified person</Description>
 <Implementation><![CDATA[
 	set id = ""
 
-	&sql(SELECT person.ID INTO :id
+	&sql(SELECT TOP 1 person.ID INTO :id
 		 FROM Dance_Data.PersonWDSF as person 
-		 	INNER JOIN 
-		 	Dance_Data_Localization.LTextValue as ltvalLN ON ltvalLN.LText = person.LastName 
-		 	INNER JOIN 
-		 	Dance_Data_Localization.LTextValue as ltvalFN ON ltvalFN.LText = person.FirstName
-		 WHERE %UPPER(ltvalLN.Value) = %UPPER(TRIM(BOTH ' ' FROM :filter.lastName)) 
+		 WHERE %UPPER(TRIM(person.LastName->Value)) = %UPPER(TRIM(BOTH ' ' FROM :filter.lastName)) 
 		 	   AND 
-		 	   %UPPER(ltvalFN.Value) = %UPPER(TRIM(BOTH ' ' FROM :filter.firstName)))
+		 	   %UPPER(TRIM(person.FirstName->Value)) = %UPPER(TRIM(BOTH ' ' FROM :filter.firstName)))
 
 	quit ..%OpenId(id)
 ]]></Implementation>

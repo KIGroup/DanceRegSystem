@@ -65,7 +65,7 @@ Get value for language=lang for object with id=ltxt</Description>
         quit:(id="") "No value for language - "_lang_" (ISO 639-1)"
     }   
     
-    quit $LISTGET(^Dance.Data.LocaD180.LTextValueD(id), 4)
+    quit $ZSTRIP($LISTGET(^Dance.Data.LocaD180.LTextValueD(id), 4), "<>W")
 ]]></Implementation>
 </Method>
 
@@ -87,7 +87,7 @@ Set value for language=lang for object with id=ltxt</Description>
         set lv = ..%New()
         set lv.Lang = ##class(LTextLanguage).%OpenId(lang)
         set lv.LText = ##class(LText).%OpenId(ltxt)
-        set lv.Value = value
+        set lv.Value = $ZSTRIP(value, "<>W")
         set sc = lv.%Save()
         
         if $$$ISERR(sc){

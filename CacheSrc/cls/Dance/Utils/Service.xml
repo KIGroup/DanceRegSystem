@@ -166,6 +166,70 @@ w ##class(Dance.Utils.Service).CreateAgeGroups()</Description>
         TSTART
         
         set ag = ##class(Dance.Data.AgeCategory).%New()
+        set ag.Code = "Молодежь 2+1"
+        set ag.OldestPartnerMaxAge = 20
+        set ag.OldestPartnerMinAge = 16
+        set ag.YoungestPartnerMaxAge = 20
+        set ag.YoungestPartnerMinAge = 16
+        set ag.SpecialLogic = 0
+        set ag.Name = ##class(Dance.Data.Localization.LText).Create("Молодежь 2+1")
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Youth 2+1", "en"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Youth 2+1", "de"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("Youth 2+1", "it"))
+        $$$THROWONERROR(st, ag.%Save())
+        /*
+        
+        
+        A: 16-35
+		включая
+		B 36-45
+		C: 46-99
+        */
+         /*
+        set ag = ##class(Dance.Data.AgeCategory).%New()
+        set ag.Code = "A"
+        set ag.OldestPartnerMaxAge = 35
+        set ag.OldestPartnerMinAge = 16
+        set ag.YoungestPartnerMaxAge = 35
+        set ag.YoungestPartnerMinAge = 16
+        set ag.SpecialLogic = 0
+        set ag.Name = ##class(Dance.Data.Localization.LText).Create("A")
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("A", "en"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("A", "de"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("A", "it"))
+        $$$THROWONERROR(st, ag.%Save())
+        
+        
+        set ag = ##class(Dance.Data.AgeCategory).%New()
+        set ag.Code = "B"
+        set ag.OldestPartnerMaxAge = 45
+        set ag.OldestPartnerMinAge = 36
+        set ag.YoungestPartnerMaxAge = 45
+        set ag.YoungestPartnerMinAge = 36
+        set ag.SpecialLogic = 0
+        set ag.Name = ##class(Dance.Data.Localization.LText).Create("B")
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("B", "en"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("B", "de"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("B", "it"))
+        $$$THROWONERROR(st, ag.%Save())
+        
+        
+        set ag = ##class(Dance.Data.AgeCategory).%New()
+        set ag.Code = "C"
+        set ag.OldestPartnerMaxAge = 99
+        set ag.OldestPartnerMinAge = 46
+        set ag.YoungestPartnerMaxAge = 99
+        set ag.YoungestPartnerMinAge = 46
+        set ag.SpecialLogic = 0
+        set ag.Name = ##class(Dance.Data.Localization.LText).Create("C")
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("C", "en"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("C", "de"))
+        $$$THROWONERROR(st, ag.Name.SetValueByLang("C", "it"))
+        $$$THROWONERROR(st, ag.%Save())
+        
+        
+       
+        set ag = ##class(Dance.Data.AgeCategory).%New()
         set ag.Code = "Ю-1+Д-2"
         set ag.OldestPartnerMaxAge = 13
         set ag.OldestPartnerMinAge = 11
@@ -208,7 +272,7 @@ w ##class(Dance.Utils.Service).CreateAgeGroups()</Description>
         $$$THROWONERROR(st, ag.Name.SetValueByLang("", "de"))
         $$$THROWONERROR(st, ag.Name.SetValueByLang("", "it"))
         $$$THROWONERROR(st, ag.%Save())
-        
+        */
         TCOMMIT
     }
     catch(ex){

@@ -467,7 +467,7 @@ do ##class(Dance.Data.Participant).UpdatePrtKey()</Description>
         TROLLBACK
         
         set st = ex.AsStatus()
-        w $SYSTEM.Status.GetErrorText(st)
+        //w $SYSTEM.Status.GetErrorText(st)
     }
 ]]></Implementation>
 </Method>

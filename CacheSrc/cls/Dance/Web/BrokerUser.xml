@@ -146,6 +146,8 @@ Public REST URLs</Description>
 <!-- Get all competition regions -->
 <Route Method="GET" Url="/competition/region" Call="Dance.Web.JsonUser:GetCompetitionRegions"/>    
 
+
+<Route Method="GET" Url="/test" Call="Dance.Web.JsonUser:Test"/>    
 </Routes>
 ]]></Data>
 </XData>

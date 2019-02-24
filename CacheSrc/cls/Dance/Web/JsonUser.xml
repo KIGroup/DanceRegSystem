@@ -889,8 +889,10 @@ Available participants competitions for grid</Description>
     
     set ageUDSRList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
     
+    
     set sourceList = ..GetTournamentCompetitionsList(trnId, $ISOBJECT(couple))
    
+    
     for i=1:1:sourceList.Count(){
         #dim cmp As Dance.Data.Competition = sourceList.GetAt(i)
         
@@ -1101,6 +1103,7 @@ Available participants competitions for grid</Description>
 <ReturnType>%ListOfObjects</ReturnType>
 <Implementation><![CDATA[
 	set trn = ##class(Dance.Data.Tournament).%OpenId(trnId)
+	
     set (man, woman) = ""
     set (athleteData, coupleData) = ""
     set (prtObjKey, prtObjClassName) = ""
@@ -1146,7 +1149,7 @@ Available participants competitions for grid</Description>
     else{
     	set ageList = ##class(Dance.Data.AgeCategory).GetAllAvailableList(maleAge, femaleAge) 
     }
-    
+        
     set sourceList = ..GetTournamentCompetitionsList(trnId, $ISOBJECT(coupleData))
     set resultList = ##class(%ListOfObjects).%New()
     
@@ -1898,6 +1901,44 @@ Get all competition regions</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[    quit ..WriteJsonFromSql("SELECT id as id, name || ' [' || LIST(CodeNumbers) ||  ']' as name FROM Dance_Data.CompetitionRegion GROUP BY ID ORDER BY Name")
+]]></Implementation>
+</Method>
+
+<Method name="Test">
+<Description>
+w ##class(Dance.Web.JsonUser).Test()</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	set st = $$$OK
+		
+	try{
+		
+		set httprequest = ##class(%Net.HttpRequest).%New()
+		set httprequest.Server = "www.danceplat.ru"
+		set httprequest.Https = 1
+		set httprequest.SSLConfiguration = "default"
+		set httprequest.ContentEncoding = "UTF-8"
+		set httprequest.Timeout = 430
+		do httprequest.Get("toursfeed1.php?trn=10122&hash=b3c230573098e6ac0510654af758c227&all=1")
+		//do httprequest.Get("groupsfeed2.php?trn=10228&hash=02f0c5d6b15a59a83654ff5d346e202c&all=1")
+		if (httprequest.HttpResponse.Data = ""){
+			$$$ThrowStatus($SYSTEM.Status.Error(5001, "Ответ от сервера не был получен."))
+		}
+		
+		#dim stream As %Stream.Object = $ZCVT(httprequest.HttpResponse.Data.Read(100000), "O", "UTF8")
+		#dim reader As %XML.Reader = ##class(%XML.Reader).%New()
+		
+		//set stream = $REPLACE(stream, "xml version=""1.0""", "xml version=""1.0"" encoding=""UTF-8""")
+		//w stream
+		//$$$THROWONERROR(st, reader.OpenStream(stream, "literal"))
+		$$$THROWONERROR(st, reader.OpenString(stream, "literal"))
+	}
+	catch(ex){
+		set st = ex.AsStatus()
+		set ^dbg = $SYSTEM.Status.GetErrorText(st)_$ZDT($NOW(), 3)
+	}
+	
+	q st
 ]]></Implementation>
 </Method>
 </Class>

@@ -102,7 +102,7 @@ Date of birth</Description>
     try{
         TSTART
         
-        set fieldsHash = ##class(%SYSTEM.Encryption).MD5Hash(data)   
+        set fieldsHash = ##class(%SYSTEM.Encryption).MD5Hash(data)    
         set propList = $LISTFROMSTRING(data, ";")
         set person = ..NumberUDSRIdxOpen($LIST(propList, 1))
             
@@ -212,15 +212,11 @@ Date of birth</Description>
 <Implementation><![CDATA[
     set id = ""
 
-    &sql(SELECT person.ID INTO :id
+    &sql(SELECT TOP 1 person.ID INTO :id
          FROM Dance_Data.PersonUDSR as person 
-            INNER JOIN 
-            Dance_Data_Localization.LTextValue as ltvalLN ON ltvalLN.LText = person.LastName 
-            INNER JOIN 
-            Dance_Data_Localization.LTextValue as ltvalFN ON ltvalFN.LText = person.FirstName
-         WHERE %UPPER(ltvalLN.Value) = %UPPER(TRIM(BOTH ' ' FROM :filter.lastName)) 
+         WHERE %UPPER(TRIM(person.LastName->Value)) = %UPPER(TRIM(BOTH ' ' FROM :filter.lastName)) 
                AND 
-               %UPPER(ltvalFN.Value) = %UPPER(TRIM(BOTH ' ' FROM :filter.firstName)) 
+               %UPPER(TRIM(person.FirstName->Value)) = %UPPER(TRIM(BOTH ' ' FROM :filter.firstName)) 
                AND 
                (DATEPART('YEAR', person.DOB) || '-' || DATEPART('MONTH', person.DOB) || '-' || DATEPART('DAY', person.DOB) = :filter.dob
                 OR

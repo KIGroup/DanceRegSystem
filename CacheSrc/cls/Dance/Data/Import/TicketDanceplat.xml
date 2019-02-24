@@ -141,6 +141,7 @@ Create or update ticket</Description>
 <FormalSpec>newObj:Dance.Data.Import.TicketDanceplat</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+	do ##class(Dance.Utils.Journal).Create("Log", "Dance.Data.Import.ImportDanceplat.Save", "IdInternal="_newObj.IdInternal)
 	set newObj.Description = $REPLACE($REPLACE(newObj.Description, $c(10), ""), "&quot;", """")
 	set newObj.City = $REPLACE(newObj.City, $C(10), "")
 	set newObj.Club = $REPLACE(newObj.Club, $C(10), "")
@@ -172,15 +173,15 @@ Create or update ticket</Description>
 	
 	if ($LENGTH(newObj.FemaleLastName) < 2) set newObj.FemaleLastName = ""
 	if ($LENGTH(newObj.FemaleFirstName) < 2) set newObj.FemaleFirstName = ""
-	set oldObj.FemaleLastName = newObj.FemaleLastName
-	set oldObj.FemaleFirstName = newObj.FemaleFirstName
+	set oldObj.FemaleLastName = $ZSTRIP(newObj.FemaleLastName, "<>W")
+	set oldObj.FemaleFirstName = $ZSTRIP(newObj.FemaleFirstName, "<>W")
 	set oldObj.FemaleDOBOrAge = newObj.FemaleDOBOrAge
 	set oldObj.FemaleNumber = +newObj.FemaleNumber
 	
 	if ($LENGTH(newObj.MaleLastName) < 2) set newObj.MaleLastName = ""
 	if ($LENGTH(newObj.MaleFirstName) < 2) set newObj.MaleFirstName = ""
-	set oldObj.MaleLastName = newObj.MaleLastName
-	set oldObj.MaleFirstName = newObj.MaleFirstName
+	set oldObj.MaleLastName = $ZSTRIP(newObj.MaleLastName, "<>W")
+	set oldObj.MaleFirstName = $ZSTRIP(newObj.MaleFirstName, "<>W")
 	set oldObj.MaleDOBOrAge = newObj.MaleDOBOrAge
 	set oldObj.MaleNumber = +newObj.MaleNumber
 	
